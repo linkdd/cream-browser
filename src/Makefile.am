@@ -1,0 +1,1 @@
+SUBDIRS=core libs plugins
