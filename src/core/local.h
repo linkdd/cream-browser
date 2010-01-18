@@ -18,6 +18,7 @@
 
 #define CREAM_FILE(path)      g_build_filename (g_get_home_dir (), ".cream-browser", path, NULL)
 
+extern struct global_t global;
 
 gboolean cream_init (int *argc, char ***argv, GError **error);
 void cream_release (int exit_code);

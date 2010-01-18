@@ -5,11 +5,11 @@ struct global_t global;
 GOptionEntry entries[] =
 {
      { "config", 'c', 0, G_OPTION_ARG_FILENAME, &global.cmdline.config, "Load an alternative configuration file" },
-     { "open", 'o', 0, G_OPTION_ARG_STRING, &global.cmdline.url, "Open URL") },
+     { "open", 'o', 0, G_OPTION_ARG_STRING, &global.cmdline.url, "Open URL" },
      { NULL }
 };
 
-gboolean cream_init (int *argv, char ***argv, GError **error)
+gboolean cream_init (int *argc, char ***argv, GError **error)
 {
      GError *local_error = NULL;
      GOptionContext *ctx;

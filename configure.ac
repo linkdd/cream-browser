@@ -1,4 +1,4 @@
-AC_INIT([cream-browser], [012010], [linkdd62@gmail.com])
+AC_INIT([cream-browser], [201001], [linkdd62@gmail.com])
 AM_INIT_AUTOMAKE([-Wall foreign])
 
 AM_GNU_GETTEXT_VERSION([0.17])
@@ -11,13 +11,10 @@ fi
 
 AC_PROG_CC
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([
+AC_CONFIG_FILES([ po/Makefile.in
     Makefile
     src/Makefile
     src/core/Makefile
-    src/libs/Makefile
-    src/plugins/Makefile
-    po/Makefile.in
 ])
 
 PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.14)
