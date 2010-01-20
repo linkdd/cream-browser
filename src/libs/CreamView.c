@@ -1,5 +1,5 @@
 #include "CreamView.h"
-#include <webkit/webkit.h>
+#include "modules/www/WebViewModule.h"
 #include <string.h>
 
 static void cream_view_class_init (CreamViewClass *class);
@@ -42,38 +42,40 @@ GtkType cream_view_get_type (void)
 
 static void cream_view_class_init (CreamViewClass *class)
 {
-     GtkObjectClass *obj_class;
+     cream_view_signals[URL_CHANGED_SIGNAL] = g_signal_new ("url-changed",
+               G_TYPE_FROM_CLASS (class),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (CreamViewClass, url_changed),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__VOID,
+               G_TYPE_NONE, 0);
+     class->url_changed = NULL;
 
-     cream_view_signals[URL_CHANGED_SIGNAL] = gtk_signal_new ("url-changed",
-               GTK_RUN_FIRST,
-               obj_class->type,
-               GTK_SIGNAL_OFFSET (CreamViewClass, url_changed),
-               gtk_signal_default_marshaller, GTK_ARG_NONE, 0);
-     class->url_changed = cream_view_url_changed;
+     cream_view_signals[TITLE_CHANGED_SIGNAL] = g_signal_new ("title-changed",
+               G_TYPE_FROM_CLASS (class),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (CreamViewClass, title_changed),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__VOID,
+               G_TYPE_NONE, 0);
+     class->title_changed = NULL;
 
-     cream_view_signals[TITLE_CHANGED_SIGNAL] = gtk_signal_new ("title-changed",
-               GTK_RUN_FIRST,
-               obj_class->type,
-               GTK_SIGNAL_OFFSET (CreamViewClass, title_changed),
-               gtk_signal_default_marshaller, GTK_ARG_NONE, 0);
-     class->title_changed = cream_view_title_changed;
-
-     cream_view_signals[STATUS_CHANGED_SIGNAL] = gtk_signal_new ("status-changed",
-               GTK_RUN_FIRST,
-               obj_class->type,
-               GTK_SIGNAL_OFFSET (CreamViewClass, status_changed),
-               gtk_signal_default_marshaller, GTK_ARG_NONE, 0);
-     class->status_changed = cream_view_status_changed;
-
-     gtk_object_class_add_signals (object_class, cream_view_signals, NB_SIGNALS);
+     cream_view_signals[STATUS_CHANGED_SIGNAL] = g_signal_new ("status-changed",
+               G_TYPE_FROM_CLASS (class),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (CreamViewClass, status_changed),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__VOID,
+               G_TYPE_NONE, 0);
+     class->status_changed = NULL;
 }
 
 static void cream_view_init (CreamView *obj)
 {
-     view->content = NULL;
-     view->url = NULL;
-     view->title = NULL;
-     view->status = NULL;
+     obj->content = NULL;
+     obj->url = NULL;
+     obj->title = NULL;
+     obj->status = NULL;
 }
 
 static void cream_view_load_content (CreamView *view)
@@ -91,26 +93,25 @@ static void cream_view_load_content (CreamView *view)
           view->content = gtk_label_new ("FTP: not yet implemented");
      }
      /* Web Page */
-     else if (!strncmp (url, "http://", 7)
-               || !strncmp (url, "file://", 7)
-               || url[0] == '/')
-     {
-          view->content = webkit_web_view_new ();
-
-          if (url[0] == '/')
-               webkit_web_view_load_uri (WEBKIT_WEB_VIEW (view->content), g_strdup_printf ("file://%s", url));
-          else
-               webkit_web_view_load_uri (WEBKIT_WEB_VIEW (view->content), url);
-
-          view->title = webkit_web_view_get_title (WEBKIT_WEB_VIEW (view->content));
-     }
      else
      {
-          view->content = webkit_web_view_new ();
-          webkit_web_view_load_uri (WEBKIT_WEB_VIEW (view->content), g_strdup_printf ("http://%s", url));
-          view->title = webkit_web_view_get_title (WEBKIT_WEB_VIEW (view->content));
-     }
+          if (!strncmp (url, "http://", 7)
+               || !strncmp (url, "file://", 7))
+          {
+               view->content = module_web_view_new (url);
+          }
+          else if (url[0] == '/')
+          {
+               view->content = module_web_view_new (g_strdup_printf ("file://%s", url));
+          }
+          else
+          {
+               view->content = module_web_view_new (g_strdup_printf ("http://%s", url));
+          }
 
+          view->title = g_strdup (module_web_view_get_title (MODULE_WEB_VIEW (view->content)));
+          view->status = g_strdup (module_web_view_get_status (MODULE_WEB_VIEW (view->content)));
+     }
 }
 
 GtkWidget *cream_view_new (const gchar *url)
@@ -130,4 +131,4 @@ GtkWidget *cream_view_new (const gchar *url)
      return GTK_WIDGET (view);
 }
 
-
+/* signals */

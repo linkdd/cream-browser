@@ -6,6 +6,10 @@
 
 G_BEGIN_DECLS
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define CREAM_VIEW(obj)            \
      GTK_CHECK_CAST(obj, cream_view_get_type (), CreamView)
 #define CREAM_VIEW_CLASS(klass)    \
@@ -38,6 +42,10 @@ struct _CreamViewClass
 
 GtkType cream_view_get_type (void);
 GtkWidget *cream_view_new (const gchar *url);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 G_END_DECLS
 
