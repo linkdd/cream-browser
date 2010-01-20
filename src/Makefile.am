@@ -1,1 +1,1 @@
-SUBDIRS=core #libs plugins
+SUBDIRS=libs core #plugins

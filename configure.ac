@@ -10,11 +10,13 @@ if test "$PKGCONFIG" = :; then
 fi
 
 AC_PROG_CC
+AC_PROG_RANLIB
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([ po/Makefile.in
     Makefile
     src/Makefile
     src/core/Makefile
+    src/libs/Makefile
 ])
 
 PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.14)

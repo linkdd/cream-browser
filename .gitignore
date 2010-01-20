@@ -1,3 +1,7 @@
 *.in
 *.swp
 *~
+*.o
+cream
+libcream.a
+__build__
