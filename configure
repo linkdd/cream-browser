@@ -6387,12 +6387,12 @@ if test -n "$PKG_CONFIG"; then
         pkg_cv_WEBKIT_CFLAGS="$WEBKIT_CFLAGS"
     else
         if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"webkit-1.0 >= 1.1.6\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "webkit-1.0 >= 1.1.6") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"webkit-1.0 >= 1.1.18\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "webkit-1.0 >= 1.1.18") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_WEBKIT_CFLAGS=`$PKG_CONFIG --cflags "webkit-1.0 >= 1.1.6" 2>/dev/null`
+  pkg_cv_WEBKIT_CFLAGS=`$PKG_CONFIG --cflags "webkit-1.0 >= 1.1.18" 2>/dev/null`
 else
   pkg_failed=yes
 fi
@@ -6405,12 +6405,12 @@ if test -n "$PKG_CONFIG"; then
         pkg_cv_WEBKIT_LIBS="$WEBKIT_LIBS"
     else
         if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"webkit-1.0 >= 1.1.6\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "webkit-1.0 >= 1.1.6") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"webkit-1.0 >= 1.1.18\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "webkit-1.0 >= 1.1.18") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_WEBKIT_LIBS=`$PKG_CONFIG --libs "webkit-1.0 >= 1.1.6" 2>/dev/null`
+  pkg_cv_WEBKIT_LIBS=`$PKG_CONFIG --libs "webkit-1.0 >= 1.1.18" 2>/dev/null`
 else
   pkg_failed=yes
 fi
@@ -6429,14 +6429,14 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        WEBKIT_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "webkit-1.0 >= 1.1.6"`
+	        WEBKIT_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "webkit-1.0 >= 1.1.18"`
         else
-	        WEBKIT_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "webkit-1.0 >= 1.1.6"`
+	        WEBKIT_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "webkit-1.0 >= 1.1.18"`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$WEBKIT_PKG_ERRORS" >&5
 
-	as_fn_error "Package requirements (webkit-1.0 >= 1.1.6) were not met:
+	as_fn_error "Package requirements (webkit-1.0 >= 1.1.18) were not met:
 
 $WEBKIT_PKG_ERRORS
 
