@@ -1,5 +1,4 @@
 #include "CreamView.h"
-#include "modules/www/WebViewModule.h"
 #include <string.h>
 
 static void cream_view_class_init (CreamViewClass *class);
@@ -14,7 +13,7 @@ enum
      NB_SIGNALS
 };
 
-static gint cream_view_signals[NB_SIGNALS] = { 0 };
+static guint cream_view_signals[NB_SIGNALS] = { 0 };
 
 GtkType cream_view_get_type (void)
 {
@@ -47,27 +46,27 @@ static void cream_view_class_init (CreamViewClass *class)
                G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
                G_STRUCT_OFFSET (CreamViewClass, url_changed),
                NULL, NULL,
-               g_cclosure_marshal_VOID__VOID,
-               G_TYPE_NONE, 0);
-     class->url_changed = NULL;
+               g_cclosure_marshal_VOID__CHAR,
+               G_TYPE_NONE,
+               1,G_TYPE_STRING);
 
      cream_view_signals[TITLE_CHANGED_SIGNAL] = g_signal_new ("title-changed",
                G_TYPE_FROM_CLASS (class),
                G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
                G_STRUCT_OFFSET (CreamViewClass, title_changed),
                NULL, NULL,
-               g_cclosure_marshal_VOID__VOID,
-               G_TYPE_NONE, 0);
-     class->title_changed = NULL;
+               g_cclosure_marshal_VOID__CHAR,
+               G_TYPE_NONE,
+               1, G_TYPE_STRING);
 
      cream_view_signals[STATUS_CHANGED_SIGNAL] = g_signal_new ("status-changed",
                G_TYPE_FROM_CLASS (class),
                G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
                G_STRUCT_OFFSET (CreamViewClass, status_changed),
                NULL, NULL,
-               g_cclosure_marshal_VOID__VOID,
-               G_TYPE_NONE, 0);
-     class->status_changed = NULL;
+               g_cclosure_marshal_VOID__CHAR,
+               G_TYPE_NONE,
+               1, G_TYPE_STRING);
 }
 
 static void cream_view_init (CreamView *obj)
@@ -95,22 +94,22 @@ static void cream_view_load_content (CreamView *view)
      /* Web Page */
      else
      {
+          view->content = module_web_view_new ();
+
           if (!strncmp (url, "http://", 7)
-               || !strncmp (url, "file://", 7))
+               || !strncmp (url, "file://", 7)
+               || !strncmp (url, "https://", 8))
           {
-               view->content = module_web_view_new (url);
+               module_web_view_load_uri (MODULE_WEB_VIEW (view->content), url);
           }
           else if (url[0] == '/')
           {
-               view->content = module_web_view_new (g_strdup_printf ("file://%s", url));
+               module_web_view_load_uri (MODULE_WEB_VIEW (view->content), g_strdup_printf ("file://%s", url));
           }
           else
           {
-               view->content = module_web_view_new (g_strdup_printf ("http://%s", url));
+               module_web_view_load_uri (MODULE_WEB_VIEW (view->content), g_strdup_printf ("http://%s", url));
           }
-
-          view->title = g_strdup (module_web_view_get_title (MODULE_WEB_VIEW (view->content)));
-          view->status = g_strdup (module_web_view_get_status (MODULE_WEB_VIEW (view->content)));
      }
 }
 

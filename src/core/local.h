@@ -7,6 +7,8 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
+#include <CreamView.h>
+
 #include "structs.h"
 #include "interface.h"
 #include "callbacks.h"

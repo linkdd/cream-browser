@@ -4,6 +4,10 @@
 #include <gtk/gtk.h>
 #include <gtk/gtkwidget.h>
 
+#include <about/AboutModule.h>
+#include <ftp/FTPModule.h>
+#include <www/WebViewModule.h>
+
 G_BEGIN_DECLS
 
 #ifdef __cplusplus
@@ -35,9 +39,9 @@ struct _CreamViewClass
 {
      GtkScrolledWindowClass parent_class;
 
-     void (*url_changed) (CreamView *obj);
-     void (*title_changed) (CreamView *obj);
-     void (*status_changed) (CreamView *obj);
+     void (*url_changed) (CreamView *obj, gchar *url);
+     void (*title_changed) (CreamView *obj, gchar *title);
+     void (*status_changed) (CreamView *obj, gchar *status);
 };
 
 GtkType cream_view_get_type (void);

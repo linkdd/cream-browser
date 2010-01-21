@@ -6165,7 +6165,7 @@ fi
 
 ac_config_headers="$ac_config_headers config.h"
 
-ac_config_files="$ac_config_files po/Makefile.in Makefile src/Makefile src/core/Makefile src/libs/Makefile"
+ac_config_files="$ac_config_files po/Makefile.in Makefile src/Makefile src/core/Makefile src/libs/Makefile src/libs/modules/about/Makefile src/libs/modules/ftp/Makefile src/libs/modules/www/Makefile"
 
 
 
@@ -7199,6 +7199,9 @@ do
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "src/core/Makefile") CONFIG_FILES="$CONFIG_FILES src/core/Makefile" ;;
     "src/libs/Makefile") CONFIG_FILES="$CONFIG_FILES src/libs/Makefile" ;;
+    "src/libs/modules/about/Makefile") CONFIG_FILES="$CONFIG_FILES src/libs/modules/about/Makefile" ;;
+    "src/libs/modules/ftp/Makefile") CONFIG_FILES="$CONFIG_FILES src/libs/modules/ftp/Makefile" ;;
+    "src/libs/modules/www/Makefile") CONFIG_FILES="$CONFIG_FILES src/libs/modules/www/Makefile" ;;
 
   *) as_fn_error "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

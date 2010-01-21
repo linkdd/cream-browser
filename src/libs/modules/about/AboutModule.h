@@ -1,0 +1,4 @@
+#ifndef __CLASS_ABOUT_MODULE_H
+#define __CLASS_ABOUT_MODULE_H
+
+#endif /* __CLASS_ABOUT_MODULE_H */

@@ -17,6 +17,9 @@ AC_CONFIG_FILES([ po/Makefile.in
     src/Makefile
     src/core/Makefile
     src/libs/Makefile
+    src/libs/modules/about/Makefile
+    src/libs/modules/ftp/Makefile
+    src/libs/modules/www/Makefile
 ])
 
 PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.14)

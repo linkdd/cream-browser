@@ -30,9 +30,8 @@ struct _ModuleWebView
      gchar *title;
      gchar *status;
 
-     gfloat zoom_level;
-     gboolean view_source_mode;
      WebKitWebInspector *inspector;
+     WebKitWebSettings *settings;
      Favicon *ico;
 };
 
@@ -40,13 +39,13 @@ struct _ModuleWebViewClass
 {
      WebKitWebViewClass parent_class;
 
-     void (*url_changed) (ModuleWebView *obj);
-     void (*title_changed) (ModuleWebView *obj);
-     void (*status_changed) (ModuleWebView *obj);
+     void (*url_changed) (ModuleWebView *obj, gchar *url);
+     void (*title_changed) (ModuleWebView *obj, gchar *title);
+     void (*status_changed) (ModuleWebView *obj, gchar *status);
 };
 
 GtkType module_web_view_get_type (void);
-GtkWidget *module_web_view_new (const gchar *url);
+GtkWidget *module_web_view_new (void);
 
 const gchar *module_web_view_get_uri (ModuleWebView *view);
 const gchar *module_web_view_get_title (ModuleWebView *view);
@@ -63,6 +62,7 @@ void module_web_view_zoom_out (ModuleWebView *view);
 void module_web_view_set_zoom_level (ModuleWebView *view, gfloat zoom);
 
 WebKitWebInspector *module_web_view_get_web_inspector (ModuleWebView *view);
+WebKitWebSettings *module_web_view_get_settings (ModuleWebView *view);
 Favicon *module_web_view_get_favicon (ModuleWebView *view);
 
 #ifdef __cplusplus
