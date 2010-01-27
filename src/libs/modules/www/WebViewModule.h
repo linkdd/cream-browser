@@ -40,8 +40,9 @@ struct _ModuleWebViewClass
      WebKitWebViewClass parent_class;
 
      void (*url_changed) (ModuleWebView *obj, gchar *url);
-     void (*title_changed) (ModuleWebView *obj, gchar *title);
+     void (*new_title) (ModuleWebView *obj, gchar *title);
      void (*status_changed) (ModuleWebView *obj, gchar *status);
+     gboolean (*new_download) (ModuleWebView *obj, WebKitDownload *download);
 };
 
 GtkType module_web_view_get_type (void);

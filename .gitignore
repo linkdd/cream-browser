@@ -6,3 +6,5 @@ cream
 libcream.a
 __build__
 autom4te.cache
+genmarshal.sh
+marshaller.txt

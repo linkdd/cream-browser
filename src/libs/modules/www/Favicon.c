@@ -50,12 +50,12 @@ Favicon *favicon_new (const gchar *uri)
           obj->cache_path = g_build_filename (g_get_user_cache_dir (), "cream-browser", NULL);
           favicon_get_cached_path (obj, "icons");
 
-          if (g_hash_table_lookup_extended (obj->memory, obj->file, NULL, (gpointer) &obj->img))
+          if (g_hash_table_lookup_extended (obj->memory, obj->file, NULL, (gpointer) &obj->ico))
           {
-               if (obj->img)
-                    g_object_ref (obj->img);
+               if (obj->ico)
+                    g_object_ref (obj->ico);
           }
-          else if ((obj->img = gdk_pixbuf_new_from_file (obj->file, NULL)))
+          else if ((obj->ico = gdk_pixbuf_new_from_file (obj->file, NULL)))
           {
                ;
           }
@@ -73,8 +73,18 @@ Favicon *favicon_new (const gchar *uri)
                g_spawn_async (NULL, arg_v, NULL,
                          G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
                          NULL, NULL, NULL, NULL);
+          }
 
-               obj->img = gdk_pixbuf_new_from_file (obj->file, NULL);
+          if (!obj->ico)
+               obj->img = gtk_image_new_from_stock (GTK_STOCK_FILE, GTK_ICON_SIZE_MENU);
+          else
+          {
+               gint w = 16;
+               gint h = 16;
+
+               gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h);
+               obj->ico = gdk_pixbuf_scale_simple (obj->ico, w, h, GDK_INTERP_BILINEAR);
+               obj->img = gtk_image_new_from_pixbuf (obj->ico);
           }
      }
 

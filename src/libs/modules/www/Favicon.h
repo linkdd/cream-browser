@@ -9,7 +9,8 @@ struct _Favicon
 {
      gchar *uri;
      gchar *file;
-     GdkPixbuf *img;
+     GdkPixbuf *ico;
+     GtkWidget *img;
 
      GHashTable *memory;
      gchar *cache_path;

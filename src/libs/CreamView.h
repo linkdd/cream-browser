@@ -33,6 +33,7 @@ struct _CreamView
      gchar *url;
      gchar *title;
      gchar *status;
+     gboolean view_source_mode;
 };
 
 struct _CreamViewClass
@@ -40,12 +41,17 @@ struct _CreamViewClass
      GtkScrolledWindowClass parent_class;
 
      void (*url_changed) (CreamView *obj, gchar *url);
-     void (*title_changed) (CreamView *obj, gchar *title);
+     void (*new_title) (CreamView *obj, gchar *title);
      void (*status_changed) (CreamView *obj, gchar *status);
 };
 
 GtkType cream_view_get_type (void);
-GtkWidget *cream_view_new (const gchar *url);
+GtkWidget *cream_view_new (void);
+
+void cream_view_load_uri (CreamView *obj, const gchar *url);
+GtkWidget *cream_view_get_content (CreamView *obj);
+gboolean cream_view_get_view_source_mode (CreamView *obj);
+void cream_view_set_view_source_mode (CreamView *obj, gboolean mode);
 
 #ifdef __cplusplus
 } /* extern "C" */
