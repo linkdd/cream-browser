@@ -5,11 +5,11 @@ static void cream_view_class_init (CreamViewClass *class);
 static void cream_view_init (CreamView *view);
 static void cream_view_load_content (CreamView *view);
 
-static void cream_view_url_changed_cb (GtkWidget *w, gchar *url, gpointer data);
+static void cream_view_uri_changed_cb (GtkWidget *w, gchar *uri, gpointer data);
 
 enum
 {
-     URL_CHANGED_SIGNAL,
+     URI_CHANGED_SIGNAL,
      NEW_TITLE_SIGNAL,
      STATUS_CHANGED_SIGNAL,
      NB_SIGNALS
@@ -43,30 +43,30 @@ GtkType cream_view_get_type (void)
 
 static void cream_view_class_init (CreamViewClass *class)
 {
-     cream_view_signals[URL_CHANGED_SIGNAL] = g_signal_new ("url-changed",
+     cream_view_signals[URI_CHANGED_SIGNAL] = g_signal_new ("uri-changed",
                G_TYPE_FROM_CLASS (class),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-               G_STRUCT_OFFSET (CreamViewClass, url_changed),
+               G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (CreamViewClass, uri_changed),
                NULL, NULL,
-               g_cclosure_marshal_VOID__CHAR,
+               g_cclosure_marshal_VOID__STRING,
                G_TYPE_NONE,
                1,G_TYPE_STRING);
 
      cream_view_signals[NEW_TITLE_SIGNAL] = g_signal_new ("new-title",
                G_TYPE_FROM_CLASS (class),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
                G_STRUCT_OFFSET (CreamViewClass, new_title),
                NULL, NULL,
-               g_cclosure_marshal_VOID__CHAR,
+               g_cclosure_marshal_VOID__STRING,
                G_TYPE_NONE,
                1, G_TYPE_STRING);
 
      cream_view_signals[STATUS_CHANGED_SIGNAL] = g_signal_new ("status-changed",
                G_TYPE_FROM_CLASS (class),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
                G_STRUCT_OFFSET (CreamViewClass, status_changed),
                NULL, NULL,
-               g_cclosure_marshal_VOID__CHAR,
+               g_cclosure_marshal_VOID__STRING,
                G_TYPE_NONE,
                1, G_TYPE_STRING);
 }
@@ -74,7 +74,7 @@ static void cream_view_class_init (CreamViewClass *class)
 static void cream_view_init (CreamView *obj)
 {
      obj->content = NULL;
-     obj->url = NULL;
+     obj->uri = NULL;
      obj->title = NULL;
      obj->status = NULL;
      obj->view_source_mode = FALSE;
@@ -82,15 +82,16 @@ static void cream_view_init (CreamView *obj)
 
 static void cream_view_load_content (CreamView *view)
 {
-     gchar *url = view->url;
+     gchar *uri = view->uri;
 
      /* information page */
-     if (!strncmp (url, "about:", 6))
+     if (!strncmp (uri, "about:", 6))
      {
-          view->content = gtk_label_new (url + 6);
+          view->content = module_web_view_new ();
+          module_web_view_load_uri (MODULE_WEB_VIEW (view->content), uri);
      }
      /* FTP repository */
-     else if (!strncmp (url, "ftp://", 6))
+     else if (!strncmp (uri, "ftp://", 6))
      {
           view->content = gtk_label_new ("FTP: not yet implemented");
      }
@@ -100,19 +101,19 @@ static void cream_view_load_content (CreamView *view)
           view->content = module_web_view_new ();
 
           module_web_view_set_view_source_mode (MODULE_WEB_VIEW (view->content), view->view_source_mode);
-          if (!strncmp (url, "http://", 7)
-               || !strncmp (url, "file://", 7)
-               || !strncmp (url, "https://", 8))
+          if (!strncmp (uri, "http://", 7)
+               || !strncmp (uri, "file://", 7)
+               || !strncmp (uri, "https://", 8))
           {
-               module_web_view_load_uri (MODULE_WEB_VIEW (view->content), url);
+               module_web_view_load_uri (MODULE_WEB_VIEW (view->content), uri);
           }
-          else if (url[0] == '/')
+          else if (uri[0] == '/')
           {
-               module_web_view_load_uri (MODULE_WEB_VIEW (view->content), g_strdup_printf ("file://%s", url));
+               module_web_view_load_uri (MODULE_WEB_VIEW (view->content), g_strdup_printf ("file://%s", uri));
           }
           else
           {
-               module_web_view_load_uri (MODULE_WEB_VIEW (view->content), g_strdup_printf ("http://%s", url));
+               module_web_view_load_uri (MODULE_WEB_VIEW (view->content), g_strdup_printf ("http://%s", uri));
           }
      }
 }
@@ -123,19 +124,19 @@ GtkWidget *cream_view_new (void)
 
      g_return_val_if_fail (view != NULL, NULL);
 
-     view->url = g_strdup ("about:blank");
+     view->uri = g_strdup ("about:blank");
      cream_view_load_content (view);
      gtk_container_add (GTK_CONTAINER (view), view->content);
 
      return GTK_WIDGET (view);
 }
 
-void cream_view_load_uri (CreamView *obj, const gchar *url)
+void cream_view_load_uri (CreamView *obj, const gchar *uri)
 {
-     if (url != NULL)
-          obj->url = g_strdup (url);
+     if (uri != NULL)
+          obj->uri = g_strdup (uri);
      else
-          obj->url = g_strdup ("about:blank");
+          obj->uri = g_strdup ("about:blank");
 
      gtk_container_remove (GTK_CONTAINER (obj), obj->content);
      cream_view_load_content (obj);
@@ -157,9 +158,9 @@ void cream_view_set_view_source_mode (CreamView *obj, gboolean mode)
      obj->view_source_mode = mode;
 }
 
-static void cream_view_url_changed_cb (GtkWidget *w, gchar *url, gpointer data)
+static void cream_view_uri_changed_cb (GtkWidget *w, gchar *uri, gpointer data)
 {
      CreamView *view = (CreamView *) data;
 
-     view->url = g_strdup (url);
+     view->uri = g_strdup (uri);
 }

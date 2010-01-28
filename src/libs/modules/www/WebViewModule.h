@@ -4,6 +4,7 @@
 #include <gtk/gtk.h>
 #include <gtk/gtkwidget.h>
 #include <webkit/webkit.h>
+#include <JavaScriptCore/JavaScript.h>
 #include "Favicon.h"
 
 G_BEGIN_DECLS
@@ -26,9 +27,10 @@ struct _ModuleWebView
 {
      WebKitWebView parent_widget;
 
-     gchar *url;
+     gchar *uri;
      gchar *title;
      gchar *status;
+     gchar *jsmsg;
 
      WebKitWebInspector *inspector;
      WebKitWebSettings *settings;
@@ -39,20 +41,24 @@ struct _ModuleWebViewClass
 {
      WebKitWebViewClass parent_class;
 
-     void (*url_changed) (ModuleWebView *obj, gchar *url);
+     void (*uri_changed) (ModuleWebView *obj, gchar *url);
      void (*new_title) (ModuleWebView *obj, gchar *title);
      void (*status_changed) (ModuleWebView *obj, gchar *status);
+     void (*jsmsg_changed) (ModuleWebView *obj, gchar *jsmsg);
      gboolean (*new_download) (ModuleWebView *obj, WebKitDownload *download);
+     gboolean (*switch_module) (ModuleWebView *obj, gchar *new_uri);
 };
 
 GtkType module_web_view_get_type (void);
 GtkWidget *module_web_view_new (void);
 
+void module_web_view_load_uri (ModuleWebView *view, const gchar *uri);
+void module_web_view_js_script_execute (ModuleWebView *view, const gchar *script);
+
 const gchar *module_web_view_get_uri (ModuleWebView *view);
 const gchar *module_web_view_get_title (ModuleWebView *view);
 const gchar *module_web_view_get_status (ModuleWebView *view);
-
-void module_web_view_load_uri (ModuleWebView *view, const gchar *uri);
+const gchar *module_web_view_get_jsmsg (ModuleWebView *view);
 
 gboolean module_web_view_get_view_source_mode (ModuleWebView *view);
 void module_web_view_set_view_source_mode (ModuleWebView *view, gboolean mode);

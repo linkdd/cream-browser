@@ -3,10 +3,12 @@
 
 enum
 {
-     URL_CHANGED_SIGNAL,
+     URI_CHANGED_SIGNAL,
      NEW_TITLE_SIGNAL,
      STATUS_CHANGED_SIGNAL,
+     JSMSG_CHANGED_SIGNAL,
      NEW_DOWNLOAD_SIGNAL,
+     SWITCH_MODULE_SIGNAL,
      NB_SIGNALS
 };
 
@@ -26,8 +28,6 @@ static WebKitWebView *module_web_view_cb_create_web_view (ModuleWebView *webview
 static gboolean module_web_view_cb_mimetype (ModuleWebView *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, gchar *mimetype, WebKitWebPolicyDecision *decision, gpointer data);
 static gboolean module_web_view_cb_download (ModuleWebView *webview, WebKitDownload *download, gpointer data);
 static void module_web_view_cb_hoverlink (ModuleWebView *webview, gchar *title, gchar *link, gpointer data);
-static gboolean module_web_view_cb_console_message (ModuleWebView *webview, gchar *message, gint line, gchar *source, gpointer data);
-static void module_web_view_cb_populate_menu (ModuleWebView *webview, GtkMenu *menu, gpointer data);
 
 GtkType module_web_view_get_type (void)
 {
@@ -54,33 +54,43 @@ GtkType module_web_view_get_type (void)
 
 static void module_web_view_class_init (ModuleWebViewClass *class)
 {
-     module_web_view_signals[URL_CHANGED_SIGNAL] = g_signal_new (
-          "url-changed",
+     module_web_view_signals[URI_CHANGED_SIGNAL] = g_signal_new (
+          "uri-changed",
           G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-          G_STRUCT_OFFSET (ModuleWebViewClass, url_changed),
+          G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+          G_STRUCT_OFFSET (ModuleWebViewClass, uri_changed),
           NULL, NULL,
-          g_cclosure_marshal_VOID__CHAR,
+          g_cclosure_marshal_VOID__STRING,
           G_TYPE_NONE,
           1, G_TYPE_STRING);
 
      module_web_view_signals[NEW_TITLE_SIGNAL] = g_signal_new (
           "new-title",
           G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+          G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
           G_STRUCT_OFFSET (ModuleWebViewClass, new_title),
           NULL, NULL,
-          g_cclosure_marshal_VOID__CHAR,
+          g_cclosure_marshal_VOID__STRING,
           G_TYPE_NONE,
           1, G_TYPE_STRING);
 
      module_web_view_signals[STATUS_CHANGED_SIGNAL] = g_signal_new (
           "status-changed",
           G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+          G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
           G_STRUCT_OFFSET (ModuleWebViewClass, status_changed),
           NULL, NULL,
-          g_cclosure_marshal_VOID__CHAR,
+          g_cclosure_marshal_VOID__STRING,
+          G_TYPE_NONE,
+          1, G_TYPE_STRING);
+
+     module_web_view_signals[JSMSG_CHANGED_SIGNAL] = g_signal_new (
+          "jsmsg-changed",
+          G_TYPE_FROM_CLASS (class),
+          G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+          G_STRUCT_OFFSET (ModuleWebViewClass, jsmsg_changed),
+          NULL, NULL,
+          g_cclosure_marshal_VOID__STRING,
           G_TYPE_NONE,
           1, G_TYPE_STRING);
 
@@ -93,13 +103,24 @@ static void module_web_view_class_init (ModuleWebViewClass *class)
           g_cclosure_user_marshal_BOOLEAN__OBJECT,
           G_TYPE_BOOLEAN,
           1, G_TYPE_OBJECT);
+
+     module_web_view_signals[SWITCH_MODULE_SIGNAL] = g_signal_new (
+          "switch-module",
+          G_TYPE_FROM_CLASS (class),
+          G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+          G_STRUCT_OFFSET (ModuleWebViewClass, switch_module),
+          NULL, NULL,
+          g_cclosure_user_marshal_BOOLEAN__STRING,
+          G_TYPE_BOOLEAN,
+          1, G_TYPE_STRING);
 }
 
 static void module_web_view_init (ModuleWebView *obj)
 {
-     obj->url = NULL;
+     obj->uri = NULL;
      obj->title = NULL;
      obj->status = NULL;
+     obj->jsmsg = NULL;
      obj->inspector = NULL;
      obj->settings = NULL;
      obj->ico = NULL;
@@ -128,8 +149,6 @@ GtkWidget *module_web_view_new (void)
                "signal::mime-type-policy-decision-requested",    G_CALLBACK (module_web_view_cb_mimetype),              NULL,
                "signal::download-requested",                     G_CALLBACK (module_web_view_cb_download),              NULL,
                "signal::hovering-over-link",                     G_CALLBACK (module_web_view_cb_hoverlink),             NULL,
-               "signal::console-message",                        G_CALLBACK (module_web_view_cb_console_message),       NULL,
-               "signal::populate-popup",                         G_CALLBACK (module_web_view_cb_populate_menu),         NULL,
           NULL);
 
      return GTK_WIDGET (obj);
@@ -160,15 +179,16 @@ static WebKitWebView *module_web_view_cb_create_inspector_win (WebKitWebInspecto
 
 static void module_web_view_cb_uri_changed (ModuleWebView *webview, GParamSpec arg1, gpointer data)
 {
-     if (webview->url != NULL)
-          g_free (webview->url);
-     webview->url = g_strdup (webkit_web_view_get_uri (WEBKIT_WEB_VIEW (webview)));
+     if (webview->uri != NULL)
+          g_free (webview->uri);
+     webview->uri = g_strdup (webkit_web_view_get_uri (WEBKIT_WEB_VIEW (webview)));
+     webview->ico = favicon_new (webkit_web_view_get_icon_uri (WEBKIT_WEB_VIEW (webview)));
 
      g_signal_emit (
           G_OBJECT (webview),
-          module_web_view_signals[URL_CHANGED_SIGNAL],
+          module_web_view_signals[URI_CHANGED_SIGNAL],
           0,
-          webview->url
+          webview->uri
      );
 }
 
@@ -190,7 +210,7 @@ static void module_web_view_cb_load_progress_changed (ModuleWebView *webview, gi
 {
      if (webview->status != NULL)
           g_free (webview->status);
-     webview->status = g_strdup_printf ("Transfering data from %s (%d%%)", webview->url, progress);
+     webview->status = g_strdup_printf ("Transfering data from %s (%d%%)", webview->uri, progress);
 
      g_signal_emit (
           G_OBJECT (webview),
@@ -204,7 +224,7 @@ static void module_web_view_cb_load_committed (ModuleWebView *webview, WebKitWeb
 {
      if (webview->status != NULL)
           g_free (webview->status);
-     webview->status = g_strdup_printf ("Waiting reply from %s", webview->url);
+     webview->status = g_strdup_printf ("Waiting reply from %s", webview->uri);
 
      g_signal_emit (
           G_OBJECT (webview),
@@ -218,7 +238,7 @@ static void module_web_view_cb_load_finished (ModuleWebView *webview, WebKitWebF
 {
      if (webview->status != NULL)
           g_free (webview->status);
-     webview->status = g_strdup (webview->url);
+     webview->status = g_strdup (webview->uri);
 
      g_signal_emit (
           G_OBJECT (webview),
@@ -234,10 +254,21 @@ static WebKitNavigationResponse module_web_view_cb_navigation (ModuleWebView *we
 
      if (g_str_has_prefix (uri, "ftp://"))
      {
-          return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
+          gboolean ret = FALSE;
+
+          g_signal_emit (
+               G_OBJECT (webview),
+               module_web_view_signals[SWITCH_MODULE_SIGNAL],
+               0,
+               uri,
+               &ret
+          );
+
+          return (ret ? WEBKIT_NAVIGATION_RESPONSE_IGNORE : WEBKIT_NAVIGATION_RESPONSE_ACCEPT);
      }
      else if (g_str_has_prefix (uri, "javascript:"))
      {
+          module_web_view_js_script_execute (webview, &uri[11]);
           return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
      }
      else
@@ -282,7 +313,7 @@ static void module_web_view_cb_hoverlink (ModuleWebView *webview, gchar *title, 
           g_free (webview->status);
 
      if (link == NULL)
-          webview->status = g_strdup (webview->url);
+          webview->status = g_strdup (webview->uri);
      else
           webview->status = g_strdup_printf ("Link: %s", link);
 
@@ -294,34 +325,87 @@ static void module_web_view_cb_hoverlink (ModuleWebView *webview, gchar *title, 
      );
 }
 
-static gboolean module_web_view_cb_console_message (ModuleWebView *webview, gchar *message, gint line, gchar *source, gpointer data)
-{
-     ;
-}
-
-static void module_web_view_cb_populate_menu (ModuleWebView *webview, GtkMenu *menu, gpointer data)
-{
-     ;
-}
-
 /* ModuleWebView methods */
 void module_web_view_load_uri (ModuleWebView *view, const gchar *uri)
 {
      webkit_web_view_load_uri (WEBKIT_WEB_VIEW (view), uri);
 
-     view->url = g_strdup (webkit_web_view_get_uri (WEBKIT_WEB_VIEW (view)));
+     view->uri = g_strdup (webkit_web_view_get_uri (WEBKIT_WEB_VIEW (view)));
      view->title = g_strdup (webkit_web_view_get_title (WEBKIT_WEB_VIEW (view)));
      view->ico = favicon_new (webkit_web_view_get_icon_uri (WEBKIT_WEB_VIEW (view)));
 }
 
+/* Execute JavaScript script */
+static gchar *jsapi_ref_to_string (JSContextRef context, JSValueRef ref)
+{
+     JSStringRef string_ref;
+     gchar *string;
+     size_t length;
+
+     string_ref = JSValueToStringCopy (context, ref, NULL);
+     length = JSStringGetMaximumUTF8CStringSize (string_ref);
+     string = g_new (gchar, length);
+     JSStringGetUTF8CString (string_ref, string, length);
+     JSStringRelease (string_ref);
+
+     return string;
+}
+
+static void jsapi_evaluate_script (ModuleWebView *view, const gchar *script, gchar **value, gchar **message)
+{
+     WebKitWebFrame *frame = webkit_web_view_get_main_frame (WEBKIT_WEB_VIEW (view));
+     JSGlobalContextRef context = webkit_web_frame_get_global_context (frame);
+     JSStringRef str;
+     JSValueRef val, exception;
+
+     str = JSStringCreateWithUTF8CString (script);
+     val = JSEvaluateScript (context, str, JSContextGetGlobalObject (context), NULL, 0, &exception);
+
+     if (!val)
+          if (message != NULL)
+               *message = jsapi_ref_to_string (context, exception);
+     else
+          if (value != NULL)
+               *value = jsapi_ref_to_string (context, val);
+}
+
+void module_web_view_js_script_execute (ModuleWebView *view, const gchar *script)
+{
+     gchar *value = NULL, *message = NULL;
+
+     g_return_if_fail (script != NULL);
+
+     jsapi_evaluate_script (view, script, &value, &message);
+
+     if (view->jsmsg)
+          g_free (view->jsmsg);
+
+     if (message)
+     {
+          view->jsmsg = g_strdup (message);
+          g_free (message);
+     }
+
+     if (value)
+     {
+          view->jsmsg = g_strdup (value);
+          g_free (value);
+     }
+}
+
 const gchar *module_web_view_get_uri (ModuleWebView *view)
 {
-     return (const gchar *) view->url;
+     return (const gchar *) view->uri;
 }
 
 const gchar *module_web_view_get_title (ModuleWebView *view)
 {
      return (const gchar *) view->title;
+}
+
+const gchar *module_web_view_get_jsmsg (ModuleWebView *view)
+{
+     return (const gchar *) view->jsmsg;
 }
 
 const gchar *module_web_view_get_status (ModuleWebView *view)

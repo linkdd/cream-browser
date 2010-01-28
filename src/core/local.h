@@ -13,11 +13,6 @@
 #include "interface.h"
 #include "callbacks.h"
 
-#include <locale.h>
-#include <config.h>
-#include "gettext.h"
-#define _(string)   g_locale_to_utf8 (gettext (string), -1, NULL, NULL, NULL)
-
 #define CREAM_FILE(path)      g_build_filename (g_get_home_dir (), ".cream-browser", path, NULL)
 
 extern struct global_t global;

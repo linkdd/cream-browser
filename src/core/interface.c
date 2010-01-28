@@ -18,7 +18,6 @@ GtkWidget *cream_interface_init (void)
      gtk_container_add (GTK_CONTAINER (main_window), box);
 
      view = cream_view_new ();
-     cream_view_load_uri (CREAM_VIEW (view), "http://www.google.fr");
      gtk_box_pack_start (GTK_BOX (box), view, TRUE, TRUE, 0);
 
      image = module_web_view_get_favicon (MODULE_WEB_VIEW (cream_view_get_content (CREAM_VIEW (view))))->img;

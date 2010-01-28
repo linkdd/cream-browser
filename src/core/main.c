@@ -22,16 +22,11 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      global.browser.homepage = NULL;
      global.browser.encoding = NULL;
 
-     /* set locale */
-     setlocale (LC_ALL, "");
-     bindtextdomain (PACKAGE, LOCALEDIR);
-     textdomain (PACKAGE);
-
      signal (SIGSEGV, signal_handler);
 
      /* parse command line */
      ctx = g_option_context_new ("");
-     g_option_context_add_main_entries (ctx, entries, PACKAGE);
+     g_option_context_add_main_entries (ctx, entries, "cream");
      g_option_context_add_group (ctx, gtk_get_option_group (TRUE));
 
      if (!g_option_context_parse (ctx, argc, argv, &local_error) && local_error != NULL)

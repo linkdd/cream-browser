@@ -1,8 +1,6 @@
 AC_INIT([cream-browser], [201001], [linkdd62@gmail.com])
-AM_INIT_AUTOMAKE([-Wall foreign])
-
-AM_GNU_GETTEXT_VERSION([0.17])
-AM_GNU_GETTEXT([external])
+AC_CONFIG_AUX_DIR([build-aux])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 AC_CHECK_PROGS([PKGCONFIG], [pkg-config], [:])
 if test "$PKGCONFIG" = :; then
@@ -12,7 +10,7 @@ fi
 AC_PROG_CC
 AC_PROG_RANLIB
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([ po/Makefile.in
+AC_CONFIG_FILES([
     Makefile
     src/Makefile
     src/core/Makefile
