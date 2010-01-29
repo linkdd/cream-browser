@@ -78,6 +78,7 @@ static void cream_view_init (CreamView *obj)
      obj->title = NULL;
      obj->status = NULL;
      obj->view_source_mode = FALSE;
+     obj->history = cream_backward_forward_list_new ();
 }
 
 static void cream_view_load_content (CreamView *view)
@@ -131,6 +132,7 @@ GtkWidget *cream_view_new (void)
      return GTK_WIDGET (view);
 }
 
+/* methods */
 void cream_view_load_uri (CreamView *obj, const gchar *uri)
 {
      if (uri != NULL)
@@ -158,6 +160,32 @@ void cream_view_set_view_source_mode (CreamView *obj, gboolean mode)
      obj->view_source_mode = mode;
 }
 
+gboolean cream_view_can_go_back (CreamView *obj)
+{
+     return FALSE; /* TODO */
+}
+
+gboolean cream_view_can_go_forward (CreamView *obj)
+{
+     return FALSE; /* TODO */
+}
+
+void cream_view_go_back (CreamView *obj)
+{
+     /* TODO */;
+}
+
+void cream_view_go_forward (CreamView *obj)
+{
+     /* TODO */;
+}
+
+CreamBackwardForwardList *cream_view_get_backward_forward_list (CreamView *obj)
+{
+     return obj->history;
+}
+
+/* signals */
 static void cream_view_uri_changed_cb (GtkWidget *w, gchar *uri, gpointer data)
 {
      CreamView *view = (CreamView *) data;

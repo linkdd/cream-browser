@@ -8,6 +8,8 @@
 #include <ftp/FTPModule.h>
 #include <www/WebViewModule.h>
 
+#include "CreamBackwardForwardList.h"
+
 G_BEGIN_DECLS
 
 #ifdef __cplusplus
@@ -34,6 +36,8 @@ struct _CreamView
      gchar *title;
      gchar *status;
      gboolean view_source_mode;
+
+     CreamBackwardForwardList *history;
 };
 
 struct _CreamViewClass
@@ -52,6 +56,12 @@ void cream_view_load_uri (CreamView *obj, const gchar *uri);
 GtkWidget *cream_view_get_content (CreamView *obj);
 gboolean cream_view_get_view_source_mode (CreamView *obj);
 void cream_view_set_view_source_mode (CreamView *obj, gboolean mode);
+
+gboolean cream_view_can_go_back (CreamView *obj);
+gboolean cream_view_can_go_forward (CreamView *obj);
+void cream_view_go_back (CreamView *obj);
+void cream_view_go_forward (CreamView *obj);
+CreamBackwardForwardList *cream_view_get_backward_forward_list (CreamView *obj);
 
 #ifdef __cplusplus
 } /* extern "C" */
