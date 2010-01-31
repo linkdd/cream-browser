@@ -1,9 +1,8 @@
-*.in
 *.swp
 *~
 *.o
 cream
-libcream.a
+*.a
 __build__
 autom4te.cache
 genmarshal.sh
