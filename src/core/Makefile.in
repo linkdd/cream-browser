@@ -32,7 +32,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = cream$(EXEEXT)
+bin_PROGRAMS = cream$(EXEEXT) creamctl$(EXEEXT)
 subdir = src/core
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -56,6 +56,11 @@ cream_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	../libs/modules/www/libcream-module-webview.a
 cream_LINK = $(CCLD) $(cream_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
+am_creamctl_OBJECTS = creamctl-creamctl.$(OBJEXT)
+creamctl_OBJECTS = $(am_creamctl_OBJECTS)
+creamctl_DEPENDENCIES = $(am__DEPENDENCIES_1)
+creamctl_LINK = $(CCLD) $(creamctl_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -64,8 +69,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(cream_SOURCES)
-DIST_SOURCES = $(cream_SOURCES)
+SOURCES = $(cream_SOURCES) $(creamctl_SOURCES)
+DIST_SOURCES = $(cream_SOURCES) $(creamctl_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -168,6 +173,9 @@ cream_LDADD = $(GTK_LIBS) $(WEBKIT_LIBS) $(LIBINTL) \
      ../libs/modules/ftp/libcream-module-ftp.a \
      ../libs/modules/www/libcream-module-webview.a
 
+creamctl_SOURCES = creamctl.c
+creamctl_CFLAGS = $(GTK_CFLAGS)
+creamctl_LDADD = $(GTK_LIBS) $(LIBINTL)
 all: all-am
 
 .SUFFIXES:
@@ -242,6 +250,9 @@ clean-binPROGRAMS:
 cream$(EXEEXT): $(cream_OBJECTS) $(cream_DEPENDENCIES) 
 	@rm -f cream$(EXEEXT)
 	$(cream_LINK) $(cream_OBJECTS) $(cream_LDADD) $(LIBS)
+creamctl$(EXEEXT): $(creamctl_OBJECTS) $(creamctl_DEPENDENCIES) 
+	@rm -f creamctl$(EXEEXT)
+	$(creamctl_LINK) $(creamctl_OBJECTS) $(creamctl_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -252,6 +263,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-callbacks.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-interface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/creamctl-creamctl.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -308,6 +320,20 @@ cream-callbacks.obj: callbacks.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='callbacks.c' object='cream-callbacks.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cream_CFLAGS) $(CFLAGS) -c -o cream-callbacks.obj `if test -f 'callbacks.c'; then $(CYGPATH_W) 'callbacks.c'; else $(CYGPATH_W) '$(srcdir)/callbacks.c'; fi`
+
+creamctl-creamctl.o: creamctl.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(creamctl_CFLAGS) $(CFLAGS) -MT creamctl-creamctl.o -MD -MP -MF $(DEPDIR)/creamctl-creamctl.Tpo -c -o creamctl-creamctl.o `test -f 'creamctl.c' || echo '$(srcdir)/'`creamctl.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/creamctl-creamctl.Tpo $(DEPDIR)/creamctl-creamctl.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='creamctl.c' object='creamctl-creamctl.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(creamctl_CFLAGS) $(CFLAGS) -c -o creamctl-creamctl.o `test -f 'creamctl.c' || echo '$(srcdir)/'`creamctl.c
+
+creamctl-creamctl.obj: creamctl.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(creamctl_CFLAGS) $(CFLAGS) -MT creamctl-creamctl.obj -MD -MP -MF $(DEPDIR)/creamctl-creamctl.Tpo -c -o creamctl-creamctl.obj `if test -f 'creamctl.c'; then $(CYGPATH_W) 'creamctl.c'; else $(CYGPATH_W) '$(srcdir)/creamctl.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/creamctl-creamctl.Tpo $(DEPDIR)/creamctl-creamctl.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='creamctl.c' object='creamctl-creamctl.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(creamctl_CFLAGS) $(CFLAGS) -c -o creamctl-creamctl.obj `if test -f 'creamctl.c'; then $(CYGPATH_W) 'creamctl.c'; else $(CYGPATH_W) '$(srcdir)/creamctl.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
