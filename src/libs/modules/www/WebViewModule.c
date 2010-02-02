@@ -37,7 +37,7 @@ static void module_web_view_class_init (ModuleWebViewClass *class);
 static void module_web_view_init (ModuleWebView *obj);
 
 static WebKitWebView *module_web_view_cb_create_inspector_win (WebKitWebInspector *inspector, WebKitWebView *view, gpointer data);
-static void module_web_view_cb_uri_changed (ModuleWebView *webview, GParamSpec arg1, gpointer data);
+static void module_web_view_cb_uri_changed (ModuleWebView *webview, GParamSpec *arg1, gpointer data);
 static void module_web_view_cb_title_changed (ModuleWebView *webview, WebKitWebFrame *frame, gchar *title, gpointer data);
 static void module_web_view_cb_load_progress_changed (ModuleWebView *webview, gint progress, gpointer data);
 static void module_web_view_cb_load_committed (ModuleWebView *webview, WebKitWebFrame *frame, gpointer data);
@@ -126,7 +126,7 @@ static void module_web_view_class_init (ModuleWebViewClass *class)
      module_web_view_signals[SWITCH_MODULE_SIGNAL] = g_signal_new (
           "switch-module",
           G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+          G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
           G_STRUCT_OFFSET (ModuleWebViewClass, switch_module),
           NULL, NULL,
           g_cclosure_user_marshal_BOOLEAN__STRING,
@@ -158,7 +158,7 @@ GtkWidget *module_web_view_new (void)
      g_signal_connect (G_OBJECT (obj->inspector), "inspect-web-view", G_CALLBACK (module_web_view_cb_create_inspector_win), obj);
 
      g_object_connect (G_OBJECT (obj),
-               "notify::uri",                                    G_CALLBACK (module_web_view_cb_uri_changed),           NULL,
+               "signal::notify::uri",                            G_CALLBACK (module_web_view_cb_uri_changed),           NULL,
                "signal::title-changed",                          G_CALLBACK (module_web_view_cb_title_changed),         NULL,
                "signal::load-progress-changed",                  G_CALLBACK (module_web_view_cb_load_progress_changed), NULL,
                "signal::load-committed",                         G_CALLBACK (module_web_view_cb_load_committed),        NULL,
@@ -196,7 +196,7 @@ static WebKitWebView *module_web_view_cb_create_inspector_win (WebKitWebInspecto
      return WEBKIT_WEB_VIEW (page);
 }
 
-static void module_web_view_cb_uri_changed (ModuleWebView *webview, GParamSpec arg1, gpointer data)
+static void module_web_view_cb_uri_changed (ModuleWebView *webview, GParamSpec *arg1, gpointer data)
 {
      if (webview->uri != NULL)
           g_free (webview->uri);
@@ -221,7 +221,7 @@ static void module_web_view_cb_title_changed (ModuleWebView *webview, WebKitWebF
           G_OBJECT (webview),
           module_web_view_signals[NEW_TITLE_SIGNAL],
           0,
-          title
+          webview->title
      );
 }
 

@@ -35,3 +35,22 @@ void cb_cream_destroy (GtkWidget *emit, gpointer data)
 {
      cream_release (EXIT_SUCCESS);
 }
+
+void cb_cream_uri_changed (GtkWidget *emit, gchar *uri, gpointer data)
+{
+     gtk_label_set_markup (GTK_LABEL (global.interface.statusbar.url), g_markup_printf_escaped (
+          "<span font=\"monospace bold 8\">%s</span>", uri)
+     );
+}
+
+void cb_cream_new_title (GtkWidget *emit, gchar *title, gpointer data)
+{
+     gtk_window_set_title (GTK_WINDOW (global.interface.main_window), g_strconcat ("Cream - ", title, NULL));
+}
+
+void cb_cream_status_changed (GtkWidget *emit, gchar *status, gpointer data)
+{
+     gtk_label_set_markup (GTK_LABEL (global.interface.statusbar.state), g_markup_printf_escaped (
+          "<span font=\"monospace bold 8\">%s</span>", status)
+     );
+}

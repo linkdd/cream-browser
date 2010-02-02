@@ -135,6 +135,8 @@ static void cream_view_load_content (CreamView *view)
           {
                module_web_view_load_uri (MODULE_WEB_VIEW (view->content), g_strdup_printf ("http://%s", uri));
           }
+
+          g_signal_connect (G_OBJECT (view->content), "uri-changed", G_CALLBACK (cream_view_uri_changed_cb), view);
      }
 }
 
@@ -210,4 +212,10 @@ static void cream_view_uri_changed_cb (GtkWidget *w, gchar *uri, gpointer data)
      CreamView *view = (CreamView *) data;
 
      view->uri = g_strdup (uri);
+
+     g_signal_emit (
+          G_OBJECT (view),
+          cream_view_signals[URI_CHANGED_SIGNAL],
+          0, uri
+     );
 }

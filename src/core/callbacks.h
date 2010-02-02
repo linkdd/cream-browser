@@ -24,5 +24,9 @@
 void signal_handler (int signum);
 
 void cb_cream_destroy (GtkWidget *emit, gpointer data);
+void cb_cream_uri_changed (GtkWidget *emit, gchar *uri, gpointer data);
+void cb_cream_new_title (GtkWidget *emit, gchar *title, gpointer data);
+void cb_cream_status_changed (GtkWidget *emit, gchar *status, gpointer data);
+
 
 #endif /* __CALLBACKS_H */
