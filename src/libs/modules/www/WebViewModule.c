@@ -271,7 +271,7 @@ static WebKitNavigationResponse module_web_view_cb_navigation (ModuleWebView *we
 {
      const gchar *uri = webkit_network_request_get_uri (request);
 
-     if (g_str_has_prefix (uri, "ftp://"))
+     if (!g_str_has_prefix (uri, "http://") && !g_str_has_prefix (uri, "https://"))
      {
           gboolean ret = FALSE;
 

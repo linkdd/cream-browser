@@ -19,7 +19,9 @@
 
 #include "CreamView.h"
 #include "marshal.h"
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 static void cream_view_class_init (CreamViewClass *class);
 static void cream_view_init (CreamView *view);
@@ -129,14 +131,27 @@ static void cream_view_load_content (CreamView *view)
 {
      gchar *uri = view->uri;
 
+     /* send an email */
+     if (g_str_has_prefix (uri, "mailto:"))
+     {
+          if (fork ())
+          {
+               if (fork ())
+               {
+                    execl ("/bin/sh", "sh", "-c", g_strconcat ("xdg-open ", uri, NULL), (char *) NULL);
+                    exit (EXIT_SUCCESS);
+               }
+               exit (EXIT_SUCCESS);
+          }
+     }
      /* information page */
-     if (!strncmp (uri, "about:", 6))
+     else if (g_str_has_prefix (uri, "about:"))
      {
           view->content = module_web_view_new ();
           module_web_view_load_uri (MODULE_WEB_VIEW (view->content), uri);
      }
      /* FTP repository */
-     else if (!strncmp (uri, "ftp://", 6))
+     else if (g_str_has_prefix (uri, "ftp://"))
      {
           view->content = gtk_label_new ("FTP: not yet implemented");
      }
@@ -146,9 +161,9 @@ static void cream_view_load_content (CreamView *view)
           view->content = module_web_view_new ();
 
           module_web_view_set_view_source_mode (MODULE_WEB_VIEW (view->content), view->view_source_mode);
-          if (!strncmp (uri, "http://", 7)
-               || !strncmp (uri, "file://", 7)
-               || !strncmp (uri, "https://", 8))
+          if (g_str_has_prefix (uri, "http://")
+               || g_str_has_prefix (uri, "file://")
+               || g_str_has_prefix (uri, "https://"))
           {
                module_web_view_load_uri (MODULE_WEB_VIEW (view->content), uri);
           }
