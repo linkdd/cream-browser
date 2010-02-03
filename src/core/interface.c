@@ -68,6 +68,7 @@ static void cream_inputbox_new (void)
 GtkWidget *cream_interface_init (void)
 {
      GdkGeometry hints = { 1, 1 }; /* GDK_HINT_MIN_SIZE for global.interface.main_window */
+     GtkAdjustment *adjust_v;
 
      /* create main window */
      global.interface.main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -88,6 +89,9 @@ GtkWidget *cream_interface_init (void)
      cream_view_load_uri (CREAM_VIEW (global.interface.view), "http://cream-browser.net");
      gtk_box_pack_start (GTK_BOX (global.interface.box), global.interface.view, TRUE, TRUE, 0);
 
+     adjust_v = cream_view_get_vadjustment (CREAM_VIEW (global.interface.view));
+     cb_cream_scroll (adjust_v, NULL);
+
      /* restore cookies */
      global.browser.cookies = soup_cookie_jar_text_new (CREAM_FILE ("cookies.txt"), FALSE);
      soup_session_add_feature (webkit_get_default_session (), SOUP_SESSION_FEATURE (global.browser.cookies));
@@ -97,6 +101,7 @@ GtkWidget *cream_interface_init (void)
      g_signal_connect (G_OBJECT (global.interface.view),        "uri-changed",    G_CALLBACK (cb_cream_uri_changed),    NULL);
      g_signal_connect (G_OBJECT (global.interface.view),        "new-title",      G_CALLBACK (cb_cream_new_title),      NULL);
      g_signal_connect (G_OBJECT (global.interface.view),        "status-changed", G_CALLBACK (cb_cream_status_changed), NULL);
+     g_signal_connect (G_OBJECT (adjust_v),                     "value-changed",  G_CALLBACK (cb_cream_scroll),         NULL);
 
      return global.interface.main_window;
 }

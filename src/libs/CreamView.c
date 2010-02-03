@@ -18,6 +18,7 @@
  */
 
 #include "CreamView.h"
+#include "marshal.h"
 #include <string.h>
 
 static void cream_view_class_init (CreamViewClass *class);
@@ -25,12 +26,18 @@ static void cream_view_init (CreamView *view);
 static void cream_view_load_content (CreamView *view);
 
 static void cream_view_uri_changed_cb (GtkWidget *w, gchar *uri, gpointer data);
+static void cream_view_new_title_cb (GtkWidget *w, gchar *title, gpointer data);
+static void cream_view_status_changed_cb (GtkWidget *w, gchar *status, gpointer data);
+static void cream_view_jsmsg_changed_cb (GtkWidget *w, gchar *jsmsg, gpointer data);
+static gboolean cream_view_new_download_cb (GtkWidget *w, WebKitDownload *download, gpointer data);
+static gboolean cream_view_switch_module_cb (GtkWidget *w, gchar *new_uri, gpointer data);
 
 enum
 {
      URI_CHANGED_SIGNAL,
      NEW_TITLE_SIGNAL,
      STATUS_CHANGED_SIGNAL,
+     NEW_DOWNLOAD_SIGNAL,
      NB_SIGNALS
 };
 
@@ -88,10 +95,28 @@ static void cream_view_class_init (CreamViewClass *class)
                g_cclosure_marshal_VOID__STRING,
                G_TYPE_NONE,
                1, G_TYPE_STRING);
+
+     cream_view_signals[NEW_DOWNLOAD_SIGNAL] = g_signal_new ("new-download",
+               G_TYPE_FROM_CLASS (class),
+               G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (CreamViewClass, new_download),
+               NULL, NULL,
+               g_cclosure_user_marshal_BOOLEAN__OBJECT,
+               G_TYPE_BOOLEAN,
+               1, G_TYPE_OBJECT);
 }
 
 static void cream_view_init (CreamView *obj)
 {
+     GtkWidget *scroll_h = gtk_hscrollbar_new (NULL);
+     GtkWidget *scroll_v = gtk_vscrollbar_new (NULL);
+
+     obj->adjust_h = gtk_range_get_adjustment (GTK_RANGE (scroll_h));
+     obj->adjust_v = gtk_range_get_adjustment (GTK_RANGE (scroll_v));
+
+     gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (obj), obj->adjust_h);
+     gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (obj), obj->adjust_v);
+
      obj->content = NULL;
      obj->uri = NULL;
      obj->title = NULL;
@@ -136,7 +161,14 @@ static void cream_view_load_content (CreamView *view)
                module_web_view_load_uri (MODULE_WEB_VIEW (view->content), g_strdup_printf ("http://%s", uri));
           }
 
-          g_signal_connect (G_OBJECT (view->content), "uri-changed", G_CALLBACK (cream_view_uri_changed_cb), view);
+          g_object_connect (G_OBJECT (view->content),
+               "signal::uri-changed",    G_CALLBACK (cream_view_uri_changed_cb),    view,
+               "signal::new-title",      G_CALLBACK (cream_view_new_title_cb),      view,
+               "signal::status-changed", G_CALLBACK (cream_view_status_changed_cb), view,
+               "signal::jsmsg-changed",  G_CALLBACK (cream_view_jsmsg_changed_cb),  view,
+               "signal::new-download",   G_CALLBACK (cream_view_new_download_cb),   view,
+               "signal::switch-module",  G_CALLBACK (cream_view_switch_module_cb),  view,
+          NULL);
      }
 }
 
@@ -206,11 +238,23 @@ CreamBackwardForwardList *cream_view_get_backward_forward_list (CreamView *obj)
      return obj->history;
 }
 
+GtkAdjustment *cream_view_get_hadjustment (CreamView *obj)
+{
+     return obj->adjust_h;
+}
+
+GtkAdjustment *cream_view_get_vadjustment (CreamView *obj)
+{
+     return obj->adjust_v;
+}
+
 /* signals */
 static void cream_view_uri_changed_cb (GtkWidget *w, gchar *uri, gpointer data)
 {
      CreamView *view = (CreamView *) data;
 
+     if (view->uri)
+          g_free (view->uri);
      view->uri = g_strdup (uri);
 
      g_signal_emit (
@@ -218,4 +262,60 @@ static void cream_view_uri_changed_cb (GtkWidget *w, gchar *uri, gpointer data)
           cream_view_signals[URI_CHANGED_SIGNAL],
           0, uri
      );
+}
+
+static void cream_view_new_title_cb (GtkWidget *w, gchar *title, gpointer data)
+{
+     CreamView *view = (CreamView *) data;
+
+     if (view->title)
+          g_free (view->title);
+     view->title = g_strdup (title);
+
+     g_signal_emit (
+          G_OBJECT (view),
+          cream_view_signals[NEW_TITLE_SIGNAL],
+          0, title
+     );
+}
+
+static void cream_view_status_changed_cb (GtkWidget *w, gchar *status, gpointer data)
+{
+     CreamView *view = (CreamView *) data;
+
+     if (view->status)
+          g_free (view->status);
+     view->status = g_strdup (status);
+
+     g_signal_emit (
+          G_OBJECT (view),
+          cream_view_signals[STATUS_CHANGED_SIGNAL],
+          0, status
+     );
+}
+
+static void cream_view_jsmsg_changed_cb (GtkWidget *w, gchar *jsmsg, gpointer data)
+{
+     /* TODO */;
+}
+
+static gboolean cream_view_new_download_cb (GtkWidget *w, WebKitDownload *download, gpointer data)
+{
+     CreamView *view = (CreamView *) data;
+     gboolean ret = FALSE;
+
+     g_signal_emit (
+          G_OBJECT (view),
+          cream_view_signals[NEW_DOWNLOAD_SIGNAL],
+          0, download,
+          &ret
+     );
+
+     return ret;
+}
+
+static gboolean cream_view_switch_module_cb (GtkWidget *w, gchar *new_uri, gpointer data)
+{
+     cream_view_load_uri ((CreamView *) data, new_uri);
+     return TRUE;
 }

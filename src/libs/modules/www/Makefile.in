@@ -71,8 +71,7 @@ libcream_module_webview_a_AR = $(AR) $(ARFLAGS)
 libcream_module_webview_a_LIBADD =
 am_libcream_module_webview_a_OBJECTS =  \
 	libcream_module_webview_a-WebViewModule.$(OBJEXT) \
-	libcream_module_webview_a-Favicon.$(OBJEXT) \
-	libcream_module_webview_a-marshal.$(OBJEXT)
+	libcream_module_webview_a-Favicon.$(OBJEXT)
 libcream_module_webview_a_OBJECTS =  \
 	$(am_libcream_module_webview_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -181,7 +180,7 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(srcdir)/include
 lib_LIBRARIES = libcream-module-webview.a
 libcream_module_webview_a_SOURCES = WebViewModule.c Favicon.c \
-	marshal.c WebViewModule.h Favicon.h marshal.h
+	WebViewModule.h Favicon.h
 libcream_module_webview_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS)
 all: all-am
 
@@ -262,7 +261,6 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcream_module_webview_a-Favicon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcream_module_webview_a-WebViewModule.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcream_module_webview_a-marshal.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -305,20 +303,6 @@ libcream_module_webview_a-Favicon.obj: Favicon.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='Favicon.c' object='libcream_module_webview_a-Favicon.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_webview_a_CFLAGS) $(CFLAGS) -c -o libcream_module_webview_a-Favicon.obj `if test -f 'Favicon.c'; then $(CYGPATH_W) 'Favicon.c'; else $(CYGPATH_W) '$(srcdir)/Favicon.c'; fi`
-
-libcream_module_webview_a-marshal.o: marshal.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_webview_a_CFLAGS) $(CFLAGS) -MT libcream_module_webview_a-marshal.o -MD -MP -MF $(DEPDIR)/libcream_module_webview_a-marshal.Tpo -c -o libcream_module_webview_a-marshal.o `test -f 'marshal.c' || echo '$(srcdir)/'`marshal.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_module_webview_a-marshal.Tpo $(DEPDIR)/libcream_module_webview_a-marshal.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='marshal.c' object='libcream_module_webview_a-marshal.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_webview_a_CFLAGS) $(CFLAGS) -c -o libcream_module_webview_a-marshal.o `test -f 'marshal.c' || echo '$(srcdir)/'`marshal.c
-
-libcream_module_webview_a-marshal.obj: marshal.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_webview_a_CFLAGS) $(CFLAGS) -MT libcream_module_webview_a-marshal.obj -MD -MP -MF $(DEPDIR)/libcream_module_webview_a-marshal.Tpo -c -o libcream_module_webview_a-marshal.obj `if test -f 'marshal.c'; then $(CYGPATH_W) 'marshal.c'; else $(CYGPATH_W) '$(srcdir)/marshal.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_module_webview_a-marshal.Tpo $(DEPDIR)/libcream_module_webview_a-marshal.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='marshal.c' object='libcream_module_webview_a-marshal.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_webview_a_CFLAGS) $(CFLAGS) -c -o libcream_module_webview_a-marshal.obj `if test -f 'marshal.c'; then $(CYGPATH_W) 'marshal.c'; else $(CYGPATH_W) '$(srcdir)/marshal.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

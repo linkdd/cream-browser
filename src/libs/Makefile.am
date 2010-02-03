@@ -4,6 +4,6 @@ DEFS = -DPREFIX=\"$(prefix)\"
 SUBDIRS = modules/about modules/ftp modules/www
 
 lib_LIBRARIES = libcream.a
-libcream_a_SOURCES = CreamView.c CreamBackwardForwardList.c
-libcream_a_SOURCES += CreamView.h CreamBackwardForwardList.h
+libcream_a_SOURCES = CreamView.c CreamBackwardForwardList.c marshal.c
+libcream_a_SOURCES += CreamView.h CreamBackwardForwardList.h marshal.h
 libcream_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS)

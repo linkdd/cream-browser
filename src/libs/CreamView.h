@@ -50,6 +50,8 @@ struct _CreamView
      GtkScrolledWindow scroll;
 
      GtkWidget *content;
+     GtkAdjustment *adjust_h;
+     GtkAdjustment *adjust_v;
 
      gchar *uri;
      gchar *title;
@@ -66,6 +68,7 @@ struct _CreamViewClass
      void (*uri_changed) (CreamView *obj, gchar *url);
      void (*new_title) (CreamView *obj, gchar *title);
      void (*status_changed) (CreamView *obj, gchar *status);
+     gboolean (*new_download) (CreamView *obj, WebKitDownload *download);
 };
 
 GtkType cream_view_get_type (void);
@@ -81,6 +84,9 @@ gboolean cream_view_can_go_forward (CreamView *obj);
 void cream_view_go_back (CreamView *obj);
 void cream_view_go_forward (CreamView *obj);
 CreamBackwardForwardList *cream_view_get_backward_forward_list (CreamView *obj);
+
+GtkAdjustment *cream_view_get_hadjustment (CreamView *obj);
+GtkAdjustment *cream_view_get_vadjustment (CreamView *obj);
 
 #ifdef __cplusplus
 } /* extern "C" */
