@@ -52,7 +52,6 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      /* parse command line */
      ctx = g_option_context_new ("");
      g_option_context_add_main_entries (ctx, entries, "cream");
-     g_option_context_add_group (ctx, gtk_get_option_group (TRUE));
 
      if (!g_option_context_parse (ctx, argc, argv, &local_error) && local_error != NULL)
      {
