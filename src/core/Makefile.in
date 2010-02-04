@@ -50,7 +50,7 @@ am_cream_OBJECTS = cream-main.$(OBJEXT) cream-interface.$(OBJEXT) \
 cream_OBJECTS = $(am_cream_OBJECTS)
 am__DEPENDENCIES_1 =
 cream_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	../libs/libcream.a \
+	$(am__DEPENDENCIES_1) ../libs/libcream.a \
 	../libs/modules/about/libcream-module-about.a \
 	../libs/modules/ftp/libcream-module-ftp.a \
 	../libs/modules/www/libcream-module-webview.a
@@ -84,6 +84,9 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
+CURLCONFIG = @CURLCONFIG@
+CURL_CFLAGS = @CURL_CFLAGS@
+CURL_LIBS = @CURL_LIBS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = -DPREFIX=\"$(prefix)\"
 DEPDIR = @DEPDIR@
@@ -166,8 +169,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(srcdir)/../libs -I$(srcdir)/../libs/modules
 cream_SOURCES = main.c local.h structs.h interface.c interface.h callbacks.c callbacks.h
-cream_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS)
-cream_LDADD = $(GTK_LIBS) $(WEBKIT_LIBS) $(LIBINTL) \
+cream_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS)
+cream_LDADD = $(GTK_LIBS) $(WEBKIT_LIBS) $(CURL_LIBS) $(LIBINTL) \
      ../libs/libcream.a \
      ../libs/modules/about/libcream-module-about.a \
      ../libs/modules/ftp/libcream-module-ftp.a \

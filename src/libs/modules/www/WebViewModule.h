@@ -28,10 +28,6 @@
 
 G_BEGIN_DECLS
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define MODULE_WEB_VIEW(obj)            \
      GTK_CHECK_CAST (obj, module_web_view_get_type (), ModuleWebView)
 #define MODULE_WEB_VIEW_CLASS(klass)    \
@@ -63,7 +59,6 @@ struct _ModuleWebViewClass
      void (*uri_changed) (ModuleWebView *obj, gchar *url);
      void (*new_title) (ModuleWebView *obj, gchar *title);
      void (*status_changed) (ModuleWebView *obj, gchar *status);
-     void (*jsmsg_changed) (ModuleWebView *obj, gchar *jsmsg);
      gboolean (*new_download) (ModuleWebView *obj, WebKitDownload *download);
      gboolean (*switch_module) (ModuleWebView *obj, gchar *new_uri);
 };
@@ -90,10 +85,6 @@ void module_web_view_set_zoom_level (ModuleWebView *view, gfloat zoom);
 WebKitWebInspector *module_web_view_get_web_inspector (ModuleWebView *view);
 WebKitWebSettings *module_web_view_get_settings (ModuleWebView *view);
 Favicon *module_web_view_get_favicon (ModuleWebView *view);
-
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
 
 G_END_DECLS
 

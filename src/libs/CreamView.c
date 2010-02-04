@@ -73,7 +73,7 @@ static void cream_view_class_init (CreamViewClass *class)
 {
      cream_view_signals[URI_CHANGED_SIGNAL] = g_signal_new ("uri-changed",
                G_TYPE_FROM_CLASS (class),
-               G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+               G_SIGNAL_RUN_LAST,
                G_STRUCT_OFFSET (CreamViewClass, uri_changed),
                NULL, NULL,
                g_cclosure_marshal_VOID__STRING,
@@ -82,7 +82,7 @@ static void cream_view_class_init (CreamViewClass *class)
 
      cream_view_signals[NEW_TITLE_SIGNAL] = g_signal_new ("new-title",
                G_TYPE_FROM_CLASS (class),
-               G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+               G_SIGNAL_RUN_LAST,
                G_STRUCT_OFFSET (CreamViewClass, new_title),
                NULL, NULL,
                g_cclosure_marshal_VOID__STRING,
@@ -91,7 +91,7 @@ static void cream_view_class_init (CreamViewClass *class)
 
      cream_view_signals[STATUS_CHANGED_SIGNAL] = g_signal_new ("status-changed",
                G_TYPE_FROM_CLASS (class),
-               G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+               G_SIGNAL_RUN_LAST,
                G_STRUCT_OFFSET (CreamViewClass, status_changed),
                NULL, NULL,
                g_cclosure_marshal_VOID__STRING,
@@ -100,7 +100,7 @@ static void cream_view_class_init (CreamViewClass *class)
 
      cream_view_signals[NEW_DOWNLOAD_SIGNAL] = g_signal_new ("new-download",
                G_TYPE_FROM_CLASS (class),
-               G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+               G_SIGNAL_RUN_LAST,
                G_STRUCT_OFFSET (CreamViewClass, new_download),
                NULL, NULL,
                g_cclosure_user_marshal_BOOLEAN__OBJECT,
@@ -153,7 +153,8 @@ static void cream_view_load_content (CreamView *view)
      /* FTP repository */
      else if (g_str_has_prefix (uri, "ftp://"))
      {
-          view->content = gtk_label_new ("FTP: not yet implemented");
+          view->content = module_ftp_new ();
+          module_ftp_load_uri (MODULE_FTP (view->content), uri);
      }
      /* Web Page */
      else
@@ -177,14 +178,17 @@ static void cream_view_load_content (CreamView *view)
           }
 
           g_object_connect (G_OBJECT (view->content),
-               "signal::uri-changed",    G_CALLBACK (cream_view_uri_changed_cb),    view,
-               "signal::new-title",      G_CALLBACK (cream_view_new_title_cb),      view,
-               "signal::status-changed", G_CALLBACK (cream_view_status_changed_cb), view,
                "signal::jsmsg-changed",  G_CALLBACK (cream_view_jsmsg_changed_cb),  view,
-               "signal::new-download",   G_CALLBACK (cream_view_new_download_cb),   view,
-               "signal::switch-module",  G_CALLBACK (cream_view_switch_module_cb),  view,
           NULL);
      }
+
+     g_object_connect (G_OBJECT (view->content),
+          "signal::uri-changed",    G_CALLBACK (cream_view_uri_changed_cb),    view,
+          "signal::new-title",      G_CALLBACK (cream_view_new_title_cb),      view,
+          "signal::status-changed", G_CALLBACK (cream_view_status_changed_cb), view,
+          "signal::new-download",   G_CALLBACK (cream_view_new_download_cb),   view,
+          "signal::switch-module",  G_CALLBACK (cream_view_switch_module_cb),  view,
+     NULL);
 }
 
 GtkWidget *cream_view_new (void)

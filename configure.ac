@@ -7,6 +7,11 @@ if test "$PKGCONFIG" = :; then
     AC_MSG_ERROR([Package 'pkg-config' not found])
 fi
 
+AC_CHECK_PROGS([CURLCONFIG], [curl-config], [:])
+if test "$CURLCONFIG" = :; then
+     AC_MSG_ERROR([Package 'curl-config' not found])
+fi
+
 AC_PROG_CC
 AC_PROG_RANLIB
 AC_CONFIG_HEADERS([config.h])
@@ -27,5 +32,8 @@ AC_SUBST(GTK_LIBS)
 PKG_CHECK_MODULES(WEBKIT, webkit-1.0 >= 1.1.18)
 AC_SUBST(WEBKIT_CFLAGS)
 AC_SUBST(WEBKIT_LIBS)
+
+AC_SUBST(CURL_CFLAGS, `curl-config --cflags`)
+AC_SUBST(CURL_LIBS, `curl-config --libs`)
 
 AC_OUTPUT

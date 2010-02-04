@@ -86,7 +86,7 @@ GtkWidget *cream_interface_init (void)
      gtk_box_pack_end (GTK_BOX (global.interface.box), global.interface.statusbar.eventbox, FALSE, FALSE, 0);
 
      global.interface.view = cream_view_new ();
-     cream_view_load_uri (CREAM_VIEW (global.interface.view), "http://cream-browser.net");
+     cream_view_load_uri (CREAM_VIEW (global.interface.view), "ftp://mirrors.kernel.org/gnu/");
      gtk_box_pack_start (GTK_BOX (global.interface.box), global.interface.view, TRUE, TRUE, 0);
 
      adjust_v = cream_view_get_vadjustment (CREAM_VIEW (global.interface.view));

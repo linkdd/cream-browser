@@ -25,7 +25,6 @@ enum
      URI_CHANGED_SIGNAL,
      NEW_TITLE_SIGNAL,
      STATUS_CHANGED_SIGNAL,
-     JSMSG_CHANGED_SIGNAL,
      NEW_DOWNLOAD_SIGNAL,
      SWITCH_MODULE_SIGNAL,
      NB_SIGNALS
@@ -76,7 +75,7 @@ static void module_web_view_class_init (ModuleWebViewClass *class)
      module_web_view_signals[URI_CHANGED_SIGNAL] = g_signal_new (
           "uri-changed",
           G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+          G_SIGNAL_RUN_LAST,
           G_STRUCT_OFFSET (ModuleWebViewClass, uri_changed),
           NULL, NULL,
           g_cclosure_marshal_VOID__STRING,
@@ -86,7 +85,7 @@ static void module_web_view_class_init (ModuleWebViewClass *class)
      module_web_view_signals[NEW_TITLE_SIGNAL] = g_signal_new (
           "new-title",
           G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+          G_SIGNAL_RUN_LAST,
           G_STRUCT_OFFSET (ModuleWebViewClass, new_title),
           NULL, NULL,
           g_cclosure_marshal_VOID__STRING,
@@ -96,18 +95,8 @@ static void module_web_view_class_init (ModuleWebViewClass *class)
      module_web_view_signals[STATUS_CHANGED_SIGNAL] = g_signal_new (
           "status-changed",
           G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+          G_SIGNAL_RUN_LAST,
           G_STRUCT_OFFSET (ModuleWebViewClass, status_changed),
-          NULL, NULL,
-          g_cclosure_marshal_VOID__STRING,
-          G_TYPE_NONE,
-          1, G_TYPE_STRING);
-
-     module_web_view_signals[JSMSG_CHANGED_SIGNAL] = g_signal_new (
-          "jsmsg-changed",
-          G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-          G_STRUCT_OFFSET (ModuleWebViewClass, jsmsg_changed),
           NULL, NULL,
           g_cclosure_marshal_VOID__STRING,
           G_TYPE_NONE,
@@ -116,7 +105,7 @@ static void module_web_view_class_init (ModuleWebViewClass *class)
      module_web_view_signals[NEW_DOWNLOAD_SIGNAL] = g_signal_new (
           "new-download",
           G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+          G_SIGNAL_RUN_LAST,
           G_STRUCT_OFFSET (ModuleWebViewClass, new_download),
           NULL, NULL,
           g_cclosure_user_marshal_BOOLEAN__OBJECT,
@@ -126,7 +115,7 @@ static void module_web_view_class_init (ModuleWebViewClass *class)
      module_web_view_signals[SWITCH_MODULE_SIGNAL] = g_signal_new (
           "switch-module",
           G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+          G_SIGNAL_RUN_LAST,
           G_STRUCT_OFFSET (ModuleWebViewClass, switch_module),
           NULL, NULL,
           g_cclosure_user_marshal_BOOLEAN__STRING,
@@ -158,17 +147,17 @@ GtkWidget *module_web_view_new (void)
      g_signal_connect (G_OBJECT (obj->inspector), "inspect-web-view", G_CALLBACK (module_web_view_cb_create_inspector_win), obj);
 
      g_object_connect (G_OBJECT (obj),
-               "signal::notify::uri",                            G_CALLBACK (module_web_view_cb_uri_changed),           NULL,
-               "signal::title-changed",                          G_CALLBACK (module_web_view_cb_title_changed),         NULL,
-               "signal::load-progress-changed",                  G_CALLBACK (module_web_view_cb_load_progress_changed), NULL,
-               "signal::load-committed",                         G_CALLBACK (module_web_view_cb_load_committed),        NULL,
-               "signal::load-finished",                          G_CALLBACK (module_web_view_cb_load_finished),         NULL,
-               "signal::navigation-requested",                   G_CALLBACK (module_web_view_cb_navigation),            NULL,
-               "signal::create-web-view",                        G_CALLBACK (module_web_view_cb_create_web_view),       NULL,
-               "signal::mime-type-policy-decision-requested",    G_CALLBACK (module_web_view_cb_mimetype),              NULL,
-               "signal::download-requested",                     G_CALLBACK (module_web_view_cb_download),              NULL,
-               "signal::hovering-over-link",                     G_CALLBACK (module_web_view_cb_hoverlink),             NULL,
-          NULL);
+          "signal::notify::uri",                            G_CALLBACK (module_web_view_cb_uri_changed),           NULL,
+          "signal::title-changed",                          G_CALLBACK (module_web_view_cb_title_changed),         NULL,
+          "signal::load-progress-changed",                  G_CALLBACK (module_web_view_cb_load_progress_changed), NULL,
+          "signal::load-committed",                         G_CALLBACK (module_web_view_cb_load_committed),        NULL,
+          "signal::load-finished",                          G_CALLBACK (module_web_view_cb_load_finished),         NULL,
+          "signal::navigation-requested",                   G_CALLBACK (module_web_view_cb_navigation),            NULL,
+          "signal::create-web-view",                        G_CALLBACK (module_web_view_cb_create_web_view),       NULL,
+          "signal::mime-type-policy-decision-requested",    G_CALLBACK (module_web_view_cb_mimetype),              NULL,
+          "signal::download-requested",                     G_CALLBACK (module_web_view_cb_download),              NULL,
+          "signal::hovering-over-link",                     G_CALLBACK (module_web_view_cb_hoverlink),             NULL,
+     NULL);
 
      return GTK_WIDGET (obj);
 }

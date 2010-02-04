@@ -3,8 +3,8 @@ DEFS = -DPREFIX=\"$(prefix)\"
 
 bin_PROGRAMS = cream creamctl
 cream_SOURCES = main.c local.h structs.h interface.c interface.h callbacks.c callbacks.h
-cream_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS)
-cream_LDADD = $(GTK_LIBS) $(WEBKIT_LIBS) $(LIBINTL) \
+cream_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS)
+cream_LDADD = $(GTK_LIBS) $(WEBKIT_LIBS) $(CURL_LIBS) $(LIBINTL) \
      ../libs/libcream.a \
      ../libs/modules/about/libcream-module-about.a \
      ../libs/modules/ftp/libcream-module-ftp.a \

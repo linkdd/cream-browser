@@ -31,10 +31,6 @@
 
 G_BEGIN_DECLS
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define CREAM_VIEW(obj)            \
      GTK_CHECK_CAST(obj, cream_view_get_type (), CreamView)
 #define CREAM_VIEW_CLASS(klass)    \
@@ -87,10 +83,6 @@ CreamBackwardForwardList *cream_view_get_backward_forward_list (CreamView *obj);
 
 GtkAdjustment *cream_view_get_hadjustment (CreamView *obj);
 GtkAdjustment *cream_view_get_vadjustment (CreamView *obj);
-
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
 
 G_END_DECLS
 

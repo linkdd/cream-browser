@@ -134,6 +134,9 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
+CURLCONFIG = @CURLCONFIG@
+CURL_CFLAGS = @CURL_CFLAGS@
+CURL_LIBS = @CURL_LIBS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = -DPREFIX=\"$(prefix)\"
 DEPDIR = @DEPDIR@
@@ -219,7 +222,7 @@ SUBDIRS = modules/about modules/ftp modules/www
 lib_LIBRARIES = libcream.a
 libcream_a_SOURCES = CreamView.c CreamBackwardForwardList.c marshal.c \
 	CreamView.h CreamBackwardForwardList.h marshal.h
-libcream_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS)
+libcream_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS)
 all: all-recursive
 
 .SUFFIXES:

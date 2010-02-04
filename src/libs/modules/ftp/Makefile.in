@@ -95,6 +95,9 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
+CURLCONFIG = @CURLCONFIG@
+CURL_CFLAGS = @CURL_CFLAGS@
+CURL_LIBS = @CURL_LIBS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = -DPREFIX=\"$(prefix)\"
 DEPDIR = @DEPDIR@
@@ -178,7 +181,7 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(srcdir)/include
 lib_LIBRARIES = libcream-module-ftp.a
 libcream_module_ftp_a_SOURCES = FTPModule.c FTPModule.h
-libcream_module_ftp_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS)
+libcream_module_ftp_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CLFAGS)
 all: all-am
 
 .SUFFIXES:
