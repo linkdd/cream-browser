@@ -217,6 +217,11 @@ static void module_ftp_init (ModuleFtp *obj)
      obj->status = NULL;
      obj->files = NULL;
      obj->load_status = MODULE_FTP_LOAD_PROVISIONAL;
+
+     /* add files to the iconview */
+     gtk_icon_view_set_model (GTK_ICON_VIEW (obj), module_ftp_create_model (obj));
+     gtk_icon_view_set_text_column (GTK_ICON_VIEW (obj), 0);
+     gtk_icon_view_set_pixbuf_column (GTK_ICON_VIEW (obj), 1);
 }
 
 GtkWidget *module_ftp_new (void)
@@ -251,15 +256,36 @@ void module_ftp_load_uri (ModuleFtp *obj, gchar *uri)
 
 /* signals */
 static void module_ftp_item_activated_cb (ModuleFtp *obj, GtkTreePath *path, gpointer data)
+
 {
      GtkTreeIter iter;
      GtkTreeModel *model = gtk_icon_view_get_model (GTK_ICON_VIEW (obj));
      gchar *filepath;
+     gboolean is_dir = FALSE;
 
      gtk_tree_model_get_iter (model, &iter, path);
-     gtk_tree_model_get (model, &iter, 0, &filepath, -1);
+     gtk_tree_model_get (model, &iter, 0, &filepath, 2, &is_dir, -1);
 
-     module_ftp_load_uri (obj, g_strconcat (obj->uri, "/", filepath, NULL));
+     if (is_dir)
+          module_ftp_load_uri (obj, g_strconcat (obj->uri, "/", filepath, NULL));
+     else
+     {
+          WebKitNetworkRequest *tmp = webkit_network_request_new (g_strconcat (obj->uri, "/", filepath, NULL));
+          WebKitDownload *dl = webkit_download_new (tmp);
+          gboolean ret = FALSE;
+
+          g_signal_emit (
+               G_OBJECT (obj),
+               module_ftp_signals[NEW_DOWNLOAD_SIGNAL],
+               0, dl,
+               &ret
+          );
+
+          if (!ret)
+          {
+               printf ("Download requested -> %s/%s\n", obj->uri, filepath);
+          }
+     }
 }
 
 static gchar **cream_strsplit (gchar *string, gchar *delim)
@@ -333,7 +359,15 @@ static GtkTreeModel *module_ftp_create_model (ModuleFtp *obj)
      file = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".cream-browser", "icons", "file.png", NULL), NULL);
      folder = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".cream-browser", "icons", "folder.png", NULL), NULL);
 
-     list_store = gtk_list_store_new (2, G_TYPE_STRING, GDK_TYPE_PIXBUF);
+     if (obj->load_status == MODULE_FTP_LOAD_PROVISIONAL)
+     {
+          list_store = gtk_list_store_new (3, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN);
+     }
+     else
+     {
+          list_store = GTK_LIST_STORE (gtk_icon_view_get_model (GTK_ICON_VIEW (obj)));
+          gtk_list_store_clear (list_store);
+     }
 
      for (i = 0; i < g_list_length (obj->files); ++i)
      {
@@ -343,11 +377,11 @@ static GtkTreeModel *module_ftp_create_model (ModuleFtp *obj)
           gtk_list_store_set (list_store, &iter,
                     0, el->path,
                     1, (el->is_dir ? folder : file),
+                    2, el->is_dir,
                     -1);
      }
 
      return GTK_TREE_MODEL (list_store);
-
 }
 
 static gpointer thread_loading_ftp (gpointer data)
@@ -380,6 +414,7 @@ static gpointer thread_loading_ftp (gpointer data)
      if ((slash = strchr (tmp, '/')))
      {
           *slash = 0;
+
           obj->host = g_strdup (tmp);
           *slash = '/';
           obj->dir = g_strdup (slash);
@@ -461,10 +496,7 @@ static gpointer thread_loading_ftp (gpointer data)
 
      curl_global_cleanup ();
 
-     /* add files to the iconview */
      gtk_icon_view_set_model (GTK_ICON_VIEW (obj), module_ftp_create_model (obj));
-     gtk_icon_view_set_text_column (GTK_ICON_VIEW (obj), 0);
-     gtk_icon_view_set_pixbuf_column (GTK_ICON_VIEW (obj), 1);
 
      obj->load_status = MODULE_FTP_LOAD_FINISHED;
      g_signal_emit (

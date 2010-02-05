@@ -1,4 +1,4 @@
-AC_INIT([cream-browser], [201001], [linkdd@ydb.me])
+AC_INIT([cream-browser], [201002], [linkdd@ydb.me])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
