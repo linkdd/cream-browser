@@ -74,7 +74,7 @@ static void module_ftp_init (ModuleFtp *obj);
 static void module_ftp_item_activated_cb (ModuleFtp *obj, GtkTreePath *path, gpointer data);
 static gchar **cream_strsplit (gchar *str, gchar *delim);
 static size_t module_ftp_curl_write_data_func (void *buffer, size_t size, size_t nmemb, void *stream);
-static int module_ftp_curl_progress_func (ModuleFtp *obj, double dl_total, double dl_now, double up_total, double up_now);
+static int module_ftp_curl_progress_func (void *clientp, double dl_total, double dl_now, double up_total, double up_now);
 static void module_ftp_split_curl_data (ModuleFtp *obj);
 static GtkTreeModel *module_ftp_create_model (ModuleFtp *obj);
 static gpointer thread_loading_ftp (gpointer data);
@@ -217,21 +217,26 @@ static void module_ftp_init (ModuleFtp *obj)
      obj->status = NULL;
      obj->files = NULL;
      obj->load_status = MODULE_FTP_LOAD_PROVISIONAL;
+}
+
+GtkWidget *module_ftp_new (void)
+{
+     ModuleFtp *obj = gtk_type_new (module_ftp_get_type ());
 
      /* add files to the iconview */
      gtk_icon_view_set_model (GTK_ICON_VIEW (obj), module_ftp_create_model (obj));
      gtk_icon_view_set_text_column (GTK_ICON_VIEW (obj), 0);
      gtk_icon_view_set_pixbuf_column (GTK_ICON_VIEW (obj), 1);
-}
 
-GtkWidget *module_ftp_new (void)
-{
-     return gtk_type_new (module_ftp_get_type ());
+     g_signal_connect (G_OBJECT (obj), "item-activated", G_CALLBACK (module_ftp_item_activated_cb), NULL);
+
+     return GTK_WIDGET (obj);
 }
 
 void module_ftp_load_uri (ModuleFtp *obj, gchar *uri)
 {
      GThread *th_loading;
+     GError *error = NULL;
 
      obj->load_status = MODULE_FTP_LOAD_COMMITTED;
      g_signal_emit (
@@ -249,9 +254,17 @@ void module_ftp_load_uri (ModuleFtp *obj, gchar *uri)
           0, obj->uri
      );
 
-     th_loading = g_thread_create (thread_loading_ftp, obj, FALSE, NULL);
+     th_loading = g_thread_create (thread_loading_ftp, obj, TRUE, &error);
 
-     g_signal_connect (G_OBJECT (obj), "item-activated", G_CALLBACK (module_ftp_item_activated_cb), NULL);
+     if (error != NULL)
+     {
+          g_thread_join (th_loading);
+          g_signal_emit (
+               G_OBJECT (obj),
+               module_ftp_signals[LOAD_ERROR_SIGNAL],
+               0, obj->uri, error
+          );
+     }
 }
 
 /* signals */
@@ -308,11 +321,15 @@ static size_t module_ftp_curl_write_data_func (void *buffer, size_t size, size_t
      else
           curl_content = g_string_new ((gchar *) buffer);
 
+     printf ("%s", (char *) buffer);
+
      return (size_t) (size * nmemb);
 }
 
-static int module_ftp_curl_progress_func (ModuleFtp *obj, double dl_total, double dl_now, double up_total, double up_now)
+static int module_ftp_curl_progress_func (void *clientp, double dl_total, double dl_now, double up_total, double up_now)
 {
+     ModuleFtp *obj = (ModuleFtp *) clientp;
+
      obj->progress = (gint) (dl_now * 100.0 / dl_total);
      g_signal_emit (
           G_OBJECT (obj),

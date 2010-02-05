@@ -46,7 +46,7 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_cream_OBJECTS = cream-main.$(OBJEXT) cream-interface.$(OBJEXT) \
-	cream-callbacks.$(OBJEXT)
+	cream-callbacks.$(OBJEXT) cream-CreamTabbed.$(OBJEXT)
 cream_OBJECTS = $(am_cream_OBJECTS)
 am__DEPENDENCIES_1 =
 cream_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -168,7 +168,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(srcdir)/../libs -I$(srcdir)/../libs/modules
-cream_SOURCES = main.c local.h structs.h interface.c interface.h callbacks.c callbacks.h
+cream_SOURCES = main.c local.h structs.h interface.c interface.h callbacks.c callbacks.h CreamTabbed.c CreamTabbed.h
 cream_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS)
 cream_LDADD = $(GTK_LIBS) $(WEBKIT_LIBS) $(CURL_LIBS) $(LIBINTL) \
      ../libs/libcream.a \
@@ -263,6 +263,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-CreamTabbed.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-callbacks.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-interface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-main.Po@am__quote@
@@ -323,6 +324,20 @@ cream-callbacks.obj: callbacks.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='callbacks.c' object='cream-callbacks.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cream_CFLAGS) $(CFLAGS) -c -o cream-callbacks.obj `if test -f 'callbacks.c'; then $(CYGPATH_W) 'callbacks.c'; else $(CYGPATH_W) '$(srcdir)/callbacks.c'; fi`
+
+cream-CreamTabbed.o: CreamTabbed.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cream_CFLAGS) $(CFLAGS) -MT cream-CreamTabbed.o -MD -MP -MF $(DEPDIR)/cream-CreamTabbed.Tpo -c -o cream-CreamTabbed.o `test -f 'CreamTabbed.c' || echo '$(srcdir)/'`CreamTabbed.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/cream-CreamTabbed.Tpo $(DEPDIR)/cream-CreamTabbed.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamTabbed.c' object='cream-CreamTabbed.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cream_CFLAGS) $(CFLAGS) -c -o cream-CreamTabbed.o `test -f 'CreamTabbed.c' || echo '$(srcdir)/'`CreamTabbed.c
+
+cream-CreamTabbed.obj: CreamTabbed.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cream_CFLAGS) $(CFLAGS) -MT cream-CreamTabbed.obj -MD -MP -MF $(DEPDIR)/cream-CreamTabbed.Tpo -c -o cream-CreamTabbed.obj `if test -f 'CreamTabbed.c'; then $(CYGPATH_W) 'CreamTabbed.c'; else $(CYGPATH_W) '$(srcdir)/CreamTabbed.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/cream-CreamTabbed.Tpo $(DEPDIR)/cream-CreamTabbed.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamTabbed.c' object='cream-CreamTabbed.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cream_CFLAGS) $(CFLAGS) -c -o cream-CreamTabbed.obj `if test -f 'CreamTabbed.c'; then $(CYGPATH_W) 'CreamTabbed.c'; else $(CYGPATH_W) '$(srcdir)/CreamTabbed.c'; fi`
 
 creamctl-creamctl.o: creamctl.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(creamctl_CFLAGS) $(CFLAGS) -MT creamctl-creamctl.o -MD -MP -MF $(DEPDIR)/creamctl-creamctl.Tpo -c -o creamctl-creamctl.o `test -f 'creamctl.c' || echo '$(srcdir)/'`creamctl.c

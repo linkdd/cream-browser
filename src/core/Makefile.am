@@ -2,7 +2,7 @@ AM_CPPFLAGS = -I$(srcdir)/../libs -I$(srcdir)/../libs/modules
 DEFS = -DPREFIX=\"$(prefix)\"
 
 bin_PROGRAMS = cream creamctl
-cream_SOURCES = main.c local.h structs.h interface.c interface.h callbacks.c callbacks.h
+cream_SOURCES = main.c local.h structs.h interface.c interface.h callbacks.c callbacks.h CreamTabbed.c CreamTabbed.h
 cream_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS)
 cream_LDADD = $(GTK_LIBS) $(WEBKIT_LIBS) $(CURL_LIBS) $(LIBINTL) \
      ../libs/libcream.a \
