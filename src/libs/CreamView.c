@@ -34,6 +34,7 @@ static void cream_view_jsmsg_changed_cb (GtkWidget *w, gchar *jsmsg, gpointer da
 static gboolean cream_view_new_download_cb (GtkWidget *w, WebKitDownload *download, gpointer data);
 static gboolean cream_view_switch_module_cb (GtkWidget *w, gchar *new_uri, gpointer data);
 
+/* Signals */
 enum
 {
      URI_CHANGED_SIGNAL,
@@ -44,6 +45,33 @@ enum
 };
 
 static guint cream_view_signals[NB_SIGNALS] = { 0 };
+/* End of signals */
+
+/* Protocols */
+struct protocols_t
+{
+     gchar *prefix;
+     void (*callback) (CreamView *obj, gchar *uri);
+};
+
+static void cream_view_mailto_callback (CreamView *obj, gchar *uri);
+static void cream_view_about_callback (CreamView *obj, gchar *uri);
+static void cream_view_http_callback (CreamView *obj, gchar *uri);
+static void cream_view_ftp_callback (CreamView *obj, gchar *uri);
+
+struct protocols_t cream_available_protocols[] =
+{
+     { "mailto:",   cream_view_mailto_callback },
+     { "about:",    cream_view_about_callback },
+     { "file://",   cream_view_http_callback },
+     { "http://",   cream_view_http_callback },
+     { "https://",  cream_view_http_callback },
+     { "ftp://",    cream_view_ftp_callback },
+     { "gopher://", NULL },
+     { NULL,        NULL }
+};
+
+/* End of protocols */
 
 GtkType cream_view_get_type (void)
 {
@@ -127,60 +155,57 @@ static void cream_view_init (CreamView *obj)
      obj->history = cream_backward_forward_list_new ();
 }
 
-static void cream_view_load_content (CreamView *view)
+static void cream_view_mailto_callback (CreamView *view, gchar *uri)
 {
-     gchar *uri = view->uri;
-
-     /* send an email */
-     if (g_str_has_prefix (uri, "mailto:"))
+     if (fork ())
      {
           if (fork ())
           {
-               if (fork ())
-               {
-                    execl ("/bin/sh", "sh", "-c", g_strconcat ("xdg-open ", uri, NULL), (char *) NULL);
-                    exit (EXIT_SUCCESS);
-               }
+               execl ("/bin/sh", "sh", "-c", g_strconcat ("xdg-open ", uri, NULL), (char *) NULL);
                exit (EXIT_SUCCESS);
           }
+          exit (EXIT_SUCCESS);
      }
-     /* information page */
-     else if (g_str_has_prefix (uri, "about:"))
-     {
-          view->content = module_web_view_new ();
-          module_web_view_load_uri (MODULE_WEB_VIEW (view->content), uri);
-     }
-     /* FTP repository */
-     else if (g_str_has_prefix (uri, "ftp://"))
-     {
-          view->content = module_ftp_new ();
-          module_ftp_load_uri (MODULE_FTP (view->content), uri);
-     }
-     /* Web Page */
-     else
-     {
-          view->content = module_web_view_new ();
+}
 
-          module_web_view_set_view_source_mode (MODULE_WEB_VIEW (view->content), view->view_source_mode);
-          if (g_str_has_prefix (uri, "http://")
-               || g_str_has_prefix (uri, "file://")
-               || g_str_has_prefix (uri, "https://"))
-          {
-               module_web_view_load_uri (MODULE_WEB_VIEW (view->content), uri);
-          }
-          else if (uri[0] == '/')
-          {
-               module_web_view_load_uri (MODULE_WEB_VIEW (view->content), g_strdup_printf ("file://%s", uri));
-          }
-          else
-          {
-               module_web_view_load_uri (MODULE_WEB_VIEW (view->content), g_strdup_printf ("http://%s", uri));
-          }
+static void cream_view_about_callback (CreamView *obj, gchar *uri)
+{
+     view->content = module_web_view_new ();
+     module_web_view_load_uri (MODULE_WEB_VIEW (view->content), uri);
+}
 
-          g_object_connect (G_OBJECT (view->content),
-               "signal::jsmsg-changed",  G_CALLBACK (cream_view_jsmsg_changed_cb),  view,
-          NULL);
+static void cream_view_http_callback (CreamView *obj, gchar *uri)
+{
+     view->content = module_web_view_new ();
+     module_web_view_set_view_source_mode (MODULE_WEB_VIEW (view->content), view->view_source_mode);
+     module_web_view_load_uri (MODULE_WEB_VIEW (view->content), uri);
+}
+
+static void cream_view_ftp_callback (CreamView *obj, gchar *uri)
+{
+     view->content = module_ftp_new ();
+     module_ftp_load_uri (MODULE_FTP (view->content), uri);
+}
+
+static void cream_view_load_content (CreamView *view)
+{
+     gchar *uri = (view->uri[0] == '/' ? g_strconcat ("file://", view->uri, NULL) : view->uri);
+     gboolean success = FALSE;
+     int i;
+
+     for (i = 0; cream_available_protocols[i] != NULL; ++i)
+     {
+          if (g_str_has_prefix (uri. cream_available_protocols[i].prefix)
+               && cream_available_protocols[i].func != NULL)
+          {
+               cream_availbale_protocols[i].func (view, uri);
+               success = TRUE;
+               break;
+          }
      }
+
+     if (!success)
+          cream_view_http_callback (view, g_strconcat ("http://", uri, NULL));
 
      g_object_connect (G_OBJECT (view->content),
           "signal::uri-changed",    G_CALLBACK (cream_view_uri_changed_cb),    view,
