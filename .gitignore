@@ -5,4 +5,4 @@ cream
 *.a
 __build__
 autom4te.cache
-docs/html
+doc/html
