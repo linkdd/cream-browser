@@ -10,7 +10,7 @@ To build Cream-Browser :
      $ sudo make install
 
 To build the documentation :
-     $ cd docs
+     $ cd doc
      $ make
 Now see the page docs/html/index.html
 
