@@ -26,23 +26,6 @@ struct handler_t
      gchar *cmd;
 };
 
-typedef struct
-{
-     GtkWidget *main_window;
-     GtkWidget *box;
-
-     GtkWidget *view;
-     struct
-     {
-          GtkWidget *eventbox;
-          GtkWidget *box;
-          GtkWidget *url;
-          GtkWidget *state;
-     } statusbar;
-
-     GtkWidget *inputbox;
-} GUI;
-
 struct global_t
 {
      struct
@@ -60,8 +43,6 @@ struct global_t
 
           SoupCookieJar *cookies;
      } browser;
-
-     GUI interface;
 };
 
 #endif /* __STRUCTS_H */

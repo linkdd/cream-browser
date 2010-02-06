@@ -51,7 +51,7 @@ static guint cream_view_signals[NB_SIGNALS] = { 0 };
 struct protocols_t
 {
      gchar *prefix;
-     void (*callback) (CreamView *obj, gchar *uri);
+     void (*func) (CreamView *obj, gchar *uri);
 };
 
 static void cream_view_mailto_callback (CreamView *obj, gchar *uri);
@@ -106,7 +106,7 @@ static void cream_view_class_init (CreamViewClass *class)
                NULL, NULL,
                g_cclosure_marshal_VOID__STRING,
                G_TYPE_NONE,
-               1,G_TYPE_STRING);
+               1, G_TYPE_STRING);
 
      cream_view_signals[NEW_TITLE_SIGNAL] = g_signal_new ("new-title",
                G_TYPE_FROM_CLASS (class),
@@ -170,21 +170,21 @@ static void cream_view_mailto_callback (CreamView *view, gchar *uri)
 
 static void cream_view_about_callback (CreamView *obj, gchar *uri)
 {
-     view->content = module_web_view_new ();
-     module_web_view_load_uri (MODULE_WEB_VIEW (view->content), uri);
+     obj->content = module_web_view_new ();
+     module_web_view_load_uri (MODULE_WEB_VIEW (obj->content), uri);
 }
 
 static void cream_view_http_callback (CreamView *obj, gchar *uri)
 {
-     view->content = module_web_view_new ();
-     module_web_view_set_view_source_mode (MODULE_WEB_VIEW (view->content), view->view_source_mode);
-     module_web_view_load_uri (MODULE_WEB_VIEW (view->content), uri);
+     obj->content = module_web_view_new ();
+     module_web_view_set_view_source_mode (MODULE_WEB_VIEW (obj->content), obj->view_source_mode);
+     module_web_view_load_uri (MODULE_WEB_VIEW (obj->content), uri);
 }
 
 static void cream_view_ftp_callback (CreamView *obj, gchar *uri)
 {
-     view->content = module_ftp_new ();
-     module_ftp_load_uri (MODULE_FTP (view->content), uri);
+     obj->content = module_ftp_new ();
+     module_ftp_load_uri (MODULE_FTP (obj->content), uri);
 }
 
 static void cream_view_load_content (CreamView *view)
@@ -193,12 +193,12 @@ static void cream_view_load_content (CreamView *view)
      gboolean success = FALSE;
      int i;
 
-     for (i = 0; cream_available_protocols[i] != NULL; ++i)
+     for (i = 0; cream_available_protocols[i].prefix != NULL; ++i)
      {
-          if (g_str_has_prefix (uri. cream_available_protocols[i].prefix)
+          if (g_str_has_prefix (uri, cream_available_protocols[i].prefix)
                && cream_available_protocols[i].func != NULL)
           {
-               cream_availbale_protocols[i].func (view, uri);
+               cream_available_protocols[i].func (view, uri);
                success = TRUE;
                break;
           }
@@ -290,6 +290,21 @@ GtkAdjustment *cream_view_get_hadjustment (CreamView *obj)
 GtkAdjustment *cream_view_get_vadjustment (CreamView *obj)
 {
      return obj->adjust_v;
+}
+
+const gchar *cream_view_get_uri (CreamView *obj)
+{
+     return (const gchar *) obj->uri;
+}
+
+const gchar *cream_view_get_title (CreamView *obj)
+{
+     return (const gchar *) obj->title;
+}
+
+const gchar *cream_view_get_status (CreamView *obj)
+{
+     return (const gchar *) obj->status;
 }
 
 /* signals */

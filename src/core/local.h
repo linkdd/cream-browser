@@ -26,7 +26,7 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#include <CreamView.h>
+#include "CreamTabbed.h"
 
 #include "structs.h"
 #include "interface.h"

@@ -32,15 +32,25 @@ struct _CreamTabbed
      } statusbar;
 
      GtkWidget *inputbox;
+
+     GtkAdjustment *adjust_v;
 };
 
 struct _CreamTabbedClass
 {
      GtkVBoxClass parent_class;
+
+     void (*update_notebook_title) (CreamTabbed *obj);
 };
 
 GtkType cream_tabbed_get_type (void);
 GtkWidget *cream_tabbed_new (void);
+
+void cream_tabbed_load_uri (CreamTabbed *obj, gchar *uri);
+
+const gchar *cream_tabbed_get_uri (CreamTabbed *obj);
+const gchar *cream_tabbed_get_title (CreamTabbed *obj);
+const gchar *cream_tabbed_get_status (CreamTabbed *obj);
 
 G_END_DECLS
 

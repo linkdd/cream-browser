@@ -44,8 +44,9 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      global.cmdline.config = NULL;
      global.cmdline.url = NULL;
 
-     global.browser.homepage = NULL;
-     global.browser.encoding = NULL;
+     global.browser.user_agent = NULL;
+     global.browser.homepage   = NULL;
+     global.browser.encoding   = NULL;
 
      signal (SIGSEGV, signal_handler);
 
@@ -81,6 +82,7 @@ void cream_release (int exit_code)
      free (global.cmdline.config);
      free (global.cmdline.url);
 
+     free (global.browser.user_agent);
      free (global.browser.homepage);
      free (global.browser.encoding);
 

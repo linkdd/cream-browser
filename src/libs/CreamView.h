@@ -84,6 +84,10 @@ CreamBackwardForwardList *cream_view_get_backward_forward_list (CreamView *obj);
 GtkAdjustment *cream_view_get_hadjustment (CreamView *obj);
 GtkAdjustment *cream_view_get_vadjustment (CreamView *obj);
 
+const gchar *cream_view_get_uri (CreamView *obj);
+const gchar *cream_view_get_title (CreamView *obj);
+const gchar *cream_view_get_status (CreamView *obj);
+
 G_END_DECLS
 
 #endif /* __CLASS_CREAM_VIEW_H */
