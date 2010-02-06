@@ -32,7 +32,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-subdir = src/libs/modules/ftp
+subdir = src/libs/CreamView
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -67,11 +67,11 @@ am__installdirs = "$(DESTDIR)$(libdir)"
 LIBRARIES = $(lib_LIBRARIES)
 AR = ar
 ARFLAGS = cru
-libcream_module_ftp_a_AR = $(AR) $(ARFLAGS)
-libcream_module_ftp_a_LIBADD =
-am_libcream_module_ftp_a_OBJECTS =  \
-	libcream_module_ftp_a-FTPModule.$(OBJEXT)
-libcream_module_ftp_a_OBJECTS = $(am_libcream_module_ftp_a_OBJECTS)
+libcreamview_a_AR = $(AR) $(ARFLAGS)
+libcreamview_a_LIBADD =
+am_libcreamview_a_OBJECTS = libcreamview_a-CreamView.$(OBJEXT) \
+	libcreamview_a-CreamBackwardForwardList.$(OBJEXT)
+libcreamview_a_OBJECTS = $(am_libcreamview_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -80,8 +80,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libcream_module_ftp_a_SOURCES)
-DIST_SOURCES = $(libcream_module_ftp_a_SOURCES)
+SOURCES = $(libcreamview_a_SOURCES)
+DIST_SOURCES = $(libcreamview_a_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -178,10 +178,11 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(srcdir)/../../../core -I$(srcdir)/../.. -I$(srcdir)/../../curl
-lib_LIBRARIES = libcream-module-ftp.a
-libcream_module_ftp_a_SOURCES = FTPModule.c FTPModule.h
-libcream_module_ftp_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CLFAGS)
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(srcdir)/../../core -I$(srcdir)/.. -I$(srcdir)/../modules -I$(srcdir)/../curl
+lib_LIBRARIES = libcreamview.a
+libcreamview_a_SOURCES = CreamView.c CreamBackwardForwardList.c \
+	CreamView.h CreamBackwardForwardList.h
+libcreamview_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -195,9 +196,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/libs/modules/ftp/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/libs/CreamView/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign src/libs/modules/ftp/Makefile
+	  $(AUTOMAKE) --foreign src/libs/CreamView/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -248,10 +249,10 @@ uninstall-libLIBRARIES:
 
 clean-libLIBRARIES:
 	-test -z "$(lib_LIBRARIES)" || rm -f $(lib_LIBRARIES)
-libcream-module-ftp.a: $(libcream_module_ftp_a_OBJECTS) $(libcream_module_ftp_a_DEPENDENCIES) 
-	-rm -f libcream-module-ftp.a
-	$(libcream_module_ftp_a_AR) libcream-module-ftp.a $(libcream_module_ftp_a_OBJECTS) $(libcream_module_ftp_a_LIBADD)
-	$(RANLIB) libcream-module-ftp.a
+libcreamview.a: $(libcreamview_a_OBJECTS) $(libcreamview_a_DEPENDENCIES) 
+	-rm -f libcreamview.a
+	$(libcreamview_a_AR) libcreamview.a $(libcreamview_a_OBJECTS) $(libcreamview_a_LIBADD)
+	$(RANLIB) libcreamview.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -259,7 +260,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcream_module_ftp_a-FTPModule.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcreamview_a-CreamView.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -275,19 +277,33 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
-libcream_module_ftp_a-FTPModule.o: FTPModule.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_ftp_a_CFLAGS) $(CFLAGS) -MT libcream_module_ftp_a-FTPModule.o -MD -MP -MF $(DEPDIR)/libcream_module_ftp_a-FTPModule.Tpo -c -o libcream_module_ftp_a-FTPModule.o `test -f 'FTPModule.c' || echo '$(srcdir)/'`FTPModule.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_module_ftp_a-FTPModule.Tpo $(DEPDIR)/libcream_module_ftp_a-FTPModule.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='FTPModule.c' object='libcream_module_ftp_a-FTPModule.o' libtool=no @AMDEPBACKSLASH@
+libcreamview_a-CreamView.o: CreamView.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -MT libcreamview_a-CreamView.o -MD -MP -MF $(DEPDIR)/libcreamview_a-CreamView.Tpo -c -o libcreamview_a-CreamView.o `test -f 'CreamView.c' || echo '$(srcdir)/'`CreamView.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcreamview_a-CreamView.Tpo $(DEPDIR)/libcreamview_a-CreamView.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamView.c' object='libcreamview_a-CreamView.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_ftp_a_CFLAGS) $(CFLAGS) -c -o libcream_module_ftp_a-FTPModule.o `test -f 'FTPModule.c' || echo '$(srcdir)/'`FTPModule.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -c -o libcreamview_a-CreamView.o `test -f 'CreamView.c' || echo '$(srcdir)/'`CreamView.c
 
-libcream_module_ftp_a-FTPModule.obj: FTPModule.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_ftp_a_CFLAGS) $(CFLAGS) -MT libcream_module_ftp_a-FTPModule.obj -MD -MP -MF $(DEPDIR)/libcream_module_ftp_a-FTPModule.Tpo -c -o libcream_module_ftp_a-FTPModule.obj `if test -f 'FTPModule.c'; then $(CYGPATH_W) 'FTPModule.c'; else $(CYGPATH_W) '$(srcdir)/FTPModule.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_module_ftp_a-FTPModule.Tpo $(DEPDIR)/libcream_module_ftp_a-FTPModule.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='FTPModule.c' object='libcream_module_ftp_a-FTPModule.obj' libtool=no @AMDEPBACKSLASH@
+libcreamview_a-CreamView.obj: CreamView.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -MT libcreamview_a-CreamView.obj -MD -MP -MF $(DEPDIR)/libcreamview_a-CreamView.Tpo -c -o libcreamview_a-CreamView.obj `if test -f 'CreamView.c'; then $(CYGPATH_W) 'CreamView.c'; else $(CYGPATH_W) '$(srcdir)/CreamView.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcreamview_a-CreamView.Tpo $(DEPDIR)/libcreamview_a-CreamView.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamView.c' object='libcreamview_a-CreamView.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_ftp_a_CFLAGS) $(CFLAGS) -c -o libcream_module_ftp_a-FTPModule.obj `if test -f 'FTPModule.c'; then $(CYGPATH_W) 'FTPModule.c'; else $(CYGPATH_W) '$(srcdir)/FTPModule.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -c -o libcreamview_a-CreamView.obj `if test -f 'CreamView.c'; then $(CYGPATH_W) 'CreamView.c'; else $(CYGPATH_W) '$(srcdir)/CreamView.c'; fi`
+
+libcreamview_a-CreamBackwardForwardList.o: CreamBackwardForwardList.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -MT libcreamview_a-CreamBackwardForwardList.o -MD -MP -MF $(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Tpo -c -o libcreamview_a-CreamBackwardForwardList.o `test -f 'CreamBackwardForwardList.c' || echo '$(srcdir)/'`CreamBackwardForwardList.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Tpo $(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamBackwardForwardList.c' object='libcreamview_a-CreamBackwardForwardList.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -c -o libcreamview_a-CreamBackwardForwardList.o `test -f 'CreamBackwardForwardList.c' || echo '$(srcdir)/'`CreamBackwardForwardList.c
+
+libcreamview_a-CreamBackwardForwardList.obj: CreamBackwardForwardList.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -MT libcreamview_a-CreamBackwardForwardList.obj -MD -MP -MF $(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Tpo -c -o libcreamview_a-CreamBackwardForwardList.obj `if test -f 'CreamBackwardForwardList.c'; then $(CYGPATH_W) 'CreamBackwardForwardList.c'; else $(CYGPATH_W) '$(srcdir)/CreamBackwardForwardList.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Tpo $(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamBackwardForwardList.c' object='libcreamview_a-CreamBackwardForwardList.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -c -o libcreamview_a-CreamBackwardForwardList.obj `if test -f 'CreamBackwardForwardList.c'; then $(CYGPATH_W) 'CreamBackwardForwardList.c'; else $(CYGPATH_W) '$(srcdir)/CreamBackwardForwardList.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

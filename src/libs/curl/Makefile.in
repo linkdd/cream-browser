@@ -32,7 +32,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-subdir = src/libs/modules/ftp
+subdir = src/libs/curl
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -67,11 +67,10 @@ am__installdirs = "$(DESTDIR)$(libdir)"
 LIBRARIES = $(lib_LIBRARIES)
 AR = ar
 ARFLAGS = cru
-libcream_module_ftp_a_AR = $(AR) $(ARFLAGS)
-libcream_module_ftp_a_LIBADD =
-am_libcream_module_ftp_a_OBJECTS =  \
-	libcream_module_ftp_a-FTPModule.$(OBJEXT)
-libcream_module_ftp_a_OBJECTS = $(am_libcream_module_ftp_a_OBJECTS)
+libcream_curl_a_AR = $(AR) $(ARFLAGS)
+libcream_curl_a_LIBADD =
+am_libcream_curl_a_OBJECTS = libcream_curl_a-CurlModule.$(OBJEXT)
+libcream_curl_a_OBJECTS = $(am_libcream_curl_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -80,8 +79,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libcream_module_ftp_a_SOURCES)
-DIST_SOURCES = $(libcream_module_ftp_a_SOURCES)
+SOURCES = $(libcream_curl_a_SOURCES)
+DIST_SOURCES = $(libcream_curl_a_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -178,10 +177,10 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(srcdir)/../../../core -I$(srcdir)/../.. -I$(srcdir)/../../curl
-lib_LIBRARIES = libcream-module-ftp.a
-libcream_module_ftp_a_SOURCES = FTPModule.c FTPModule.h
-libcream_module_ftp_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CLFAGS)
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(srcdir)/../../core -I$(srcdir)/modules -I$(srcdir)/curl
+lib_LIBRARIES = libcream-curl.a
+libcream_curl_a_SOURCES = CurlModule.c CurlModule.h
+libcream_curl_a_CFLAGS = $(GTK_CFLAGS) $(CURL_CFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -195,9 +194,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/libs/modules/ftp/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/libs/curl/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign src/libs/modules/ftp/Makefile
+	  $(AUTOMAKE) --foreign src/libs/curl/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -248,10 +247,10 @@ uninstall-libLIBRARIES:
 
 clean-libLIBRARIES:
 	-test -z "$(lib_LIBRARIES)" || rm -f $(lib_LIBRARIES)
-libcream-module-ftp.a: $(libcream_module_ftp_a_OBJECTS) $(libcream_module_ftp_a_DEPENDENCIES) 
-	-rm -f libcream-module-ftp.a
-	$(libcream_module_ftp_a_AR) libcream-module-ftp.a $(libcream_module_ftp_a_OBJECTS) $(libcream_module_ftp_a_LIBADD)
-	$(RANLIB) libcream-module-ftp.a
+libcream-curl.a: $(libcream_curl_a_OBJECTS) $(libcream_curl_a_DEPENDENCIES) 
+	-rm -f libcream-curl.a
+	$(libcream_curl_a_AR) libcream-curl.a $(libcream_curl_a_OBJECTS) $(libcream_curl_a_LIBADD)
+	$(RANLIB) libcream-curl.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -259,7 +258,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcream_module_ftp_a-FTPModule.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcream_curl_a-CurlModule.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -275,19 +274,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
-libcream_module_ftp_a-FTPModule.o: FTPModule.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_ftp_a_CFLAGS) $(CFLAGS) -MT libcream_module_ftp_a-FTPModule.o -MD -MP -MF $(DEPDIR)/libcream_module_ftp_a-FTPModule.Tpo -c -o libcream_module_ftp_a-FTPModule.o `test -f 'FTPModule.c' || echo '$(srcdir)/'`FTPModule.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_module_ftp_a-FTPModule.Tpo $(DEPDIR)/libcream_module_ftp_a-FTPModule.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='FTPModule.c' object='libcream_module_ftp_a-FTPModule.o' libtool=no @AMDEPBACKSLASH@
+libcream_curl_a-CurlModule.o: CurlModule.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_curl_a_CFLAGS) $(CFLAGS) -MT libcream_curl_a-CurlModule.o -MD -MP -MF $(DEPDIR)/libcream_curl_a-CurlModule.Tpo -c -o libcream_curl_a-CurlModule.o `test -f 'CurlModule.c' || echo '$(srcdir)/'`CurlModule.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_curl_a-CurlModule.Tpo $(DEPDIR)/libcream_curl_a-CurlModule.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CurlModule.c' object='libcream_curl_a-CurlModule.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_ftp_a_CFLAGS) $(CFLAGS) -c -o libcream_module_ftp_a-FTPModule.o `test -f 'FTPModule.c' || echo '$(srcdir)/'`FTPModule.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_curl_a_CFLAGS) $(CFLAGS) -c -o libcream_curl_a-CurlModule.o `test -f 'CurlModule.c' || echo '$(srcdir)/'`CurlModule.c
 
-libcream_module_ftp_a-FTPModule.obj: FTPModule.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_ftp_a_CFLAGS) $(CFLAGS) -MT libcream_module_ftp_a-FTPModule.obj -MD -MP -MF $(DEPDIR)/libcream_module_ftp_a-FTPModule.Tpo -c -o libcream_module_ftp_a-FTPModule.obj `if test -f 'FTPModule.c'; then $(CYGPATH_W) 'FTPModule.c'; else $(CYGPATH_W) '$(srcdir)/FTPModule.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_module_ftp_a-FTPModule.Tpo $(DEPDIR)/libcream_module_ftp_a-FTPModule.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='FTPModule.c' object='libcream_module_ftp_a-FTPModule.obj' libtool=no @AMDEPBACKSLASH@
+libcream_curl_a-CurlModule.obj: CurlModule.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_curl_a_CFLAGS) $(CFLAGS) -MT libcream_curl_a-CurlModule.obj -MD -MP -MF $(DEPDIR)/libcream_curl_a-CurlModule.Tpo -c -o libcream_curl_a-CurlModule.obj `if test -f 'CurlModule.c'; then $(CYGPATH_W) 'CurlModule.c'; else $(CYGPATH_W) '$(srcdir)/CurlModule.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_curl_a-CurlModule.Tpo $(DEPDIR)/libcream_curl_a-CurlModule.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CurlModule.c' object='libcream_curl_a-CurlModule.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_ftp_a_CFLAGS) $(CFLAGS) -c -o libcream_module_ftp_a-FTPModule.obj `if test -f 'FTPModule.c'; then $(CYGPATH_W) 'FTPModule.c'; else $(CYGPATH_W) '$(srcdir)/FTPModule.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_curl_a_CFLAGS) $(CFLAGS) -c -o libcream_curl_a-CurlModule.obj `if test -f 'CurlModule.c'; then $(CYGPATH_W) 'CurlModule.c'; else $(CYGPATH_W) '$(srcdir)/CurlModule.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

@@ -14,7 +14,6 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -42,47 +41,8 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(libdir)"
-LIBRARIES = $(lib_LIBRARIES)
-AR = ar
-ARFLAGS = cru
-libcream_a_AR = $(AR) $(ARFLAGS)
-libcream_a_LIBADD =
-am_libcream_a_OBJECTS = libcream_a-CreamView.$(OBJEXT) \
-	libcream_a-CreamBackwardForwardList.$(OBJEXT) \
-	libcream_a-marshal.$(OBJEXT)
-libcream_a_OBJECTS = $(am_libcream_a_OBJECTS)
-DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
-depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
-am__depfiles_maybe = depfiles
-am__mv = mv -f
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libcream_a_SOURCES)
-DIST_SOURCES = $(libcream_a_SOURCES)
+SOURCES =
+DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -138,7 +98,7 @@ CURLCONFIG = @CURLCONFIG@
 CURL_CFLAGS = @CURL_CFLAGS@
 CURL_LIBS = @CURL_LIBS@
 CYGPATH_W = @CYGPATH_W@
-DEFS = -DPREFIX=\"$(prefix)\"
+DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -217,16 +177,10 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(srcdir)/modules
-SUBDIRS = modules/about modules/ftp modules/www
-lib_LIBRARIES = libcream.a
-libcream_a_SOURCES = CreamView.c CreamBackwardForwardList.c marshal.c \
-	CreamView.h CreamBackwardForwardList.h marshal.h
-libcream_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS)
+SUBDIRS = curl modules/about modules/ftp modules/www CreamView
 all: all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -257,108 +211,6 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-install-libLIBRARIES: $(lib_LIBRARIES)
-	@$(NORMAL_INSTALL)
-	test -z "$(libdir)" || $(MKDIR_P) "$(DESTDIR)$(libdir)"
-	@list='$(lib_LIBRARIES)'; test -n "$(libdir)" || list=; \
-	list2=; for p in $$list; do \
-	  if test -f $$p; then \
-	    list2="$$list2 $$p"; \
-	  else :; fi; \
-	done; \
-	test -z "$$list2" || { \
-	  echo " $(INSTALL_DATA) $$list2 '$(DESTDIR)$(libdir)'"; \
-	  $(INSTALL_DATA) $$list2 "$(DESTDIR)$(libdir)" || exit $$?; }
-	@$(POST_INSTALL)
-	@list='$(lib_LIBRARIES)'; test -n "$(libdir)" || list=; \
-	for p in $$list; do \
-	  if test -f $$p; then \
-	    $(am__strip_dir) \
-	    echo " ( cd '$(DESTDIR)$(libdir)' && $(RANLIB) $$f )"; \
-	    ( cd "$(DESTDIR)$(libdir)" && $(RANLIB) $$f ) || exit $$?; \
-	  else :; fi; \
-	done
-
-uninstall-libLIBRARIES:
-	@$(NORMAL_UNINSTALL)
-	@list='$(lib_LIBRARIES)'; test -n "$(libdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(libdir)' && rm -f "$$files" )"; \
-	cd "$(DESTDIR)$(libdir)" && rm -f $$files
-
-clean-libLIBRARIES:
-	-test -z "$(lib_LIBRARIES)" || rm -f $(lib_LIBRARIES)
-libcream.a: $(libcream_a_OBJECTS) $(libcream_a_DEPENDENCIES) 
-	-rm -f libcream.a
-	$(libcream_a_AR) libcream.a $(libcream_a_OBJECTS) $(libcream_a_LIBADD)
-	$(RANLIB) libcream.a
-
-mostlyclean-compile:
-	-rm -f *.$(OBJEXT)
-
-distclean-compile:
-	-rm -f *.tab.c
-
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcream_a-CreamBackwardForwardList.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcream_a-CreamView.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcream_a-marshal.Po@am__quote@
-
-.c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c $<
-
-.c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-libcream_a-CreamView.o: CreamView.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_a_CFLAGS) $(CFLAGS) -MT libcream_a-CreamView.o -MD -MP -MF $(DEPDIR)/libcream_a-CreamView.Tpo -c -o libcream_a-CreamView.o `test -f 'CreamView.c' || echo '$(srcdir)/'`CreamView.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_a-CreamView.Tpo $(DEPDIR)/libcream_a-CreamView.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamView.c' object='libcream_a-CreamView.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_a_CFLAGS) $(CFLAGS) -c -o libcream_a-CreamView.o `test -f 'CreamView.c' || echo '$(srcdir)/'`CreamView.c
-
-libcream_a-CreamView.obj: CreamView.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_a_CFLAGS) $(CFLAGS) -MT libcream_a-CreamView.obj -MD -MP -MF $(DEPDIR)/libcream_a-CreamView.Tpo -c -o libcream_a-CreamView.obj `if test -f 'CreamView.c'; then $(CYGPATH_W) 'CreamView.c'; else $(CYGPATH_W) '$(srcdir)/CreamView.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_a-CreamView.Tpo $(DEPDIR)/libcream_a-CreamView.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamView.c' object='libcream_a-CreamView.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_a_CFLAGS) $(CFLAGS) -c -o libcream_a-CreamView.obj `if test -f 'CreamView.c'; then $(CYGPATH_W) 'CreamView.c'; else $(CYGPATH_W) '$(srcdir)/CreamView.c'; fi`
-
-libcream_a-CreamBackwardForwardList.o: CreamBackwardForwardList.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_a_CFLAGS) $(CFLAGS) -MT libcream_a-CreamBackwardForwardList.o -MD -MP -MF $(DEPDIR)/libcream_a-CreamBackwardForwardList.Tpo -c -o libcream_a-CreamBackwardForwardList.o `test -f 'CreamBackwardForwardList.c' || echo '$(srcdir)/'`CreamBackwardForwardList.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_a-CreamBackwardForwardList.Tpo $(DEPDIR)/libcream_a-CreamBackwardForwardList.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamBackwardForwardList.c' object='libcream_a-CreamBackwardForwardList.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_a_CFLAGS) $(CFLAGS) -c -o libcream_a-CreamBackwardForwardList.o `test -f 'CreamBackwardForwardList.c' || echo '$(srcdir)/'`CreamBackwardForwardList.c
-
-libcream_a-CreamBackwardForwardList.obj: CreamBackwardForwardList.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_a_CFLAGS) $(CFLAGS) -MT libcream_a-CreamBackwardForwardList.obj -MD -MP -MF $(DEPDIR)/libcream_a-CreamBackwardForwardList.Tpo -c -o libcream_a-CreamBackwardForwardList.obj `if test -f 'CreamBackwardForwardList.c'; then $(CYGPATH_W) 'CreamBackwardForwardList.c'; else $(CYGPATH_W) '$(srcdir)/CreamBackwardForwardList.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_a-CreamBackwardForwardList.Tpo $(DEPDIR)/libcream_a-CreamBackwardForwardList.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamBackwardForwardList.c' object='libcream_a-CreamBackwardForwardList.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_a_CFLAGS) $(CFLAGS) -c -o libcream_a-CreamBackwardForwardList.obj `if test -f 'CreamBackwardForwardList.c'; then $(CYGPATH_W) 'CreamBackwardForwardList.c'; else $(CYGPATH_W) '$(srcdir)/CreamBackwardForwardList.c'; fi`
-
-libcream_a-marshal.o: marshal.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_a_CFLAGS) $(CFLAGS) -MT libcream_a-marshal.o -MD -MP -MF $(DEPDIR)/libcream_a-marshal.Tpo -c -o libcream_a-marshal.o `test -f 'marshal.c' || echo '$(srcdir)/'`marshal.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_a-marshal.Tpo $(DEPDIR)/libcream_a-marshal.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='marshal.c' object='libcream_a-marshal.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_a_CFLAGS) $(CFLAGS) -c -o libcream_a-marshal.o `test -f 'marshal.c' || echo '$(srcdir)/'`marshal.c
-
-libcream_a-marshal.obj: marshal.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_a_CFLAGS) $(CFLAGS) -MT libcream_a-marshal.obj -MD -MP -MF $(DEPDIR)/libcream_a-marshal.Tpo -c -o libcream_a-marshal.obj `if test -f 'marshal.c'; then $(CYGPATH_W) 'marshal.c'; else $(CYGPATH_W) '$(srcdir)/marshal.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_a-marshal.Tpo $(DEPDIR)/libcream_a-marshal.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='marshal.c' object='libcream_a-marshal.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_a_CFLAGS) $(CFLAGS) -c -o libcream_a-marshal.obj `if test -f 'marshal.c'; then $(CYGPATH_W) 'marshal.c'; else $(CYGPATH_W) '$(srcdir)/marshal.c'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -555,12 +407,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(LIBRARIES)
+all-am: Makefile
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(libdir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
@@ -588,13 +437,11 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-clean-am: clean-generic clean-libLIBRARIES mostlyclean-am
+clean-am: clean-generic mostlyclean-am
 
 distclean: distclean-recursive
-	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
-distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-tags
+distclean-am: clean-am distclean-generic distclean-tags
 
 dvi: dvi-recursive
 
@@ -614,7 +461,7 @@ install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
-install-exec-am: install-libLIBRARIES
+install-exec-am:
 
 install-html: install-html-recursive
 
@@ -637,13 +484,12 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-recursive
-	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-recursive
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic
+mostlyclean-am: mostlyclean-generic
 
 pdf: pdf-recursive
 
@@ -653,25 +499,23 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-libLIBRARIES
+uninstall-am:
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) ctags-recursive \
 	install-am install-strip tags-recursive
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
-	all all-am check check-am clean clean-generic \
-	clean-libLIBRARIES ctags ctags-recursive distclean \
-	distclean-compile distclean-generic distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-libLIBRARIES install-man \
+	all all-am check check-am clean clean-generic ctags \
+	ctags-recursive distclean distclean-generic distclean-tags \
+	distdir dvi dvi-am html html-am info info-am install \
+	install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
 	install-pdf install-pdf-am install-ps install-ps-am \
 	install-strip installcheck installcheck-am installdirs \
 	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
-	ps ps-am tags tags-recursive uninstall uninstall-am \
-	uninstall-libLIBRARIES
+	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags \
+	tags-recursive uninstall uninstall-am
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

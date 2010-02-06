@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(srcdir)/include
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(srcdir)/../../../core -I$(srcdir)/../.. -I$(srcdir)/../../curl
 DEFS = -DPREFIX=\"$(prefix)\"
 
 lib_LIBRARIES = libcream-module-ftp.a
