@@ -17,6 +17,12 @@
  *        along with Cream-Browser. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*!
+  \file WebViewModule.h
+  \brief WebKit integration
+  \author David Delassus
+ */
+
 #ifndef __CLASS_WEB_VIEW_MODULE_H
 #define __CLASS_WEB_VIEW_MODULE_H
 
@@ -38,23 +44,25 @@ G_BEGIN_DECLS
 typedef struct _ModuleWebView ModuleWebView;
 typedef struct _ModuleWebViewClass ModuleWebViewClass;
 
+/*! \struct _ModuleWebView */
 struct _ModuleWebView
 {
-     WebKitWebView parent_widget;
+     WebKitWebView parent_widget;       /*!< Parent instance */
 
-     gchar *uri;
-     gchar *title;
-     gchar *status;
-     gchar *jsmsg;
+     gchar *uri;                        /*!< URI loaded by WebKitWebView */
+     gchar *title;                      /*!< Title of the page */
+     gchar *status;                     /*!< Status of the page */
+     gchar *jsmsg;                      /*!< JavaScript message sended by the page (when execute a JavaScript scrip) */
 
-     WebKitWebInspector *inspector;
-     WebKitWebSettings *settings;
-     Favicon *ico;
+     WebKitWebInspector *inspector;     /*!< DOM Inspector */
+     WebKitWebSettings *settings;       /*!< Settings of the WebKitWebView */
+     Favicon *ico;                      /*!< Favicon of the page */
 };
 
+/*! \struct _ModuleWebViewClass */
 struct _ModuleWebViewClass
 {
-     WebKitWebViewClass parent_class;
+     WebKitWebViewClass parent_class;   /*!< Parent class */
 
      void (*uri_changed) (ModuleWebView *obj, gchar *url);
      void (*new_title) (ModuleWebView *obj, gchar *title);

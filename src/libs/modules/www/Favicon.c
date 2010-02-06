@@ -17,6 +17,12 @@
  *        along with Cream-Browser. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*!
+  \file Favicon.c
+  \brief Favicon definition
+  \author David Delassus
+ */
+
 #include "Favicon.h"
 
 static void g_object_maybe_unref (gpointer obj)
@@ -54,6 +60,13 @@ static void favicon_get_cached_path (Favicon *obj, const gchar *subfolder)
      obj->file = g_strdup (cached_path);
 }
 
+/*!
+  \fn Favicon *favicon_new (const gchar *uri)
+  \brief Download a favicon and save it in the cache
+
+  \param uri URI of the favicon
+  \return A new Favicon object
+ */
 Favicon *favicon_new (const gchar *uri)
 {
      Favicon *obj;
@@ -110,6 +123,10 @@ Favicon *favicon_new (const gchar *uri)
      return obj;
 }
 
+/*!
+  \fn void favicon_destroy (Favicon *obj)
+  \brief Free memory used by the Favicon object
+ */
 void favicon_destroy (Favicon *obj)
 {
      g_free (obj->uri);

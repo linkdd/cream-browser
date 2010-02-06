@@ -17,6 +17,12 @@
  *        along with Cream-Browser. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*!
+  \file CreamBackwardForwardList.c
+  \brief History managment
+  \author David Delassus
+ */
+
 #include "CreamBackwardForwardList.h"
 
 static gint list_compare_func (CreamHistoryItem *a, CreamHistoryItem *b)
@@ -24,6 +30,12 @@ static gint list_compare_func (CreamHistoryItem *a, CreamHistoryItem *b)
      return g_strcmp0 (a->uri, b->uri);
 }
 
+/*!
+  \fn CreamBackwardForwardList *cream_backward_forward_list_new (void)
+  \brief Initialise a new history
+
+  \return A new history
+ */
 CreamBackwardForwardList *cream_backward_forward_list_new (void)
 {
      CreamBackwardForwardList *ret = g_malloc (sizeof (CreamBackwardForwardList));
@@ -37,6 +49,15 @@ CreamBackwardForwardList *cream_backward_forward_list_new (void)
      return ret;
 }
 
+/*!
+  \fn CreamHistoryItem *cream_history_item_new (gchar *uri, gchar *title, time_t timestamp)
+  \brief Create a new history item
+
+  \param uri URI of the new hisotry item
+  \param title Title of the new history item
+  \param timestamp Timestamp when the page was last accessed
+  \return A new history item
+ */
 CreamHistoryItem *cream_history_item_new (gchar *uri, gchar *title, time_t timestamp)
 {
      CreamHistoryItem *ret = g_malloc (sizeof (CreamHistoryItem));
@@ -51,6 +72,13 @@ CreamHistoryItem *cream_history_item_new (gchar *uri, gchar *title, time_t times
      return ret;
 }
 
+/*!
+  \fn void cream_backward_forward_list_add_head_backward_item (CreamBackwardForwardList *list, CreamHistoryItem *item)
+  \brief Add a new history item in the backward history
+
+  \param list The history
+  \param item The history item
+ */
 void cream_backward_forward_list_add_head_backward_item (CreamBackwardForwardList *list, CreamHistoryItem *item)
 {
      GList *tmp = g_list_find_custom (list->backward, item, (GCompareFunc) list_compare_func);
@@ -65,13 +93,27 @@ void cream_backward_forward_list_add_head_backward_item (CreamBackwardForwardLis
      }
 }
 
-CreamHistoryItem *cream_backward_forward_list_del_head_backward_item (CreamBackwardForwardList *list, CreamHistoryItem *item)
+/*!
+  \fn CreamHistoryItem *cream_backward_forward_list_del_head_backward_item (CreamBackwardForwardList *list)
+  \brief Delete an item from the backward history
+
+  \param list The history
+  \return The item deleted
+ */
+CreamHistoryItem *cream_backward_forward_list_del_head_backward_item (CreamBackwardForwardList *list)
 {
      GList *tmp = g_list_first (list->backward);
      list->backward = g_list_remove_link (list->backward, tmp);
      return (CreamHistoryItem *) g_list_nth_data (tmp, 0);
 }
 
+/*!
+  \fn void cream_backward_forward_list_add_head_forward_item (CreamBackwardForwardList *list, CreamHistoryItem *item)
+  \brief Add a new history item in the forward history
+
+  \param list The history
+  \param item The history item
+ */
 void cream_backward_forward_list_add_head_forward_item (CreamBackwardForwardList *list, CreamHistoryItem *item)
 {
      GList *tmp = g_list_find_custom (list->forward, item, (GCompareFunc) list_compare_func);
@@ -86,7 +128,14 @@ void cream_backward_forward_list_add_head_forward_item (CreamBackwardForwardList
      }
 }
 
-CreamHistoryItem *cream_backward_forward_list_del_forward_item (CreamBackwardForwardList *list, CreamHistoryItem *item)
+/*!
+  \fn CreamHistoryItem *cream_backward_forward_list_del_forward_item (CreamBackwardForwardList *list)
+  \brief Delete an item from the forward history
+
+  \param list The history
+  \return Ther item deleted
+ */
+CreamHistoryItem *cream_backward_forward_list_del_forward_item (CreamBackwardForwardList *list)
 {
      GList *tmp = g_list_first (list->forward);
      list->forward = g_list_remove_link (list->forward, tmp);

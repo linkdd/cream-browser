@@ -17,6 +17,15 @@
  *        along with Cream-Browser. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*!
+  \file CreamView.c
+  \brief CreamView object
+  \author David Delassus
+
+  This object will load an object according to
+  the used protocol.
+ */
+
 #ifndef __CLASS_CREAM_VIEW_H
 #define __CLASS_CREAM_VIEW_H
 
@@ -41,25 +50,27 @@ G_BEGIN_DECLS
 typedef struct _CreamView CreamView;
 typedef struct _CreamViewClass CreamViewClass;
 
+/*! \struct _CreamView */
 struct _CreamView
 {
-     GtkScrolledWindow scroll;
+     GtkScrolledWindow scroll;          /*!< Parent instance */
 
-     GtkWidget *content;
+     GtkWidget *content;                /*!< Content of the CreamView */
      GtkAdjustment *adjust_h;
      GtkAdjustment *adjust_v;
 
-     gchar *uri;
-     gchar *title;
-     gchar *status;
-     gboolean view_source_mode;
+     gchar *uri;                        /*!< URI of the loaded page */
+     gchar *title;                      /*!< Title of the loaded page */
+     gchar *status;                     /*!< Status of the loaded page */
+     gboolean view_source_mode;         /*!< Viewing mode (page's source if TRUE) */
 
-     CreamBackwardForwardList *history;
+     CreamBackwardForwardList *history; /*!< History */
 };
 
+/*! \struct _CreamViewClass */
 struct _CreamViewClass
 {
-     GtkScrolledWindowClass parent_class;
+     GtkScrolledWindowClass parent_class;    /*!< Parent class */
 
      void (*uri_changed) (CreamView *obj, gchar *url);
      void (*new_title) (CreamView *obj, gchar *title);

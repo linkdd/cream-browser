@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(srcdir)/../../core -I$(srcdir)/modules -I$(srcdir)/curl
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs/modules -I$(top_srcdir)/src/libs/curl
 DEFS = -DPREFIX=\"$(prefix)\"
 
 lib_LIBRARIES = libcream-curl.a

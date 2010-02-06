@@ -17,6 +17,12 @@
  *        along with Cream-Browser. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*!
+  \file WebKitWebView.c
+  \brief WebKit integration
+  \author David Delassus
+ */
+
 #include "WebViewModule.h"
 #include <marshal.h>
 
@@ -134,6 +140,12 @@ static void module_web_view_init (ModuleWebView *obj)
      obj->ico = NULL;
 }
 
+/*!
+  \fn GtkWidget *module_web_view_new (void)
+  \brief Create a new ModuleWebView object
+
+  \return A new ModuleWebView
+ */
 GtkWidget *module_web_view_new (void)
 {
      ModuleWebView *obj = gtk_type_new (module_web_view_get_type ());
@@ -334,6 +346,14 @@ static void module_web_view_cb_hoverlink (ModuleWebView *webview, gchar *title, 
 }
 
 /* ModuleWebView methods */
+
+/*!
+  \fn void module_web_view_load_uri (ModuleWebView *view, const gchar *uri)
+  \brief Load new URI
+
+  \param view A ModuleWebView
+  \param uri New URI to load
+ */
 void module_web_view_load_uri (ModuleWebView *view, const gchar *uri)
 {
      webkit_web_view_load_uri (WEBKIT_WEB_VIEW (view), uri);
@@ -377,6 +397,13 @@ static void jsapi_evaluate_script (ModuleWebView *view, const gchar *script, gch
                *value = jsapi_ref_to_string (context, val);
 }
 
+/*!
+  \fn void module_web_view_js_script_execute (ModuleWebView *view, const gchar *script)
+  \brief Execute JavaScript script
+
+  \param view A ModuleWebView
+  \param script Script to execute
+ */
 void module_web_view_js_script_execute (ModuleWebView *view, const gchar *script)
 {
      gchar *value = NULL, *message = NULL;
@@ -401,67 +428,128 @@ void module_web_view_js_script_execute (ModuleWebView *view, const gchar *script
      }
 }
 
+/*!
+  \fn const gchar *module_web_view_get_uri (ModuleWebView *view)
+  \brief Get the URI of the loaded page
+ */
 const gchar *module_web_view_get_uri (ModuleWebView *view)
 {
      return (const gchar *) view->uri;
 }
 
+/*!
+  \fn const gchar *module_web_view_get_title (ModuleWebView *view)
+  \brief Get the title of the loaded page
+ */
 const gchar *module_web_view_get_title (ModuleWebView *view)
 {
      return (const gchar *) view->title;
 }
 
+/*!
+  \fn const gchar *module_web_view_get_jsmsg (ModuleWebView *view)
+  \brief Get the latest JavaScript message
+ */
 const gchar *module_web_view_get_jsmsg (ModuleWebView *view)
 {
      return (const gchar *) view->jsmsg;
 }
 
+/*!
+  \fn const gchar *module_web_view_get_status (ModuleWebView *view)
+  \brief Get the status of the loaded page
+ */
 const gchar *module_web_view_get_status (ModuleWebView *view)
 {
      return (const gchar *) view->status;
 }
 
+/*!
+  \fn gboolean module_web_view_get_view_source_mode (ModuleWebView *view)
+  \brief Check if we are seeing the page's source
+ */
 gboolean module_web_view_get_view_source_mode (ModuleWebView *view)
 {
      return webkit_web_view_get_view_source_mode (WEBKIT_WEB_VIEW (view));
 }
 
+/*!
+  \fn void module_web_view_set_view_source_mode (ModuleWebView *view, gboolean mode)
+  \brief Set the view mode
+
+  \param view A ModuleWebView object
+  \param mode TRUE if you want to see the page's source
+ */
 void module_web_view_set_view_source_mode (ModuleWebView *view, gboolean mode)
 {
      webkit_web_view_set_view_source_mode (WEBKIT_WEB_VIEW (view), mode);
 }
 
+/*!
+  \fn gfloat module_web_view_get_zoom_level (ModuleWebView *view)
+  \brief Get the zoom level
+ */
 gfloat module_web_view_get_zoom_level (ModuleWebView *view)
 {
      return webkit_web_view_get_zoom_level (WEBKIT_WEB_VIEW (view));
 }
 
+/*!
+  \fn void module_web_view_zoom_in (ModuleWebView *view)
+  \brief Zoom in the page
+ */
 void module_web_view_zoom_in (ModuleWebView *view)
 {
      webkit_web_view_zoom_in (WEBKIT_WEB_VIEW (view));
 }
 
+/*!
+  \fn void module_web_view_zoom_out (ModuleWebView *view)
+  \brief Zoom out the page
+ */
 void module_web_view_zoom_out (ModuleWebView *view)
 {
      webkit_web_view_zoom_out (WEBKIT_WEB_VIEW (view));
 }
 
+/*!
+  \fn void module_web_view_set_zoom_level (ModuleWebView *view, gfloat zoom)
+  \brief Set the page's zoom level
+
+  \param view A ModuleWebView
+  \param zoom The new zoom level
+ */
 void module_web_view_set_zoom_level (ModuleWebView *view, gfloat zoom)
 {
      webkit_web_view_set_zoom_level (WEBKIT_WEB_VIEW (view), zoom);
 }
 
+/*!
+  \fn WebKitWebInspector *module_web_view_get_web_inspector (ModuleWebView *view)
+  \brief Get the DOM inspector of the page
+ */
 WebKitWebInspector *module_web_view_get_web_inspector (ModuleWebView *view)
 {
      return view->inspector;
 }
 
+/*!
+  \fn WebKitWebSettings *module_web_view_get_settings (ModuleWebView *view)
+  \brief Get the settings of the WebKitWebView
+ */
 WebKitWebSettings *module_web_view_get_settings (ModuleWebView *view)
 {
      return view->settings;
 }
 
+/*!
+  \fn Favicon *module_web_view_get_favicon (ModuleWebView *view)
+  \brief Get the page's favicon
+
+  \return A Favicon object containing the page's favicon
+ */
 Favicon *module_web_view_get_favicon (ModuleWebView *view)
 {
      return view->ico;
 }
+

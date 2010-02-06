@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -I$(srcdir)/../libs -I$(srcdir)/../libs/CreamView -I$(srcdir)/../libs/modules -I$(srcdir)/../libs/curl
+AM_CPPFLAGS = -I..//libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/modules -I$(top_srcdir)/src/libs/curl
 DEFS = -DPREFIX=\"$(prefix)\"
 
 bin_PROGRAMS = cream creamctl

@@ -178,7 +178,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(srcdir)/../../../core -I$(srcdir)/../.. -I$(srcdir)/../../curl
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/curl
 lib_LIBRARIES = libcream-module-ftp.a
 libcream_module_ftp_a_SOURCES = FTPModule.c FTPModule.h
 libcream_module_ftp_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CLFAGS)

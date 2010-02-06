@@ -17,6 +17,15 @@
  *        along with Cream-Browser. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*!
+  \file CreamView.c
+  \brief CreamView object
+  \author David Delassus
+
+  This object will load an object according to
+  the used protocol.
+ */
+
 #include "CreamView.h"
 #include <marshal.h>
 #include <stdlib.h>
@@ -35,6 +44,7 @@ static gboolean cream_view_new_download_cb (GtkWidget *w, WebKitDownload *downlo
 static gboolean cream_view_switch_module_cb (GtkWidget *w, gchar *new_uri, gpointer data);
 
 /* Signals */
+
 enum
 {
      URI_CHANGED_SIGNAL,
@@ -47,11 +57,11 @@ enum
 static guint cream_view_signals[NB_SIGNALS] = { 0 };
 /* End of signals */
 
-/* Protocols */
+/*! \struct protocols_t */
 struct protocols_t
 {
-     gchar *prefix;
-     void (*func) (CreamView *obj, gchar *uri);
+     gchar *prefix;                               /*!< protocol's prefix, for example: http:// */
+     void (*func) (CreamView *obj, gchar *uri);   /*!< function to call when the protocol is used */
 };
 
 static void cream_view_mailto_callback (CreamView *obj, gchar *uri);
@@ -187,6 +197,12 @@ static void cream_view_ftp_callback (CreamView *obj, gchar *uri)
      module_ftp_load_uri (MODULE_FTP (obj->content), uri);
 }
 
+/*!
+  \fn static void cream_view_load_content (CreamView *view)
+  \brief Load an object according to the used protocol
+
+  \param view The CreamView object
+ */
 static void cream_view_load_content (CreamView *view)
 {
      gchar *uri = (view->uri[0] == '/' ? g_strconcat ("file://", view->uri, NULL) : view->uri);
@@ -216,6 +232,12 @@ static void cream_view_load_content (CreamView *view)
      NULL);
 }
 
+/*!
+  \fn GtkWidget *cream_view_new (void)
+  \brief Create a new CreamView object
+
+  \return The new CreamView object
+ */
 GtkWidget *cream_view_new (void)
 {
      CreamView *view = gtk_type_new (cream_view_get_type ());
@@ -230,6 +252,14 @@ GtkWidget *cream_view_new (void)
 }
 
 /* methods */
+
+/*!
+  \fn void cream_view_load_uri (CreamView *obj, const gchar *uri)
+  \brief Load a new URI
+
+  \param obj The CreamView object
+  \param uri The new URI to load
+ */
 void cream_view_load_uri (CreamView *obj, const gchar *uri)
 {
      if (uri != NULL)
@@ -242,66 +272,103 @@ void cream_view_load_uri (CreamView *obj, const gchar *uri)
      gtk_container_add (GTK_CONTAINER (obj), obj->content);
 }
 
+/*!
+  \fn GtkWidget *cream_view_get_content (CreamView *obj)
+  \brief Get the object which show the URI previously loaded
+
+  \param obj The CreamView object
+  \return The CreamView's content
+ */
 GtkWidget *cream_view_get_content (CreamView *obj)
 {
      return obj->content;
 }
 
+/*!
+  \fn gboolean cream_view_get_view_source_mode (CreamView *obj)
+  \brief Check if we are seeing the page's source
+ */
 gboolean cream_view_get_view_source_mode (CreamView *obj)
 {
      return obj->view_source_mode;
 }
 
+/*!
+  \fn void cream_view_set_view_source_mode (CreamView *obj, gboolean mode)
+  \brief Tell the CreamView to show the page's source or not
+
+  \param obj
+  \param mode TRUE if you want show the page's source
+ */
 void cream_view_set_view_source_mode (CreamView *obj, gboolean mode)
 {
      obj->view_source_mode = mode;
 }
 
+/*! \fn gboolean cream_view_can_go_back (CreamView *obj) */
 gboolean cream_view_can_go_back (CreamView *obj)
 {
      return FALSE; /* TODO */
 }
 
+/*! \fn gboolean cream_view_can_go_forward (CreamView *obj) */
 gboolean cream_view_can_go_forward (CreamView *obj)
 {
      return FALSE; /* TODO */
 }
 
+/*! \fn void cream_view_go_back (CreamView *obj) */
 void cream_view_go_back (CreamView *obj)
 {
      /* TODO */;
 }
 
+/*! \fn void cream_view_go_forward (CreamView *obj) */
 void cream_view_go_forward (CreamView *obj)
 {
      /* TODO */;
 }
 
+/*! \fn CreamBackwardForwardList *cream_view_get_backward_forward_list (CreamView *obj) */
 CreamBackwardForwardList *cream_view_get_backward_forward_list (CreamView *obj)
 {
      return obj->history;
 }
 
+/*! \fn GtkAdjustment *cream_view_get_hadjustment (CreamView *obj) */
 GtkAdjustment *cream_view_get_hadjustment (CreamView *obj)
 {
      return obj->adjust_h;
 }
 
+/*! \fn GtkAdjustment *cream_view_get_vadjustment (CreamView *obj) */
 GtkAdjustment *cream_view_get_vadjustment (CreamView *obj)
 {
      return obj->adjust_v;
 }
 
+/*!
+  \fn const gchar *cream_view_get_uri (CreamView *obj)
+  \brief Get the URI of the loaded page
+ */
 const gchar *cream_view_get_uri (CreamView *obj)
 {
      return (const gchar *) obj->uri;
 }
 
+/*!
+  \fn const gchar *cream_view_get_title (CreamView *obj)
+  \brief Get the title of the loaded page
+ */
 const gchar *cream_view_get_title (CreamView *obj)
 {
      return (const gchar *) obj->title;
 }
 
+/*!
+  \fn const gchar *cream_view_get_status (CreamView *obj)
+  \brief Get the status message of the loaded page (you can show it in a statusbar)
+ */
 const gchar *cream_view_get_status (CreamView *obj)
 {
      return (const gchar *) obj->status;

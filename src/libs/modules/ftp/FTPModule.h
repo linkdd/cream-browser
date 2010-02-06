@@ -17,6 +17,12 @@
  *        along with Cream-Browser. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*!
+  \file FTPModule.h
+  \brief Module FTP header
+  \author David Delassus
+ */
+
 #ifndef __CLASS_FTP_MODULE_H
 #define __CLASS_FTP_MODULE_H
 

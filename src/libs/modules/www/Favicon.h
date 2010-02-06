@@ -17,6 +17,12 @@
  *        along with Cream-Browser. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*!
+  \file Favicon.h
+  \brief Favicon definition
+  \author David Delassus
+ */
+
 #ifndef __CLASS_FAVICON_H
 #define __CLASS_FAVICON_H
 
@@ -24,15 +30,16 @@
 
 typedef struct _Favicon Favicon;
 
+/*! \struct _Favicon */
 struct _Favicon
 {
-     gchar *uri;
-     gchar *file;
-     GdkPixbuf *ico;
-     GtkWidget *img;
+     gchar *uri;         /*!< URI of the favicon */
+     gchar *file;        /*!< File on the disk */
+     GdkPixbuf *ico;     /*!< Icon */
+     GtkWidget *img;     /*!< GtkWidget containing the icon */
 
-     GHashTable *memory;
-     gchar *cache_path;
+     GHashTable *memory; /*!< Memory containing all the favicon previously loaded */
+     gchar *cache_path;  /*!< Path to the cache (to save the favicon in) */
 };
 
 Favicon *favicon_new (const gchar *uri);
