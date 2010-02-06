@@ -41,9 +41,7 @@ int main (int argc, char **argv)
      GError *error = NULL;
      GOptionContext* context = g_option_context_new ("- utility for controlling and interacting with Cream-Browser through its socket file");
      g_option_context_add_main_entries (context, entries, NULL);
-     g_option_context_add_group (context, gtk_get_option_group (TRUE));
      g_option_context_parse (context, &argc, &argv, &error);
-
 
      if (sockpath && command)
      {
@@ -87,7 +85,7 @@ int main (int argc, char **argv)
      }
      else
      {
-          fprintf (stderr, "Usage: Cream-Browserctrl -s /path/to/socket -c \"command\"");
+          fprintf (stderr, "Usage: creamctl -s /path/to/socket -c \"command\"\n");
           return EXIT_FAILURE;
      }
 }
