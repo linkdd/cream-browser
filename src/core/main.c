@@ -65,6 +65,9 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      g_mkdir_with_parents (g_build_filename (home, ".cream-browser", NULL), 0711);
      g_mkdir_with_parents (g_build_filename (home, ".cream-browser", "downloads", NULL), 0755);
 
+     /* init CURL before any thread started */
+     curl_global_init (CURL_GLOBAL_DEFAULT);
+
      /* init GTK/Glib */
      gtk_init (argc, argv);
 
@@ -87,6 +90,8 @@ void cream_release (int exit_code)
      free (global.browser.encoding);
 
      gtk_main_quit ();
+
+     curl_global_cleanup ();
      exit (exit_code);
 }
 

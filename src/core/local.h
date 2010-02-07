@@ -25,6 +25,7 @@
 
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
+#include <curl/curl.h>
 
 #include "CreamTabbed.h"
 
