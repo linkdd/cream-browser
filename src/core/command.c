@@ -17,30 +17,9 @@
  *        along with Cream-Browser. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LOCAL_H
-#define __LOCAL_H
+#include "local.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <gtk/gtk.h>
-#include <webkit/webkit.h>
-#include <curl/curl.h>
-#include <gnet.h>
-
-#include "CreamTabbed.h"
-
-#include "structs.h"
-#include "interface.h"
-#include "callbacks.h"
-#include "command.h"
-
-#define CREAM_FILE(path)      g_build_filename (g_get_home_dir (), ".cream-browser", path, NULL)
-
-extern struct global_t global;
-
-gboolean cream_init (int *argc, char ***argv, GError **error);
-void cream_release (int exit_code);
-
-#endif /* __LOCAL_H */
+void cb_inputbox (GtkEntry *inputbox, CreamTabbed *obj)
+{
+     ;
+}

@@ -89,9 +89,6 @@ GtkWidget *cream_interface_init (void)
 
      global.notebook = GTK_NOTEBOOK (gtk_notebook_new ());
      gtk_container_add (GTK_CONTAINER (main_window), GTK_WIDGET (global.notebook));
-     notebook_append_page ("http://google.fr");
-     notebook_append_page ("http://linkdd.ydb.me");
-     notebook_append_page ("http://cream-browser.net");
 
      /* restore cookies */
      global.browser.cookies = soup_cookie_jar_text_new (CREAM_FILE ("cookies.txt"), FALSE);

@@ -1,3 +1,28 @@
+/*
+*        Copyright (c) 2010, David Delassus <linkdd@ydb.me>
+*
+*        This file is part of Cream-Browser
+*
+*        Cream-Browser is free software; you can redistribute it and/or modify
+*        it under the terms of the GNU General Public License as published by
+*        the Free Software Foundation, either version 3 of the License, or
+*        (at your option) any later version.
+*
+*        Cream-Browser is distributed in the hope that it will be useful
+*        but WITHOUT ANY WARRANTY; without even the implied warranty of
+*        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*        GNU General Public License for more details.
+*
+*        You should have received a copy of the GNU General Public License
+*        along with Cream-Browser. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*!
+  \file CreamTabbed.c
+  \brief CreamTabbed object
+  \author David Delassus
+ */
+
 #include "CreamTabbed.h"
 
 enum
@@ -67,6 +92,11 @@ static void cream_tabbed_init (CreamTabbed *obj)
      obj->adjust_v = NULL;
 }
 
+/*!
+  \fn GtkWidget *cream_tabbed_new (void)
+  \brief Create a new CreamTabbed object which can be added to the notebook
+  \return A new CreamTabbed object
+ */
 GtkWidget *cream_tabbed_new (void)
 {
      CreamTabbed *obj = gtk_type_new (cream_tabbed_get_type ());
@@ -135,28 +165,54 @@ static void cream_tabbed_init_inputbox (CreamTabbed *obj)
      /* border */
      gtk_entry_set_inner_border (GTK_ENTRY (obj->inputbox), NULL);
      gtk_entry_set_has_frame (GTK_ENTRY (obj->inputbox), FALSE);
+
+     g_signal_connect (G_OBJECT (obj->inputbox), "activate", G_CALLBACK (cb_inputbox), obj);
 }
 
+/*!
+  \fn void cream_tabbed_load_uri (CreamTabbed *obj, gchar *uri)
+  \brief Load a new URI in the CreamView
+
+  \param obj The CreamTabbed object
+  \param uri New URI to load
+ */
 void cream_tabbed_load_uri (CreamTabbed *obj, gchar *uri)
 {
      cream_view_load_uri (CREAM_VIEW (obj->creamview), uri);
 }
 
+/*!
+  \fn const gchar *cream_tabbed_get_uri (CreamTabbed *obj)
+  \brief Get the loaded URI of the CreamView
+ */
 const gchar *cream_tabbed_get_uri (CreamTabbed *obj)
 {
      return cream_view_get_uri (CREAM_VIEW (obj->creamview));
 }
 
+/*!
+  \fn const gchar *cream_tabbed_get_title (CreamTabbed *obj)
+  \brief Get the title of the loaded URI
+ */
 const gchar *cream_tabbed_get_title (CreamTabbed *obj)
 {
      return cream_view_get_title (CREAM_VIEW (obj->creamview));
 }
 
+/*!
+  \fn const gchar *cream_tabbed_get_status (CreamTabbed *obj)
+  \brief Get the status message of the loaded URI
+ */
 const gchar *cream_tabbed_get_status (CreamTabbed *obj)
 {
      return cream_view_get_status (CREAM_VIEW (obj->creamview));
 }
 
+/*!
+  \fn GtkWidget *cream_tabbed_get_favicon (CreamTabbed *obj)
+  \brief Get the favicon of the loaded URI
+  \return A GtkImage containing the favicon
+ */
 GtkWidget *cream_tabbed_get_favicon (CreamTabbed *obj)
 {
      return cream_view_get_favicon (CREAM_VIEW (obj->creamview));

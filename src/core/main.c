@@ -113,6 +113,9 @@ int main (int argc, char **argv)
 
      win = cream_interface_init ();
 
+     notebook_append_page ("http://cream-browser.net");
+     notebook_append_page ("ftp://mirrors.kernel.org/gnu/");
+
      gtk_widget_show_all (win);
      gtk_main ();
      return 0;
