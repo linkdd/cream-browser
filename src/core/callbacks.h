@@ -24,5 +24,7 @@
 void signal_handler (int signum);
 
 void cb_cream_destroy (GtkWidget *emit, gpointer data);
+void cb_cream_update_notebook_title (GtkWidget *child, gpointer data);
+void cb_cream_notebook_close_page (GtkButton *button, GtkWidget *child);
 
 #endif /* __CALLBACKS_H */

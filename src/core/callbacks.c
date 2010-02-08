@@ -36,4 +36,15 @@ void cb_cream_destroy (GtkWidget *emit, gpointer data)
      cream_release (EXIT_SUCCESS);
 }
 
+void cb_cream_update_notebook_title (GtkWidget *child, gpointer data)
+{
+     gtk_notebook_set_tab_label (global.notebook, child, cream_create_tab_label (CREAM_TABBED (child)));
+}
+
+void cb_cream_notebook_close_page (GtkButton *button, GtkWidget *child)
+{
+     gtk_notebook_remove_page (global.notebook,
+          gtk_notebook_page_num (global.notebook, child)
+     );
+}
 

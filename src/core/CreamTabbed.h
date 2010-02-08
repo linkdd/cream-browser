@@ -52,6 +52,8 @@ const gchar *cream_tabbed_get_uri (CreamTabbed *obj);
 const gchar *cream_tabbed_get_title (CreamTabbed *obj);
 const gchar *cream_tabbed_get_status (CreamTabbed *obj);
 
+GtkWidget *cream_tabbed_get_favicon (CreamTabbed *obj);
+
 G_END_DECLS
 
 #endif /* __CLASS_CREAM_TABBED_H */

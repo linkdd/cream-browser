@@ -43,6 +43,8 @@ struct global_t
 
           SoupCookieJar *cookies;
      } browser;
+
+     GtkNotebook *notebook;
 };
 
 #endif /* __STRUCTS_H */

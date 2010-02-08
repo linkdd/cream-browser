@@ -115,6 +115,8 @@ const gchar *cream_view_get_uri (CreamView *obj);
 const gchar *cream_view_get_title (CreamView *obj);
 const gchar *cream_view_get_status (CreamView *obj);
 
+GtkWidget *cream_view_get_favicon (CreamView *obj);
+
 G_END_DECLS
 
 #endif /* __CLASS_CREAM_VIEW_H */

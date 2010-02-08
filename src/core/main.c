@@ -48,6 +48,8 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      global.browser.homepage   = NULL;
      global.browser.encoding   = NULL;
 
+     global.notebook = NULL;
+
      signal (SIGSEGV, signal_handler);
 
      /* parse command line */
@@ -64,6 +66,8 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      home = g_get_home_dir ();
      g_mkdir_with_parents (g_build_filename (home, ".cream-browser", NULL), 0711);
      g_mkdir_with_parents (g_build_filename (home, ".cream-browser", "downloads", NULL), 0755);
+
+     gnet_init ();
 
      /* init CURL before any thread started */
      curl_global_init (CURL_GLOBAL_DEFAULT);

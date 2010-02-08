@@ -19,32 +19,79 @@
 
 #include "local.h"
 
-void notebook_append_page (GtkNotebook *notebook, gchar *uri)
+GtkWidget *cream_create_tab_label (CreamTabbed *obj)
+{
+     GtkWidget *hbox, *label, *button;
+
+     gchar *txt = g_strdup (cream_tabbed_get_title (obj));
+     GtkRcStyle *rcstyle;
+     GtkWidget *image;
+
+     hbox = gtk_hbox_new (FALSE, 0);
+
+     /*gtk_box_pack_start (GTK_BOX (hbox), cream_tabbed_get_favicon (obj), FALSE, FALSE, 0);*/
+
+     /* truncate title */
+     if (txt == NULL)
+          txt = g_strdup ("about:blank");
+
+     if (strlen (txt) > 25)
+     {
+          txt[24] = 0;
+          txt = g_strdup_printf ("%s...", txt);
+     }
+
+     label = gtk_label_new (txt);
+     gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 5);
+
+     /* button */
+     image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+     gtk_misc_set_alignment (GTK_MISC (image), 0.0, 0.0);
+
+     rcstyle = gtk_rc_style_new ();
+     rcstyle->xthickness = rcstyle->ythickness = 0;
+
+     button = gtk_button_new ();
+     gtk_button_set_image (GTK_BUTTON (button), image);
+     gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
+
+     gtk_widget_modify_style (button, rcstyle);
+     g_object_unref (rcstyle);
+
+     gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
+
+     gtk_widget_show_all (hbox);
+
+     g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (cb_cream_notebook_close_page), GTK_WIDGET (obj));
+
+     return hbox;
+}
+
+void notebook_append_page (gchar *uri)
 {
      GtkWidget *creamtabbed = cream_tabbed_new ();
      cream_tabbed_load_uri (CREAM_TABBED (creamtabbed), uri);
-     GtkWidget *label = gtk_label_new (cream_tabbed_get_title (CREAM_TABBED (creamtabbed)));
 
-     gtk_notebook_append_page (notebook, creamtabbed, label);
+     gtk_notebook_append_page (global.notebook, creamtabbed, cream_create_tab_label (CREAM_TABBED (creamtabbed)));
+
+     g_signal_connect (G_OBJECT (creamtabbed), "update-notebook-title", G_CALLBACK (cb_cream_update_notebook_title), NULL);
 }
 
 GtkWidget *cream_interface_init (void)
 {
      GdkGeometry hints = { 1, 1 }; /* GDK_HINT_MIN_SIZE for main_window */
-     GtkWidget *main_window;
-     GtkWidget *notebook;
 
      /* create main window */
-     main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+     GtkWidget *main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
      gtk_window_set_title (GTK_WINDOW (main_window), "Cream-Browser");
      gtk_window_set_default_size (GTK_WINDOW (main_window), 800, 600);
      gtk_window_set_geometry_hints (GTK_WINDOW (main_window), NULL, &hints, GDK_HINT_MIN_SIZE);
 
-     notebook = gtk_notebook_new ();
-     gtk_container_add (GTK_CONTAINER (main_window), notebook);
-     notebook_append_page (GTK_NOTEBOOK (notebook), "http://google.fr");
-     notebook_append_page (GTK_NOTEBOOK (notebook), "http://linkdd.ydb.me");
-     notebook_append_page (GTK_NOTEBOOK (notebook), "http://cream-browser.net");
+     global.notebook = GTK_NOTEBOOK (gtk_notebook_new ());
+     gtk_container_add (GTK_CONTAINER (main_window), GTK_WIDGET (global.notebook));
+     notebook_append_page ("http://google.fr");
+     notebook_append_page ("http://linkdd.ydb.me");
+     notebook_append_page ("http://cream-browser.net");
 
      /* restore cookies */
      global.browser.cookies = soup_cookie_jar_text_new (CREAM_FILE ("cookies.txt"), FALSE);
