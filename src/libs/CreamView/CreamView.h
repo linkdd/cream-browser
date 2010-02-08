@@ -54,10 +54,10 @@ typedef struct _CreamViewClass CreamViewClass;
 struct _CreamView
 {
      GtkScrolledWindow scroll;          /*!< Parent instance */
-
-     GtkWidget *content;                /*!< Content of the CreamView */
      GtkAdjustment *adjust_h;
      GtkAdjustment *adjust_v;
+
+     GtkWidget *content;                /*!< Content of the CreamView */
 
      gchar *uri;                        /*!< URI of the loaded page */
      gchar *title;                      /*!< Title of the loaded page */
@@ -73,9 +73,25 @@ struct _CreamViewClass
      GtkScrolledWindowClass parent_class;    /*!< Parent class */
 
      void (*uri_changed) (CreamView *obj, gchar *url);
+     /*!< The "uri-changed" signal is emitted when the module load a new URL
+       \param url The new URL
+      */
+
      void (*new_title) (CreamView *obj, gchar *title);
+     /*!< The "new-title" signal is emitted when the page change its title
+       \param title The new page's title
+      */
+
      void (*status_changed) (CreamView *obj, gchar *status);
+     /*!< The "status-changed" signal is emitted when the module send a new message for the statusbar
+       \param status The status message
+      */
+
      gboolean (*new_download) (CreamView *obj, WebKitDownload *download);
+     /*!< The "new-download" signal is emitted when the module request a new download
+       \param download WebKit object which represent the download request
+       \return TRUE if you handle the signal
+      */
 };
 
 GtkType cream_view_get_type (void);

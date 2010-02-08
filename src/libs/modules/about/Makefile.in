@@ -69,8 +69,7 @@ AR = ar
 ARFLAGS = cru
 libcream_module_about_a_AR = $(AR) $(ARFLAGS)
 libcream_module_about_a_LIBADD =
-am_libcream_module_about_a_OBJECTS =  \
-	libcream_module_about_a-AboutModule.$(OBJEXT)
+am_libcream_module_about_a_OBJECTS = AboutModule.$(OBJEXT)
 libcream_module_about_a_OBJECTS =  \
 	$(am_libcream_module_about_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -106,6 +105,8 @@ ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EXEEXT = @EXEEXT@
+GNET_CFLAGS = @GNET_CFLAGS@
+GNET_LIBS = @GNET_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
 INSTALL = @INSTALL@
@@ -179,10 +180,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(srcdir)/include
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/modules
 lib_LIBRARIES = libcream-module-about.a
 libcream_module_about_a_SOURCES = AboutModule.c AboutModule.h
-libcream_module_about_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -260,7 +260,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcream_module_about_a-AboutModule.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AboutModule.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -275,20 +275,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-libcream_module_about_a-AboutModule.o: AboutModule.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_about_a_CFLAGS) $(CFLAGS) -MT libcream_module_about_a-AboutModule.o -MD -MP -MF $(DEPDIR)/libcream_module_about_a-AboutModule.Tpo -c -o libcream_module_about_a-AboutModule.o `test -f 'AboutModule.c' || echo '$(srcdir)/'`AboutModule.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_module_about_a-AboutModule.Tpo $(DEPDIR)/libcream_module_about_a-AboutModule.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='AboutModule.c' object='libcream_module_about_a-AboutModule.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_about_a_CFLAGS) $(CFLAGS) -c -o libcream_module_about_a-AboutModule.o `test -f 'AboutModule.c' || echo '$(srcdir)/'`AboutModule.c
-
-libcream_module_about_a-AboutModule.obj: AboutModule.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_about_a_CFLAGS) $(CFLAGS) -MT libcream_module_about_a-AboutModule.obj -MD -MP -MF $(DEPDIR)/libcream_module_about_a-AboutModule.Tpo -c -o libcream_module_about_a-AboutModule.obj `if test -f 'AboutModule.c'; then $(CYGPATH_W) 'AboutModule.c'; else $(CYGPATH_W) '$(srcdir)/AboutModule.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_module_about_a-AboutModule.Tpo $(DEPDIR)/libcream_module_about_a-AboutModule.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='AboutModule.c' object='libcream_module_about_a-AboutModule.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_about_a_CFLAGS) $(CFLAGS) -c -o libcream_module_about_a-AboutModule.obj `if test -f 'AboutModule.c'; then $(CYGPATH_W) 'AboutModule.c'; else $(CYGPATH_W) '$(srcdir)/AboutModule.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

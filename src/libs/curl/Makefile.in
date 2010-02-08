@@ -69,7 +69,7 @@ AR = ar
 ARFLAGS = cru
 libcream_curl_a_AR = $(AR) $(ARFLAGS)
 libcream_curl_a_LIBADD =
-am_libcream_curl_a_OBJECTS = libcream_curl_a-CurlModule.$(OBJEXT)
+am_libcream_curl_a_OBJECTS = CurlModule.$(OBJEXT)
 libcream_curl_a_OBJECTS = $(am_libcream_curl_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
@@ -104,6 +104,8 @@ ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EXEEXT = @EXEEXT@
+GNET_CFLAGS = @GNET_CFLAGS@
+GNET_LIBS = @GNET_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
 INSTALL = @INSTALL@
@@ -180,7 +182,6 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs/modules -I$(top_srcdir)/src/libs/curl
 lib_LIBRARIES = libcream-curl.a
 libcream_curl_a_SOURCES = CurlModule.c CurlModule.h
-libcream_curl_a_CFLAGS = $(GTK_CFLAGS) $(CURL_CFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -258,7 +259,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcream_curl_a-CurlModule.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CurlModule.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -273,20 +274,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-libcream_curl_a-CurlModule.o: CurlModule.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_curl_a_CFLAGS) $(CFLAGS) -MT libcream_curl_a-CurlModule.o -MD -MP -MF $(DEPDIR)/libcream_curl_a-CurlModule.Tpo -c -o libcream_curl_a-CurlModule.o `test -f 'CurlModule.c' || echo '$(srcdir)/'`CurlModule.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_curl_a-CurlModule.Tpo $(DEPDIR)/libcream_curl_a-CurlModule.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CurlModule.c' object='libcream_curl_a-CurlModule.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_curl_a_CFLAGS) $(CFLAGS) -c -o libcream_curl_a-CurlModule.o `test -f 'CurlModule.c' || echo '$(srcdir)/'`CurlModule.c
-
-libcream_curl_a-CurlModule.obj: CurlModule.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_curl_a_CFLAGS) $(CFLAGS) -MT libcream_curl_a-CurlModule.obj -MD -MP -MF $(DEPDIR)/libcream_curl_a-CurlModule.Tpo -c -o libcream_curl_a-CurlModule.obj `if test -f 'CurlModule.c'; then $(CYGPATH_W) 'CurlModule.c'; else $(CYGPATH_W) '$(srcdir)/CurlModule.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_curl_a-CurlModule.Tpo $(DEPDIR)/libcream_curl_a-CurlModule.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CurlModule.c' object='libcream_curl_a-CurlModule.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_curl_a_CFLAGS) $(CFLAGS) -c -o libcream_curl_a-CurlModule.obj `if test -f 'CurlModule.c'; then $(CYGPATH_W) 'CurlModule.c'; else $(CYGPATH_W) '$(srcdir)/CurlModule.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

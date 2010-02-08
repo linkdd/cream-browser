@@ -69,9 +69,8 @@ AR = ar
 ARFLAGS = cru
 libcream_module_webview_a_AR = $(AR) $(ARFLAGS)
 libcream_module_webview_a_LIBADD =
-am_libcream_module_webview_a_OBJECTS =  \
-	libcream_module_webview_a-WebViewModule.$(OBJEXT) \
-	libcream_module_webview_a-Favicon.$(OBJEXT)
+am_libcream_module_webview_a_OBJECTS = WebViewModule.$(OBJEXT) \
+	Favicon.$(OBJEXT)
 libcream_module_webview_a_OBJECTS =  \
 	$(am_libcream_module_webview_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -107,6 +106,8 @@ ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EXEEXT = @EXEEXT@
+GNET_CFLAGS = @GNET_CFLAGS@
+GNET_LIBS = @GNET_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
 INSTALL = @INSTALL@
@@ -184,7 +185,6 @@ AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(top_srcdir)/src/core -I$(top_srcd
 lib_LIBRARIES = libcream-module-webview.a
 libcream_module_webview_a_SOURCES = WebViewModule.c Favicon.c \
 	WebViewModule.h Favicon.h
-libcream_module_webview_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -262,8 +262,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcream_module_webview_a-Favicon.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcream_module_webview_a-WebViewModule.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Favicon.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WebViewModule.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -278,34 +278,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-libcream_module_webview_a-WebViewModule.o: WebViewModule.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_webview_a_CFLAGS) $(CFLAGS) -MT libcream_module_webview_a-WebViewModule.o -MD -MP -MF $(DEPDIR)/libcream_module_webview_a-WebViewModule.Tpo -c -o libcream_module_webview_a-WebViewModule.o `test -f 'WebViewModule.c' || echo '$(srcdir)/'`WebViewModule.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_module_webview_a-WebViewModule.Tpo $(DEPDIR)/libcream_module_webview_a-WebViewModule.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='WebViewModule.c' object='libcream_module_webview_a-WebViewModule.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_webview_a_CFLAGS) $(CFLAGS) -c -o libcream_module_webview_a-WebViewModule.o `test -f 'WebViewModule.c' || echo '$(srcdir)/'`WebViewModule.c
-
-libcream_module_webview_a-WebViewModule.obj: WebViewModule.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_webview_a_CFLAGS) $(CFLAGS) -MT libcream_module_webview_a-WebViewModule.obj -MD -MP -MF $(DEPDIR)/libcream_module_webview_a-WebViewModule.Tpo -c -o libcream_module_webview_a-WebViewModule.obj `if test -f 'WebViewModule.c'; then $(CYGPATH_W) 'WebViewModule.c'; else $(CYGPATH_W) '$(srcdir)/WebViewModule.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_module_webview_a-WebViewModule.Tpo $(DEPDIR)/libcream_module_webview_a-WebViewModule.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='WebViewModule.c' object='libcream_module_webview_a-WebViewModule.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_webview_a_CFLAGS) $(CFLAGS) -c -o libcream_module_webview_a-WebViewModule.obj `if test -f 'WebViewModule.c'; then $(CYGPATH_W) 'WebViewModule.c'; else $(CYGPATH_W) '$(srcdir)/WebViewModule.c'; fi`
-
-libcream_module_webview_a-Favicon.o: Favicon.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_webview_a_CFLAGS) $(CFLAGS) -MT libcream_module_webview_a-Favicon.o -MD -MP -MF $(DEPDIR)/libcream_module_webview_a-Favicon.Tpo -c -o libcream_module_webview_a-Favicon.o `test -f 'Favicon.c' || echo '$(srcdir)/'`Favicon.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_module_webview_a-Favicon.Tpo $(DEPDIR)/libcream_module_webview_a-Favicon.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='Favicon.c' object='libcream_module_webview_a-Favicon.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_webview_a_CFLAGS) $(CFLAGS) -c -o libcream_module_webview_a-Favicon.o `test -f 'Favicon.c' || echo '$(srcdir)/'`Favicon.c
-
-libcream_module_webview_a-Favicon.obj: Favicon.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_webview_a_CFLAGS) $(CFLAGS) -MT libcream_module_webview_a-Favicon.obj -MD -MP -MF $(DEPDIR)/libcream_module_webview_a-Favicon.Tpo -c -o libcream_module_webview_a-Favicon.obj `if test -f 'Favicon.c'; then $(CYGPATH_W) 'Favicon.c'; else $(CYGPATH_W) '$(srcdir)/Favicon.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcream_module_webview_a-Favicon.Tpo $(DEPDIR)/libcream_module_webview_a-Favicon.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='Favicon.c' object='libcream_module_webview_a-Favicon.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcream_module_webview_a_CFLAGS) $(CFLAGS) -c -o libcream_module_webview_a-Favicon.obj `if test -f 'Favicon.c'; then $(CYGPATH_W) 'Favicon.c'; else $(CYGPATH_W) '$(srcdir)/Favicon.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

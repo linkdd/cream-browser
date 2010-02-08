@@ -1,0 +1,31 @@
+global
+{
+     homepage = "http://cream-browser.net"
+     encodage = "UTF-8"
+     javascript = TRUE
+
+     user-agent
+     {
+          set "@global@" { name = "Cream-Browser @version@ (WebKit @webkit_major@.@webkit_minor@.@webkit_micro@) (@`uname -s`@ @`uname -n`@ @`uname -r`@ @`uname -v`@ @`uname -m`@ [@arch@]) (Commit: @commit@)" }
+          # Use regex to set dynamic user agent according to a domain
+          set "google\.(fr|com)" { name = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.1) Gecko/20100122 firefox/3.6.1" }
+     }
+
+     bookmarks-file = "~/.cream-browser/bookmarks"
+     history-file = "~/.cream-browser/history"
+     cookie-file = "~/.cream-browser/cookies.txt"
+}
+
+handlers
+{
+     set "download" { handler = "spawn ~/.cream-browser/scripts/download.sh" }
+     set "signal::load-committed" { handler = "spawn ~/.cream-browser/scripts/my_history.sh" }
+}
+
+keys
+{
+     bind "d" { cmd = "download %s" }
+     bind "o" { cmd = "open %s" }
+     bind "O" { cmd = "open @uri@" }
+     bind "t" { cmd = "tabopen %s" }
+}

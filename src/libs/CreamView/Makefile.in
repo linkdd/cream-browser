@@ -69,8 +69,8 @@ AR = ar
 ARFLAGS = cru
 libcreamview_a_AR = $(AR) $(ARFLAGS)
 libcreamview_a_LIBADD =
-am_libcreamview_a_OBJECTS = libcreamview_a-CreamView.$(OBJEXT) \
-	libcreamview_a-CreamBackwardForwardList.$(OBJEXT)
+am_libcreamview_a_OBJECTS = CreamView.$(OBJEXT) \
+	CreamBackwardForwardList.$(OBJEXT)
 libcreamview_a_OBJECTS = $(am_libcreamview_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
@@ -105,6 +105,8 @@ ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EXEEXT = @EXEEXT@
+GNET_CFLAGS = @GNET_CFLAGS@
+GNET_LIBS = @GNET_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
 INSTALL = @INSTALL@
@@ -182,7 +184,6 @@ AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(top_srcdir)/src/core -I$(top_srcd
 lib_LIBRARIES = libcreamview.a
 libcreamview_a_SOURCES = CreamView.c CreamBackwardForwardList.c \
 	CreamView.h CreamBackwardForwardList.h
-libcreamview_a_CFLAGS = $(GTK_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -260,8 +261,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcreamview_a-CreamView.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CreamBackwardForwardList.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CreamView.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -276,34 +277,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-libcreamview_a-CreamView.o: CreamView.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -MT libcreamview_a-CreamView.o -MD -MP -MF $(DEPDIR)/libcreamview_a-CreamView.Tpo -c -o libcreamview_a-CreamView.o `test -f 'CreamView.c' || echo '$(srcdir)/'`CreamView.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcreamview_a-CreamView.Tpo $(DEPDIR)/libcreamview_a-CreamView.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamView.c' object='libcreamview_a-CreamView.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -c -o libcreamview_a-CreamView.o `test -f 'CreamView.c' || echo '$(srcdir)/'`CreamView.c
-
-libcreamview_a-CreamView.obj: CreamView.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -MT libcreamview_a-CreamView.obj -MD -MP -MF $(DEPDIR)/libcreamview_a-CreamView.Tpo -c -o libcreamview_a-CreamView.obj `if test -f 'CreamView.c'; then $(CYGPATH_W) 'CreamView.c'; else $(CYGPATH_W) '$(srcdir)/CreamView.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcreamview_a-CreamView.Tpo $(DEPDIR)/libcreamview_a-CreamView.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamView.c' object='libcreamview_a-CreamView.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -c -o libcreamview_a-CreamView.obj `if test -f 'CreamView.c'; then $(CYGPATH_W) 'CreamView.c'; else $(CYGPATH_W) '$(srcdir)/CreamView.c'; fi`
-
-libcreamview_a-CreamBackwardForwardList.o: CreamBackwardForwardList.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -MT libcreamview_a-CreamBackwardForwardList.o -MD -MP -MF $(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Tpo -c -o libcreamview_a-CreamBackwardForwardList.o `test -f 'CreamBackwardForwardList.c' || echo '$(srcdir)/'`CreamBackwardForwardList.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Tpo $(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamBackwardForwardList.c' object='libcreamview_a-CreamBackwardForwardList.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -c -o libcreamview_a-CreamBackwardForwardList.o `test -f 'CreamBackwardForwardList.c' || echo '$(srcdir)/'`CreamBackwardForwardList.c
-
-libcreamview_a-CreamBackwardForwardList.obj: CreamBackwardForwardList.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -MT libcreamview_a-CreamBackwardForwardList.obj -MD -MP -MF $(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Tpo -c -o libcreamview_a-CreamBackwardForwardList.obj `if test -f 'CreamBackwardForwardList.c'; then $(CYGPATH_W) 'CreamBackwardForwardList.c'; else $(CYGPATH_W) '$(srcdir)/CreamBackwardForwardList.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Tpo $(DEPDIR)/libcreamview_a-CreamBackwardForwardList.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='CreamBackwardForwardList.c' object='libcreamview_a-CreamBackwardForwardList.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcreamview_a_CFLAGS) $(CFLAGS) -c -o libcreamview_a-CreamBackwardForwardList.obj `if test -f 'CreamBackwardForwardList.c'; then $(CYGPATH_W) 'CreamBackwardForwardList.c'; else $(CYGPATH_W) '$(srcdir)/CreamBackwardForwardList.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
