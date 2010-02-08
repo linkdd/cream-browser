@@ -27,6 +27,7 @@
 #define __CLASS_CURL_MODULE_H
 
 #include <glib-object.h>
+#include <gnet.h>
 
 #include <curl/curl.h>
 #include <curl/types.h>
@@ -60,7 +61,7 @@ struct _CurlModule
 {
      GObject parent;               /*!< Parent instance */
 
-     gchar *uri;                   /*!< URI to load */
+     GURI *uri;                    /*!< URI to load */
      gchar *status;                /*!< Status of the loaded URI */
 
      gfloat progress;              /*!< Loading's progress */

@@ -233,7 +233,7 @@ static size_t curl_module_fn_write (void *ptr, size_t size, size_t nmemb, void *
      priv->content = g_string_append (content, (gchar *) ptr);
 
      g_free (obj->status);
-     obj->status = g_strdup_printf ("Transfering data from %s ...", obj->uri);
+     obj->status = g_strdup_printf ("Transfering data from %s ...", obj->uri->hostname);
      g_signal_emit (
           G_OBJECT (obj),
           curl_module_signals[STATUS_CHANGED_SIGNAL],
@@ -265,14 +265,14 @@ static void *curl_module_load_uri_thread (void *data)
      if (priv->context)
      {
           g_free (obj->status);
-          obj->status = g_strdup_printf ("Connecting to %s ...", obj->uri);
+          obj->status = g_strdup_printf ("Connecting to %s ...", obj->uri->hostname);
           g_signal_emit (
                G_OBJECT (obj),
                curl_module_signals[STATUS_CHANGED_SIGNAL],
                0, obj->status
           );
 
-          curl_easy_setopt (priv->context, CURLOPT_URL, obj->uri);
+          curl_easy_setopt (priv->context, CURLOPT_URL, gnet_uri_get_string (obj->uri));
 
           curl_easy_setopt (priv->context, CURLOPT_WRITEFUNCTION, curl_module_fn_write);
           curl_easy_setopt (priv->context, CURLOPT_WRITEDATA, obj);
@@ -295,12 +295,15 @@ static void *curl_module_load_uri_thread (void *data)
                obj->status = g_strdup (curl_easy_strerror (priv->result));
                obj->load_status = CURL_LOAD_FAILED;
 
-               error = g_error_new (CURL_MODULE_ERROR, CURL_MODULE_ERROR_CURL_ERROR, "Error, cannot access to '%s': %s.", obj->uri, obj->status);
+               error = g_error_new (CURL_MODULE_ERROR, CURL_MODULE_ERROR_CURL_ERROR, "Error, cannot access to %s%s : %s.",
+                         obj->uri->hostname,
+                         (obj->uri->path ? g_strconcat (" - ", obj->uri->path, NULL) : ""),
+                         obj->status);
 
                g_signal_emit (
                     G_OBJECT (obj),
                     curl_module_signals[LOAD_ERROR_SIGNAL],
-                    0, obj->uri, error
+                    0, gnet_rui_get_string (obj->uri), error
                );
 
                g_signal_emit (
@@ -319,7 +322,7 @@ static void *curl_module_load_uri_thread (void *data)
                );
 
                g_free (obj->status);
-               obj->status = g_strdup (obj->uri);
+               obj->status = g_strdup (gnet_uri_get_string (obj->uri));
 
                g_signal_emit (
                     G_OBJECT (obj),
@@ -344,8 +347,7 @@ static void *curl_module_load_uri_thread (void *data)
  */
 void curl_module_load_uri (CurlModule *obj, gchar *uri)
 {
-     g_free (obj->uri);
-     obj->uri = g_strdup (uri);
+     obj->uri = gnet_uri_new (uri);
 
      obj->load_status = CURL_LOAD_COMMITTED;
      g_signal_emit (
@@ -375,7 +377,7 @@ void curl_module_load_uri (CurlModule *obj, gchar *uri)
  */
 const gchar *curl_module_get_uri (CurlModule *obj)
 {
-     return (const gchar *) obj->uri;
+     return (const gchar *) gnet_uri_get_string (obj->uri);
 }
 
 /*!
