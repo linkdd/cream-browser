@@ -2,7 +2,8 @@ AM_CPPFLAGS = -I..//libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/
 DEFS = -DPREFIX=\"$(prefix)\"
 
 bin_PROGRAMS = cream creamctl
-cream_SOURCES = main.c local.h structs.h interface.c interface.h callbacks.c callbacks.h CreamTabbed.c CreamTabbed.h marshal.c marshal.h
+cream_SOURCES = main.c marshal.c interface.c callbacks.c CreamTabbed.c command.c
+cream_SOURCES += local.h structs.h marshal.h interface.h callbacks.h CreamTabbed.h command.h
 cream_LDADD = ../libs/CreamView/libcreamview.a \
               ../libs/curl/libcream-curl.a \
               ../libs/modules/about/libcream-module-about.a \

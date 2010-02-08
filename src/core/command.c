@@ -19,7 +19,39 @@
 
 #include "local.h"
 
+void getcmd (GtkEntry *inputbox, const gchar *text, CreamTabbed *obj)
+{
+     if (text[0] == '/' && strlen (text) > 1)
+     {
+          if (MODULE_IS_WEB_VIEW (CREAM_VIEW (obj->creamview)->content))
+          {
+               WebKitWebView *view = WEBKIT_WEB_VIEW (CREAM_VIEW (obj->creamview)->content);
+
+               webkit_web_view_mark_text_matches (view, text + 1, TRUE, 0);
+               webkit_web_view_set_highlight_text_matches (view, TRUE);
+          }
+     }
+     else if (text[0] == ':' && strlen (text) > 1)
+     {
+          ;
+     }
+     else
+     {
+          printf ("Not a browser command : '%s'", text);
+     }
+
+     gtk_entry_set_text (inputbox, "");
+}
+
 void cb_inputbox (GtkEntry *inputbox, CreamTabbed *obj)
 {
-     ;
+     const gchar *text = gtk_entry_get_text (inputbox);
+
+     g_return_if_fail (text != NULL);
+     g_return_if_fail (strlen (text) != 0);
+
+     if (MODULE_IS_WEB_VIEW (CREAM_VIEW (obj->creamview)->content))
+          webkit_web_view_unmark_text_matches (WEBKIT_WEB_VIEW (CREAM_VIEW (obj->creamview)->content));
+
+     getcmd (inputbox, text, obj);
 }

@@ -44,6 +44,13 @@ struct global_t
           SoupCookieJar *cookies;
      } browser;
 
+     struct
+     {
+          GUnixSocket *sock;
+          GIOChannel *channel;
+          gchar *path;
+     } unix_sock;
+
      GtkNotebook *notebook;
 };
 

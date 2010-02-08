@@ -31,6 +31,65 @@ void signal_handler (int signum)
      }
 }
 
+gboolean control_socket (GIOChannel *channel)
+{
+     struct sockaddr_un remote;
+     unsigned int t = sizeof (remote);
+     int csock;
+     GIOChannel *cchannel;
+
+     csock = accept (g_io_channel_unix_get_fd (channel),
+                     (struct sockaddr *) &remote, &t);
+
+     if ((cchannel = g_io_channel_unix_new (csock)))
+     {
+          g_io_add_watch (cchannel, G_IO_IN | G_IO_HUP, (GIOFunc) control_client_socket, cchannel);
+     }
+
+     return TRUE;
+}
+
+gboolean control_client_socket (GIOChannel *channel)
+{
+     GString *result = g_string_new ("");
+     GError *error = NULL;
+     GIOStatus ret;
+     char *line;
+     gsize len;
+
+     ret = g_io_channel_read_line (channel, &line, &len, NULL, &error);
+     if (ret == G_IO_STATUS_ERROR)
+     {
+          g_warning ("Error reading UNIX socket '%s' : %s\n", global.unix_sock.path, error->message);
+          g_io_channel_shutdown (channel, TRUE, &error);
+          return FALSE;
+     }
+     else if (ret == G_IO_STATUS_EOF)
+     {
+          /* shutdown and remove channel watch from main loop */
+          g_io_channel_shutdown (channel, TRUE, &error);
+          return FALSE;
+     }
+
+     if (line)
+     {
+          printf ("Client said: %s", line);
+          g_string_append (result, "server thanks you\n");
+
+          ret = g_io_channel_write_chars (channel, result->str, result->len, &len, &error);
+          if (ret == G_IO_STATUS_ERROR)
+          {
+               g_warning ("Error writing UNIX socket '%s' : %s\n", global.unix_sock.path, error->message);
+          }
+          g_io_channel_flush (channel, &error);
+     }
+
+     if (error) g_error_free (error);
+     g_string_free (result, TRUE);
+     g_free (line);
+     return TRUE;
+}
+
 void cb_cream_destroy (GtkWidget *emit, gpointer data)
 {
      cream_release (EXIT_SUCCESS);

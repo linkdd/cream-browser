@@ -34,6 +34,17 @@ const struct handler_t cream_handlers[] =
      { NULL, NULL }
 };
 
+void init_socket (void)
+{
+     /* Init UNIX socket */
+     gnet_init ();
+
+     global.unix_sock.path    = g_strdup_printf ("%s/%s_%d_socket", g_get_tmp_dir (), g_get_prgname (), getpid ());
+     global.unix_sock.sock    = gnet_unix_socket_server_new (global.unix_sock.path);
+     global.unix_sock.channel = gnet_unix_socket_get_io_channel (global.unix_sock.sock);
+     g_io_add_watch (global.unix_sock.channel, G_IO_IN | G_IO_HUP, (GIOFunc) control_socket, NULL);
+}
+
 gboolean cream_init (int *argc, char ***argv, GError **error)
 {
      GError *local_error = NULL;
@@ -67,7 +78,7 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      g_mkdir_with_parents (g_build_filename (home, ".cream-browser", NULL), 0711);
      g_mkdir_with_parents (g_build_filename (home, ".cream-browser", "downloads", NULL), 0755);
 
-     gnet_init ();
+     init_socket ();
 
      /* init CURL before any thread started */
      curl_global_init (CURL_GLOBAL_DEFAULT);
@@ -93,6 +104,8 @@ void cream_release (int exit_code)
      free (global.browser.homepage);
      free (global.browser.encoding);
 
+     unlink (global.unix_sock.path);
+
      gtk_main_quit ();
 
      curl_global_cleanup ();
@@ -114,7 +127,6 @@ int main (int argc, char **argv)
      win = cream_interface_init ();
 
      notebook_append_page ("http://cream-browser.net");
-     notebook_append_page ("ftp://mirrors.kernel.org/gnu/");
 
      gtk_widget_show_all (win);
      gtk_main ();

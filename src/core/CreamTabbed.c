@@ -23,7 +23,7 @@
   \author David Delassus
  */
 
-#include "CreamTabbed.h"
+#include "local.h"
 
 enum
 {

@@ -45,8 +45,9 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_cream_OBJECTS = main.$(OBJEXT) interface.$(OBJEXT) \
-	callbacks.$(OBJEXT) CreamTabbed.$(OBJEXT) marshal.$(OBJEXT)
+am_cream_OBJECTS = main.$(OBJEXT) marshal.$(OBJEXT) \
+	interface.$(OBJEXT) callbacks.$(OBJEXT) CreamTabbed.$(OBJEXT) \
+	command.$(OBJEXT)
 cream_OBJECTS = $(am_cream_OBJECTS)
 cream_DEPENDENCIES = ../libs/CreamView/libcreamview.a \
 	../libs/curl/libcream-curl.a \
@@ -165,7 +166,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I..//libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/modules -I$(top_srcdir)/src/libs/curl
-cream_SOURCES = main.c local.h structs.h interface.c interface.h callbacks.c callbacks.h CreamTabbed.c CreamTabbed.h marshal.c marshal.h
+cream_SOURCES = main.c marshal.c interface.c callbacks.c CreamTabbed.c \
+	command.c local.h structs.h marshal.h interface.h callbacks.h \
+	CreamTabbed.h command.h
 cream_LDADD = ../libs/CreamView/libcreamview.a \
               ../libs/curl/libcream-curl.a \
               ../libs/modules/about/libcream-module-about.a \
@@ -259,6 +262,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CreamTabbed.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/callbacks.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/creamctl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/interface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@

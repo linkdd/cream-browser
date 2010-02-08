@@ -23,6 +23,9 @@
 
 void signal_handler (int signum);
 
+gboolean control_socket (GIOChannel *channel);
+gboolean control_client_socket (GIOChannel *channel);
+
 void cb_cream_destroy (GtkWidget *emit, gpointer data);
 void cb_cream_update_notebook_title (GtkWidget *child, gpointer data);
 void cb_cream_notebook_close_page (GtkButton *button, GtkWidget *child);
