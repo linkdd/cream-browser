@@ -381,6 +381,16 @@ const gchar *curl_module_get_uri (CurlModule *obj)
 }
 
 /*!
+  \fn GURI *curl_module_get_guri (CurlModule *obj)
+  \brief Get the GURI object which represent the URI loaded by CURL
+  \return A GURI object
+ */
+GURI *curl_module_get_guri (CurlModule *obj)
+{
+     return obj->uri;
+}
+
+/*!
   \fn const gchar *curl_module_get_status (CurlModule *obj)
   \brief Get the status message
   \return The status of the loaded URI

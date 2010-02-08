@@ -109,6 +109,7 @@ CurlModule *curl_module_new (void);
 void curl_module_load_uri (CurlModule *obj, gchar *uri);
 
 const gchar *curl_module_get_uri (CurlModule *obj);
+GURI *curl_module_get_guri (CurlModule *obj);
 const gchar *curl_module_get_status (CurlModule *obj);
 CurlLoadStatus curl_module_get_load_status (CurlModule *obj);
 const gchar *curl_module_get_content (CurlModule *obj);
