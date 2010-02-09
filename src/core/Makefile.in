@@ -47,7 +47,7 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_cream_OBJECTS = main.$(OBJEXT) marshal.$(OBJEXT) \
 	interface.$(OBJEXT) callbacks.$(OBJEXT) CreamTabbed.$(OBJEXT) \
-	command.$(OBJEXT)
+	command.$(OBJEXT) CurlClient.$(OBJEXT)
 cream_OBJECTS = $(am_cream_OBJECTS)
 cream_DEPENDENCIES = ../libs/CreamView/libcreamview.a \
 	../libs/curl/libcream-curl.a ../libs/gopher/libcream-gopher.a \
@@ -167,8 +167,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/modules -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher
 cream_SOURCES = main.c marshal.c interface.c callbacks.c CreamTabbed.c \
-	command.c local.h structs.h marshal.h interface.h callbacks.h \
-	CreamTabbed.h command.h
+	command.c ../libs/curl/CurlClient.c local.h structs.h \
+	marshal.h interface.h callbacks.h CreamTabbed.h command.h
 cream_LDADD = ../libs/CreamView/libcreamview.a \
               ../libs/curl/libcream-curl.a \
               ../libs/gopher/libcream-gopher.a \
@@ -262,6 +262,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CreamTabbed.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CurlClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/callbacks.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/creamctl.Po@am__quote@
@@ -282,6 +283,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+
+CurlClient.o: ../libs/curl/CurlClient.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT CurlClient.o -MD -MP -MF $(DEPDIR)/CurlClient.Tpo -c -o CurlClient.o `test -f '../libs/curl/CurlClient.c' || echo '$(srcdir)/'`../libs/curl/CurlClient.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/CurlClient.Tpo $(DEPDIR)/CurlClient.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../libs/curl/CurlClient.c' object='CurlClient.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o CurlClient.o `test -f '../libs/curl/CurlClient.c' || echo '$(srcdir)/'`../libs/curl/CurlClient.c
+
+CurlClient.obj: ../libs/curl/CurlClient.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT CurlClient.obj -MD -MP -MF $(DEPDIR)/CurlClient.Tpo -c -o CurlClient.obj `if test -f '../libs/curl/CurlClient.c'; then $(CYGPATH_W) '../libs/curl/CurlClient.c'; else $(CYGPATH_W) '$(srcdir)/../libs/curl/CurlClient.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/CurlClient.Tpo $(DEPDIR)/CurlClient.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../libs/curl/CurlClient.c' object='CurlClient.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o CurlClient.obj `if test -f '../libs/curl/CurlClient.c'; then $(CYGPATH_W) '../libs/curl/CurlClient.c'; else $(CYGPATH_W) '$(srcdir)/../libs/curl/CurlClient.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

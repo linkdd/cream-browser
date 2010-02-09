@@ -303,7 +303,7 @@ static void *curl_client_load_uri_thread (void *data)
                g_signal_emit (
                     G_OBJECT (obj),
                     curl_client_signals[LOAD_ERROR_SIGNAL],
-                    0, gnet_rui_get_string (obj->uri), error
+                    0, gnet_uri_get_string (obj->uri), error
                );
 
                g_signal_emit (

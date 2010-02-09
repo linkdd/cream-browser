@@ -61,9 +61,10 @@ typedef struct _ModuleFtpPrivate ModuleFtpPrivate;
 /*! \struct _ModuleFtpPrivate */
 struct _ModuleFtpPrivate
 {
-     GList *files;       /*!< List of all files on the FTP */
-     GURI *uri;          /*!< GURI object, to have the hostname, user and password, etc... */
-     CurlClient *curl;   /*!< CURL object */
+     GList *files;                 /*!< List of all files on the FTP */
+     GtkListStore *list_store;     /*!< Files list for the GtkTreeView object */
+     GURI *uri;                    /*!< GURI object, to have the hostname, user and password, etc... */
+     CurlClient *curl;             /*!< CURL object */
 };
 
 /* End of private data */
@@ -72,7 +73,7 @@ static void module_ftp_class_init (ModuleFtpClass *class);
 static void module_ftp_init (ModuleFtp *obj);
 
 static gchar **cream_strsplit (gchar *str, gchar *delim);
-static GtkTreeModel *module_ftp_create_model (ModuleFtp *obj);
+static void module_ftp_update_model (ModuleFtp *obj);
 
 static void module_ftp_row_activated_cb (ModuleFtp *obj, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data);
 static void module_ftp_load_finished_cb (CurlClient *curl, ModuleFtp *obj);
@@ -174,8 +175,14 @@ GtkWidget *module_ftp_new (void)
      GtkTreeViewColumn *col;
      GtkCellRenderer *cell;
 
+     /* Init CURL */
+     priv->files = NULL;
+     priv->uri = NULL;
+     priv->curl = curl_client_new ();
+
      /* add files to the iconview */
-     gtk_tree_view_set_model (GTK_TREE_VIEW (obj), module_ftp_create_model (obj));
+     priv->list_store = gtk_list_store_new (4, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+     gtk_tree_view_set_model (GTK_TREE_VIEW (obj), GTK_TREE_MODEL (priv->list_store));
 
      cell = gtk_cell_renderer_pixbuf_new ();
      col = gtk_tree_view_column_new_with_attributes ("Icon", cell, "pixbuf", 0, NULL);
@@ -183,6 +190,7 @@ GtkWidget *module_ftp_new (void)
 
      cell = gtk_cell_renderer_text_new ();
      col = gtk_tree_view_column_new_with_attributes ("Name", cell, "text", 1, NULL);
+     gtk_tree_view_column_set_expand (col, TRUE);
      gtk_tree_view_append_column (GTK_TREE_VIEW (obj), col);
 
      cell = gtk_cell_renderer_text_new ();
@@ -192,11 +200,6 @@ GtkWidget *module_ftp_new (void)
      cell = gtk_cell_renderer_text_new ();
      col = gtk_tree_view_column_new_with_attributes ("Type", cell, "text", 3, NULL);
      gtk_tree_view_append_column (GTK_TREE_VIEW (obj), col);
-
-     /* Init CURL */
-     priv->files = NULL;
-     priv->uri = NULL;
-     priv->curl = curl_client_new ();
 
      g_signal_connect (G_OBJECT (obj),        "row-activated", G_CALLBACK (module_ftp_row_activated_cb), NULL);
      g_object_connect (G_OBJECT (priv->curl),
@@ -239,20 +242,16 @@ static gchar *cream_bytes (gsize bytes)
 
      while (tmp > 1.0)
      {
-          if (tmp < 1)
-               return g_strdup_printf ("%.1f %s", tmp * 1024.0, array[i]);
-
           tmp /= 1024.0;
           i++;
      }
 
-     return g_strdup_printf ("%d b", bytes);
+     return g_strdup_printf ("%.1f %s", tmp * 1024.0, array[i]);
 }
 
-static GtkTreeModel *module_ftp_create_model (ModuleFtp *obj)
+static void module_ftp_update_model (ModuleFtp *obj)
 {
      ModuleFtpPrivate *priv = MODULE_FTP_GET_PRIVATE (obj);
-     GtkListStore *list_store;
      GdkPixbuf *file, *folder;
      GtkTreeIter iter;
      int i;
@@ -260,30 +259,23 @@ static GtkTreeModel *module_ftp_create_model (ModuleFtp *obj)
      file = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".cream-browser", "icons", "file.png", NULL), NULL);
      folder = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".cream-browser", "icons", "folder.png", NULL), NULL);
 
-     if (CURL_LOAD_PROVISIONAL == curl_client_get_load_status (priv->curl))
+     if (CURL_LOAD_PROVISIONAL != curl_client_get_load_status (priv->curl))
      {
-          list_store = gtk_list_store_new (4, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-     }
-     else
-     {
-          list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (obj)));
-          gtk_list_store_clear (list_store);
-     }
+          gtk_list_store_clear (priv->list_store);
 
-     for (i = 0; i < g_list_length (priv->files); ++i)
-     {
-          FtpFile *el = g_list_nth_data (priv->files, i);
+          for (i = 0; i < g_list_length (priv->files); ++i)
+          {
+               FtpFile *el = g_list_nth_data (priv->files, i);
 
-          gtk_list_store_append (list_store, &iter);
-          gtk_list_store_set (list_store, &iter,
-                    0, el->path,
-                    1, (el->is_dir ? folder : file),
-                    2, cream_bytes (el->size),
-                    3, (el->is_dir ? "directory" : "file"),
-                    -1);
+               gtk_list_store_append (priv->list_store, &iter);
+               gtk_list_store_set (priv->list_store, &iter,
+                         0, (el->is_dir ? folder : file),
+                         1, el->path,
+                         2, cream_bytes (el->size),
+                         3, (el->is_dir ? "directory" : "file"),
+                         -1);
+          }
      }
-
-     return GTK_TREE_MODEL (list_store);
 }
 
 /* signals */
@@ -295,7 +287,7 @@ static void module_ftp_row_activated_cb (ModuleFtp *obj, GtkTreePath *path, GtkT
      gchar *type;
 
      gtk_tree_model_get_iter (model, &iter, path);
-     gtk_tree_model_get (model, &iter, 0, &filepath, 3, &type, -1);
+     gtk_tree_model_get (model, &iter, 1, &filepath, 3, &type, -1);
 
      if (g_str_equal (type, "directory"))
           module_ftp_load_uri (obj, g_strconcat (obj->uri, "/", filepath, NULL));
@@ -326,6 +318,8 @@ static void module_ftp_load_finished_cb (CurlClient *curl, ModuleFtp *obj)
      gchar **lines = cream_strsplit (tmp, "\n");
      gint i, l = g_strv_length (lines);
 
+     g_list_free (priv->files);
+     priv->files = NULL;
      for (i = 0; i < l; ++i)
      {
           FtpFile *el = g_malloc (sizeof (FtpFile));
@@ -340,7 +334,7 @@ static void module_ftp_load_finished_cb (CurlClient *curl, ModuleFtp *obj)
           priv->files = g_list_append (priv->files, el);
      }
 
-     module_ftp_create_model (obj);
+     module_ftp_update_model (obj);
      gtk_widget_show_all (GTK_WIDGET (obj));
 
      priv->uri = curl_client_get_guri (curl);
