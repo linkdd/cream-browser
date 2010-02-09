@@ -25,8 +25,14 @@ void signal_handler (int signum)
      switch (signum)
      {
           case SIGSEGV:
-               fprintf (stderr, "Cream: Segmentation fault\n");
+               fprintf (stderr, "Cream-Browser: Segmentation fault\n");
                cream_release (EXIT_FAILURE);
+               break;
+
+          case SIGINT:
+          case SIGKILL:
+          case SIGTERM:
+               cream_release (EXIT_SUCCESS);
                break;
      }
 }

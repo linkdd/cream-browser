@@ -32,7 +32,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-subdir = src/libs/modules/ftp
+subdir = src/libs/gopher
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -67,10 +67,10 @@ am__installdirs = "$(DESTDIR)$(libdir)"
 LIBRARIES = $(lib_LIBRARIES)
 AR = ar
 ARFLAGS = cru
-libcream_module_ftp_a_AR = $(AR) $(ARFLAGS)
-libcream_module_ftp_a_LIBADD =
-am_libcream_module_ftp_a_OBJECTS = FTPModule.$(OBJEXT)
-libcream_module_ftp_a_OBJECTS = $(am_libcream_module_ftp_a_OBJECTS)
+libcream_gopher_a_AR = $(AR) $(ARFLAGS)
+libcream_gopher_a_LIBADD =
+am_libcream_gopher_a_OBJECTS = GopherClient.$(OBJEXT)
+libcream_gopher_a_OBJECTS = $(am_libcream_gopher_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -79,8 +79,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libcream_module_ftp_a_SOURCES)
-DIST_SOURCES = $(libcream_module_ftp_a_SOURCES)
+SOURCES = $(libcream_gopher_a_SOURCES)
+DIST_SOURCES = $(libcream_gopher_a_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -179,9 +179,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/modules -I$(top_srcdir)/src/libs/curl
-lib_LIBRARIES = libcream-module-ftp.a
-libcream_module_ftp_a_SOURCES = FTPModule.c FTPModule.h
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs/modules -I$(top_srcdir)/src/libs/gopher
+lib_LIBRARIES = libcream-gopher.a
+libcream_gopher_a_SOURCES = GopherClient.c GopherClient.h
 all: all-am
 
 .SUFFIXES:
@@ -195,9 +195,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/libs/modules/ftp/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/libs/gopher/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign src/libs/modules/ftp/Makefile
+	  $(AUTOMAKE) --foreign src/libs/gopher/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -248,10 +248,10 @@ uninstall-libLIBRARIES:
 
 clean-libLIBRARIES:
 	-test -z "$(lib_LIBRARIES)" || rm -f $(lib_LIBRARIES)
-libcream-module-ftp.a: $(libcream_module_ftp_a_OBJECTS) $(libcream_module_ftp_a_DEPENDENCIES) 
-	-rm -f libcream-module-ftp.a
-	$(libcream_module_ftp_a_AR) libcream-module-ftp.a $(libcream_module_ftp_a_OBJECTS) $(libcream_module_ftp_a_LIBADD)
-	$(RANLIB) libcream-module-ftp.a
+libcream-gopher.a: $(libcream_gopher_a_OBJECTS) $(libcream_gopher_a_DEPENDENCIES) 
+	-rm -f libcream-gopher.a
+	$(libcream_gopher_a_AR) libcream-gopher.a $(libcream_gopher_a_OBJECTS) $(libcream_gopher_a_LIBADD)
+	$(RANLIB) libcream-gopher.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -259,7 +259,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FTPModule.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GopherClient.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

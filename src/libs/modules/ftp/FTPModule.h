@@ -29,11 +29,9 @@
 #include <gtk/gtk.h>
 #include <gtk/gtkwidget.h>
 
-#include <curl/curl.h>
-#include <curl/types.h>
-#include <curl/easy.h>
-
+#include <CurlClient.h>
 #include <webkit/webkit.h>
+#include <gnet.h>
 
 G_BEGIN_DECLS
 
@@ -44,58 +42,31 @@ G_BEGIN_DECLS
 #define MODULE_IS_FTP(obj)         \
      GTK_CHECK_TYPE (obj, module_ftp_get_type ())
 
-typedef enum
-{
-     MODULE_FTP_LOAD_PROVISIONAL,
-     MODULE_FTP_LOAD_COMMITTED,
-     MODULE_FTP_LOAD_STARTED,
-     MODULE_FTP_LOAD_FINISHED,
-     MODULE_FTP_LOAD_FAILED
-} ModuleFtpLoadStatus;
-
-typedef struct
-{
-     gchar *path;
-     size_t size;
-     gboolean is_dir;
-} FtpFile;
-
 typedef struct _ModuleFtp ModuleFtp;
 typedef struct _ModuleFtpClass ModuleFtpClass;
 
+/*! \struct _ModuleFtp */
 struct _ModuleFtp
 {
-     GtkIconView parent;
+     GtkTreeView parent;           /*!< Parent instance */
 
-     gchar *uri;
-     gchar *user;
-     gchar *passwd;
-     gchar *host;
-     gchar *dir;
+     gchar *uri;                   /*!< URI loaded by CurlClient */
+     gchar *title;                 /*!< Title of the loaded URI */
+     gchar *status;                /*!< Status message of the loaded URI */
 
-     gchar *title;
-     gchar *status;
-
-     GList *files;
-     ModuleFtpLoadStatus load_status;
-     gint progress;
+     gboolean view_source_mode;    /*!< TRUE if you want to see the page's source */
 };
 
+/*! \struct _ModuleFtpClass */
 struct _ModuleFtpClass
 {
-     GtkIconViewClass parent_class;
+     GtkTreeViewClass parent_class;     /*!< Parent class */
 
      void (*uri_changed) (ModuleFtp *obj, gchar *uri);
      void (*new_title) (ModuleFtp *obj, gchar *title);
      void (*status_changed) (ModuleFtp *obj, gchar *status);
      gboolean (*new_download) (ModuleFtp *obj, WebKitDownload *download);
      gboolean (*switch_module) (ModuleFtp *obj, gchar *new_uri);
-
-     void (*load_committed) (ModuleFtp *obj);
-     void (*load_started) (ModuleFtp *obj);
-     void (*load_progress_changed) (ModuleFtp *obj, gint progress);
-     void (*load_finished) (ModuleFtp *obj);
-     void (*load_error) (ModuleFtp *obj, gchar *uri, gpointer error);
 };
 
 GtkType module_ftp_get_type (void);

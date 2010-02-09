@@ -18,34 +18,34 @@
  */
 
 /*!
-  \file CurlModule.c
+  \file CurlClient.c
   \brief Curl integration
   \author David Delassus
  */
 
-#include "CurlModule.h"
+#include "CurlClient.h"
 #include <marshal.h>
 #include <string.h>
 
-#define CURL_MODULE_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TYPE_CURL_MODULE, CurlModulePrivate))
+#define CURL_CLIENT_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TYPE_CURL_CLIENT, CurlClientPrivate))
 
-typedef struct _CurlModulePrivate CurlModulePrivate;
+typedef struct _CurlClientPrivate CurlClientPrivate;
 
 /*!
-  \struct _CurlModulePrivate
-  \brief CurlModule private data
+  \struct _CurlClientPrivate
+  \brief CurlClient private data
  */
-struct _CurlModulePrivate
+struct _CurlClientPrivate
 {
      CURL *context;      /*!< Curl object */
      CURLcode result;    /*!< Result of CURL loading */
      GString *content;   /*!< Content downloaded */
 };
 
-static GObject *curl_module_constructor (GType type, guint n_properties, GObjectConstructParam *properties);
-static void curl_module_finalize (GObject *self);
+static GObject *curl_client_constructor (GType type, guint n_properties, GObjectConstructParam *properties);
+static void curl_client_finalize (GObject *self);
 
-/*! \brief CurlModule signals definition */
+/*! \brief CurlClient signals definition */
 enum
 {
      LOAD_COMMITTED_SIGNAL,
@@ -60,121 +60,121 @@ enum
      NB_SIGNALS
 };
 
-static guint curl_module_signals[NB_SIGNALS] = {0};
+static guint curl_client_signals[NB_SIGNALS] = {0};
 
 /*!
-  \enum CurlModuleError
-  \brief CurlModule errors definition
+  \enum CurlClientError
+  \brief CurlClient errors definition
  */
 typedef enum
 {
-     CURL_MODULE_ERROR_CURL_INIT,
-     CURL_MODULE_ERROR_CURL_ERROR,
-     CURL_MODULE_ERROR_THREAD,
-     CURL_MODULE_ERROR_FAILED
-} CurlModuleError;
+     CURL_CLIENT_ERROR_CURL_INIT,
+     CURL_CLIENT_ERROR_CURL_ERROR,
+     CURL_CLIENT_ERROR_THREAD,
+     CURL_CLIENT_ERROR_FAILED
+} CurlClientError;
 
-#define CURL_MODULE_ERROR     (curl_module_error_quark ())
+#define CURL_CLIENT_ERROR     (curl_client_error_quark ())
 
-static GQuark curl_module_error_quark (void)
+static GQuark curl_client_error_quark (void)
 {
-     static GQuark curl_module_error = 0;
+     static GQuark curl_client_error = 0;
 
-     if (!curl_module_error)
+     if (!curl_client_error)
      {
-          curl_module_error = g_quark_from_string ("CURL_MODULE_ERROR");
+          curl_client_error = g_quark_from_string ("CURL_CLIENT_ERROR");
      }
 
-     return curl_module_error;
+     return curl_client_error;
 }
 
 /* Define object */
-G_DEFINE_TYPE (CurlModule, curl_module, G_TYPE_OBJECT)
+G_DEFINE_TYPE (CurlClient, curl_client, G_TYPE_OBJECT)
 
-static void curl_module_class_init (CurlModuleClass *class)
+static void curl_client_class_init (CurlClientClass *class)
 {
      GObjectClass *gobject_class = G_OBJECT_CLASS (class);
 
-     g_type_class_add_private (class, sizeof (CurlModulePrivate));
+     g_type_class_add_private (class, sizeof (CurlClientPrivate));
 
-     curl_module_signals[LOAD_COMMITTED_SIGNAL] = g_signal_new (
+     curl_client_signals[LOAD_COMMITTED_SIGNAL] = g_signal_new (
                "load-committed",
                G_TYPE_FROM_CLASS (class),
                G_SIGNAL_RUN_LAST,
-               G_STRUCT_OFFSET (CurlModuleClass, load_committed),
+               G_STRUCT_OFFSET (CurlClientClass, load_committed),
                NULL, NULL,
                g_cclosure_marshal_VOID__VOID,
                G_TYPE_NONE,
                0, G_TYPE_NONE);
 
-     curl_module_signals[LOAD_STARTED_SIGNAL] = g_signal_new (
+     curl_client_signals[LOAD_STARTED_SIGNAL] = g_signal_new (
                "load-started",
                G_TYPE_FROM_CLASS (class),
                G_SIGNAL_RUN_LAST,
-               G_STRUCT_OFFSET (CurlModuleClass, load_started),
+               G_STRUCT_OFFSET (CurlClientClass, load_started),
                NULL, NULL,
                g_cclosure_marshal_VOID__VOID,
                G_TYPE_NONE,
                0, G_TYPE_NONE);
 
-     curl_module_signals[LOAD_PROGRESS_CHANGED_SIGNAL] = g_signal_new (
+     curl_client_signals[LOAD_PROGRESS_CHANGED_SIGNAL] = g_signal_new (
                "load-progress-changed",
                G_TYPE_FROM_CLASS (class),
                G_SIGNAL_RUN_LAST,
-               G_STRUCT_OFFSET (CurlModuleClass, load_progress_changed),
+               G_STRUCT_OFFSET (CurlClientClass, load_progress_changed),
                NULL, NULL,
                g_cclosure_marshal_VOID__FLOAT,
                G_TYPE_NONE,
                1, G_TYPE_FLOAT);
 
-     curl_module_signals[LOAD_FINISHED_SIGNAL] = g_signal_new (
+     curl_client_signals[LOAD_FINISHED_SIGNAL] = g_signal_new (
                "load-finished",
                G_TYPE_FROM_CLASS (class),
                G_SIGNAL_RUN_LAST,
-               G_STRUCT_OFFSET (CurlModuleClass, load_finished),
+               G_STRUCT_OFFSET (CurlClientClass, load_finished),
                NULL, NULL,
                g_cclosure_marshal_VOID__VOID,
                G_TYPE_NONE,
                0, G_TYPE_NONE);
 
-     curl_module_signals[LOAD_ERROR_SIGNAL] = g_signal_new (
+     curl_client_signals[LOAD_ERROR_SIGNAL] = g_signal_new (
                "load-error",
                G_TYPE_FROM_CLASS (class),
                G_SIGNAL_RUN_LAST,
-               G_STRUCT_OFFSET (CurlModuleClass, load_error),
+               G_STRUCT_OFFSET (CurlClientClass, load_error),
                NULL, NULL,
                g_cclosure_user_marshal_VOID__STRING_POINTER,
                G_TYPE_NONE,
                2, G_TYPE_STRING, G_TYPE_POINTER);
 
-     curl_module_signals[URI_CHANGED_SIGNAL] = g_signal_new (
+     curl_client_signals[URI_CHANGED_SIGNAL] = g_signal_new (
                "uri-changed",
                G_TYPE_FROM_CLASS (class),
                G_SIGNAL_RUN_LAST,
-               G_STRUCT_OFFSET (CurlModuleClass, uri_changed),
+               G_STRUCT_OFFSET (CurlClientClass, uri_changed),
                NULL, NULL,
                g_cclosure_marshal_VOID__STRING,
                G_TYPE_NONE,
                1, G_TYPE_STRING);
 
-     curl_module_signals[STATUS_CHANGED_SIGNAL] = g_signal_new (
+     curl_client_signals[STATUS_CHANGED_SIGNAL] = g_signal_new (
                "status-changed",
                G_TYPE_FROM_CLASS (class),
                G_SIGNAL_RUN_LAST,
-               G_STRUCT_OFFSET (CurlModuleClass, status_changed),
+               G_STRUCT_OFFSET (CurlClientClass, status_changed),
                NULL, NULL,
                g_cclosure_marshal_VOID__STRING,
                G_TYPE_NONE,
                1, G_TYPE_STRING);
 
-     gobject_class->constructor  = curl_module_constructor;
-     gobject_class->finalize     = curl_module_finalize;
+     gobject_class->constructor  = curl_client_constructor;
+     gobject_class->finalize     = curl_client_finalize;
      class->instance = NULL;
 }
 
-static void curl_module_init (CurlModule *self)
+static void curl_client_init (CurlClient *self)
 {
-     CurlModulePrivate *priv = CURL_MODULE_GET_PRIVATE (self);
+     CurlClientPrivate *priv = CURL_CLIENT_GET_PRIVATE (self);
 
      self->load_status = CURL_LOAD_PROVISIONAL;
      self->uri = NULL;
@@ -185,14 +185,14 @@ static void curl_module_init (CurlModule *self)
      priv->content = g_string_new ("");
 }
 
-static GObject *curl_module_constructor (GType type, guint n_properties, GObjectConstructParam *properties)
+static GObject *curl_client_constructor (GType type, guint n_properties, GObjectConstructParam *properties)
 {
-     CurlModuleClass *class = NULL;
+     CurlClientClass *class = NULL;
 
-     class = g_type_class_peek (TYPE_CURL_MODULE);
+     class = g_type_class_peek (TYPE_CURL_CLIENT);
      if (class->instance == NULL)
      {
-          class->instance = G_OBJECT_CLASS (curl_module_parent_class)->constructor (type, n_properties, properties);
+          class->instance = G_OBJECT_CLASS (curl_client_parent_class)->constructor (type, n_properties, properties);
      }
      else
      {
@@ -202,32 +202,32 @@ static GObject *curl_module_constructor (GType type, guint n_properties, GObject
      return class->instance;
 }
 
-static void curl_module_finalize (GObject *self)
+static void curl_client_finalize (GObject *self)
 {
-     CurlModuleClass *class = NULL;
+     CurlClientClass *class = NULL;
 
-     class = g_type_class_peek (TYPE_CURL_MODULE);
+     class = g_type_class_peek (TYPE_CURL_CLIENT);
      class->instance = NULL;
-     G_OBJECT_CLASS (curl_module_parent_class)->finalize (self);
+     G_OBJECT_CLASS (curl_client_parent_class)->finalize (self);
 }
 
 /*!
-  \fn CurlModule *curl_module_new (void)
-  \brief Create a new CurlModule object
+  \fn CurlClient *curl_client_new (void)
+  \brief Create a new CurlClient object
 
   \return The new CURL context
  */
-CurlModule *curl_module_new (void)
+CurlClient *curl_client_new (void)
 {
-     CurlModule *obj = g_object_new (TYPE_CURL_MODULE, NULL);
+     CurlClient *obj = g_object_new (TYPE_CURL_CLIENT, NULL);
 
      return obj;
 }
 
-static size_t curl_module_fn_write (void *ptr, size_t size, size_t nmemb, void *stream)
+static size_t curl_client_fn_write (void *ptr, size_t size, size_t nmemb, void *stream)
 {
-     CurlModule *obj = (CurlModule *) stream;
-     CurlModulePrivate *priv = CURL_MODULE_GET_PRIVATE (obj);
+     CurlClient *obj = (CurlClient *) stream;
+     CurlClientPrivate *priv = CURL_CLIENT_GET_PRIVATE (obj);
      GString *content = priv->content;
 
      priv->content = g_string_append (content, (gchar *) ptr);
@@ -236,29 +236,29 @@ static size_t curl_module_fn_write (void *ptr, size_t size, size_t nmemb, void *
      obj->status = g_strdup_printf ("Transfering data from %s ...", obj->uri->hostname);
      g_signal_emit (
           G_OBJECT (obj),
-          curl_module_signals[STATUS_CHANGED_SIGNAL],
+          curl_client_signals[STATUS_CHANGED_SIGNAL],
           0, obj->status
      );
 
      return (size_t) (size * nmemb);
 }
 
-static int curl_module_fn_progress (void *ptr, double dl_total, double dl_now, double up_total, double up_now)
+static int curl_client_fn_progress (void *ptr, double dl_total, double dl_now, double up_total, double up_now)
 {
-     CurlModule *obj = (CurlModule *) ptr;
+     CurlClient *obj = (CurlClient *) ptr;
      obj->progress = (gfloat) (dl_now * 100.0 / dl_total);
      g_signal_emit (
           G_OBJECT (obj),
-          curl_module_signals[LOAD_PROGRESS_CHANGED_SIGNAL],
+          curl_client_signals[LOAD_PROGRESS_CHANGED_SIGNAL],
           0, obj->progress
      );
      return 0;
 }
 
-static void *curl_module_load_uri_thread (void *data)
+static void *curl_client_load_uri_thread (void *data)
 {
-     CurlModule *obj = (CurlModule *) data;
-     CurlModulePrivate *priv = CURL_MODULE_GET_PRIVATE (obj);
+     CurlClient *obj = (CurlClient *) data;
+     CurlClientPrivate *priv = CURL_CLIENT_GET_PRIVATE (obj);
      GError *error = NULL;
 
      priv->context = curl_easy_init ();
@@ -268,23 +268,23 @@ static void *curl_module_load_uri_thread (void *data)
           obj->status = g_strdup_printf ("Connecting to %s ...", obj->uri->hostname);
           g_signal_emit (
                G_OBJECT (obj),
-               curl_module_signals[STATUS_CHANGED_SIGNAL],
+               curl_client_signals[STATUS_CHANGED_SIGNAL],
                0, obj->status
           );
 
           curl_easy_setopt (priv->context, CURLOPT_URL, gnet_uri_get_string (obj->uri));
 
-          curl_easy_setopt (priv->context, CURLOPT_WRITEFUNCTION, curl_module_fn_write);
+          curl_easy_setopt (priv->context, CURLOPT_WRITEFUNCTION, curl_client_fn_write);
           curl_easy_setopt (priv->context, CURLOPT_WRITEDATA, obj);
 
           curl_easy_setopt (priv->context, CURLOPT_NOPROGRESS, 0L);
-          curl_easy_setopt (priv->context, CURLOPT_PROGRESSFUNCTION, curl_module_fn_progress);
+          curl_easy_setopt (priv->context, CURLOPT_PROGRESSFUNCTION, curl_client_fn_progress);
           curl_easy_setopt (priv->context, CURLOPT_PROGRESSDATA, obj);
 
           obj->load_status = CURL_LOAD_STARTED;
           g_signal_emit (
                G_OBJECT (obj),
-               curl_module_signals[LOAD_STARTED_SIGNAL],
+               curl_client_signals[LOAD_STARTED_SIGNAL],
                0
           );
 
@@ -295,20 +295,20 @@ static void *curl_module_load_uri_thread (void *data)
                obj->status = g_strdup (curl_easy_strerror (priv->result));
                obj->load_status = CURL_LOAD_FAILED;
 
-               error = g_error_new (CURL_MODULE_ERROR, CURL_MODULE_ERROR_CURL_ERROR, "Error, cannot access to %s%s : %s.",
+               error = g_error_new (CURL_CLIENT_ERROR, CURL_CLIENT_ERROR_CURL_ERROR, "Error, cannot access to %s%s : %s.",
                          obj->uri->hostname,
                          (obj->uri->path ? g_strconcat (" - ", obj->uri->path, NULL) : ""),
                          obj->status);
 
                g_signal_emit (
                     G_OBJECT (obj),
-                    curl_module_signals[LOAD_ERROR_SIGNAL],
+                    curl_client_signals[LOAD_ERROR_SIGNAL],
                     0, gnet_rui_get_string (obj->uri), error
                );
 
                g_signal_emit (
                     G_OBJECT (obj),
-                    curl_module_signals[STATUS_CHANGED_SIGNAL],
+                    curl_client_signals[STATUS_CHANGED_SIGNAL],
                     0, obj->status
                );
           }
@@ -317,7 +317,7 @@ static void *curl_module_load_uri_thread (void *data)
                obj->load_status = CURL_LOAD_FINISHED;
                g_signal_emit (
                     G_OBJECT (obj),
-                    curl_module_signals[LOAD_FINISHED_SIGNAL],
+                    curl_client_signals[LOAD_FINISHED_SIGNAL],
                     0
                );
 
@@ -326,7 +326,7 @@ static void *curl_module_load_uri_thread (void *data)
 
                g_signal_emit (
                     G_OBJECT (obj),
-                    curl_module_signals[STATUS_CHANGED_SIGNAL],
+                    curl_client_signals[STATUS_CHANGED_SIGNAL],
                     0, obj->status
                );
           }
@@ -339,89 +339,89 @@ static void *curl_module_load_uri_thread (void *data)
 }
 
 /*!
-  \fn void curl_module_load_uri (CurlModule *obj, gchar *uri)
+  \fn void curl_client_load_uri (CurlClient *obj, gchar *uri)
   \brief Load a new URI into the CURL context
 
-  \param obj A CurlModule object
+  \param obj A CurlClient object
   \param uri The URI to load
  */
-void curl_module_load_uri (CurlModule *obj, gchar *uri)
+void curl_client_load_uri (CurlClient *obj, gchar *uri)
 {
      obj->uri = gnet_uri_new (uri);
 
      obj->load_status = CURL_LOAD_COMMITTED;
      g_signal_emit (
           G_OBJECT (obj),
-          curl_module_signals[LOAD_COMMITTED_SIGNAL],
+          curl_client_signals[LOAD_COMMITTED_SIGNAL],
           0
      );
 
-     if (!g_thread_create (&curl_module_load_uri_thread, obj, FALSE, NULL) != 0)
+     if (!g_thread_create (&curl_client_load_uri_thread, obj, FALSE, NULL) != 0)
      {
           GError *error = NULL;
 
-          error = g_error_new (CURL_MODULE_ERROR, CURL_MODULE_ERROR_THREAD, "Error, cannot initialize thread");
+          error = g_error_new (CURL_CLIENT_ERROR, CURL_CLIENT_ERROR_THREAD, "Error, cannot initialize thread");
 
           g_signal_emit (
                G_OBJECT (obj),
-               curl_module_signals[LOAD_ERROR_SIGNAL],
+               curl_client_signals[LOAD_ERROR_SIGNAL],
                0, uri, error
           );
      }
 }
 
 /*!
-  \fn const gchar *curl_module_get_uri (CurlModule *obj)
+  \fn const gchar *curl_client_get_uri (CurlClient *obj)
   \brief Get the URI loaded by CURL
   \return The loaded URI
  */
-const gchar *curl_module_get_uri (CurlModule *obj)
+const gchar *curl_client_get_uri (CurlClient *obj)
 {
      return (const gchar *) gnet_uri_get_string (obj->uri);
 }
 
 /*!
-  \fn GURI *curl_module_get_guri (CurlModule *obj)
+  \fn GURI *curl_client_get_guri (CurlClient *obj)
   \brief Get the GURI object which represent the URI loaded by CURL
   \return A GURI object
  */
-GURI *curl_module_get_guri (CurlModule *obj)
+GURI *curl_client_get_guri (CurlClient *obj)
 {
      return obj->uri;
 }
 
 /*!
-  \fn const gchar *curl_module_get_status (CurlModule *obj)
+  \fn const gchar *curl_client_get_status (CurlClient *obj)
   \brief Get the status message
   \return The status of the loaded URI
  */
-const gchar *curl_module_get_status (CurlModule *obj)
+const gchar *curl_client_get_status (CurlClient *obj)
 {
      return (const gchar *) obj->status;
 }
 
 /*!
-  \fn CurlLoadStatus curl_module_get_load_status (CurlModule *obj)
+  \fn CurlLoadStatus curl_client_get_load_status (CurlClient *obj)
   \brief Get the load information
   \return Load information of the loaded URI
  */
-CurlLoadStatus curl_module_get_load_status (CurlModule *obj)
+CurlLoadStatus curl_client_get_load_status (CurlClient *obj)
 {
      return obj->load_status;
 }
 
 /*!
-  \fn const gchar *curl_module_get_content (CurlModule *obj)
+  \fn const gchar *curl_client_get_content (CurlClient *obj)
   \brief Get the content downloaded by CURL
   \return A string containing the content or NULL if the load is not finished
  */
-const gchar *curl_module_get_content (CurlModule *obj)
+const gchar *curl_client_get_content (CurlClient *obj)
 {
      gchar *ret = NULL;
 
      if (obj->load_status == CURL_LOAD_FINISHED)
      {
-          CurlModulePrivate *priv = CURL_MODULE_GET_PRIVATE (obj);
+          CurlClientPrivate *priv = CURL_CLIENT_GET_PRIVATE (obj);
 
           ret = priv->content->str;
      }

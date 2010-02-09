@@ -1,1 +1,1 @@
-SUBDIRS = curl modules/about modules/ftp modules/www CreamView
+SUBDIRS = curl gopher modules/about modules/ftp modules/www CreamView

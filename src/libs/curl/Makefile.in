@@ -69,7 +69,7 @@ AR = ar
 ARFLAGS = cru
 libcream_curl_a_AR = $(AR) $(ARFLAGS)
 libcream_curl_a_LIBADD =
-am_libcream_curl_a_OBJECTS = CurlModule.$(OBJEXT)
+am_libcream_curl_a_OBJECTS = CurlClient.$(OBJEXT)
 libcream_curl_a_OBJECTS = $(am_libcream_curl_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
@@ -181,7 +181,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs/modules -I$(top_srcdir)/src/libs/curl
 lib_LIBRARIES = libcream-curl.a
-libcream_curl_a_SOURCES = CurlModule.c CurlModule.h
+libcream_curl_a_SOURCES = CurlClient.c CurlClient.h
 all: all-am
 
 .SUFFIXES:
@@ -259,7 +259,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CurlModule.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CurlClient.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

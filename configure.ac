@@ -21,6 +21,7 @@ AC_CONFIG_FILES([
     src/core/Makefile
     src/libs/Makefile
     src/libs/curl/Makefile
+    src/libs/gopher/Makefile
     src/libs/CreamView/Makefile
     src/libs/modules/about/Makefile
     src/libs/modules/ftp/Makefile

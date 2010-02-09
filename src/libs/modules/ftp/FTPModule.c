@@ -34,56 +34,52 @@ enum
      STATUS_CHANGED_SIGNAL,
      NEW_DOWNLOAD_SIGNAL,
      SWITCH_MODULE_SIGNAL,
-
-     LOAD_COMMITTED_SIGNAL,
-     LOAD_STARTED_SIGNAL,
-     LOAD_PROGRESS_CHANGED_SIGNAL,
-     LOAD_FINISHED_SIGNAL,
-     LOAD_ERROR_SIGNAL,
-
-     NAVIGATION_REQUESTED,
-     POPULATE_POPUP_SIGNAL,
-
      NB_SIGNALS
 };
 
 static guint module_ftp_signals[NB_SIGNALS] = { 0 };
 
-/* Errors */
-typedef enum
+/*!
+  \struct FtpFile
+  \brief A file from the FTP repository
+ */
+typedef struct
 {
-     MODULE_FTP_ERROR_CURL_INIT,
-     MODULE_FTP_ERROR_CONNECT,
-     MODULE_FTP_ERROR_FAILED
-} ModuleFtpError;
+     gchar *path;        /*!< URI of the file */
+     size_t size;        /*!< File's size in bytes */
+     gboolean is_dir;    /*!< TRUE if the file is a directory */
+} FtpFile;
 
-#define MODULE_FTP_ERROR      (module_ftp_error_quark ())
+/* Private data */
 
-static GQuark module_ftp_error_quark (void)
+#define MODULE_FTP_GET_PRIVATE(obj)     (G_TYPE_INSTANCE_GET_PRIVATE ((obj),    \
+                                         module_ftp_get_type (),                \
+                                         ModuleFtpPrivate))
+
+typedef struct _ModuleFtpPrivate ModuleFtpPrivate;
+
+/*! \struct _ModuleFtpPrivate */
+struct _ModuleFtpPrivate
 {
-     static GQuark module_ftp_error = 0;
+     GList *files;       /*!< List of all files on the FTP */
+     GURI *uri;          /*!< GURI object, to have the hostname, user and password, etc... */
+     CurlClient *curl;   /*!< CURL object */
+};
 
-     if (!module_ftp_error)
-     {
-          module_ftp_error = g_quark_from_string ("MODULE_FTP_ERROR");
-     }
-
-     return module_ftp_error;
-}
-/* End of errors */
-
-static GString *curl_content = NULL; /* for CURL */
+/* End of private data */
 
 static void module_ftp_class_init (ModuleFtpClass *class);
 static void module_ftp_init (ModuleFtp *obj);
 
-static void module_ftp_item_activated_cb (ModuleFtp *obj, GtkTreePath *path, gpointer data);
 static gchar **cream_strsplit (gchar *str, gchar *delim);
-static size_t module_ftp_curl_write_data_func (void *buffer, size_t size, size_t nmemb, void *stream);
-static int module_ftp_curl_progress_func (void *clientp, double dl_total, double dl_now, double up_total, double up_now);
-static void module_ftp_split_curl_data (ModuleFtp *obj);
 static GtkTreeModel *module_ftp_create_model (ModuleFtp *obj);
-static gpointer thread_loading_ftp (gpointer data);
+
+static void module_ftp_row_activated_cb (ModuleFtp *obj, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data);
+static void module_ftp_load_finished_cb (CurlClient *curl, ModuleFtp *obj);
+static void module_ftp_load_error_cb (CurlClient *curl, gchar *uri, gpointer error, ModuleFtp *obj);
+static void module_ftp_progress_changed_cb (CurlClient *curl, gfloat progress, ModuleFtp *obj);
+static void module_ftp_uri_changed_cb (CurlClient *curl, gchar *uri, ModuleFtp *obj);
+static void module_ftp_status_changed_cb (CurlClient *curl, gchar *status, ModuleFtp *obj);
 
 GtkType module_ftp_get_type (void)
 {
@@ -102,7 +98,7 @@ GtkType module_ftp_get_type (void)
                (GtkClassInitFunc) NULL
           };
 
-          module_ftp_type = gtk_type_unique (GTK_TYPE_ICON_VIEW, &module_ftp_info);
+          module_ftp_type = gtk_type_unique (GTK_TYPE_TREE_VIEW, &module_ftp_info);
      }
 
      return module_ftp_type;
@@ -110,6 +106,8 @@ GtkType module_ftp_get_type (void)
 
 static void module_ftp_class_init (ModuleFtpClass *class)
 {
+     g_type_class_add_private (class, sizeof (ModuleFtpPrivate));
+
      module_ftp_signals[URI_CHANGED_SIGNAL] = g_signal_new (
           "uri-changed",
           G_TYPE_FROM_CLASS (class),
@@ -159,133 +157,147 @@ static void module_ftp_class_init (ModuleFtpClass *class)
           g_cclosure_user_marshal_BOOLEAN__STRING,
           G_TYPE_BOOLEAN,
           1, G_TYPE_STRING);
-
-     module_ftp_signals[LOAD_COMMITTED_SIGNAL] = g_signal_new (
-          "load-committed",
-          G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_LAST,
-          G_STRUCT_OFFSET (ModuleFtpClass, load_committed),
-          NULL, NULL,
-          g_cclosure_marshal_VOID__VOID,
-          G_TYPE_NONE,
-          0, G_TYPE_NONE);
-
-     module_ftp_signals[LOAD_STARTED_SIGNAL] = g_signal_new (
-          "load-started",
-          G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_LAST,
-          G_STRUCT_OFFSET (ModuleFtpClass, load_started),
-          NULL, NULL,
-          g_cclosure_marshal_VOID__VOID,
-          G_TYPE_NONE,
-          0, G_TYPE_NONE);
-
-     module_ftp_signals[LOAD_PROGRESS_CHANGED_SIGNAL] = g_signal_new (
-          "load-progress-changed",
-          G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_LAST,
-          G_STRUCT_OFFSET (ModuleFtpClass, load_progress_changed),
-          NULL, NULL,
-          g_cclosure_marshal_VOID__INT,
-          G_TYPE_NONE,
-          1, G_TYPE_INT);
-
-     module_ftp_signals[LOAD_FINISHED_SIGNAL] = g_signal_new (
-          "load-finished",
-          G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_LAST,
-          G_STRUCT_OFFSET (ModuleFtpClass, load_finished),
-          NULL, NULL,
-          g_cclosure_marshal_VOID__VOID,
-          G_TYPE_NONE,
-          0, G_TYPE_NONE);
-
-     module_ftp_signals[LOAD_ERROR_SIGNAL] = g_signal_new (
-          "load-error",
-          G_TYPE_FROM_CLASS (class),
-          G_SIGNAL_RUN_LAST,
-          G_STRUCT_OFFSET (ModuleFtpClass, load_error),
-          NULL, NULL,
-          g_cclosure_user_marshal_VOID__STRING_POINTER,
-          G_TYPE_NONE,
-          2, G_TYPE_STRING, G_TYPE_POINTER);
-
 }
 
 static void module_ftp_init (ModuleFtp *obj)
 {
      obj->uri = NULL;
-     obj->user = NULL;
-     obj->passwd = NULL;
-     obj->host = NULL;
-     obj->dir = NULL;
      obj->title = NULL;
      obj->status = NULL;
-     obj->files = NULL;
-     obj->load_status = MODULE_FTP_LOAD_PROVISIONAL;
+     obj->view_source_mode = FALSE;
 }
 
 GtkWidget *module_ftp_new (void)
 {
      ModuleFtp *obj = gtk_type_new (module_ftp_get_type ());
+     ModuleFtpPrivate *priv = MODULE_FTP_GET_PRIVATE (obj);
+     GtkTreeViewColumn *col;
+     GtkCellRenderer *cell;
 
      /* add files to the iconview */
-     gtk_icon_view_set_model (GTK_ICON_VIEW (obj), module_ftp_create_model (obj));
-     gtk_icon_view_set_text_column (GTK_ICON_VIEW (obj), 0);
-     gtk_icon_view_set_pixbuf_column (GTK_ICON_VIEW (obj), 1);
+     gtk_tree_view_set_model (GTK_TREE_VIEW (obj), module_ftp_create_model (obj));
 
-     g_signal_connect (G_OBJECT (obj), "item-activated", G_CALLBACK (module_ftp_item_activated_cb), NULL);
+     cell = gtk_cell_renderer_pixbuf_new ();
+     col = gtk_tree_view_column_new_with_attributes ("Icon", cell, "pixbuf", 0, NULL);
+     gtk_tree_view_append_column (GTK_TREE_VIEW (obj), col);
+
+     cell = gtk_cell_renderer_text_new ();
+     col = gtk_tree_view_column_new_with_attributes ("Name", cell, "text", 1, NULL);
+     gtk_tree_view_append_column (GTK_TREE_VIEW (obj), col);
+
+     cell = gtk_cell_renderer_text_new ();
+     col = gtk_tree_view_column_new_with_attributes ("Size", cell, "text", 2, NULL);
+     gtk_tree_view_append_column (GTK_TREE_VIEW (obj), col);
+
+     cell = gtk_cell_renderer_text_new ();
+     col = gtk_tree_view_column_new_with_attributes ("Type", cell, "text", 3, NULL);
+     gtk_tree_view_append_column (GTK_TREE_VIEW (obj), col);
+
+     /* Init CURL */
+     priv->files = NULL;
+     priv->uri = NULL;
+     priv->curl = curl_client_new ();
+
+     g_signal_connect (G_OBJECT (obj),        "row-activated", G_CALLBACK (module_ftp_row_activated_cb), NULL);
+     g_object_connect (G_OBJECT (priv->curl),
+          "signal::load-finished",         G_CALLBACK (module_ftp_load_finished_cb),    obj,
+          "signal::load-error",            G_CALLBACK (module_ftp_load_error_cb),       obj,
+          "signal::load-progress-changed", G_CALLBACK (module_ftp_progress_changed_cb), obj,
+          "signal::uri-changed",           G_CALLBACK (module_ftp_uri_changed_cb),      obj,
+          "signal::status-changed",        G_CALLBACK (module_ftp_status_changed_cb),   obj,
+     NULL);
 
      return GTK_WIDGET (obj);
 }
 
 void module_ftp_load_uri (ModuleFtp *obj, gchar *uri)
 {
-     GThread *th_loading;
-     GError *error = NULL;
+     ModuleFtpPrivate *priv = MODULE_FTP_GET_PRIVATE (obj);
 
-     obj->load_status = MODULE_FTP_LOAD_COMMITTED;
-     g_signal_emit (
-          G_OBJECT (obj),
-          module_ftp_signals[LOAD_COMMITTED_SIGNAL],
-          0
-     );
+     curl_client_load_uri (priv->curl, uri);
+     priv->uri = curl_client_get_guri (priv->curl);
+}
 
-     if (obj->uri)
-          g_free (obj->uri);
-     obj->uri = g_strdup (uri);
-     g_signal_emit (
-          G_OBJECT (obj),
-          module_ftp_signals[URI_CHANGED_SIGNAL],
-          0, obj->uri
-     );
+static gchar **cream_strsplit (gchar *string, gchar *delim)
+{
+     gchar **tmp = g_strsplit (string, delim, -1);
+     GArray *ret = g_array_new (TRUE, TRUE, sizeof (gchar*));
+     int i, l = g_strv_length (tmp);
 
-     th_loading = g_thread_create (thread_loading_ftp, obj, TRUE, &error);
+     for (i = 0; i < l; ++i)
+          if (strcmp (tmp[i], ""))
+               ret = g_array_append_val (ret, tmp[i]);
 
-     if (error != NULL)
+     return (gchar **) g_array_free (ret, FALSE);
+}
+
+static gchar *cream_bytes (gsize bytes)
+{
+     gchar *array[] = { "b", "kb", "Mb", "Gb", "Tb" };
+     gfloat tmp = (gfloat)bytes / 1024.0;
+     gint i = 0;
+
+     while (tmp > 1.0)
      {
-          g_thread_join (th_loading);
-          g_signal_emit (
-               G_OBJECT (obj),
-               module_ftp_signals[LOAD_ERROR_SIGNAL],
-               0, obj->uri, error
-          );
+          if (tmp < 1)
+               return g_strdup_printf ("%.1f %s", tmp * 1024.0, array[i]);
+
+          tmp /= 1024.0;
+          i++;
      }
+
+     return g_strdup_printf ("%d b", bytes);
+}
+
+static GtkTreeModel *module_ftp_create_model (ModuleFtp *obj)
+{
+     ModuleFtpPrivate *priv = MODULE_FTP_GET_PRIVATE (obj);
+     GtkListStore *list_store;
+     GdkPixbuf *file, *folder;
+     GtkTreeIter iter;
+     int i;
+
+     file = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".cream-browser", "icons", "file.png", NULL), NULL);
+     folder = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".cream-browser", "icons", "folder.png", NULL), NULL);
+
+     if (CURL_LOAD_PROVISIONAL == curl_client_get_load_status (priv->curl))
+     {
+          list_store = gtk_list_store_new (4, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+     }
+     else
+     {
+          list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (obj)));
+          gtk_list_store_clear (list_store);
+     }
+
+     for (i = 0; i < g_list_length (priv->files); ++i)
+     {
+          FtpFile *el = g_list_nth_data (priv->files, i);
+
+          gtk_list_store_append (list_store, &iter);
+          gtk_list_store_set (list_store, &iter,
+                    0, el->path,
+                    1, (el->is_dir ? folder : file),
+                    2, cream_bytes (el->size),
+                    3, (el->is_dir ? "directory" : "file"),
+                    -1);
+     }
+
+     return GTK_TREE_MODEL (list_store);
 }
 
 /* signals */
-static void module_ftp_item_activated_cb (ModuleFtp *obj, GtkTreePath *path, gpointer data)
-
+static void module_ftp_row_activated_cb (ModuleFtp *obj, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data)
 {
      GtkTreeIter iter;
-     GtkTreeModel *model = gtk_icon_view_get_model (GTK_ICON_VIEW (obj));
+     GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (obj));
      gchar *filepath;
-     gboolean is_dir = FALSE;
+     gchar *type;
 
      gtk_tree_model_get_iter (model, &iter, path);
-     gtk_tree_model_get (model, &iter, 0, &filepath, 2, &is_dir, -1);
+     gtk_tree_model_get (model, &iter, 0, &filepath, 3, &type, -1);
 
-     if (is_dir)
+     if (g_str_equal (type, "directory"))
           module_ftp_load_uri (obj, g_strconcat (obj->uri, "/", filepath, NULL));
      else
      {
@@ -307,226 +319,96 @@ static void module_ftp_item_activated_cb (ModuleFtp *obj, GtkTreePath *path, gpo
      }
 }
 
-static gchar **cream_strsplit (gchar *string, gchar *delim)
+static void module_ftp_load_finished_cb (CurlClient *curl, ModuleFtp *obj)
 {
-     gchar **tmp = g_strsplit (string, delim, -1);
-     GArray *ret = g_array_new (TRUE, TRUE, sizeof (gchar*));
-     int i, l = g_strv_length (tmp);
+     ModuleFtpPrivate *priv = MODULE_FTP_GET_PRIVATE (obj);
+     gchar *tmp = g_strdup (curl_client_get_content (curl));
+     gchar **lines = cream_strsplit (tmp, "\n");
+     gint i, l = g_strv_length (lines);
 
      for (i = 0; i < l; ++i)
-          if (strcmp (tmp[i], ""))
-               ret = g_array_append_val (ret, tmp[i]);
-
-     return (gchar **) g_array_free (ret, FALSE);
-}
-
-static size_t module_ftp_curl_write_data_func (void *buffer, size_t size, size_t nmemb, void *stream)
-{
-     if (curl_content)
-          curl_content = g_string_append (curl_content, (gchar *) buffer);
-     else
-          curl_content = g_string_new ((gchar *) buffer);
-
-     printf ("%s", (char *) buffer);
-
-     return (size_t) (size * nmemb);
-}
-
-static int module_ftp_curl_progress_func (void *clientp, double dl_total, double dl_now, double up_total, double up_now)
-{
-     ModuleFtp *obj = (ModuleFtp *) clientp;
-
-     obj->progress = (gint) (dl_now * 100.0 / dl_total);
-     g_signal_emit (
-          G_OBJECT (obj),
-          module_ftp_signals[LOAD_PROGRESS_CHANGED_SIGNAL],
-          0, obj->progress
-     );
-
-     return 0;
-}
-
-static void module_ftp_split_curl_data (ModuleFtp *obj)
-{
-     gchar *tmp = g_string_free (curl_content, FALSE);
-     gchar **lines = cream_strsplit (tmp, "\n");
-     int i, len = g_strv_length (lines);
-
-     /* lines format :
-      * <access> <number of files> <user owner> <group owner> <size> <month> <day> <year> <file>
-      */
-     g_list_free (obj->files);
-     for (i = 0; i < len; ++i)
      {
           FtpFile *el = g_malloc (sizeof (FtpFile));
           gchar **cols = cream_strsplit (lines[i], " ");
 
-          el->is_dir = (cols[0][0] == 'd');
-          el->size = (size_t) g_ascii_strtoll (cols[4], NULL, 10);
+          if (cols[0][0] == 'd')
+               el->is_dir = TRUE;
+
+          el->size = g_ascii_strtoll (cols[4], NULL, 10);
           el->path = g_strdup (cols[8]);
 
-          /* add to the list */
-          obj->files = g_list_append (obj->files, el);
+          priv->files = g_list_append (priv->files, el);
      }
 
-     g_strfreev (lines);
-}
+     module_ftp_create_model (obj);
+     gtk_widget_show_all (GTK_WIDGET (obj));
 
-static GtkTreeModel *module_ftp_create_model (ModuleFtp *obj)
-{
-     GtkListStore *list_store;
-     GdkPixbuf *file, *folder;
-     GtkTreeIter iter;
-     int i;
+     priv->uri = curl_client_get_guri (curl);
+     g_free (obj->uri);
+     obj->uri = g_strdup (gnet_uri_get_string (priv->uri));
 
-     file = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".cream-browser", "icons", "file.png", NULL), NULL);
-     folder = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".cream-browser", "icons", "folder.png", NULL), NULL);
-
-     if (obj->load_status == MODULE_FTP_LOAD_PROVISIONAL)
-     {
-          list_store = gtk_list_store_new (3, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN);
-     }
-     else
-     {
-          list_store = GTK_LIST_STORE (gtk_icon_view_get_model (GTK_ICON_VIEW (obj)));
-          gtk_list_store_clear (list_store);
-     }
-
-     for (i = 0; i < g_list_length (obj->files); ++i)
-     {
-          FtpFile *el = g_list_nth_data (obj->files, i);
-
-          gtk_list_store_append (list_store, &iter);
-          gtk_list_store_set (list_store, &iter,
-                    0, el->path,
-                    1, (el->is_dir ? folder : file),
-                    2, el->is_dir,
-                    -1);
-     }
-
-     return GTK_TREE_MODEL (list_store);
-}
-
-static gpointer thread_loading_ftp (gpointer data)
-{
-     ModuleFtp *obj = (ModuleFtp *) data;
-     gchar *tmp, *at, *point, *slash;
-     GError *error = NULL;
-     CURL *curl;
-     CURLcode res;
-
-     g_return_val_if_fail (MODULE_IS_FTP (obj), NULL);
-
-     /* Parse URL to get information (username, password, hostname, folder)
-      * ftp://[username[:password]@]hostname.domain/directory
-      */
-     tmp = obj->uri + strlen ("ftp://");
-     if ((at = strchr (tmp, '@')))
-     {
-          *at = 0;
-          if ((point = strchr (tmp, ':')))
-          {
-               *point = 0;
-               obj->user = g_strdup (tmp);
-               obj->passwd = g_strdup (point + 1);
-          }
-
-          tmp = at + 1;
-     }
-
-     if ((slash = strchr (tmp, '/')))
-     {
-          *slash = 0;
-
-          obj->host = g_strdup (tmp);
-          *slash = '/';
-          obj->dir = g_strdup (slash);
-     }
-     else
-     {
-          obj->host = g_strdup (tmp);
-     }
-
-     /* Change object properties */
-     obj->title = g_strdup_printf ("%s - %s", obj->host, obj->dir);
      g_signal_emit (
           G_OBJECT (obj),
-          module_ftp_signals[NEW_TITLE_SIGNAL],
-          0, obj->title
+          module_ftp_signals[URI_CHANGED_SIGNAL],
+          0, obj->uri
      );
 
-     obj->status = g_strdup_printf ("Connecting to %s ...", obj->host);
+     obj->status = g_strdup (obj->uri);
      g_signal_emit (
           G_OBJECT (obj),
           module_ftp_signals[STATUS_CHANGED_SIGNAL],
           0, obj->status
      );
 
-     /* Start loading */
-     obj->load_status = MODULE_FTP_LOAD_STARTED;
+     obj->title = g_strdup_printf ("Index of %s", priv->uri->path);
      g_signal_emit (
           G_OBJECT (obj),
-          module_ftp_signals[LOAD_STARTED_SIGNAL],
-          0
+          module_ftp_signals[NEW_TITLE_SIGNAL],
+          0, obj->title
      );
+}
 
-     /* connect to FTP with CURL */
-     curl_global_init (CURL_GLOBAL_DEFAULT);
-     curl = curl_easy_init ();
-     if (curl)
-     {
-          curl_easy_setopt (curl, CURLOPT_URL, g_strconcat ("ftp://", obj->host, (obj->dir ? obj->dir : "/"), NULL));
-          if (obj->user)
-               curl_easy_setopt (curl, CURLOPT_USERNAME, obj->user);
-          if (obj->passwd)
-               curl_easy_setopt (curl, CURLOPT_PASSWORD, obj->passwd);
+static void module_ftp_load_error_cb (CurlClient *curl, gchar *uri, gpointer error, ModuleFtp *obj)
+{
+     printf ("Error '%s' : %s\n", uri, ((GError *) error)->message);
+}
 
-          curl_easy_setopt (curl, CURLOPT_WRITEFUNCTION, module_ftp_curl_write_data_func);
-          curl_easy_setopt (curl, CURLOPT_NOPROGRESS, 0L);
-          curl_easy_setopt (curl, CURLOPT_PROGRESSFUNCTION, module_ftp_curl_progress_func);
-          curl_easy_setopt (curl, CURLOPT_PROGRESSDATA, obj);
+static void module_ftp_progress_changed_cb (CurlClient *curl, gfloat progress, ModuleFtp *obj)
+{
+     ModuleFtpPrivate *priv = MODULE_FTP_GET_PRIVATE (obj);
 
-          res = curl_easy_perform (curl);
-          curl_easy_cleanup (curl);
-
-          if (CURLE_OK != res)
-          {
-               error = g_error_new (MODULE_FTP_ERROR, MODULE_FTP_ERROR_CONNECT, "Error %d: Failed to open connection with %s", res, obj->host);
-               obj->load_status = MODULE_FTP_LOAD_FAILED;
-               g_signal_emit (
-                    G_OBJECT (obj),
-                    module_ftp_signals[LOAD_ERROR_SIGNAL],
-                    0, obj->uri, error
-               );
-               return NULL;
-          }
-          else
-          {
-               module_ftp_split_curl_data (obj);
-          }
-     }
-     else
-     {
-          error = g_error_new (MODULE_FTP_ERROR, MODULE_FTP_ERROR_CONNECT, "Failed to init CURL");
-          obj->load_status = MODULE_FTP_LOAD_FAILED;
-          g_signal_emit (
-               G_OBJECT (obj),
-               module_ftp_signals[LOAD_ERROR_SIGNAL],
-               0, obj->uri, error
-          );
-          return NULL;
-     }
-
-     curl_global_cleanup ();
-
-     gtk_icon_view_set_model (GTK_ICON_VIEW (obj), module_ftp_create_model (obj));
-
-     obj->load_status = MODULE_FTP_LOAD_FINISHED;
+     g_free (obj->status);
+     obj->status = g_strdup_printf ("Transfering data from %s ... (%d%%)", priv->uri->hostname, (gint) progress);
      g_signal_emit (
           G_OBJECT (obj),
-          module_ftp_signals[LOAD_FINISHED_SIGNAL],
-          0
+          module_ftp_signals[STATUS_CHANGED_SIGNAL],
+          0, obj->status
      );
+}
 
-     return NULL;
+static void module_ftp_uri_changed_cb (CurlClient *curl, gchar *uri, ModuleFtp *obj)
+{
+     ModuleFtpPrivate *priv = MODULE_FTP_GET_PRIVATE (obj);
+     priv->uri = curl_client_get_guri (curl);
+
+     g_free (obj->uri);
+     obj->uri = g_strdup (uri);
+
+     g_signal_emit (
+          G_OBJECT (obj),
+          module_ftp_signals[URI_CHANGED_SIGNAL],
+          0, obj->uri
+     );
+}
+
+static void module_ftp_status_changed_cb (CurlClient *curl, gchar *status, ModuleFtp *obj)
+{
+     g_free (obj->status);
+     obj->status = g_strdup (status);
+
+     g_signal_emit (
+          G_OBJECT (obj),
+          module_ftp_signals[STATUS_CHANGED_SIGNAL],
+          0, obj->status
+     );
 }
