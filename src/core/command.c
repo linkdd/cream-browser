@@ -33,11 +33,11 @@ void getcmd (GtkEntry *inputbox, const gchar *text, CreamTabbed *obj)
      }
      else if (text[0] == ':' && strlen (text) > 1)
      {
-          ;
+          cream_tabbed_load_uri (obj, text + 1);
      }
      else
      {
-          printf ("Not a browser command : '%s'", text);
+          printf ("Not a browser command : '%s'\n", text);
      }
 
      gtk_entry_set_text (inputbox, "");

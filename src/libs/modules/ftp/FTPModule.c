@@ -263,6 +263,14 @@ static void module_ftp_update_model (ModuleFtp *obj)
      {
           gtk_list_store_clear (priv->list_store);
 
+          gtk_list_store_append (priv->list_store, &iter);
+          gtk_list_store_set (priv->list_store, &iter,
+                    0, folder,
+                    1, "..",
+                    2, "0 b",
+                    3, "directory",
+                    -1);
+
           for (i = 0; i < g_list_length (priv->files); ++i)
           {
                FtpFile *el = g_list_nth_data (priv->files, i);
@@ -285,15 +293,32 @@ static void module_ftp_row_activated_cb (ModuleFtp *obj, GtkTreePath *path, GtkT
      GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (obj));
      gchar *filepath;
      gchar *type;
+     GURI *tmp = gnet_uri_new (obj->uri);
 
      gtk_tree_model_get_iter (model, &iter, path);
      gtk_tree_model_get (model, &iter, 1, &filepath, 3, &type, -1);
 
+     if (g_str_equal (filepath, ".."))
+     {
+          gint l = strlen (obj->uri);
+          gchar *p;
+
+          if (g_str_equal (tmp->path, "/"))
+               return;
+
+          obj->uri[l - 1] = 0;
+          p = strrchr (obj->uri, '/');
+          if (p != NULL) *p = 0;
+
+          module_ftp_load_uri (obj, g_strconcat (obj->uri, "/", NULL));
+          return;
+     }
+
      if (g_str_equal (type, "directory"))
-          module_ftp_load_uri (obj, g_strconcat (obj->uri, "/", filepath, NULL));
+          module_ftp_load_uri (obj, g_strconcat (obj->uri, filepath, "/", NULL));
      else
      {
-          WebKitNetworkRequest *tmp = webkit_network_request_new (g_strconcat (obj->uri, "/", filepath, NULL));
+          WebKitNetworkRequest *tmp = webkit_network_request_new (g_strconcat (obj->uri, filepath, NULL));
           WebKitDownload *dl = webkit_download_new (tmp);
           gboolean ret = FALSE;
 
@@ -372,7 +397,7 @@ static void module_ftp_progress_changed_cb (CurlClient *curl, gfloat progress, M
      ModuleFtpPrivate *priv = MODULE_FTP_GET_PRIVATE (obj);
 
      g_free (obj->status);
-     obj->status = g_strdup_printf ("Transfering data from %s ... (%d%%)", priv->uri->hostname, (gint) progress);
+     obj->status = g_strdup_printf ("Transfering data from %s ...", priv->uri->hostname);
      g_signal_emit (
           G_OBJECT (obj),
           module_ftp_signals[STATUS_CHANGED_SIGNAL],

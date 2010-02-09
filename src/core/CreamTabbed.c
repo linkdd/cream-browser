@@ -170,13 +170,13 @@ static void cream_tabbed_init_inputbox (CreamTabbed *obj)
 }
 
 /*!
-  \fn void cream_tabbed_load_uri (CreamTabbed *obj, gchar *uri)
+  \fn void cream_tabbed_load_uri (CreamTabbed *obj, const gchar *uri)
   \brief Load a new URI in the CreamView
 
   \param obj The CreamTabbed object
   \param uri New URI to load
  */
-void cream_tabbed_load_uri (CreamTabbed *obj, gchar *uri)
+void cream_tabbed_load_uri (CreamTabbed *obj, const gchar *uri)
 {
      cream_view_load_uri (CREAM_VIEW (obj->creamview), uri);
 }

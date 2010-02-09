@@ -262,6 +262,7 @@ static void *curl_client_load_uri_thread (void *data)
      GError *error = NULL;
 
      priv->context = curl_easy_init ();
+     priv->content = g_string_new ("");
      if (priv->context)
      {
           g_free (obj->status);

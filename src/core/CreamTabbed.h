@@ -74,7 +74,7 @@ struct _CreamTabbedClass
 GtkType cream_tabbed_get_type (void);
 GtkWidget *cream_tabbed_new (void);
 
-void cream_tabbed_load_uri (CreamTabbed *obj, gchar *uri);
+void cream_tabbed_load_uri (CreamTabbed *obj, const gchar *uri);
 
 const gchar *cream_tabbed_get_uri (CreamTabbed *obj);
 const gchar *cream_tabbed_get_title (CreamTabbed *obj);

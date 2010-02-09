@@ -130,7 +130,7 @@ int main (int argc, char **argv)
 
      win = cream_interface_init ();
 
-     notebook_append_page ("ftp://mirrors.kernel.org/gnu/");
+     notebook_append_page ("ftp://mirrors.kernel.org/");
 
      gtk_widget_show_all (win);
      gtk_main ();
