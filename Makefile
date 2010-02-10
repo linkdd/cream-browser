@@ -16,7 +16,7 @@ export top_srcdir = $(PWD)
 # GCC flags
 export CC = gcc
 export INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules
-export CCFLAGS = -g -Wall -O2
+export CCFLAGS = -g -Wall -O2 -DPREFIX="$(prefix)"
 # GTK+ flags for GCC
 export GTK_CFLAGS = `pkg-config --cflags gtk+-2.0`
 export GTK_LIBS = `pkg-config --libs gtk+-2.0`
