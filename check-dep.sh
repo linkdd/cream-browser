@@ -1,7 +1,7 @@
 #!/bin/sh
 
 DEPENDANCIES="gtk+-2.0 gnet-2.0 webkit-1.0"
-VERSIONS="2.14 2.0.0 1.1.18"
+VERSIONS="2.14 2.0.0 1.1.15"
 
 # Check PKG-CONFIG
 echo -n "Checking pkg-config... "
