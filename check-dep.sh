@@ -27,7 +27,7 @@ echo "yes"
 i=0
 for lib in $DEPENDANCIES
 do
-     local ver
+     ver=""
      j=0
 
      for ver in $VERSIONS
