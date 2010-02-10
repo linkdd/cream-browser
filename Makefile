@@ -24,6 +24,7 @@ CREAM_DISTFILES =	$(CREAM_MAKEFILES) COPYING AUTHORS README \
 
 # Common prefix for installation directories.
 # NOTE: This directory must exist when you start the install.
+destdir =
 export prefix = /usr/local
 export datarootdir = $(prefix)/share
 export datadir = $(datarootdir)
@@ -39,7 +40,7 @@ export top_srcdir = $(PWD)
 
 # GCC flags
 export CC = gcc
-export INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules
+export INCLUDES = -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules
 export CCFLAGS = -g -Wall -O2 -DPREFIX="$(prefix)"
 # GTK+ flags for GCC
 export GTK_CFLAGS = `pkg-config --cflags gtk+-2.0`
@@ -67,10 +68,10 @@ check-dep:
 	@sh check-dep.sh
 
 install:
-	@$(MAKE) install -C src/core DESTDIR=$(DESTDIR)
+	@$(MAKE) install -C src/core destdir=$(destdir)
 
 uninstall:
-	@$(MAKE) uninstall -C src/core DESTDIR=$(DESTDIR)
+	@$(MAKE) uninstall -C src/core destdir=$(destdir)
 
 clean:
 	@$(MAKE) clean -C src/libs
