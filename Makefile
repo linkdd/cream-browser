@@ -1,3 +1,27 @@
+PROGNAME = cream-browser
+VERSION = 201002
+
+# Variables for 'make dist'
+CREAM_MAKEFILES =	Makefile \
+				src/core/Makefile \
+				src/libs/Makefile \
+				src/libs/CreamView/Makefile \
+				src/libs/curl/Makefile \
+				src/libs/gopher/Makefile \
+				src/libs/modules/about/Makefile \
+				src/libs/modules/ftp/Makefile \
+				src/libs/modules/www/Makefile
+
+CREAM_DISTFILES =	$(CREAM_MAKEFILES) COPYING AUTHORS README \
+				src/core/*.c src/core/*.h \
+				src/libs/CreamView/*.c src/libs/CreamView/*.h \
+				src/libs/curl/*.c src/libs/curl/*.h \
+				src/libs/gopher/*.c src/libs/gopher/*.h \
+				src/libs/modules/about/*.c src/libs/modules/about/*.h \
+				src/libs/modules/ftp/*.c src/libs/modules/ftp/*.h \
+				src/libs/modules/www/*.c src/libs/modules/www/*.h \
+				doc/Doxyfile check-dep.sh
+
 # Common prefix for installation directories.
 # NOTE: This directory must exist when you start the install.
 export prefix = /usr/local
@@ -53,7 +77,16 @@ clean:
 	@$(MAKE) clean -C src/core
 
 dist:
-	@echo "TODO"
+	@echo "Generating $(PROGNAME)-$(VERSION).tar ..."
+	@tar cvf $(PROGNAME)-$(VERSION).tar $(CREAM_DISTFILES) -H posix > /dev/null
+	@mkdir $(PROGNAME)-$(VERSION)
+	@tar xvf $(PROGNAME)-$(VERSION).tar -C $(PROGNAME)-$(VERSION) > /dev/null
+	@rm -f $(PROGNAME)-$(VERSION).tar
+	@tar cvf $(PROGNAME)-$(VERSION).tar $(PROGNAME)-$(VERSION)/* -H posix > /dev/null
+	@echo "Creating $(PROGNAME)-$(VERSION).tar.gz ..."
+	@gzip $(PROGNAME)-$(VERSION).tar
+	@echo "Cleaning..."
+	@rm -rf $(PROGNAME)-$(VERSION)
 
 doc:
 	@$(MAKE) -C doc/

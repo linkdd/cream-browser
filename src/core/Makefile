@@ -17,6 +17,7 @@ creamctl_LIBS =
 
 all: cream creamctl
 
+
 install: all
 	$(INSTALL_PROGRAM) cream $(DESTDIR)$(bindir)/cream
 	$(INSTALL_PROGRAM) creamctl $(DESTDIR)$(bindir)/creamctl
