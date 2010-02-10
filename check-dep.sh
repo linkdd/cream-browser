@@ -1,7 +1,7 @@
 #!/bin/sh
 
-DEPENDANCIES=( gtk+-2.0 gnet-2.0 webkit-1.0 )
-VERSIONS=( 2.14 2.0.0 1.1.18 )
+DEPENDANCIES="gtk+-2.0 gnet-2.0 webkit-1.0"
+VERSIONS="2.14 2.0.0 1.1.18"
 
 # Check PKG-CONFIG
 echo -n "Checking pkg-config... "
@@ -24,13 +24,19 @@ fi
 echo "yes"
 
 # Check LIBRARIES
-nblibs=${#DEPENDANCIES[@]}
-index=0
-
-while [ "$index" -lt "$nblibs" ]
+i=0
+for lib in $DEPENDANCIES
 do
-     lib=${DEPENDANCIES[$index]}
-     ver=${VERSIONS[$index]}
+     local ver
+     j=0
+
+     for ver in $VERSIONS
+     do
+          if [ $i -eq $j ] ; then
+               break
+          fi
+          j=$((j + 1))
+     done
 
      echo -n "Checking $lib... "
 
@@ -52,6 +58,5 @@ do
      fi
 
      echo "yes"
-
-     let "index = $index + 1"
+     i=$((i + 1))
 done
