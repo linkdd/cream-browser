@@ -22,24 +22,32 @@ CREAM_DISTFILES =	$(CREAM_MAKEFILES) COPYING AUTHORS README \
 				src/libs/modules/www/*.c src/libs/modules/www/*.h \
 				doc/Doxyfile check-dep.sh
 
+# Programs
+export CC      = gcc
+export AR      = ar
+export INSTALL = install
+
+export INSTALL_PROGRAM = $(INSTALL) -c
+export INSTALL_SCRIPT  = $(INSTALL) -c
+export INSTALL_DATA    = $(INSTALL) -c -m 644
+
 # Common PREFIX for installation directories.
 # NOTE: This directory must exist when you start the install.
 DESTDIR =
 export PREFIX = /usr/local
 export datarootdir = $(PREFIX)/share
 export datadir = $(datarootdir)
-export exec_PREFIX = $(prefix)
+export exec_prefix = $(prefix)
 # Where to put the executable for the command `gcc'.
-export bindir = $(exec_PREFIX)/bin
+export bindir = $(exec_prefix)/bin
 # Where to put the directories used by the compiler.
-export libexecdir = $(exec_PREFIX)/libexec
+export libexecdir = $(exec_prefix)/libexec
 # Where to put the Info files.
 export infodir = $(datarootdir)/info
 # Sources directory
 export top_srcdir = $(PWD)
 
 # GCC flags
-export CC = gcc
 export INCLUDES = -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules
 export CCFLAGS = -g -Wall -O2 -DPREFIX="$(PREFIX)" -DCREAM_PROGNAME="\"$(PROGNAME)\"" -DCREAM_VERSION="\"$(VERSION)\""
 # GTK+ flags for GCC
@@ -68,6 +76,10 @@ check-dep:
 	@sh check-dep.sh
 
 install:
+	@mkdir -p $(DESTDIR)$(bindir)
+	@mkdir -p $(DESTDIR)$(datadir)
+	@mkdir -p $(DESTDIR)$(infodir)
+	@mkdir -p $(DESTDIR)$(libexecdir)
 	@$(MAKE) install -C src/core DESTDIR=$(DESTDIR)
 
 uninstall:
