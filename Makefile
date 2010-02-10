@@ -79,6 +79,7 @@ install:
 	@mkdir -p $(DESTDIR)$(bindir)
 	@mkdir -p $(DESTDIR)$(datadir)
 	@mkdir -p $(DESTDIR)$(infodir)
+	@mkdir -p $(DESTDIR)$(libexecdir)
 	@$(MAKE) install -C src/core DESTDIR=$(DESTDIR)
 
 uninstall:
