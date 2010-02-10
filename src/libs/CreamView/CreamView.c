@@ -39,7 +39,6 @@ static void cream_view_load_content (CreamView *view);
 static void cream_view_uri_changed_cb (GtkWidget *w, gchar *uri, gpointer data);
 static void cream_view_new_title_cb (GtkWidget *w, gchar *title, gpointer data);
 static void cream_view_status_changed_cb (GtkWidget *w, gchar *status, gpointer data);
-static void cream_view_jsmsg_changed_cb (GtkWidget *w, gchar *jsmsg, gpointer data);
 static gboolean cream_view_new_download_cb (GtkWidget *w, WebKitDownload *download, gpointer data);
 static gboolean cream_view_switch_module_cb (GtkWidget *w, gchar *new_uri, gpointer data);
 
@@ -435,11 +434,6 @@ static void cream_view_status_changed_cb (GtkWidget *w, gchar *status, gpointer 
           cream_view_signals[STATUS_CHANGED_SIGNAL],
           0, status
      );
-}
-
-static void cream_view_jsmsg_changed_cb (GtkWidget *w, gchar *jsmsg, gpointer data)
-{
-     /* TODO */;
 }
 
 static gboolean cream_view_new_download_cb (GtkWidget *w, WebKitDownload *download, gpointer data)

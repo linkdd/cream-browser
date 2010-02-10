@@ -390,11 +390,15 @@ static void jsapi_evaluate_script (ModuleWebView *view, const gchar *script, gch
      val = JSEvaluateScript (context, str, JSContextGetGlobalObject (context), NULL, 0, &exception);
 
      if (!val)
+     {
           if (message != NULL)
                *message = jsapi_ref_to_string (context, exception);
+     }
      else
+     {
           if (value != NULL)
                *value = jsapi_ref_to_string (context, val);
+     }
 }
 
 /*!
