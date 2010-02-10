@@ -22,17 +22,17 @@ CREAM_DISTFILES =	$(CREAM_MAKEFILES) COPYING AUTHORS README \
 				src/libs/modules/www/*.c src/libs/modules/www/*.h \
 				doc/Doxyfile check-dep.sh
 
-# Common prefix for installation directories.
+# Common PREFIX for installation directories.
 # NOTE: This directory must exist when you start the install.
-destdir =
-export prefix = /usr/local
-export datarootdir = $(prefix)/share
+DESTDIR =
+export PREFIX = /usr/local
+export datarootdir = $(PREFIX)/share
 export datadir = $(datarootdir)
-export exec_prefix = $(prefix)
+export exec_PREFIX = $(prefix)
 # Where to put the executable for the command `gcc'.
-export bindir = $(exec_prefix)/bin
+export bindir = $(exec_PREFIX)/bin
 # Where to put the directories used by the compiler.
-export libexecdir = $(exec_prefix)/libexec
+export libexecdir = $(exec_PREFIX)/libexec
 # Where to put the Info files.
 export infodir = $(datarootdir)/info
 # Sources directory
@@ -41,7 +41,7 @@ export top_srcdir = $(PWD)
 # GCC flags
 export CC = gcc
 export INCLUDES = -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules
-export CCFLAGS = -g -Wall -O2 -DPREFIX="$(prefix)"
+export CCFLAGS = -g -Wall -O2 -DPREFIX="$(PREFIX)" -DCREAM_PROGNAME="\"$(PROGNAME)\"" -DCREAM_VERSION="\"$(VERSION)\""
 # GTK+ flags for GCC
 export GTK_CFLAGS = `pkg-config --cflags gtk+-2.0`
 export GTK_LIBS = `pkg-config --libs gtk+-2.0`
@@ -68,10 +68,10 @@ check-dep:
 	@sh check-dep.sh
 
 install:
-	@$(MAKE) install -C src/core destdir=$(destdir)
+	@$(MAKE) install -C src/core DESTDIR=$(DESTDIR)
 
 uninstall:
-	@$(MAKE) uninstall -C src/core destdir=$(destdir)
+	@$(MAKE) uninstall -C src/core DESTDIR=$(DESTDIR)
 
 clean:
 	@$(MAKE) clean -C src/libs

@@ -19,8 +19,8 @@ all: cream creamctl
 
 
 install: all
-	$(INSTALL_PROGRAM) cream $(destdir)$(bindir)/cream
-	$(INSTALL_PROGRAM) creamctl $(destdir)$(bindir)/creamctl
+	$(INSTALL_PROGRAM) cream $(DESTDIR)$(bindir)/cream
+	$(INSTALL_PROGRAM) creamctl $(DESTDIR)$(bindir)/creamctl
 
 uninstall:
 	rm $(DESTDIR)$(bindir)/cream
