@@ -13,4 +13,4 @@ libcream-module-about.a: $(libcream_module_about_a_OBJECTS) $(libcream_module_ab
 	$(AR) rcs $@ $(libcream_module_about_a_OBJECTS)
 
 %.o: %.c
-	$(CC) $(CCFLAGS) $(INCLUDES) $(ALL_CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) $(ALL_CFLAGS) -c $^ -o $@

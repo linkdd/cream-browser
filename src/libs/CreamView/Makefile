@@ -13,4 +13,4 @@ libcreamview.a: $(libcreamview_a_OBJECTS) $(libcreamview_a_HEADERS)
 	$(AR) rcs $@ $(libcreamview_a_OBJECTS)
 
 %.o: %.c
-	$(CC) $(CCFLAGS) $(INCLUDES) $(ALL_CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) $(ALL_CFLAGS) -c $^ -o $@

@@ -13,4 +13,4 @@ libcream-curl.a: $(libcream_curl_a_OBJECTS) $(libcream_curl_a_HEADERS)
 	$(AR) rcs $@ $(libcream_curl_a_OBJECTS)
 
 %.o: %.c
-	$(CC) $(CCFLAGS) $(INCLUDES) $(ALL_CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) $(ALL_CFLAGS) -c $^ -o $@

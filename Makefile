@@ -23,21 +23,16 @@ CREAM_DISTFILES =	$(CREAM_MAKEFILES) COPYING AUTHORS README \
 				doc/Doxyfile check-dep.sh
 
 # Programs
-export CC      = gcc
-export AR      = ar
-export INSTALL = install
-
-export INSTALL_PROGRAM = $(INSTALL) -c
-export INSTALL_SCRIPT  = $(INSTALL) -c
-export INSTALL_DATA    = $(INSTALL) -c -m 644
+export INSTALL_PROGRAM = install -c
+export INSTALL_SCRIPT  = install -c
+export INSTALL_DATA    = install -c -m 644
 
 # Common PREFIX for installation directories.
 # NOTE: This directory must exist when you start the install.
-DESTDIR =
 export PREFIX = /usr/local
 export datarootdir = $(PREFIX)/share
 export datadir = $(datarootdir)
-export exec_prefix = $(prefix)
+export exec_prefix = $(PREFIX)
 # Where to put the executable for the command `gcc'.
 export bindir = $(exec_prefix)/bin
 # Where to put the directories used by the compiler.
@@ -48,8 +43,9 @@ export infodir = $(datarootdir)/info
 export top_srcdir = $(PWD)
 
 # GCC flags
-export INCLUDES = -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules
-export CCFLAGS = -g -Wall -O2 -DPREFIX="$(PREFIX)" -DCREAM_PROGNAME="\"$(PROGNAME)\"" -DCREAM_VERSION="\"$(VERSION)\""
+INCLUDES = -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules
+export CFLAGS += -g -Wall -O2 -DPREFIX="$(PREFIX)" -DCREAM_PROGNAME="\"$(PROGNAME)\"" -DCREAM_VERSION="\"$(VERSION)\"" $(INCLUDES)
+
 # GTK+ flags for GCC
 export GTK_CFLAGS = `pkg-config --cflags gtk+-2.0`
 export GTK_LIBS = `pkg-config --libs gtk+-2.0`
@@ -89,11 +85,10 @@ clean:
 	@$(MAKE) clean -C src/core
 
 dist:
-	@echo "Generating $(PROGNAME)-$(VERSION).tar ..."
-	@tar cvf $(PROGNAME)-$(VERSION).tar $(CREAM_DISTFILES) -H posix > /dev/null
+	@echo "Copying files..."
 	@mkdir $(PROGNAME)-$(VERSION)
-	@tar xvf $(PROGNAME)-$(VERSION).tar -C $(PROGNAME)-$(VERSION) > /dev/null
-	@rm -f $(PROGNAME)-$(VERSION).tar
+	@cp --parents $(CREAM_DISTFILES) $(PROGNAME)-$(VERSION)/
+	@echo "Creating $(PROGNAME)-$(VERSION).tar ..."
 	@tar cvf $(PROGNAME)-$(VERSION).tar $(PROGNAME)-$(VERSION)/* -H posix > /dev/null
 	@echo "Creating $(PROGNAME)-$(VERSION).tar.gz ..."
 	@gzip $(PROGNAME)-$(VERSION).tar

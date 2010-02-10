@@ -30,10 +30,10 @@ clean:
 	@rm -vrf *.o cream creamctl
 
 cream: $(cream_OBJECTS) $(cream_HEADERS)
-	$(CC) $(CCFLAGS) $(ALL_LIBS) $(cream_OBJECTS) $(cream_LIBS) -o $@
+	$(CC) $(CFLAGS) $(ALL_LIBS) $(cream_OBJECTS) $(cream_LIBS) -o $@
 
 creamctl: $(creamctl_OBJECTS) $(creamctl_HEADERS)
-	$(CC) $(CCFLAGS) $(GTK_LIBS) $(creamctl_OBJECTS) $(creamctl_LIBS) -o $@
+	$(CC) $(CFLAGS) $(GTK_LIBS) $(creamctl_OBJECTS) $(creamctl_LIBS) -o $@
 
 %.o: %.c
-	$(CC) $(CCFLAGS) $(INCLUDES) $(ALL_CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) $(ALL_CFLAGS) -c $^ -o $@

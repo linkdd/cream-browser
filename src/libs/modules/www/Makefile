@@ -13,4 +13,4 @@ libcream-module-webview.a: $(libcream_module_webview_a_OBJECTS) $(libcream_modul
 	$(AR) rcs $@ $(libcream_module_webview_a_OBJECTS)
 
 %.o: %.c
-	$(CC) $(CCFLAGS) $(INCLUDES) $(ALL_CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) $(ALL_CFLAGS) -c $^ -o $@

@@ -370,7 +370,7 @@ void module_web_view_load_uri (ModuleWebView *view, const gchar *uri)
 #if WEBKIT_CHECK_VERSION (1, 1, 18)
      view->ico = favicon_new (webkit_web_view_get_icon_uri (WEBKIT_WEB_VIEW (view)));
 #else
-     GURI *tmp = gnet_uri_new (view->uri);
+     GURI *tmp = gnet_uri_new (uri);
      view->ico = favicon_new (g_strconcat ("http://", tmp->hostname, "/favicon.ico", NULL));
 #endif
 }

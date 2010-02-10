@@ -13,4 +13,4 @@ libcream-gopher.a: $(libcream_gopher_a_OBJECTS) $(libcream_gopher_a_HEADERS)
 	$(AR) rcs $@ $(libcream_gopher_a_OBJECTS)
 
 %.o: %.c
-	$(CC) $(CCFLAGS) $(INCLUDES) $(ALL_CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) $(ALL_CFLAGS) -c $^ -o $@

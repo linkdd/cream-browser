@@ -13,4 +13,4 @@ libcream-module-ftp.a: $(libcream_module_ftp_a_OBJECTS) $(libcream_module_ftp_a_
 	$(AR) rcs $@ $(libcream_module_ftp_a_OBJECTS)
 
 %.o: %.c
-	$(CC) $(CCFLAGS) $(INCLUDES) $(ALL_CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) $(ALL_CFLAGS) -c $^ -o $@
