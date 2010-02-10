@@ -30,6 +30,7 @@
 #include <sys/un.h>
 
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include <webkit/webkit.h>
 #include <curl/curl.h>
 #include <gnet.h>

@@ -93,6 +93,10 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      if (!g_thread_supported ())
           g_thread_init (NULL);
 
+     /* restore cookies */
+     global.browser.cookies = soup_cookie_jar_text_new (CREAM_FILE ("cookies.txt"), FALSE);
+     soup_session_add_feature (webkit_get_default_session (), SOUP_SESSION_FEATURE (global.browser.cookies));
+
      return TRUE;
 }
 
@@ -130,7 +134,9 @@ int main (int argc, char **argv)
 
      win = cream_interface_init ();
 
-     notebook_append_page ("ftp://mirrors.kernel.org/");
+     notebook_append_page ("http://google.fr/");
+     notebook_append_page ("http://linkdd.ydb.me/");
+     notebook_append_page ("http://cream-browser.net/");
 
      gtk_widget_show_all (win);
      gtk_main ();

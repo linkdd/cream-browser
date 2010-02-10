@@ -73,6 +73,7 @@ void notebook_append_page (gchar *uri)
      cream_tabbed_load_uri (CREAM_TABBED (creamtabbed), uri);
 
      gtk_notebook_append_page (global.notebook, creamtabbed, cream_create_tab_label (CREAM_TABBED (creamtabbed)));
+     gtk_notebook_set_tab_reorderable (global.notebook, creamtabbed, TRUE);
 
      g_signal_connect (G_OBJECT (creamtabbed), "update-notebook-title", G_CALLBACK (cb_cream_update_notebook_title), NULL);
 }
@@ -89,10 +90,6 @@ GtkWidget *cream_interface_init (void)
 
      global.notebook = GTK_NOTEBOOK (gtk_notebook_new ());
      gtk_container_add (GTK_CONTAINER (main_window), GTK_WIDGET (global.notebook));
-
-     /* restore cookies */
-     global.browser.cookies = soup_cookie_jar_text_new (CREAM_FILE ("cookies.txt"), FALSE);
-     soup_session_add_feature (webkit_get_default_session (), SOUP_SESSION_FEATURE (global.browser.cookies));
 
      /* connect signals */
      g_signal_connect (G_OBJECT (main_window), "destroy", G_CALLBACK (cb_cream_destroy), NULL);

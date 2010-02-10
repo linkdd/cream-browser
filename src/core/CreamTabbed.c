@@ -166,7 +166,8 @@ static void cream_tabbed_init_inputbox (CreamTabbed *obj)
      gtk_entry_set_inner_border (GTK_ENTRY (obj->inputbox), NULL);
      gtk_entry_set_has_frame (GTK_ENTRY (obj->inputbox), FALSE);
 
-     g_signal_connect (G_OBJECT (obj->inputbox), "activate", G_CALLBACK (cb_inputbox), obj);
+     g_signal_connect (G_OBJECT (obj->inputbox), "activate",        G_CALLBACK (cb_inputbox),      obj);
+     g_signal_connect (G_OBJECT (obj->inputbox), "key-press-event", G_CALLBACK (cb_inputbox_keys), obj);
 }
 
 /*!
@@ -216,6 +217,24 @@ const gchar *cream_tabbed_get_status (CreamTabbed *obj)
 GtkWidget *cream_tabbed_get_favicon (CreamTabbed *obj)
 {
      return cream_view_get_favicon (CREAM_VIEW (obj->creamview));
+}
+
+/*!
+  \fn void echo (CreamTabbed *obj, const gchar *format, ...)
+  \brief Display text into the inputbox. This function has the same syntax as printf()
+  \param obj The CreamTabbed object which contain the inputbox
+ */
+void echo (CreamTabbed *obj, const gchar *format, ...)
+{
+     va_list arg;
+     gchar *str;
+
+     va_start (arg, format);
+     str = g_strdup_vprintf (format, arg);
+     va_end (arg);
+
+     gtk_entry_set_text (GTK_ENTRY (obj->inputbox), str);
+     g_free (str);
 }
 
 /* signals */
