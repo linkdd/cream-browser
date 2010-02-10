@@ -200,16 +200,14 @@ static WebKitWebView *module_web_view_cb_create_inspector_win (WebKitWebInspecto
 
 static void module_web_view_cb_uri_changed (ModuleWebView *webview, GParamSpec *arg1, gpointer data)
 {
+     GURI *tmp;
+
      if (webview->uri != NULL)
           g_free (webview->uri);
      webview->uri = g_strdup (webkit_web_view_get_uri (WEBKIT_WEB_VIEW (webview)));
 
-#if WEBKIT_CHECK_VERSION (1, 1, 18)
-     webview->ico = favicon_new (webkit_web_view_get_icon_uri (WEBKIT_WEB_VIEW (webview)));
-#else
-     GURI *tmp = gnet_uri_new (webview->uri);
+     tmp = gnet_uri_new (webview->uri);
      webview->ico = favicon_new (g_strconcat ("http://", tmp->hostname, "/favicon.ico", NULL));
-#endif
 
      g_signal_emit (
           G_OBJECT (webview),
