@@ -2,7 +2,6 @@
 *~
 *.o
 cream
+creamctl
 *.a
-__build__
-autom4te.cache
 doc/html
