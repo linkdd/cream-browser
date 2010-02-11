@@ -88,8 +88,14 @@ struct _CreamViewClass
       */
 
      gboolean (*new_download) (CreamView *obj, WebKitDownload *download);
-     /*!< The "new-download" signal is emitted when the module request a new download
+     /*!< The "new-download" signal is emitted when the module requests a new download
        \param download WebKit object which represent the download request
+       \return TRUE if you handle the signal
+      */
+
+     gboolean (*new_window) (CreamView *obj, const gchar *uri);
+     /*!< The "new-window" signal is emitted when the module requests opening a new window
+       \param uri The new URI to load in a new window
        \return TRUE if you handle the signal
       */
 };

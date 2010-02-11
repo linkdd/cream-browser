@@ -23,7 +23,7 @@
 #include <CreamView.h>
 
 GtkWidget *cream_create_tab_label (CreamTabbed *obj);
-void notebook_append_page (gchar *uri);
+void notebook_append_page (const gchar *uri);
 GtkWidget *cream_interface_init (void);
 
 #endif /* __INTERFACE_H */

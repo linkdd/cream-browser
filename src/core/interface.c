@@ -72,7 +72,7 @@ GtkWidget *cream_create_tab_label (CreamTabbed *obj)
      return hbox;
 }
 
-void notebook_append_page (gchar *uri)
+void notebook_append_page (const gchar *uri)
 {
      GtkWidget *creamtabbed = cream_tabbed_new ();
      cream_tabbed_load_uri (CREAM_TABBED (creamtabbed), uri);

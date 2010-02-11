@@ -42,6 +42,7 @@ static void cream_tabbed_init_inputbox (CreamTabbed *obj);
 static void cream_tabbed_uri_changed_cb (CreamView *view, gchar *uri, CreamTabbed *obj);
 static void cream_tabbed_new_title_cb (CreamView *view, gchar *title, CreamTabbed *obj);
 static void cream_tabbed_status_changed_cb (CreamView *view, gchar *status, CreamTabbed *obj);
+static gboolean cream_tabbed_new_window_cb (CreamView *view, const gchar *uri, gpointer data);
 static void cream_tabbed_scroll_cb (GtkAdjustment *vadjust, CreamTabbed *obj);
 
 GtkType cream_tabbed_get_type (void)
@@ -115,6 +116,7 @@ GtkWidget *cream_tabbed_new (void)
      g_signal_connect (G_OBJECT (obj->creamview), "uri-changed",    G_CALLBACK (cream_tabbed_uri_changed_cb),    obj);
      g_signal_connect (G_OBJECT (obj->creamview), "new-title",      G_CALLBACK (cream_tabbed_new_title_cb),      obj);
      g_signal_connect (G_OBJECT (obj->creamview), "status-changed", G_CALLBACK (cream_tabbed_status_changed_cb), obj);
+     g_signal_connect (G_OBJECT (obj->creamview), "new-window",     G_CALLBACK (cream_tabbed_new_window_cb),     NULL);
 
      cream_tabbed_scroll_cb (obj->adjust_v, obj);
 
@@ -286,6 +288,13 @@ static void cream_tabbed_status_changed_cb (CreamView *view, gchar *status, Crea
      gtk_label_set_markup (GTK_LABEL (obj->statusbar.url), g_markup_printf_escaped (
           "<span font=\"monospace bold 8\">%s</span>", status)
      );
+}
+
+static gboolean cream_tabbed_new_window_cb (CreamView *view, const gchar *uri, gpointer data)
+{
+     notebook_append_page (uri);
+     gtk_widget_show_all (GTK_WIDGET (global.notebook));
+     return TRUE;
 }
 
 static void cream_tabbed_scroll_cb (GtkAdjustment *vadjust, CreamTabbed *obj)

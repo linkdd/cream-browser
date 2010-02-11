@@ -48,7 +48,6 @@ static void module_web_view_cb_load_progress_changed (ModuleWebView *webview, gi
 static void module_web_view_cb_load_committed (ModuleWebView *webview, WebKitWebFrame *frame, gpointer data);
 static void module_web_view_cb_load_finished (ModuleWebView *webview, WebKitWebFrame *frame, gpointer data);
 static WebKitNavigationResponse module_web_view_cb_navigation (ModuleWebView *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, gpointer data);
-static WebKitWebView *module_web_view_cb_create_web_view (ModuleWebView *webview, WebKitWebFrame *frame, gpointer data);
 static gboolean module_web_view_cb_mimetype (ModuleWebView *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, gchar *mimetype, WebKitWebPolicyDecision *decision, gpointer data);
 static gboolean module_web_view_cb_download (ModuleWebView *webview, WebKitDownload *download, gpointer data);
 static void module_web_view_cb_hoverlink (ModuleWebView *webview, gchar *title, gchar *link, gpointer data);
@@ -164,7 +163,6 @@ GtkWidget *module_web_view_new (void)
           "signal::load-committed",                         G_CALLBACK (module_web_view_cb_load_committed),        NULL,
           "signal::load-finished",                          G_CALLBACK (module_web_view_cb_load_finished),         NULL,
           "signal::navigation-requested",                   G_CALLBACK (module_web_view_cb_navigation),            NULL,
-          "signal::create-web-view",                        G_CALLBACK (module_web_view_cb_create_web_view),       NULL,
           "signal::mime-type-policy-decision-requested",    G_CALLBACK (module_web_view_cb_mimetype),              NULL,
           "signal::download-requested",                     G_CALLBACK (module_web_view_cb_download),              NULL,
           "signal::hovering-over-link",                     G_CALLBACK (module_web_view_cb_hoverlink),             NULL,
@@ -293,11 +291,6 @@ static WebKitNavigationResponse module_web_view_cb_navigation (ModuleWebView *we
      {
           return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
      }
-}
-
-static WebKitWebView *module_web_view_cb_create_web_view (ModuleWebView *webview, WebKitWebFrame *frame, gpointer data)
-{
-     return WEBKIT_WEB_VIEW (module_web_view_new ());
 }
 
 static gboolean module_web_view_cb_mimetype (ModuleWebView *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, gchar *mimetype, WebKitWebPolicyDecision *decision, gpointer data)
