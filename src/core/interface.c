@@ -22,6 +22,7 @@
 GtkWidget *cream_create_tab_label (CreamTabbed *obj)
 {
      GtkWidget *hbox, *label, *button;
+     GdkPixbuf *ico;
 
      gchar *txt = g_strdup (cream_tabbed_get_title (obj));
      GtkRcStyle *rcstyle;
@@ -29,7 +30,11 @@ GtkWidget *cream_create_tab_label (CreamTabbed *obj)
 
      hbox = gtk_hbox_new (FALSE, 0);
 
-     /*gtk_box_pack_start (GTK_BOX (hbox), cream_tabbed_get_favicon (obj), FALSE, FALSE, 0);*/
+     ico = cream_tabbed_get_favicon (obj);
+     if (ico)
+          gtk_box_pack_start (GTK_BOX (hbox), gtk_image_new_from_pixbuf (ico), FALSE, FALSE, 0);
+     else
+          gtk_box_pack_start (GTK_BOX (hbox), gtk_image_new_from_stock (GTK_STOCK_FILE, GTK_ICON_SIZE_MENU), FALSE, FALSE, 0);
 
      /* truncate title */
      if (txt == NULL)

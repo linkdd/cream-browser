@@ -36,13 +36,12 @@ struct _Favicon
      gchar *uri;         /*!< URI of the favicon */
      gchar *file;        /*!< File on the disk */
      GdkPixbuf *ico;     /*!< Icon */
-     GtkWidget *img;     /*!< GtkWidget containing the icon */
 
      GHashTable *memory; /*!< Memory containing all the favicon previously loaded */
      gchar *cache_path;  /*!< Path to the cache (to save the favicon in) */
 };
 
-Favicon *favicon_new (const gchar *uri);
+Favicon *favicon_new (const gchar *uri, const gchar *ico_uri);
 void favicon_destroy (Favicon *obj);
 
 #endif /* __CLASS_FAVICON_H */

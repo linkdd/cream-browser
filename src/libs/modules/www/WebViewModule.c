@@ -43,7 +43,6 @@ static void module_web_view_class_init (ModuleWebViewClass *class);
 static void module_web_view_init (ModuleWebView *obj);
 
 static WebKitWebView *module_web_view_cb_create_inspector_win (WebKitWebInspector *inspector, WebKitWebView *view, gpointer data);
-static void module_web_view_cb_uri_changed (ModuleWebView *webview, GParamSpec *arg1, gpointer data);
 static void module_web_view_cb_title_changed (ModuleWebView *webview, WebKitWebFrame *frame, gchar *title, gpointer data);
 static void module_web_view_cb_load_progress_changed (ModuleWebView *webview, gint progress, gpointer data);
 static void module_web_view_cb_load_committed (ModuleWebView *webview, WebKitWebFrame *frame, gpointer data);
@@ -160,7 +159,6 @@ GtkWidget *module_web_view_new (void)
      g_signal_connect (G_OBJECT (obj->inspector), "inspect-web-view", G_CALLBACK (module_web_view_cb_create_inspector_win), obj);
 
      g_object_connect (G_OBJECT (obj),
-          "signal::notify::uri",                            G_CALLBACK (module_web_view_cb_uri_changed),           NULL,
           "signal::title-changed",                          G_CALLBACK (module_web_view_cb_title_changed),         NULL,
           "signal::load-progress-changed",                  G_CALLBACK (module_web_view_cb_load_progress_changed), NULL,
           "signal::load-committed",                         G_CALLBACK (module_web_view_cb_load_committed),        NULL,
@@ -198,27 +196,6 @@ static WebKitWebView *module_web_view_cb_create_inspector_win (WebKitWebInspecto
      return WEBKIT_WEB_VIEW (page);
 }
 
-static void module_web_view_cb_uri_changed (ModuleWebView *webview, GParamSpec *arg1, gpointer data)
-{
-     if (webview->uri != NULL)
-          g_free (webview->uri);
-     webview->uri = g_strdup (webkit_web_view_get_uri (WEBKIT_WEB_VIEW (webview)));
-
-#if WEBKIT_CHECK_VERSION (1, 1, 18)
-     webview->ico = favicon_new (webkit_web_view_get_icon_uri (WEBKIT_WEB_VIEW (webview)));
-#else
-     GURI *tmp = gnet_uri_new (webview->uri);
-     webview->ico = favicon_new (g_strconcat ("http://", tmp->hostname, "/favicon.ico", NULL));
-#endif
-
-     g_signal_emit (
-          G_OBJECT (webview),
-          module_web_view_signals[URI_CHANGED_SIGNAL],
-          0,
-          webview->uri
-     );
-}
-
 static void module_web_view_cb_title_changed (ModuleWebView *webview, WebKitWebFrame *frame, gchar *title, gpointer data)
 {
      if (webview->title != NULL)
@@ -249,6 +226,25 @@ static void module_web_view_cb_load_progress_changed (ModuleWebView *webview, gi
 
 static void module_web_view_cb_load_committed (ModuleWebView *webview, WebKitWebFrame *frame, gpointer data)
 {
+     /* update URL */
+     if (webview->uri != NULL)
+          g_free (webview->uri);
+     webview->uri = g_strdup (webkit_web_view_get_uri (WEBKIT_WEB_VIEW (webview)));
+
+#if WEBKIT_CHECK_VERSION (1, 1, 18)
+     webview->ico = favicon_new (webview->uri, webkit_web_view_get_icon_uri (WEBKIT_WEB_VIEW (webview)));
+#else
+     webview->ico = favicon_new (webview->uri, NULL);
+#endif
+
+     g_signal_emit (
+          G_OBJECT (webview),
+          module_web_view_signals[URI_CHANGED_SIGNAL],
+          0,
+          webview->uri
+     );
+
+     /* update status */
      if (webview->status != NULL)
           g_free (webview->status);
      webview->status = g_strdup_printf ("Waiting reply from %s", webview->uri);
@@ -364,15 +360,6 @@ static void module_web_view_cb_hoverlink (ModuleWebView *webview, gchar *title, 
 void module_web_view_load_uri (ModuleWebView *view, const gchar *uri)
 {
      webkit_web_view_load_uri (WEBKIT_WEB_VIEW (view), uri);
-
-     view->uri = g_strdup (webkit_web_view_get_uri (WEBKIT_WEB_VIEW (view)));
-     view->title = g_strdup (webkit_web_view_get_title (WEBKIT_WEB_VIEW (view)));
-#if WEBKIT_CHECK_VERSION (1, 1, 18)
-     view->ico = favicon_new (webkit_web_view_get_icon_uri (WEBKIT_WEB_VIEW (view)));
-#else
-     GURI *tmp = gnet_uri_new (uri);
-     view->ico = favicon_new (g_strconcat ("http://", tmp->hostname, "/favicon.ico", NULL));
-#endif
 }
 
 /* Execute JavaScript script */

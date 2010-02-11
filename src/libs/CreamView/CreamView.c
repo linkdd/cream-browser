@@ -374,20 +374,19 @@ const gchar *cream_view_get_status (CreamView *obj)
 }
 
 /*!
-  \fn GtkWidget *cream_view_get_favicon (CreamView *obj)
+  \fn GdkPixbuf *cream_view_get_favicon (CreamView *obj)
   \brief Get the Favicon of the loaded page
-  \return A widget containing the favicon image
+  \return A pixbuf containing the favicon image
  */
- GtkWidget *cream_view_get_favicon (CreamView *obj)
+GdkPixbuf *cream_view_get_favicon (CreamView *obj)
 {
      if (MODULE_IS_WEB_VIEW (obj->content))
      {
-          return module_web_view_get_favicon (MODULE_WEB_VIEW (obj->content))->img;
+          Favicon *tmp = module_web_view_get_favicon (MODULE_WEB_VIEW (obj->content));
+          if (tmp) return tmp->ico;
      }
-     else
-     {
-          return gtk_image_new_from_stock (GTK_STOCK_FILE, GTK_ICON_SIZE_MENU);
-     }
+
+     return NULL;
 }
 
 /* signals */

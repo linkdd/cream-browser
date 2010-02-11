@@ -44,7 +44,7 @@ export top_srcdir = $(PWD)
 
 # GCC flags
 INCLUDES = -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules
-export CFLAGS += -g -Wall -O2 -DPREFIX="$(PREFIX)" -DCREAM_PROGNAME="\"$(PROGNAME)\"" -DCREAM_VERSION="\"$(VERSION)\"" $(INCLUDES)
+export CFLAGS += -g -ggdb3 -fno-inline -Wall -O2 -DPREFIX="$(PREFIX)" -DCREAM_PROGNAME="\"$(PROGNAME)\"" -DCREAM_VERSION="\"$(VERSION)\"" $(INCLUDES)
 
 # GTK+ flags for GCC
 export GTK_CFLAGS = `pkg-config --cflags gtk+-2.0`

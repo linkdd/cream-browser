@@ -79,7 +79,7 @@ void cream_tabbed_load_uri (CreamTabbed *obj, const gchar *uri);
 const gchar *cream_tabbed_get_uri (CreamTabbed *obj);
 const gchar *cream_tabbed_get_title (CreamTabbed *obj);
 const gchar *cream_tabbed_get_status (CreamTabbed *obj);
-GtkWidget *cream_tabbed_get_favicon (CreamTabbed *obj);
+GdkPixbuf *cream_tabbed_get_favicon (CreamTabbed *obj);
 
 void echo (CreamTabbed *obj, const gchar *format, ...);
 

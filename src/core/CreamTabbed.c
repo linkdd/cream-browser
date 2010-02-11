@@ -210,11 +210,11 @@ const gchar *cream_tabbed_get_status (CreamTabbed *obj)
 }
 
 /*!
-  \fn GtkWidget *cream_tabbed_get_favicon (CreamTabbed *obj)
+  \fn GdkPixbuf *cream_tabbed_get_favicon (CreamTabbed *obj)
   \brief Get the favicon of the loaded URI
-  \return A GtkImage containing the favicon
+  \return A GdkPixbuf containing the favicon
  */
-GtkWidget *cream_tabbed_get_favicon (CreamTabbed *obj)
+GdkPixbuf *cream_tabbed_get_favicon (CreamTabbed *obj)
 {
      return cream_view_get_favicon (CREAM_VIEW (obj->creamview));
 }
