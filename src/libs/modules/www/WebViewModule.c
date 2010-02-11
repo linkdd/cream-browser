@@ -227,7 +227,9 @@ static void module_web_view_cb_destroy_inspector_win (GtkWidget *win, ModuleWebV
      ModuleWebViewPrivate *priv = MODULE_WEB_VIEW_GET_PRIVATE (obj);
      priv->win = NULL;
 
+#if WEBKIT_CHECK_VERSION (1, 1, 17)
      webkit_web_inspector_close (obj->inspector);
+#endif
 }
 
 static void module_web_view_cb_title_changed (ModuleWebView *webview, WebKitWebFrame *frame, gchar *title, gpointer data)
