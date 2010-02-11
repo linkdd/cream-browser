@@ -111,6 +111,9 @@ void cb_cream_notebook_close_page (GtkButton *button, GtkWidget *child)
      gtk_notebook_remove_page (global.notebook,
           gtk_notebook_page_num (global.notebook, child)
      );
+
+     if (gtk_notebook_get_n_pages (global.notebook) == 0)
+          cream_release (EXIT_SUCCESS);
 }
 
 gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *obj)
