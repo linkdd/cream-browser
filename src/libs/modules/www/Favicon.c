@@ -33,7 +33,7 @@ static GdkPixbuf *g_load_pixbuf_from_stock (const gchar *icon_name, GtkIconSize 
      GtkIconInfo *info = gtk_icon_theme_lookup_icon (theme, icon_name, size, GTK_ICON_LOOKUP_FORCE_SIZE);
      GdkPixbuf *icon = gtk_icon_info_load_icon (info, &local_error);
 
-     if (!icon)
+     if (local_error != NULL)
      {
           g_propagate_error (error, local_error);
           return NULL;
@@ -80,10 +80,10 @@ static gchar *favicon_get_cached_path (Favicon *obj, const gchar *uri, const gch
   \fn Favicon *favicon_new (const gchar *uri)
   \brief Download a favicon and save it in the cache
 
-  \param uri URI of the favicon
+  \param uri URI of the website
   \return A new Favicon object
  */
-Favicon *favicon_new (const gchar *uri, const gchar *ico_uri)
+Favicon *favicon_new (const gchar *uri)
 {
      Favicon *obj;
 
@@ -99,29 +99,23 @@ Favicon *favicon_new (const gchar *uri, const gchar *ico_uri)
           obj->memory = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_object_maybe_unref);
           obj->cache_path = g_build_filename (g_get_user_cache_dir (), CREAM_PROGNAME, NULL);
 
-          if ((ico_uri && g_str_has_prefix (ico_uri, "http://"))
-               || g_str_has_prefix (uri, "http://"))
+          if (g_str_has_prefix (uri, "http://") || g_str_has_prefix (uri, "https://"))
           {
-               if (!ico_uri)
+               guint i = 8;
+
+               while (uri[i] != '\0' && uri[i] != '/')
+                    i++;
+
+               if (uri[i] == '/')
                {
-                    guint i = 8;
-
-                    while (uri[i] != '\0' && uri[i] != '/')
-                         i++;
-
-                    if (uri[i] == '/')
-                    {
-                         obj->uri = g_strdup (uri);
-                         obj->uri[i] = 0;
-                         obj->uri = g_strdup_printf ("%s/favicon.ico", obj->uri);
-                    }
-                    else
-                         obj->uri = g_strdup_printf ("%s/favicon.ico", uri);
+                    obj->uri = g_strdup (uri);
+                    obj->uri[i] = 0;
+                    obj->uri = g_strdup_printf ("%s/favicon.ico", obj->uri);
                }
                else
-                    obj->uri = g_strdup (ico_uri);
+                    obj->uri = g_strdup_printf ("%s/favicon.ico", uri);
 
-               obj->file = favicon_get_cached_path (obj, ico_uri, "icons");
+               obj->file = favicon_get_cached_path (obj, obj->uri, "icons");
 
                if (g_hash_table_lookup_extended (obj->memory, obj->file, NULL, (gpointer) &obj->ico))
                {

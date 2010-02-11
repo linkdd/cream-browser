@@ -230,12 +230,7 @@ static void module_web_view_cb_load_committed (ModuleWebView *webview, WebKitWeb
      if (webview->uri != NULL)
           g_free (webview->uri);
      webview->uri = g_strdup (webkit_web_view_get_uri (WEBKIT_WEB_VIEW (webview)));
-
-#if WEBKIT_CHECK_VERSION (1, 1, 18)
-     webview->ico = favicon_new (webview->uri, webkit_web_view_get_icon_uri (WEBKIT_WEB_VIEW (webview)));
-#else
-     webview->ico = favicon_new (webview->uri, NULL);
-#endif
+     webview->ico = favicon_new (webview->uri);
 
      g_signal_emit (
           G_OBJECT (webview),

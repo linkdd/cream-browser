@@ -41,7 +41,7 @@ struct _Favicon
      gchar *cache_path;  /*!< Path to the cache (to save the favicon in) */
 };
 
-Favicon *favicon_new (const gchar *uri, const gchar *ico_uri);
+Favicon *favicon_new (const gchar *uri);
 void favicon_destroy (Favicon *obj);
 
 #endif /* __CLASS_FAVICON_H */
