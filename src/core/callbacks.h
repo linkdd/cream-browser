@@ -21,8 +21,6 @@
 #ifndef __CALLBACKS_H
 #define __CALLBACKS_H
 
-void signal_handler (int signum);
-
 gboolean control_socket (GIOChannel *channel);
 gboolean control_client_socket (GIOChannel *channel);
 

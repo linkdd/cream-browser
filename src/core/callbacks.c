@@ -20,23 +20,6 @@
 
 #include "local.h"
 
-void signal_handler (int signum)
-{
-     switch (signum)
-     {
-          case SIGSEGV:
-               fprintf (stderr, "Cream-Browser: Segmentation fault\n");
-               cream_release (EXIT_FAILURE);
-               break;
-
-          case SIGINT:
-          case SIGKILL:
-          case SIGTERM:
-               cream_release (EXIT_SUCCESS);
-               break;
-     }
-}
-
 gboolean control_socket (GIOChannel *channel)
 {
      struct sockaddr_un remote;

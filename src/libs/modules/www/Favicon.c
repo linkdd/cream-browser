@@ -33,7 +33,7 @@ static GdkPixbuf *g_load_pixbuf_from_stock (const gchar *icon_name, GtkIconSize 
      GtkIconInfo *info = gtk_icon_theme_lookup_icon (theme, icon_name, size, GTK_ICON_LOOKUP_FORCE_SIZE);
      GdkPixbuf *icon = gtk_icon_info_load_icon (info, &local_error);
 
-     if (local_error != NULL)
+     if (icon == NULL || local_error != NULL)
      {
           g_propagate_error (error, local_error);
           return NULL;
@@ -151,7 +151,7 @@ Favicon *favicon_new (const gchar *uri)
                GError *error = NULL;
 
                obj->ico = g_load_pixbuf_from_stock (GTK_STOCK_FILE, GTK_ICON_SIZE_MENU, &error);
-               if (!obj->ico)
+               if (obj->ico == NULL || error != NULL)
                {
                     g_warning ("Error, can't load pixbuf: %s\n", error->message);
                     g_error_free (error);

@@ -61,12 +61,6 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
      global.notebook = NULL;
 
-     /* init signals */
-     signal (SIGSEGV, signal_handler);
-     signal (SIGINT,  signal_handler);
-     signal (SIGKILL, signal_handler);
-     signal (SIGTERM, signal_handler);
-
      /* parse command line */
      ctx = g_option_context_new ("");
      g_option_context_add_main_entries (ctx, entries, "cream");
@@ -134,9 +128,10 @@ int main (int argc, char **argv)
 
      win = cream_interface_init ();
 
-     notebook_append_page ("http://google.fr/");
-     notebook_append_page ("http://linkdd.ydb.me/");
-     notebook_append_page ("http://cream-browser.net/");
+     if (global.cmdline.url != NULL)
+          notebook_append_page (global.cmdline.url);
+     else
+          notebook_append_page ("http://cream-browser.net");
 
      gtk_widget_show_all (win);
      gtk_main ();
