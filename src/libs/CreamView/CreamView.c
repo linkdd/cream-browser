@@ -269,6 +269,7 @@ void cream_view_load_uri (CreamView *obj, const gchar *uri)
      gtk_container_remove (GTK_CONTAINER (obj), obj->content);
      cream_view_load_content (obj);
      gtk_container_add (GTK_CONTAINER (obj), obj->content);
+     gtk_widget_show_all (GTK_WIDGET (obj));
 }
 
 /*!
