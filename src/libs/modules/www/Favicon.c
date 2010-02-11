@@ -28,11 +28,15 @@
 static GdkPixbuf *g_load_pixbuf_from_stock (const gchar *icon_name, GtkIconSize size, GError **error)
 {
      GError *local_error = NULL;
+     GtkIconTheme *theme;
+     GtkIconInfo *info;
+     GdkPixbuf *icon;
 
-     GtkIconTheme *theme = gtk_icon_theme_get_default ();
-     GtkIconInfo *info = gtk_icon_theme_lookup_icon (theme, icon_name, size, GTK_ICON_LOOKUP_FORCE_SIZE);
-     GdkPixbuf *icon = gtk_icon_info_load_icon (info, &local_error);
+     theme = gtk_icon_theme_get_default ();
+     if (NULL == (info = gtk_icon_theme_lookup_icon (theme, icon_name, size, GTK_ICON_LOOKUP_FORCE_SIZE)))
+          return NULL;
 
+     icon = gtk_icon_info_load_icon (info, &local_error);
      if (icon == NULL || local_error != NULL)
      {
           g_propagate_error (error, local_error);
