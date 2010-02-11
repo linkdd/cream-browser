@@ -27,6 +27,16 @@
 #include <marshal.h>
 #include <gnet.h>
 
+#define MODULE_WEB_VIEW_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE ((obj), module_web_view_get_type (), ModuleWebViewPrivate))
+
+typedef struct _ModuleWebViewPrivate ModuleWebViewPrivate;
+
+/*! \struct _ModuleWebViewPrivate */
+struct _ModuleWebViewPrivate
+{
+     GtkWidget *win;     /*!< The window of the DOM inspector */
+};
+
 enum
 {
      URI_CHANGED_SIGNAL,
@@ -42,7 +52,9 @@ static guint module_web_view_signals[NB_SIGNALS] = { 0 };
 static void module_web_view_class_init (ModuleWebViewClass *class);
 static void module_web_view_init (ModuleWebView *obj);
 
-static WebKitWebView *module_web_view_cb_create_inspector_win (WebKitWebInspector *inspector, WebKitWebView *view, gpointer data);
+static WebKitWebView *module_web_view_cb_create_inspector_win (WebKitWebInspector *inspector, WebKitWebView *view, ModuleWebView *obj);
+static gboolean module_web_view_cb_close_inspector_win (WebKitWebInspector *inspector, ModuleWebView *obj);
+static void module_web_view_cb_destroy_inspector_win (GtkWidget *win, ModuleWebView *obj);
 static void module_web_view_cb_title_changed (ModuleWebView *webview, WebKitWebFrame *frame, gchar *title, gpointer data);
 static void module_web_view_cb_load_progress_changed (ModuleWebView *webview, gint progress, gpointer data);
 static void module_web_view_cb_load_committed (ModuleWebView *webview, WebKitWebFrame *frame, gpointer data);
@@ -77,6 +89,8 @@ GtkType module_web_view_get_type (void)
 
 static void module_web_view_class_init (ModuleWebViewClass *class)
 {
+     g_type_class_add_private (class, sizeof (ModuleWebViewPrivate));
+
      module_web_view_signals[URI_CHANGED_SIGNAL] = g_signal_new (
           "uri-changed",
           G_TYPE_FROM_CLASS (class),
@@ -155,7 +169,11 @@ GtkWidget *module_web_view_new (void)
 
      obj->inspector = webkit_web_view_get_inspector (WEBKIT_WEB_VIEW (obj));
      g_object_set (G_OBJECT (obj->inspector), "javascript-profiling-enabled", TRUE, NULL);
-     g_signal_connect (G_OBJECT (obj->inspector), "inspect-web-view", G_CALLBACK (module_web_view_cb_create_inspector_win), obj);
+     g_object_connect (G_OBJECT (obj->inspector),
+          "signal::inspect-web-view", G_CALLBACK (module_web_view_cb_create_inspector_win), obj,
+          "signal::close-window",     G_CALLBACK (module_web_view_cb_close_inspector_win),  obj,
+          "signal::finished",         G_CALLBACK (module_web_view_cb_close_inspector_win),  obj,
+     NULL);
 
      g_object_connect (G_OBJECT (obj),
           "signal::title-changed",                          G_CALLBACK (module_web_view_cb_title_changed),         NULL,
@@ -172,26 +190,44 @@ GtkWidget *module_web_view_new (void)
 }
 
 /* WebKit signals */
-static WebKitWebView *module_web_view_cb_create_inspector_win (WebKitWebInspector *inspector, WebKitWebView *view, gpointer data)
+static WebKitWebView *module_web_view_cb_create_inspector_win (WebKitWebInspector *inspector, WebKitWebView *view, ModuleWebView *obj)
 {
-     GtkWidget *win;
+     ModuleWebViewPrivate *priv = MODULE_WEB_VIEW_GET_PRIVATE (obj);
      GtkWidget *scroll;
      GtkWidget *page;
 
-     win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-     gtk_window_set_title (GTK_WINDOW (win), g_strconcat (
+     priv->win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+     gtk_window_set_title (GTK_WINDOW (priv->win), g_strconcat (
           "WebInspector - ", webkit_web_view_get_uri (view), NULL)
      );
 
      scroll = gtk_scrolled_window_new (NULL, NULL);
-     gtk_container_add (GTK_CONTAINER (win), scroll);
+     gtk_container_add (GTK_CONTAINER (priv->win), scroll);
 
      page = webkit_web_view_new ();
      gtk_container_add (GTK_CONTAINER (scroll), page);
 
-     gtk_widget_show_all (win);
+     gtk_widget_show_all (priv->win);
+
+     g_signal_connect (G_OBJECT (priv->win), "destroy", G_CALLBACK (module_web_view_cb_destroy_inspector_win), obj);
 
      return WEBKIT_WEB_VIEW (page);
+}
+
+static gboolean module_web_view_cb_close_inspector_win (WebKitWebInspector *inspector, ModuleWebView *obj)
+{
+     ModuleWebViewPrivate *priv = MODULE_WEB_VIEW_GET_PRIVATE (obj);
+     if (priv->win != NULL)
+          gtk_widget_destroy (priv->win);
+     return TRUE;
+}
+
+static void module_web_view_cb_destroy_inspector_win (GtkWidget *win, ModuleWebView *obj)
+{
+     ModuleWebViewPrivate *priv = MODULE_WEB_VIEW_GET_PRIVATE (obj);
+     priv->win = NULL;
+
+     webkit_web_inspector_close (obj->inspector);
 }
 
 static void module_web_view_cb_title_changed (ModuleWebView *webview, WebKitWebFrame *frame, gchar *title, gpointer data)
