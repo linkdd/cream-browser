@@ -29,7 +29,6 @@ export INSTALL_DATA    = install -c -m 644
 
 # Common PREFIX for installation directories.
 # NOTE: This directory must exist when you start the install.
-export PREFIX = /usr/local
 export datarootdir = $(PREFIX)/share
 export datadir = $(datarootdir)
 export exec_prefix = $(PREFIX)
