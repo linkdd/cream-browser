@@ -17,6 +17,13 @@
  *        along with Cream-Browser. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*!
+  \file AboutModule.h
+  \brief Header of the module About (used to manage about:xxx pages)
+  \author David Delassus
+  \todo
+ */
+
 #ifndef __CLASS_ABOUT_MODULE_H
 #define __CLASS_ABOUT_MODULE_H
 

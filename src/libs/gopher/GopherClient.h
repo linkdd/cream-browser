@@ -17,6 +17,13 @@
  *        along with Cream-Browser. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*!
+  \file GopherClient.h
+  \brief Gopher client header's file
+  \author David Delassus
+  \todo
+ */
+
 #ifndef __CLASS_GOPHER_CLIENT_H
 #define __CLASS_GOPHER_CLIENT_H
 
