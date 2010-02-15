@@ -265,6 +265,8 @@ static void *curl_client_load_uri_thread (void *data)
      priv->content = g_string_new ("");
      if (priv->context)
      {
+          gchar *content_type = NULL;
+
           g_free (obj->status);
           obj->status = g_strdup_printf ("Connecting to %s ...", obj->uri->hostname);
           g_signal_emit (
@@ -315,6 +317,13 @@ static void *curl_client_load_uri_thread (void *data)
           }
           else
           {
+               priv->result = curl_easy_getinfo (priv->content, CURLINFO_CONTENT_TYPE, &content_type);
+               if (CURLE_OK == priv->result && content_type)
+               {
+                    /*! \todo Emit signal "download-requested" */
+                    printf ("Download requested: %s (%s)\n", gnet_uri_get_string (obj->uri), content_type);
+               }
+
                obj->load_status = CURL_LOAD_FINISHED;
                g_signal_emit (
                     G_OBJECT (obj),

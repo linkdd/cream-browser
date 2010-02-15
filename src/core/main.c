@@ -39,7 +39,7 @@ void init_socket (void)
      /* Init UNIX socket */
      gnet_init ();
 
-     global.unix_sock.path    = g_strdup_printf ("%s/%s_%d_socket", g_get_tmp_dir (), CREAM_PROGNAME, getpid ());
+     global.unix_sock.path    = g_strdup_printf ("%s/%s_%d_socket", g_get_tmp_dir (), PACKAGE, getpid ());
      global.unix_sock.sock    = gnet_unix_socket_server_new (global.unix_sock.path);
      global.unix_sock.channel = gnet_unix_socket_get_io_channel (global.unix_sock.sock);
      g_io_add_watch (global.unix_sock.channel, G_IO_IN | G_IO_HUP, (GIOFunc) control_socket, NULL);

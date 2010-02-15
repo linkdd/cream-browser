@@ -23,6 +23,7 @@
   \author David Delassus
  */
 
+#include <config.h>
 #include "Favicon.h"
 
 static GdkPixbuf *g_load_pixbuf_from_stock (const gchar *icon_name, GtkIconSize size, GError **error)
@@ -101,7 +102,7 @@ Favicon *favicon_new (const gchar *uri)
           obj->ico  = NULL;
 
           obj->memory = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_object_maybe_unref);
-          obj->cache_path = g_build_filename (g_get_user_cache_dir (), CREAM_PROGNAME, NULL);
+          obj->cache_path = g_build_filename (g_get_user_cache_dir (), PACKAGE, NULL);
 
           if (g_str_has_prefix (uri, "http://") || g_str_has_prefix (uri, "https://"))
           {
@@ -155,10 +156,14 @@ Favicon *favicon_new (const gchar *uri)
                GError *error = NULL;
 
                obj->ico = g_load_pixbuf_from_stock (GTK_STOCK_FILE, GTK_ICON_SIZE_MENU, &error);
-               if (obj->ico == NULL || error != NULL)
+               if (obj->ico == NULL)
                {
-                    g_warning ("Error, can't load pixbuf: %s\n", error->message);
-                    g_error_free (error);
+                    if (error != NULL)
+                    {
+                         g_warning ("Error, can't load pixbuf: %s\n", error->message);
+                         g_error_free (error);
+                    }
+
                     return NULL;
                }
           }

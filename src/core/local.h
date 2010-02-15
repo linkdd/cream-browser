@@ -20,6 +20,8 @@
 #ifndef __LOCAL_H
 #define __LOCAL_H
 
+#include <config.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

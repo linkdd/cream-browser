@@ -26,6 +26,7 @@
   the used protocol.
  */
 
+#include <config.h>
 #include "CreamView.h"
 #include <marshal.h>
 #include <stdlib.h>
@@ -75,6 +76,7 @@ static void cream_view_about_callback (CreamView *obj, gchar *uri);
 static void cream_view_http_callback (CreamView *obj, gchar *uri);
 static void cream_view_ftp_callback (CreamView *obj, gchar *uri);
 
+/*! \brief Available protocoles and their callbacks */
 struct protocols_t cream_available_protocols[] =
 {
      { "mailto:",   cream_view_mailto_callback },
@@ -83,6 +85,9 @@ struct protocols_t cream_available_protocols[] =
      { "http://",   cream_view_http_callback },
      { "https://",  cream_view_http_callback },
      { "ftp://",    cream_view_ftp_callback },
+#ifdef HAVE_CURL_SSL
+     { "ftps://",   cream_view_ftp_callback }, /*! \todo Manage SSL certification */
+#endif
      { "gopher://", NULL },
      { NULL,        NULL }
 };

@@ -1,5 +1,6 @@
-PROGNAME = cream-browser
-VERSION = 201002
+PROGNAME  = cream-browser
+VERSION   = 201002
+BUGREPORT = linkdd@ydb.me
 
 # Variables for 'make dist'
 CREAM_MAKEFILES =	Makefile \
@@ -42,8 +43,8 @@ export infodir = $(datarootdir)/info
 export top_srcdir = $(PWD)
 
 # GCC flags
-INCLUDES = -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules
-export CFLAGS += -g -ggdb3 -fno-inline -Wall -O2 -DPREFIX="$(PREFIX)" -DCREAM_PROGNAME="\"$(PROGNAME)\"" -DCREAM_VERSION="\"$(VERSION)\"" $(INCLUDES)
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules
+export CFLAGS += -g -ggdb3 -fno-inline -Wall -O2 -DPREFIX="$(PREFIX)" $(INCLUDES)
 
 # GTK+ flags for GCC
 export GTK_CFLAGS = `pkg-config --cflags gtk+-2.0`
@@ -69,6 +70,15 @@ all: check-dep
 
 check-dep:
 	@sh check-dep.sh
+	@echo "#ifndef __CONFIG_H" > config.h
+	@echo "#define __CONFIG_H" >> config.h
+
+	@echo "#define PACKAGE    \"$(PROGNAME)\"" >> config.h
+	@echo "#define VERSION    \"$(VERSION)\"" >> config.h
+	@echo "#define BUGREPORT  \"$(BUGREPORT)\"" >> config.h
+
+	@if [ "`curl-config --feature | grep SSL`" == "SSL" ]; then echo "#define HAVE_CURL_SSL" >> config.h ; fi
+	@echo "#endif /* __CONFIG_H */" >> config.h
 
 install:
 	@mkdir -p $(DESTDIR)$(bindir)
@@ -82,6 +92,7 @@ uninstall:
 clean:
 	@$(MAKE) clean -C src/libs
 	@$(MAKE) clean -C src/core
+	@rm -vrf config.h
 
 dist:
 	@echo "Copying files..."
