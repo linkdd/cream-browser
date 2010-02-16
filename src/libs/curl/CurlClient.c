@@ -56,6 +56,7 @@ enum
 
      URI_CHANGED_SIGNAL,
      STATUS_CHANGED_SIGNAL,
+     DOWNLOAD_REQUESTED_SIGNAL,
 
      NB_SIGNALS
 };
@@ -165,6 +166,16 @@ static void curl_client_class_init (CurlClientClass *class)
                NULL, NULL,
                g_cclosure_marshal_VOID__STRING,
                G_TYPE_NONE,
+               1, G_TYPE_STRING);
+
+     curl_client_signals[DOWNLOAD_REQUESTED_SIGNAL] = g_signal_new (
+               "download-requested",
+               G_TYPE_FROM_CLASS (class),
+               G_SIGNAL_RUN_LAST,
+               G_STRUCT_OFFSET (CurlClientClass, download_requested),
+               NULL, NULL,
+               g_cclosure_user_marshal_BOOLEAN__STRING,
+               G_TYPE_BOOLEAN,
                1, G_TYPE_STRING);
 
      gobject_class->constructor  = curl_client_constructor;
@@ -320,8 +331,17 @@ static void *curl_client_load_uri_thread (void *data)
                priv->result = curl_easy_getinfo (priv->content, CURLINFO_CONTENT_TYPE, &content_type);
                if (CURLE_OK == priv->result && content_type)
                {
-                    /*! \todo Emit signal "download-requested" */
-                    printf ("Download requested: %s (%s)\n", gnet_uri_get_string (obj->uri), content_type);
+                    gboolean ret = FALSE;
+
+                    g_signal_emit (
+                         G_OBJECT (obj),
+                         curl_client_signals[DOWNLOAD_REQUESTED_SIGNAL],
+                         0, gnet_uri_get_string (obj->uri),
+                         &ret
+                    );
+
+                    if (!ret)
+                         printf ("Download requested: %s (%s)\n", gnet_uri_get_string (obj->uri), content_type);
                }
 
                obj->load_status = CURL_LOAD_FINISHED;

@@ -81,6 +81,7 @@ static void module_ftp_load_error_cb (CurlClient *curl, gchar *uri, gpointer err
 static void module_ftp_progress_changed_cb (CurlClient *curl, gfloat progress, ModuleFtp *obj);
 static void module_ftp_uri_changed_cb (CurlClient *curl, gchar *uri, ModuleFtp *obj);
 static void module_ftp_status_changed_cb (CurlClient *curl, gchar *status, ModuleFtp *obj);
+static gboolean module_ftp_download_requested_cb (CurlClient *curl, gchar *uri, ModuleFtp *obj);
 
 GtkType module_ftp_get_type (void)
 {
@@ -203,11 +204,12 @@ GtkWidget *module_ftp_new (void)
 
      g_signal_connect (G_OBJECT (obj),        "row-activated", G_CALLBACK (module_ftp_row_activated_cb), NULL);
      g_object_connect (G_OBJECT (priv->curl),
-          "signal::load-finished",         G_CALLBACK (module_ftp_load_finished_cb),    obj,
-          "signal::load-error",            G_CALLBACK (module_ftp_load_error_cb),       obj,
-          "signal::load-progress-changed", G_CALLBACK (module_ftp_progress_changed_cb), obj,
-          "signal::uri-changed",           G_CALLBACK (module_ftp_uri_changed_cb),      obj,
-          "signal::status-changed",        G_CALLBACK (module_ftp_status_changed_cb),   obj,
+          "signal::load-finished",         G_CALLBACK (module_ftp_load_finished_cb),      obj,
+          "signal::load-error",            G_CALLBACK (module_ftp_load_error_cb),         obj,
+          "signal::load-progress-changed", G_CALLBACK (module_ftp_progress_changed_cb),   obj,
+          "signal::uri-changed",           G_CALLBACK (module_ftp_uri_changed_cb),        obj,
+          "signal::status-changed",        G_CALLBACK (module_ftp_status_changed_cb),     obj,
+          "signal::download-requested",    G_CALLBACK (module_ftp_download_requested_cb), obj,
      NULL);
 
      return GTK_WIDGET (obj);
@@ -330,9 +332,7 @@ static void module_ftp_row_activated_cb (ModuleFtp *obj, GtkTreePath *path, GtkT
           );
 
           if (!ret)
-          {
-               printf ("Download requested -> %s/%s\n", obj->uri, filepath);
-          }
+               printf ("Download requested: %s\n", g_strconcat (obj->uri, filepath, NULL));
      }
 }
 
@@ -431,3 +431,21 @@ static void module_ftp_status_changed_cb (CurlClient *curl, gchar *status, Modul
           0, obj->status
      );
 }
+
+static gboolean module_ftp_download_requested_cb (CurlClient *curl, gchar *uri, ModuleFtp *obj)
+{
+     WebKitNetworkRequest *tmp = webkit_network_request_new (uri);
+     WebKitDownload *dl = webkit_download_new (tmp);
+     gboolean ret = FALSE;
+
+     g_signal_emit (
+          G_OBJECT (obj),
+          module_ftp_signals[NEW_DOWNLOAD_SIGNAL],
+          0, dl,
+          &ret
+     );
+
+     return ret;
+}
+
+

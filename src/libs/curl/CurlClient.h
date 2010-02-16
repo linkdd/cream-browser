@@ -99,6 +99,12 @@ struct _CurlClientClass
        \param status The status text (can be printed in a statusbar)
       */
 
+     gboolean (*download_requested) (CurlClient *obj, gchar *uri);
+     /*!< The "download-request" signal is emitted when a file need to be downloaded.
+       \param uri URI of the file to download
+       \return TRUE if you handle the signal
+      */
+
      /*< private >*/
      GObject *instance;  /*!< Associated instance */
 };
