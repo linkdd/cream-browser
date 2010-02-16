@@ -168,15 +168,6 @@ static void cream_view_class_init (CreamViewClass *class)
 
 static void cream_view_init (CreamView *obj)
 {
-     GtkWidget *scroll_h = gtk_hscrollbar_new (NULL);
-     GtkWidget *scroll_v = gtk_vscrollbar_new (NULL);
-
-     obj->adjust_h = gtk_range_get_adjustment (GTK_RANGE (scroll_h));
-     obj->adjust_v = gtk_range_get_adjustment (GTK_RANGE (scroll_v));
-
-     gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (obj), obj->adjust_h);
-     gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (obj), obj->adjust_v);
-
      obj->content = NULL;
      obj->uri = NULL;
      obj->title = NULL;
@@ -267,6 +258,9 @@ GtkWidget *cream_view_new (void)
      CreamView *view = gtk_type_new (cream_view_get_type ());
 
      g_return_val_if_fail (view != NULL, NULL);
+
+     view->adjust_h = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (view));
+     view->adjust_v = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (view));
 
      view->uri = g_strdup ("about:blank");
      cream_view_load_content (view);
