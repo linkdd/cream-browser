@@ -28,5 +28,6 @@ void cb_cream_destroy (GtkWidget *emit, gpointer data);
 void cb_cream_update_notebook_title (GtkWidget *child, gpointer data);
 void cb_cream_notebook_close_page (GtkButton *button, GtkWidget *child);
 gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *obj);
+gboolean cb_creamview_keys (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj);
 
 #endif /* __CALLBACKS_H */

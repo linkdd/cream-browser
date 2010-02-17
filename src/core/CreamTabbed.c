@@ -113,10 +113,13 @@ GtkWidget *cream_tabbed_new (void)
      gtk_box_pack_start (GTK_BOX (obj), obj->creamview, TRUE, TRUE, 0);
 
      g_signal_connect (G_OBJECT (obj->adjust_v),  "value-changed",  G_CALLBACK (cream_tabbed_scroll_cb),         obj);
-     g_signal_connect (G_OBJECT (obj->creamview), "uri-changed",    G_CALLBACK (cream_tabbed_uri_changed_cb),    obj);
-     g_signal_connect (G_OBJECT (obj->creamview), "new-title",      G_CALLBACK (cream_tabbed_new_title_cb),      obj);
-     g_signal_connect (G_OBJECT (obj->creamview), "status-changed", G_CALLBACK (cream_tabbed_status_changed_cb), obj);
-     g_signal_connect (G_OBJECT (obj->creamview), "new-window",     G_CALLBACK (cream_tabbed_new_window_cb),     NULL);
+     g_object_connect (G_OBJECT (obj->creamview),
+          "signal::uri-changed",     G_CALLBACK (cream_tabbed_uri_changed_cb),    obj,
+          "signal::new-title",       G_CALLBACK (cream_tabbed_new_title_cb),      obj,
+          "signal::status-changed",  G_CALLBACK (cream_tabbed_status_changed_cb), obj,
+          "signal::new-window",      G_CALLBACK (cream_tabbed_new_window_cb),     NULL,
+          "signal::key-press-event", G_CALLBACK (cb_creamview_keys),              obj,
+     NULL);
 
      cream_tabbed_scroll_cb (obj->adjust_v, obj);
 
