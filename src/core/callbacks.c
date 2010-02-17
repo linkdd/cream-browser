@@ -133,7 +133,7 @@ gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *
                }
 
                echo (obj, "");
-               gtk_widget_grab_focus (obj->creamview);
+               gtk_widget_grab_focus (obj->inputbox);
                break;
           }
 
