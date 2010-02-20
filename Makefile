@@ -51,19 +51,19 @@ export CFLAGS += -g -ggdb3 -fno-inline -Wall -O2 -DPREFIX="$(PREFIX)" $(INCLUDES
 
 # GTK+ flags for GCC
 export GTK_CFLAGS = `pkg-config --cflags gtk+-2.0`
-export GTK_LIBS = `pkg-config --libs gtk+-2.0`
+export GTK_LDADD = `pkg-config --libs gtk+-2.0`
 # GNet flags for GCC
 export GNET_CFLAGS = `pkg-config --cflags gnet-2.0`
-export GNET_LIBS = `pkg-config --libs gnet-2.0`
+export GNET_LDADD = `pkg-config --libs gnet-2.0`
 # WebKit flags for GCC
 export WEBKIT_CFLAGS = `pkg-config --cflags webkit-1.0`
-export WEBKIT_LIBS = `pkg-config --libs webkit-1.0`
+export WEBKIT_LDADD = `pkg-config --libs webkit-1.0`
 # Curl flags for GCC
 export CURL_CFLAGS = `curl-config --cflags`
-export CURL_LIBS = `curl-config --libs`
+export CURL_LDADD = `curl-config --libs`
 # All flags for GCC
 export ALL_CFLAGS = $(GTK_CFLAGS) $(GNET_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS)
-export ALL_LIBS = $(GTK_LIBS) $(GNET_LIBS) $(WEBKIT_LIBS) $(CURL_LIBS)
+export ALL_LDADD = $(GTK_LDADD) $(GNET_LDADD) $(WEBKIT_LDADD) $(CURL_LDADD)
 
 .PHONY: all install uninstall clean dist doc check-dep
 

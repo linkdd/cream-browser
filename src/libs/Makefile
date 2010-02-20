@@ -1,17 +1,13 @@
 .PHONY: all clean
 
 all:
-	@$(MAKE) all -C CreamView
-	@$(MAKE) all -C curl
-	@$(MAKE) all -C gopher
-	@$(MAKE) all -C modules/about
-	@$(MAKE) all -C modules/ftp
-	@$(MAKE) all -C modules/www
+	@$(MAKE) -C CreamView
+	@$(MAKE) -C curl
+	@$(MAKE) -C gopher
+	@$(MAKE) -C modules/about
+	@$(MAKE) -C modules/ftp
+	@$(MAKE) -C modules/www
+	@$(AR) rcs libcream.a *.o
 
 clean:
-	@$(MAKE) clean -C CreamView
-	@$(MAKE) clean -C curl
-	@$(MAKE) clean -C gopher
-	@$(MAKE) clean -C modules/about
-	@$(MAKE) clean -C modules/ftp
-	@$(MAKE) clean -C modules/www
+	@rm -vrf *.o libcream.a

@@ -1,16 +1,11 @@
-libcream_module_about_a_SOURCES = AboutModule.c
-libcream_module_about_a_OBJECTS = $(libcream_module_about_a_SOURCES:.c=.o)
-libcream_module_about_a_HEADERS = AboutModule.h
+SOURCES = AboutModule.c
+OBJECTS = $(SOURCES:.c=.o)
+HEADERS = AboutModule.h
 
-.PHONY: all clean
+.PHONY: all
 
-all: libcream-module-about.a
-
-clean:
-	@rm -vrf libcream-module-about.a *.o
-
-libcream-module-about.a: $(libcream_module_about_a_OBJECTS) $(libcream_module_about_a_HEADERS)
-	$(AR) rcs $@ $(libcream_module_about_a_OBJECTS)
+all: $(OBJECTS) $(HEADERS)
+	@mv $(OBJECTS) $(top_srcdir)/src/libs
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(ALL_CFLAGS) -c $^ -o $@

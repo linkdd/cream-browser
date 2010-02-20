@@ -1,16 +1,11 @@
-libcreamview_a_SOURCES = CreamView.c CreamBackwardForwardList.c
-libcreamview_a_OBJECTS = $(libcreamview_a_SOURCES:.c=.o)
-libcreamview_a_HEADERS = CreamView.h CreamBackwardForwardList.h
+SOURCES = CreamView.c CreamBackwardForwardList.c
+OBJECTS = $(SOURCES:.c=.o)
+HEADERS = CreamView.h CreamBackwardForwardList.h
 
-.PHONY: all clean
+.PHONY: all
 
-all: libcreamview.a
-
-clean:
-	@rm -vrf libcreamview.a *.o
-
-libcreamview.a: $(libcreamview_a_OBJECTS) $(libcreamview_a_HEADERS)
-	$(AR) rcs $@ $(libcreamview_a_OBJECTS)
+all: $(OBJECTS) $(HEADERS)
+	@mv $(OBJECTS) $(top_srcdir)/src/libs
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(ALL_CFLAGS) -c $^ -o $@

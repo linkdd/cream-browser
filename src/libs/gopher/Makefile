@@ -1,16 +1,11 @@
-libcream_gopher_a_SOURCES = GopherClient.c
-libcream_gopher_a_OBJECTS = $(libcream_gopher_a_SOURCES:.c=.o)
-libcream_gopher_a_HEADERS = GopherClient.h
+SOURCES = GopherClient.c
+OBJECTS = $(SOURCES:.c=.o)
+HEADERS = GopherClient.h
 
-.PHONY: all clean
+.PHONY: all
 
-all: libcream-gopher.a
-
-clean:
-	@rm -vrf libcream-gopher.a *.o
-
-libcream-gopher.a: $(libcream_gopher_a_OBJECTS) $(libcream_gopher_a_HEADERS)
-	$(AR) rcs $@ $(libcream_gopher_a_OBJECTS)
+all: $(OBJECTS) $(HEADERS)
+	@mv $(OBJECTS) $(top_srcdir)/src/libs
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(ALL_CFLAGS) -c $^ -o $@

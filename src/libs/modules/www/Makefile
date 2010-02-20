@@ -1,16 +1,11 @@
-libcream_module_webview_a_SOURCES = WebViewModule.c Favicon.c
-libcream_module_webview_a_OBJECTS = $(libcream_module_webview_a_SOURCES:.c=.o)
-libcream_module_webview_a_HEADERS = WebViewModule.h Favicon.h
+SOURCES = WebViewModule.c Favicon.c
+OBJECTS = $(SOURCES:.c=.o)
+HEADERS = WebViewModule.h Favicon.h
 
-.PHONY: all clean
+.PHONY: all
 
-all: libcream-module-webview.a
-
-clean:
-	@rm -vrf libcream-module-webview.a *.o
-
-libcream-module-webview.a: $(libcream_module_webview_a_OBJECTS) $(libcream_module_webview_a_HEADERS)
-	$(AR) rcs $@ $(libcream_module_webview_a_OBJECTS)
+all: $(OBJECTS) $(HEADERS)
+	@mv $(OBJECTS) $(top_srcdir)/src/libs
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(ALL_CFLAGS) -c $^ -o $@
