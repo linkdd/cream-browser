@@ -235,8 +235,17 @@ static void cream_view_load_content (CreamView *view)
           }
      }
 
+
      if (!success)
-          cream_view_http_callback (view, g_strconcat ("http://", uri, NULL));
+     {
+          if (!strstr (uri, "://"))
+               cream_view_http_callback (view, g_strconcat ("http://", uri, NULL));
+          else /* a unknow protocol is specified */
+          {
+               /* tell the browser we need a handler */;
+               return;
+          }
+     }
 
      g_object_connect (G_OBJECT (view->content),
           "signal::uri-changed",    G_CALLBACK (cream_view_uri_changed_cb),    view,

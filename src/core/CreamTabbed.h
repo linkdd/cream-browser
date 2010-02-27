@@ -68,7 +68,7 @@ struct _CreamTabbedClass
      GtkVBoxClass parent_class;    /*!< Parent class */
 
      void (*update_notebook_title) (CreamTabbed *obj);
-     /*!< The "update-notebook-title" signal is emitted when the CreamView's title changed */
+     /*!@signal The "update-notebook-title" signal is emitted when the CreamView's title changed */
 };
 
 GtkType cream_tabbed_get_type (void);

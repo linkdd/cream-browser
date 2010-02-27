@@ -30,4 +30,28 @@
 #include <glib-object.h>
 #include <gnet.h>
 
+#define TYPE_GOPHER_CLIENT              (gopher_client_get_type ())
+#define GOPHER_CLIENT(obj)              (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_GOPHER_CLIENT, GopherClient))
+#define GOPHER_CLIENT_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_GOPHER_CLIENT, GopherClientClass))
+#define IS_GOPHER_CLIENT(obj)           (G_TYPE_INSTANCE_TYPE ((obj), TYPE_GOPHER_CLIENT))
+#define IS_GOPHER_CLIENT_CLASS(klass)   (G_TYPE_CLASS_TYPE ((klass), TYPE_GOPHER_CLIENT))
+#define GOPHER_CLIENT_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_GOPHER_CLIENT, GopherClientClass))
+
+typedef struct _GopherClient GopherClient;
+typedef struct _GopherClientClass GopherClientClass;
+
+struct _GopherClient
+{
+     GObject parent;
+
+     GURI *uri;
+     gchar *status;
+};
+
+struct _GopherClientClass
+{
+     GObjectClass parent;
+     GObject *instance;
+};
+
 #endif /* __CLASS_GOPHER_CLIENT_H */
