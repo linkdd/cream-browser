@@ -3,8 +3,13 @@
 DEPENDANCIES="gtk+-2.0 gnet-2.0 webkit-1.0"
 VERSIONS="2.14 2.0.0 1.1.15"
 
+HEADERS="confuse.h"
+LIBRARIES="libconfuse.so"
+
+echo "Checking programs:"
+
 # Check PKG-CONFIG
-echo -n "Checking pkg-config... "
+echo -n "-- Checking pkg-config... "
 PKGCONFIG="`which pkg-config`"
 if [ "$?" != "0" ] ; then
      echo "no"
@@ -14,7 +19,7 @@ fi
 echo "yes"
 
 # Check CURL-CONFIG
-echo -n "Checking curl-config... "
+echo -n "-- Checking curl-config... "
 CURLCONFIG="`which curl-config`"
 if [ "$?" != "0" ] ; then
      echo "no"
@@ -22,6 +27,8 @@ if [ "$?" != "0" ] ; then
      exit 1
 fi
 echo "yes"
+
+echo "Checking libraries (pkg-config):"
 
 # Check LIBRARIES
 i=0
@@ -38,7 +45,7 @@ do
           j=$((j + 1))
      done
 
-     echo -n "Checking $lib... "
+     echo -n "-- Checking $lib... "
 
      # Library exists ?
      $PKGCONFIG --exists $lib
@@ -60,3 +67,31 @@ do
      echo "yes"
      i=$((i + 1))
 done
+
+echo "Checking libraries:"
+
+# Check libraries without pkg-config
+for h in $HEADERS
+do
+	echo -n "-- Checking $h..."
+	if [ ! -e /usr/include/$h ] && [ ! -e /usr/local/include/$h ] ; then
+		echo "no"
+		echo "Header $h not found."
+		exit 1
+	fi
+
+	echo "yes"
+done
+
+for l in $LIBRARIES
+do
+	echo -n "-- Checking $l..."
+	if [ ! -e /usr/lib/$l ] && [ ! -e /usr/local/lib/$l ] ; then
+		echo "no"
+		echo "Library $l not found."
+		exit 1
+	fi
+
+	echo "yes"
+done
+

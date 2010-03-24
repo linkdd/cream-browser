@@ -73,8 +73,8 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
      /* crate directories */
      home = g_get_home_dir ();
-     g_mkdir_with_parents (g_build_filename (home, ".cream-browser", NULL), 0711);
-     g_mkdir_with_parents (g_build_filename (home, ".cream-browser", "downloads", NULL), 0755);
+     g_mkdir_with_parents (g_build_filename (home, ".config", "cream-browser", NULL), 0711);
+     g_mkdir_with_parents (g_build_filename (home, ".config", "cream-browser", "downloads", NULL), 0755);
 
      init_socket ();
 

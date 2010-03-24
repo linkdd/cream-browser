@@ -289,6 +289,8 @@ GtkWidget *cream_view_new (void)
  */
 void cream_view_load_uri (CreamView *obj, const gchar *uri)
 {
+     g_return_if_fail (obj != NULL);
+
      if (uri != NULL)
           obj->uri = g_strdup (uri);
      else

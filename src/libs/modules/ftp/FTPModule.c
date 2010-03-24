@@ -258,8 +258,8 @@ static void module_ftp_update_model (ModuleFtp *obj)
      GtkTreeIter iter;
      int i;
 
-     file = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".cream-browser", "icons", "file.png", NULL), NULL);
-     folder = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".cream-browser", "icons", "folder.png", NULL), NULL);
+     file = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".config", "cream-browser", "icons", "file.png", NULL), NULL);
+     folder = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".config", "cream-browser", "icons", "folder.png", NULL), NULL);
 
      if (CURL_LOAD_PROVISIONAL != curl_client_get_load_status (priv->curl))
      {

@@ -7,6 +7,7 @@ all:
 	@$(MAKE) -C modules/about
 	@$(MAKE) -C modules/ftp
 	@$(MAKE) -C modules/www
+	@$(MAKE) -C config
 	@$(AR) rcs libcream.a *.o
 
 clean:

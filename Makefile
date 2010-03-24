@@ -63,7 +63,7 @@ export CURL_CFLAGS = `curl-config --cflags`
 export CURL_LDADD = `curl-config --libs`
 # All flags for GCC
 export ALL_CFLAGS = $(GTK_CFLAGS) $(GNET_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS)
-export ALL_LDADD = $(GTK_LDADD) $(GNET_LDADD) $(WEBKIT_LDADD) $(CURL_LDADD)
+export ALL_LDADD = $(GTK_LDADD) $(GNET_LDADD) $(WEBKIT_LDADD) $(CURL_LDADD) -lconfuse
 
 .PHONY: all install uninstall clean dist doc check-dep
 

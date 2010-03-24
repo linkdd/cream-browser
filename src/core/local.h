@@ -44,7 +44,7 @@
 #include "callbacks.h"
 #include "command.h"
 
-#define CREAM_FILE(path)      g_build_filename (g_get_home_dir (), ".cream-browser", path, NULL)
+#define CREAM_FILE(path)      g_build_filename (g_get_home_dir (), ".config", "cream-browser", path, NULL)
 
 extern struct global_t global;
 
