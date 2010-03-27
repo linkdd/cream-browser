@@ -25,6 +25,7 @@
 
 #include <config.h>
 #include "Favicon.h"
+#include <xdg.h>
 
 static GdkPixbuf *g_load_pixbuf_from_stock (const gchar *icon_name, GtkIconSize size, GError **error)
 {
@@ -102,7 +103,7 @@ Favicon *favicon_new (const gchar *uri)
           obj->ico  = NULL;
 
           obj->memory = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_object_maybe_unref);
-          obj->cache_path = g_build_filename (g_get_user_cache_dir (), PACKAGE, NULL);
+          obj->cache_path = g_build_filename (get_xdg_var_by_name ("XDG_CACHE_HOME"), PACKAGE, NULL);
 
           if (g_str_has_prefix (uri, "http://") || g_str_has_prefix (uri, "https://"))
           {

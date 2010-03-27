@@ -19,6 +19,26 @@
 
 #include "libconfig.h"
 
+#define CREAM_CONFIG_ERROR cream_config_error_quark ()
+
+typedef enum
+{
+     CREAM_CFG_ERROR_PARSE,
+     CREAM_CFG_ERROR_FAILED
+} CreamCfgError;
+
+GQuark cream_config_error_quark (void)
+{
+     static GQuark cream_config_error = 0;
+
+     if (cream_config_error == 0)
+     {
+          cream_config_error = g_quark_from_string ("CREAM_CONFIG_ERROR");
+     }
+
+     return cream_config_error;
+}
+
 /* /global/user-agent/set() */
 static cfg_opt_t config_user_agent_set_opts[] =
 {
@@ -86,7 +106,7 @@ static cfg_opt_t config_root_opts[] =
 };
 
 
-gboolean cream_config_load (gchar *path, struct cream_config_t *cfg)
+gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **error)
 {
      int i = 0;
 
@@ -112,6 +132,9 @@ gboolean cream_config_load (gchar *path, struct cream_config_t *cfg)
      {
           free (cfg);
           cfg = NULL;
+
+          g_set_error (error, CREAM_CONFIG_ERROR, CREAM_CFG_ERROR_PARSE, "Failed to parse: %s", path);
+
           return FALSE;
      }
 
@@ -164,6 +187,8 @@ gboolean cream_config_load (gchar *path, struct cream_config_t *cfg)
           tmp->next = cfg->keys;
           cfg->keys = tmp;
      }
+
+     cfg_free (cream_cfg.root);
 
      return TRUE;
 }

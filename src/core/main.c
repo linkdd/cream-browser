@@ -21,6 +21,17 @@
 
 struct global_t global;
 
+struct XDG_t XDG[] =
+{
+     { "XDG_CONFIG_HOME", "~/.config" },
+     { "XDG_DATA_HOME",   "~/.local/share" },
+     { "XDG_CACHE_HOME",  "~/.cache" },
+     { "XDG_CONFIG_DIRS", "/etc/xdg" },
+     { "XDG_DATA_DIRS",   "/usr/local/share/:/usr/share/" },
+     { NULL, NULL }
+};
+
+
 GOptionEntry entries[] =
 {
      { "config", 'c', 0, G_OPTION_ARG_FILENAME, &global.cmdline.config, "Load an alternative configuration file" },
@@ -33,6 +44,90 @@ const struct handler_t cream_handlers[] =
      { "download", NULL },
      { NULL, NULL }
 };
+
+char *str_replace (const char *search, const char *replace, const char *string)
+{
+     gchar **buf;
+     char *ret;
+
+     g_return_val_if_fail (string != NULL, NULL);
+
+     buf = g_strsplit (string, search, -1);
+     ret = g_strjoinv (replace, buf);
+     g_strfreev (buf);
+
+     return ret;
+}
+
+gchar *get_xdg_var (struct XDG_t xdg)
+{
+     const gchar *actual_val = getenv (xdg.env);
+     const gchar *home = g_get_home_dir ();
+     gchar *ret;
+
+     if (!actual_val || strcmp (actual_val, "") == 0)
+     {
+          if (xdg.val)
+          {
+               ret = str_replace ("~", home, xdg.val);
+          }
+          else
+          {
+               ret = NULL;
+          }
+     }
+     else
+     {
+          ret = str_replace ("~", home, xdg.val);
+     }
+
+     return ret;
+}
+
+gchar *get_xdg_var_by_name (gchar *name)
+{
+     int i;
+
+     for (i = 0; XDG[i].env != NULL; ++i)
+          if (strcmp (XDG[i].env, name) == 0)
+               return get_xdg_var (XDG[i]);
+
+     return NULL;
+}
+
+gchar *find_xdg_file (int xdg_type, const char *filename)
+{
+     gchar *xdgv = get_xdg_var (XDG[xdg_type]);
+     gchar *tmp_file = g_strconcat (xdgv, filename, NULL);
+
+     gchar *tmp_str;
+     char *ptr, *buf;
+
+     g_free (xdgv);
+
+     if (!g_file_test (tmp_file, G_FILE_TEST_EXISTS) && xdg_type != 2)
+     {
+          buf = get_xdg_var (XDG[3 + xdg_type]);
+          tmp_str = (char *) strtok_r (buf, ":", &ptr);
+          g_free (buf);
+
+          while ((tmp_str = (char *) strtok_r (NULL, ":", &ptr)) && !g_file_test (tmp_file, G_FILE_TEST_EXISTS))
+          {
+               g_free (tmp_file);
+               tmp_file = g_strconcat (tmp_str, filename, NULL);
+          }
+     }
+
+     if (g_file_test (tmp_file, G_FILE_TEST_EXISTS))
+     {
+          return tmp_file;
+     }
+     else
+     {
+          g_free (tmp_file);
+          return NULL;
+     }
+}
 
 void init_socket (void)
 {
@@ -55,10 +150,6 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      global.cmdline.config = NULL;
      global.cmdline.url = NULL;
 
-     global.browser.user_agent = NULL;
-     global.browser.homepage   = NULL;
-     global.browser.encoding   = NULL;
-
      global.notebook = NULL;
 
      /* parse command line */
@@ -73,8 +164,20 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
      /* crate directories */
      home = g_get_home_dir ();
-     g_mkdir_with_parents (g_build_filename (home, ".config", "cream-browser", NULL), 0711);
-     g_mkdir_with_parents (g_build_filename (home, ".config", "cream-browser", "downloads", NULL), 0755);
+     g_mkdir_with_parents (g_build_filename (get_xdg_var_by_name ("XDG_CONFIG_HOME"), "cream-browser", NULL), 0711);
+     g_mkdir_with_parents (g_build_filename (get_xdg_var_by_name ("XDG_CONFIG_HOME"), "cream-browser", "downloads", NULL), 0755);
+
+     if (global.cmdline.config == NULL)
+     {
+          global.cmdline.config = g_strdup (find_xdg_file (XDG_TYPE_CONFIG, "cream-browser/config"));
+     }
+
+     /* load configuration */
+     if (!cream_config_load (global.cmdline.config, global.browser.cfg, &local_error) && local_error != NULL)
+     {
+          g_propagate_error (error, local_error);
+          return FALSE;
+     }
 
      init_socket ();
 
@@ -88,7 +191,7 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
           g_thread_init (NULL);
 
      /* restore cookies */
-     global.browser.cookies = soup_cookie_jar_text_new (CREAM_FILE ("cookies.txt"), FALSE);
+     global.browser.cookies = soup_cookie_jar_text_new (g_build_filename (get_xdg_var_by_name ("XDG_CONFIG_HOME"), "cream-browser", "cookies.txt", NULL), FALSE);
      soup_session_add_feature (webkit_get_default_session (), SOUP_SESSION_FEATURE (global.browser.cookies));
 
      return TRUE;
@@ -98,13 +201,11 @@ void cream_release (int exit_code)
 {
      soup_cookie_jar_save (global.browser.cookies);
 
+     cream_config_free (global.browser.cfg);
+
      /* free memory */
      free (global.cmdline.config);
      free (global.cmdline.url);
-
-     free (global.browser.user_agent);
-     free (global.browser.homepage);
-     free (global.browser.encoding);
 
      unlink (global.unix_sock.path);
 

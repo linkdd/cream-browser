@@ -9,6 +9,7 @@ CREAM_MAKEFILES =	Makefile \
 				src/libs/CreamView/Makefile \
 				src/libs/curl/Makefile \
 				src/libs/gopher/Makefile \
+				src/libs/config/Makefile \
 				src/libs/modules/about/Makefile \
 				src/libs/modules/ftp/Makefile \
 				src/libs/modules/www/Makefile
@@ -18,6 +19,7 @@ CREAM_DISTFILES =	$(CREAM_MAKEFILES) COPYING AUTHORS README \
 				src/libs/CreamView/*.c src/libs/CreamView/*.h \
 				src/libs/curl/*.c src/libs/curl/*.h \
 				src/libs/gopher/*.c src/libs/gopher/*.h \
+				src/libs/config/*.c src/libs/config/*.h \
 				src/libs/modules/about/*.c src/libs/modules/about/*.h \
 				src/libs/modules/ftp/*.c src/libs/modules/ftp/*.h \
 				src/libs/modules/www/*.c src/libs/modules/www/*.h \
@@ -46,7 +48,7 @@ export infodir = $(datarootdir)/info
 export top_srcdir = $(PWD)
 
 # GCC flags
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/config -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules
 export CFLAGS += -g -ggdb3 -fno-inline -Wall -O2 -DPREFIX="$(PREFIX)" $(INCLUDES)
 
 # GTK+ flags for GCC
@@ -88,6 +90,8 @@ install:
 	@mkdir -p $(DESTDIR)$(datadir)
 	@mkdir -p $(DESTDIR)$(infodir)
 	@$(MAKE) install -C src/core DESTDIR=$(DESTDIR)
+	@$(INSTALL) -d $(DESTDIR)/etc/xdg/cream-browser/
+	@$(INSTALL_DATA) config.sample $(DESTDIR)/etc/xdg/cream-browser/config
 
 uninstall:
 	@$(MAKE) uninstall -C src/core DESTDIR=$(DESTDIR)

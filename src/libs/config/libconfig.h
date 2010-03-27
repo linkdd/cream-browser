@@ -67,7 +67,7 @@ struct cream_config_t
      struct key_t *keys;
 };
 
-gboolean cream_config_load (gchar *path, struct cream_config_t *cfg);
+gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **error);
 void cream_config_free (struct cream_config_t *cfg);
 
 #endif /* __LIB_CONFIG_H */

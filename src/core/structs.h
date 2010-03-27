@@ -20,12 +20,6 @@
 #ifndef __STRUCTS_H
 #define __STRUCTS_H
 
-struct handler_t
-{
-     gchar *name;
-     gchar *cmd;
-};
-
 struct global_t
 {
      struct
@@ -36,11 +30,7 @@ struct global_t
 
      struct
      {
-          gchar *user_agent;
-          gchar *homepage;
-          gchar *encoding;
-          gboolean javascript;
-
+          struct cream_config_t *cfg;
           SoupCookieJar *cookies;
      } browser;
 

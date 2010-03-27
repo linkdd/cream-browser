@@ -26,6 +26,7 @@
 #include "FTPModule.h"
 #include <marshal.h>
 #include <string.h>
+#include <xdg.h>
 
 enum
 {
@@ -258,8 +259,8 @@ static void module_ftp_update_model (ModuleFtp *obj)
      GtkTreeIter iter;
      int i;
 
-     file = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".config", "cream-browser", "icons", "file.png", NULL), NULL);
-     folder = gdk_pixbuf_new_from_file (g_build_filename (g_get_home_dir (), ".config", "cream-browser", "icons", "folder.png", NULL), NULL);
+     file = gdk_pixbuf_new_from_file (find_xdg_file (XDG_TYPE_DATA, "cream-browser/icons/file.png"), NULL);
+     folder = gdk_pixbuf_new_from_file (find_xdg_file (XDG_TYPE_DATA, "cream-browser/icons/folder.png"), NULL);
 
      if (CURL_LOAD_PROVISIONAL != curl_client_get_load_status (priv->curl))
      {

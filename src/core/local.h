@@ -37,14 +37,15 @@
 #include <curl/curl.h>
 #include <gnet.h>
 
+#include <libconfig.h>
+
 #include "CreamTabbed.h"
 
+#include "xdg.h"
 #include "structs.h"
 #include "interface.h"
 #include "callbacks.h"
 #include "command.h"
-
-#define CREAM_FILE(path)      g_build_filename (g_get_home_dir (), ".config", "cream-browser", path, NULL)
 
 extern struct global_t global;
 
