@@ -26,8 +26,8 @@ struct XDG_t XDG[] =
      { "XDG_CONFIG_HOME", "~/.config" },
      { "XDG_DATA_HOME",   "~/.local/share" },
      { "XDG_CACHE_HOME",  "~/.cache" },
-     { "XDG_CONFIG_DIRS", "/etc/xdg" },
-     { "XDG_DATA_DIRS",   "/usr/local/share/:/usr/share/" },
+     { "XDG_CONFIG_DIRS", PREFIX "/etc/xdg:/etc/xdg" },
+     { "XDG_DATA_DIRS",   PREFIX "/share:/usr/local/share/:/usr/share/" },
      { NULL, NULL }
 };
 
@@ -97,37 +97,40 @@ gchar *get_xdg_var_by_name (gchar *name)
 
 gchar *find_xdg_file (int xdg_type, const char *filename)
 {
-     gchar *xdgv = get_xdg_var (XDG[xdg_type]);
-     gchar *tmp_file = g_strconcat (xdgv, filename, NULL);
+     gchar *xdg_var = NULL;
+     gchar **xdgv;
+     int i;
 
-     gchar *tmp_str;
-     char *ptr = NULL;
-     char *buf;
-
-     g_free (xdgv);
-
-     if (!g_file_test (tmp_file, G_FILE_TEST_EXISTS) && xdg_type != 2)
+     if (xdg_type == XDG_TYPE_CONFIG)
      {
-          buf = get_xdg_var (XDG[3 + xdg_type]);
-          tmp_str = (char *) strtok_r (buf, ":", &ptr);
-          g_free (buf);
+          xdg_var = g_strconcat (get_xdg_var_by_name ("XDG_CONFIG_HOME"), ":",
+                                 get_xdg_var_by_name ("XDG_CONFIG_DIRS"), NULL);
+     }
+     else if (xdg_type == XDG_TYPE_DATA)
+     {
+          xdg_var = g_strconcat (get_xdg_var_by_name ("XDG_DATA_HOME"), ":",
+                                 get_xdg_var_by_name ("XDG_DATA_DIRS"), NULL);
+     }
+     else if (xdg_type == XDG_TYPE_CACHE)
+     {
+          xdg_var = get_xdg_var_by_name ("XDG_CACHE_HOME");
+     }
 
-          while ((tmp_str = (char *) strtok_r (NULL, ":", &ptr)) && !g_file_test (tmp_file, G_FILE_TEST_EXISTS))
+     xdg_var = str_replace ("~", g_get_home_dir (), xdg_var);
+     xdgv = g_strsplit (xdg_var, ":", -1);
+
+     for (i = 0; xdgv[i] != NULL; ++i)
+     {
+          gchar *file = g_strconcat (xdgv[i], "/", filename, NULL);
+          if (g_file_test (file, G_FILE_TEST_EXISTS))
           {
-               g_free (tmp_file);
-               tmp_file = g_strconcat (tmp_str, filename, NULL);
+               g_strfreev (xdgv);
+               return file;
           }
      }
 
-     if (g_file_test (tmp_file, G_FILE_TEST_EXISTS))
-     {
-          return tmp_file;
-     }
-     else
-     {
-          g_free (tmp_file);
-          return NULL;
-     }
+     g_strfreev (xdgv);
+     return NULL;
 }
 
 void init_socket (void)
@@ -175,7 +178,7 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
      if (global.cmdline.config == NULL)
      {
-          global.cmdline.config = g_strdup (find_xdg_file (XDG_TYPE_CONFIG, "cream-browser/config"));
+          global.cmdline.config = g_strdup (find_xdg_file (XDG_TYPE_CONFIG, "/cream-browser/config"));
           if (global.cmdline.config == NULL)
           {
                g_set_error (error, CREAM_ERROR, CREAM_ERROR_XDGFILENOTFOUND, "Can't find configuration.");

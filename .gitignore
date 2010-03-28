@@ -7,3 +7,4 @@ creamctl
 *.a
 doc/html
 __build__
+autom4te.cache
