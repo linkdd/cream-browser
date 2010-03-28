@@ -101,7 +101,8 @@ gchar *find_xdg_file (int xdg_type, const char *filename)
      gchar *tmp_file = g_strconcat (xdgv, filename, NULL);
 
      gchar *tmp_str;
-     char *ptr, *buf;
+     char *ptr = NULL;
+     char *buf;
 
      g_free (xdgv);
 
@@ -152,6 +153,12 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
      global.notebook = NULL;
 
+     /* init GTK/Glib */
+     gtk_init (argc, argv);
+
+     if (!g_thread_supported ())
+          g_thread_init (NULL);
+
      /* parse command line */
      ctx = g_option_context_new ("");
      g_option_context_add_main_entries (ctx, entries, "cream");
@@ -170,10 +177,15 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      if (global.cmdline.config == NULL)
      {
           global.cmdline.config = g_strdup (find_xdg_file (XDG_TYPE_CONFIG, "cream-browser/config"));
+          if (global.cmdline.config == NULL)
+          {
+               g_set_error (error, CREAM_ERROR, CREAM_ERROR_XDGFILENOTFOUND, "Can't find configuration.");
+               return FALSE;
+          }
      }
 
      /* load configuration */
-     if (!cream_config_load (global.cmdline.config, global.browser.cfg, &local_error) && local_error != NULL)
+     if (!cream_config_load (global.cmdline.config, &global.cfg, &local_error) && local_error != NULL)
      {
           g_propagate_error (error, local_error);
           return FALSE;
@@ -183,12 +195,6 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
      /* init CURL before any thread started */
      curl_global_init (CURL_GLOBAL_DEFAULT);
-
-     /* init GTK/Glib */
-     gtk_init (argc, argv);
-
-     if (!g_thread_supported ())
-          g_thread_init (NULL);
 
      /* restore cookies */
      global.browser.cookies = soup_cookie_jar_text_new (g_build_filename (get_xdg_var_by_name ("XDG_CONFIG_HOME"), "cream-browser", "cookies.txt", NULL), FALSE);
@@ -201,7 +207,7 @@ void cream_release (int exit_code)
 {
      soup_cookie_jar_save (global.browser.cookies);
 
-     cream_config_free (global.browser.cfg);
+     cream_config_free (&global.cfg);
 
      /* free memory */
      free (global.cmdline.config);
@@ -232,9 +238,22 @@ int main (int argc, char **argv)
      if (global.cmdline.url != NULL)
           notebook_append_page (global.cmdline.url);
      else
-          notebook_append_page ("http://cream-browser.net");
+          notebook_append_page (global.cfg.global.homepage);
 
      gtk_widget_show_all (win);
      gtk_main ();
      return 0;
 }
+
+GQuark cream_error_quark (void)
+{
+     static GQuark cream_error = 0;
+
+     if (cream_error == 0)
+     {
+          cream_error = g_quark_from_string ("CREAM_ERROR");
+     }
+
+     return cream_error;
+}
+

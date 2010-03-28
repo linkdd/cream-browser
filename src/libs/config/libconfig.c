@@ -23,6 +23,7 @@
 
 typedef enum
 {
+     CREAM_CFG_ERROR_OPTS,
      CREAM_CFG_ERROR_PARSE,
      CREAM_CFG_ERROR_FAILED
 } CreamCfgError;
@@ -119,9 +120,12 @@ gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **er
           cfg_t *keys;
      } cream_cfg;
 
-     g_return_val_if_fail (path != NULL, FALSE);
+     if (path == NULL || cfg == NULL)
+     {
+          g_set_error (error, CREAM_CONFIG_ERROR, CREAM_CFG_ERROR_OPTS, "Can't load configuration (path not found or memory not allocated).");
+          return FALSE;
+     }
 
-     cfg = malloc (sizeof (struct cream_config_t));
      cfg->global.user_agent = NULL;
      cfg->handlers          = NULL;
      cfg->keys              = NULL;
@@ -242,8 +246,5 @@ void cream_config_free (struct cream_config_t *cfg)
 
           tmp_key = next;
      }
-
-     free (cfg);
-     cfg = NULL;
 }
 

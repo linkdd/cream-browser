@@ -11,9 +11,9 @@ global
           set "google\.(fr|com)" { name = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.1) Gecko/20100122 firefox/3.6.1" }
      }
 
-     bookmarks-file = "~/.cream-browser/bookmarks"
-     history-file = "~/.cream-browser/history"
-     cookie-file = "~/.cream-browser/cookies.txt"
+     bookmarks = "~/.cream-browser/bookmarks"
+     history = "~/.cream-browser/history"
+     cookie = "~/.cream-browser/cookies.txt"
 }
 
 handlers

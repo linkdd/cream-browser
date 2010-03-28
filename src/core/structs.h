@@ -30,7 +30,6 @@ struct global_t
 
      struct
      {
-          struct cream_config_t *cfg;
           SoupCookieJar *cookies;
      } browser;
 
@@ -41,6 +40,7 @@ struct global_t
           gchar *path;
      } unix_sock;
 
+     struct cream_config_t cfg;
      GtkNotebook *notebook;
 };
 

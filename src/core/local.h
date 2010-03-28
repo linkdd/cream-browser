@@ -52,4 +52,14 @@ extern struct global_t global;
 gboolean cream_init (int *argc, char ***argv, GError **error);
 void cream_release (int exit_code);
 
+/* errors */
+typedef enum
+{
+     CREAM_ERROR_XDGFILENOTFOUND,
+     CREAM_ERROR_FAILED
+} CreamError;
+
+GQuark cream_error_quark (void);
+#define CREAM_ERROR cream_error_quark ()
+
 #endif /* __LOCAL_H */

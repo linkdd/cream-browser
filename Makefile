@@ -33,7 +33,7 @@ export INSTALL_DATA    = install -c -m 644
 # Common PREFIX for installation directories.
 # NOTE: This directory must exist when you start the install.
 ifndef DESTDIR
-	export PREFIX = /usr
+export PREFIX = /usr
 endif
 export datarootdir = $(PREFIX)/share
 export datadir = $(datarootdir)
@@ -49,7 +49,11 @@ export top_srcdir = $(PWD)
 
 # GCC flags
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/config -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules
-export CFLAGS += -g -ggdb3 -fno-inline -Wall -O2 -DPREFIX="$(PREFIX)" $(INCLUDES)
+ifeq ($(DEBUG), "yes")
+export CFLAGS += -g -Wall -O2 -DPREFIX="$(PREFIX)" $(INCLUDES)
+else
+export CFLAGS += -Wall -O2 -DPREFIX="$(PREFIX)" $(INCLUDES)
+endif
 
 # GTK+ flags for GCC
 export GTK_CFLAGS = `pkg-config --cflags gtk+-2.0`
@@ -65,7 +69,7 @@ export CURL_CFLAGS = `curl-config --cflags`
 export CURL_LDADD = `curl-config --libs`
 # All flags for GCC
 export ALL_CFLAGS = $(GTK_CFLAGS) $(GNET_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS)
-export ALL_LDADD = $(GTK_LDADD) $(GNET_LDADD) $(WEBKIT_LDADD) $(CURL_LDADD) -lconfuse
+export ALL_LDADD = -lconfuse $(GTK_LDADD) $(GNET_LDADD) $(WEBKIT_LDADD) $(CURL_LDADD)
 
 .PHONY: all install uninstall clean dist doc check-dep
 
