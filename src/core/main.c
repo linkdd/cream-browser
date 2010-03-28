@@ -145,7 +145,7 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 {
      GError *local_error = NULL;
      GOptionContext *ctx;
-     const gchar *home;
+     gchar *cookie;
 
      /* init global structure */
      global.cmdline.config = NULL;
@@ -170,7 +170,6 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      }
 
      /* crate directories */
-     home = g_get_home_dir ();
      g_mkdir_with_parents (g_build_filename (get_xdg_var_by_name ("XDG_CONFIG_HOME"), "cream-browser", NULL), 0711);
      g_mkdir_with_parents (g_build_filename (get_xdg_var_by_name ("XDG_CONFIG_HOME"), "cream-browser", "downloads", NULL), 0755);
 
@@ -197,8 +196,28 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      curl_global_init (CURL_GLOBAL_DEFAULT);
 
      /* restore cookies */
-     global.browser.cookies = soup_cookie_jar_text_new (g_build_filename (get_xdg_var_by_name ("XDG_CONFIG_HOME"), "cream-browser", "cookies.txt", NULL), FALSE);
+     if ((cookie = global.cfg.global.cookie) == NULL)
+     {
+          cookie = g_build_filename (get_xdg_var_by_name ("XDG_CONFIG_HOME"), "cream-browser", "cookies.txt", NULL);
+     }
+     else
+     {
+          cookie = str_replace ("~", get_xdg_var_by_name ("XDG_CONFIG_HOME"), cookie);
+     }
+
+     global.browser.cookies = soup_cookie_jar_text_new (cookie, FALSE);
      soup_session_add_feature (webkit_get_default_session (), SOUP_SESSION_FEATURE (global.browser.cookies));
+
+     if (global.cfg.global.history != NULL)
+     {
+          /* restore history */;
+     }
+
+     if (global.cfg.global.bookmarks != NULL)
+     {
+          /* restore bookmarks */;
+     }
+
 
      return TRUE;
 }
@@ -206,6 +225,16 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 void cream_release (int exit_code)
 {
      soup_cookie_jar_save (global.browser.cookies);
+
+     if (global.cfg.global.history != NULL)
+     {
+          /* save history */;
+     }
+
+     if (global.cfg.global.bookmarks != NULL)
+     {
+          /* save bookmarks */;
+     }
 
      cream_config_free (&global.cfg);
 

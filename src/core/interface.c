@@ -89,7 +89,7 @@ GtkWidget *cream_interface_init (void)
 
      /* create main window */
      GtkWidget *main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-     gtk_window_set_title (GTK_WINDOW (main_window), "Cream-Browser");
+     gtk_window_set_title (GTK_WINDOW (main_window), g_strdup_printf ("Cream-Browser <%d>", getpid ()));
      gtk_window_set_default_size (GTK_WINDOW (main_window), 800, 600);
      gtk_window_set_geometry_hints (GTK_WINDOW (main_window), NULL, &hints, GDK_HINT_MIN_SIZE);
 
