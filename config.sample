@@ -11,15 +11,15 @@ global
           set "google\.(fr|com)" { name = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.1) Gecko/20100122 firefox/3.6.1" }
      }
 
-     bookmarks = "~/.cream-browser/bookmarks"
-     history = "~/.cream-browser/history"
-     cookie = "~/.cream-browser/cookies.txt"
+     bookmarks = "~/.config/cream-browser/bookmarks"
+     history = "~/.config/cream-browser/history"
+     cookie = "~/.config/cream-browser/cookies.txt"
 }
 
 handlers
 {
-     set "download" { handler = "spawn ~/.cream-browser/scripts/download.sh" }
-     set "signal::load-committed" { handler = "spawn ~/.cream-browser/scripts/my_history.sh" }
+     set "download" { handler = "spawn ~/.local/share/cream-browser/scripts/download.sh" }
+     set "signal::load-committed" { handler = "spawn ~/.local/share/cream-browser/scripts/my_history.sh" }
 }
 
 keys
