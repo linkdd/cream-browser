@@ -203,10 +203,7 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      {
           cookie = g_build_filename (get_xdg_var_by_name ("XDG_CONFIG_HOME"), "cream-browser", "cookies.txt", NULL);
      }
-     else
-     {
-          cookie = str_replace ("~", get_xdg_var_by_name ("XDG_CONFIG_HOME"), cookie);
-     }
+     cookie = str_replace ("~", g_get_home_dir (), cookie);
 
      global.browser.cookies = soup_cookie_jar_text_new (cookie, FALSE);
      soup_session_add_feature (webkit_get_default_session (), SOUP_SESSION_FEATURE (global.browser.cookies));
