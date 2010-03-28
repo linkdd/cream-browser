@@ -6,3 +6,4 @@ cream
 creamctl
 *.a
 doc/html
+__build__
