@@ -44,4 +44,10 @@ struct global_t
      GtkNotebook *notebook;
 };
 
+struct cmd_t
+{
+     char *id;
+     int (*func)(int argc, char **argv, CreamTabbed *obj);
+};
+
 #endif /* __STRUCTS_H */

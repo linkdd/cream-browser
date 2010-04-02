@@ -81,6 +81,7 @@ void notebook_append_page (const gchar *uri)
      gtk_notebook_set_tab_reorderable (global.notebook, creamtabbed, TRUE);
 
      g_signal_connect (G_OBJECT (creamtabbed), "update-notebook-title", G_CALLBACK (cb_cream_update_notebook_title), NULL);
+     gtk_widget_show_all (GTK_WIDGET (global.notebook));
 }
 
 GtkWidget *cream_interface_init (void)

@@ -19,8 +19,24 @@
 
 #include "local.h"
 
-void getcmd (GtkEntry *inputbox, const gchar *text, CreamTabbed *obj)
+int cmd_open (int argc, char **argv, CreamTabbed *obj);
+int cmd_tabopen (int argc, char **argv, CreamTabbed *obj);
+int cmd_close (int argc, char **argv, CreamTabbed *obj);
+int cmd_quit (int argc, char **argv, CreamTabbed *obj);
+
+struct cmd_t commands[] =
 {
+     { "open",    cmd_open },
+     { "tabopen", cmd_tabopen },
+     { "close",   cmd_close },
+     { "quit",    cmd_quit },
+     { NULL, NULL }
+};
+
+int getcmd (GtkEntry *inputbox, const gchar *text, CreamTabbed *obj)
+{
+     int ret = 0;
+
      if (text[0] == '/' && strlen (text) > 1)
      {
           if (MODULE_IS_WEB_VIEW (CREAM_VIEW (obj->creamview)->content))
@@ -33,14 +49,33 @@ void getcmd (GtkEntry *inputbox, const gchar *text, CreamTabbed *obj)
      }
      else if (text[0] == ':' && strlen (text) > 1)
      {
-          cream_tabbed_load_uri (obj, text + 1);
+          int i, argc;
+          char **argv;
+
+          text++;
+          argv = g_strsplit (text, " ", -1);
+          argc = g_strv_length (argv);
+
+          ret = -1;
+          for (i = 0; commands[i].id != NULL; ++i)
+          {
+               if (g_str_equal (commands[i].id, argv[0]))
+               {
+                    if (commands[i].func != NULL)
+                    {
+                         ret = commands[i].func (argc, argv, obj);
+                         break;
+                    }
+               }
+          }
      }
      else
      {
-          printf ("Not a browser command : '%s'\n", text);
+          ret = -1;
      }
 
      gtk_entry_set_text (inputbox, "");
+     return ret;
 }
 
 void cb_inputbox (GtkEntry *inputbox, CreamTabbed *obj)
@@ -54,4 +89,37 @@ void cb_inputbox (GtkEntry *inputbox, CreamTabbed *obj)
           webkit_web_view_unmark_text_matches (WEBKIT_WEB_VIEW (CREAM_VIEW (obj->creamview)->content));
 
      getcmd (inputbox, text, obj);
+}
+
+int cmd_open (int argc, char **argv, CreamTabbed *obj)
+{
+     int i;
+
+     for (i = 1; i < argc; ++i)
+          cream_tabbed_load_uri (obj, argv[i]);
+
+     return 0;
+}
+
+int cmd_tabopen (int argc, char **argv, CreamTabbed *obj)
+{
+     int i;
+
+     for (i = 1; i < argc; ++i)
+          notebook_append_page (argv[i]);
+
+     return 0;
+}
+
+int cmd_close (int argc, char **argv, CreamTabbed *obj)
+{
+     gtk_notebook_remove_page (global.notebook,
+          gtk_notebook_get_current_page (global.notebook));
+     return 0;
+}
+
+int cmd_quit (int argc, char **argv, CreamTabbed *obj)
+{
+     cream_release (EXIT_SUCCESS);
+     return 0;
 }
