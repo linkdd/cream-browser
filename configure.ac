@@ -29,22 +29,15 @@ AC_SUBST(WEBKIT_LIBS)
 AC_SUBST(CURL_CFLAGS, [`curl-config --cflags`])
 AC_SUBST(CURL_LIBS, [`curl-config --libs`])
 
+AC_CHECK_LIB([confuse], [main], [], [
+echo "Library 'libconfuse' not found"
+exit -1
+])
+AC_SUBST(CONFUSE_LIBS, [-lconfuse])
+
 # Checks for library functions
 
-AC_CHECK_LIB([confuse], [cfg_init],    [CONFUSE_LIBS=-lconfuse], [AC_MSG_ERROR([libconfuse: cfg_init() missing])])
-AC_CHECK_LIB([confuse], [cfg_parse],   [CONFUSE_LIBS=-lconfuse], [AC_MSG_ERROR([libconfuse: cfg_parse() missing])])
-AC_CHECK_LIB([confuse], [cfg_getsec],  [CONFUSE_LIBS=-lconfuse], [AC_MSG_ERROR([libconfuse: cfg_getsec() missing])])
-AC_CHECK_LIB([confuse], [cfg_getnsec], [CONFUSE_LIBS=-lconfuse], [AC_MSG_ERROR([libconfuse: cfg_getnsec() missing])])
-AC_CHECK_LIB([confuse], [cfg_getstr],  [CONFUSE_LIBS=-lconfuse], [AC_MSG_ERROR([libconfuse: cfg_getstr() missing])])
-AC_CHECK_LIB([confuse], [cfg_getbool], [CONFUSE_LIBS=-lconfuse], [AC_MSG_ERROR([libconfuse: cfg_getbool() missing])])
-AC_CHECK_LIB([confuse], [cfg_title],   [CONFUSE_LIBS=-lconfuse], [AC_MSG_ERROR([libconfuse: cfg_title() missing])])
-AC_CHECK_LIB([confuse], [cfg_size],    [CONFUSE_LIBS=-lconfuse], [AC_MSG_ERROR([libconfuse: cfg_size() missing])])
-AC_CHECK_LIB([confuse], [cfg_free],    [CONFUSE_LIBS=-lconfuse], [AC_MSG_ERROR([libconfuse: cfg_free() missing])])
-AC_SUBST(CONFUSE_LIBS)
-
 # Checks for header files
-
-AC_CHECK_HEADERS(confuse.h)
 
 # Checks for library features
 
