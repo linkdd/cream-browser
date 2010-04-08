@@ -47,7 +47,8 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_cream_OBJECTS = cream-main.$(OBJEXT) cream-marshal.$(OBJEXT) \
 	cream-CreamTabbed.$(OBJEXT) cream-interface.$(OBJEXT) \
-	cream-callbacks.$(OBJEXT) cream-command.$(OBJEXT)
+	cream-callbacks.$(OBJEXT) cream-command.$(OBJEXT) \
+	cream-bind.$(OBJEXT)
 cream_OBJECTS = $(am_cream_OBJECTS)
 am__DEPENDENCIES_1 =
 cream_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -167,8 +168,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-cream_SOURCES = main.c marshal.c CreamTabbed.c interface.c callbacks.c command.c \
-                local.h structs.h marshal.h CreamTabbed.h interface.h callbacks.h command.h xdg.h
+cream_SOURCES = main.c marshal.c CreamTabbed.c interface.c callbacks.c command.c bind.c \
+                local.h structs.h marshal.h CreamTabbed.h interface.h callbacks.h command.h bind.h xdg.h
 
 cream_CPPFLAGS = $(GTK_CFLAGS) $(GNET_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS) \
                  -I$(top_srcdir) -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/config -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules \
@@ -266,6 +267,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-CreamTabbed.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-bind.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-callbacks.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-command.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-interface.Po@am__quote@
@@ -370,6 +372,20 @@ cream-command.obj: command.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='command.c' object='cream-command.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cream_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cream-command.obj `if test -f 'command.c'; then $(CYGPATH_W) 'command.c'; else $(CYGPATH_W) '$(srcdir)/command.c'; fi`
+
+cream-bind.o: bind.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cream_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cream-bind.o -MD -MP -MF $(DEPDIR)/cream-bind.Tpo -c -o cream-bind.o `test -f 'bind.c' || echo '$(srcdir)/'`bind.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/cream-bind.Tpo $(DEPDIR)/cream-bind.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='bind.c' object='cream-bind.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cream_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cream-bind.o `test -f 'bind.c' || echo '$(srcdir)/'`bind.c
+
+cream-bind.obj: bind.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cream_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cream-bind.obj -MD -MP -MF $(DEPDIR)/cream-bind.Tpo -c -o cream-bind.obj `if test -f 'bind.c'; then $(CYGPATH_W) 'bind.c'; else $(CYGPATH_W) '$(srcdir)/bind.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/cream-bind.Tpo $(DEPDIR)/cream-bind.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='bind.c' object='cream-bind.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cream_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cream-bind.obj `if test -f 'bind.c'; then $(CYGPATH_W) 'bind.c'; else $(CYGPATH_W) '$(srcdir)/bind.c'; fi`
 
 creamctl-creamctl.o: creamctl.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(creamctl_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT creamctl-creamctl.o -MD -MP -MF $(DEPDIR)/creamctl-creamctl.Tpo -c -o creamctl-creamctl.o `test -f 'creamctl.c' || echo '$(srcdir)/'`creamctl.c

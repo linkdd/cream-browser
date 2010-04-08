@@ -46,11 +46,13 @@
 #include "interface.h"
 #include "callbacks.h"
 #include "command.h"
+#include "bind.h"
 
 extern struct global_t global;
 
 gboolean cream_init (int *argc, char ***argv, GError **error);
 void cream_release (int exit_code);
+gboolean run_command (const gchar *cmd, GString **ret);
 
 /* errors */
 typedef enum

@@ -17,16 +17,9 @@
  *        along with Cream-Browser. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __BIND_H
+#define __BIND_H
 
-#ifndef __CALLBACKS_H
-#define __CALLBACKS_H
+gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj);
 
-gboolean control_socket (GIOChannel *channel);
-gboolean control_client_socket (GIOChannel *channel);
-
-void cb_cream_destroy (GtkWidget *emit, gpointer data);
-void cb_cream_update_notebook_title (GtkWidget *child, gpointer data);
-void cb_cream_notebook_close_page (GtkButton *button, GtkWidget *child);
-gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *obj);
-
-#endif /* __CALLBACKS_H */
+#endif /* __BIND_H */

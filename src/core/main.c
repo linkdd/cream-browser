@@ -250,6 +250,32 @@ void cream_release (int exit_code)
      exit (exit_code);
 }
 
+gboolean run_command (const gchar *cmd, GString **ret)
+{
+     extern struct cmd_t commands[];
+     GError *error = NULL;
+     gint argc;
+     gchar **argv;
+     int i;
+
+     if (!g_shell_parse_argv (cmd, &argc, &argv, &error) || error != NULL)
+     {
+          if (ret != NULL)
+               *ret = g_string_new (error->message);
+          g_error_free (error);
+          return FALSE;
+     }
+
+     for (i = 0; i < argc; ++i)
+          printf ("[%s] ", argv[i]);
+     printf ("\n");
+
+     if (ret != NULL)
+          *ret = g_string_new ("success\r\n");
+
+     return TRUE;
+}
+
 int main (int argc, char **argv)
 {
      GError *error = NULL;

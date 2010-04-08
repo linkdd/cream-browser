@@ -118,7 +118,7 @@ GtkWidget *cream_tabbed_new (void)
           "signal::new-title",       G_CALLBACK (cream_tabbed_new_title_cb),      obj,
           "signal::status-changed",  G_CALLBACK (cream_tabbed_status_changed_cb), obj,
           "signal::new-window",      G_CALLBACK (cream_tabbed_new_window_cb),     NULL,
-          "signal::key-press-event", G_CALLBACK (cb_creamview_keys),              obj,
+          "signal::key-press-event", G_CALLBACK (bind_getkey),                    obj,
      NULL);
 
      cream_tabbed_scroll_cb (obj->adjust_v, obj);

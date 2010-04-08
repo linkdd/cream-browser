@@ -49,31 +49,31 @@ gboolean control_client_socket (GIOChannel *channel)
      ret = g_io_channel_read_line (channel, &line, &len, NULL, &error);
      if (ret == G_IO_STATUS_ERROR)
      {
-          g_warning ("Error reading UNIX socket '%s' : %s\n", global.unix_sock.path, error->message);
-          g_io_channel_shutdown (channel, TRUE, &error);
+          g_warning ("Error reading UNIX socket '%s' : %s", global.unix_sock.path, error->message);
+          g_io_channel_shutdown (channel, TRUE, NULL);
+          g_error_free (error);
           return FALSE;
      }
      else if (ret == G_IO_STATUS_EOF)
      {
           /* shutdown and remove channel watch from main loop */
-          g_io_channel_shutdown (channel, TRUE, &error);
+          g_io_channel_shutdown (channel, TRUE, NULL);
           return FALSE;
      }
 
      if (line)
      {
-          printf ("Client said: %s", line);
-          g_string_append (result, "server thanks you\n");
+          run_command (line, &result);
 
           ret = g_io_channel_write_chars (channel, result->str, result->len, &len, &error);
           if (ret == G_IO_STATUS_ERROR)
           {
                g_warning ("Error writing UNIX socket '%s' : %s\n", global.unix_sock.path, error->message);
+               g_error_free (error);
           }
-          g_io_channel_flush (channel, &error);
+          g_io_channel_flush (channel, NULL);
      }
 
-     if (error) g_error_free (error);
      g_string_free (result, TRUE);
      g_free (line);
      return TRUE;
@@ -134,50 +134,6 @@ gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *
 
                echo (obj, "");
                gtk_widget_grab_focus (obj->inputbox);
-               break;
-          }
-
-          default: ret = FALSE; break;
-     }
-
-     return ret;
-}
-
-gboolean cb_creamview_keys (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj)
-{
-     gboolean ret = TRUE;
-
-     switch (event->keyval)
-     {
-          case GDK_Escape:
-          {
-               GtkWidget *content = cream_view_get_content (CREAM_VIEW (obj->creamview));
-
-               if (MODULE_IS_WEB_VIEW (content))
-               {
-                    WebKitWebSettings *settings = module_web_view_get_settings (MODULE_WEB_VIEW (content));
-                    g_object_set (settings, "enable-caret-browsing", FALSE, NULL);
-                    webkit_web_view_set_settings (WEBKIT_WEB_VIEW (content), settings);
-               }
-
-               echo (obj, "");
-               gtk_widget_grab_focus (obj->creamview);
-               break;
-          }
-
-          case GDK_Insert:
-          {
-               GtkWidget *content = cream_view_get_content (CREAM_VIEW (obj->creamview));
-
-               if (MODULE_IS_WEB_VIEW (content))
-               {
-                    WebKitWebSettings *settings = module_web_view_get_settings (MODULE_WEB_VIEW (content));
-                    g_object_set (settings, "enable-caret-browsing", TRUE, NULL);
-                    webkit_web_view_set_settings (WEBKIT_WEB_VIEW (content), settings);
-               }
-
-               echo (obj, "-- CARET --");
-               gtk_widget_grab_focus (obj->creamview);
                break;
           }
 
