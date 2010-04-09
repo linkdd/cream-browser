@@ -30,6 +30,7 @@ struct global_t
 
      struct
      {
+          enum { InsertMode, BindMode, CmdMode } mode;
           SoupCookieJar *cookies;
      } browser;
 

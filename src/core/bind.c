@@ -31,7 +31,7 @@ static gboolean bind_parse_buffer (CreamTabbed *obj)
           {
                g_string_free (bind_buffer, TRUE);
                bind_buffer = NULL;
-               return run_command (tmp->cmd, NULL);
+               return run_command (tmp->cmd, NULL, obj);
           }
      }
 
@@ -41,6 +41,8 @@ static gboolean bind_parse_buffer (CreamTabbed *obj)
 gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj)
 {
      gboolean ret = TRUE;
+
+     global.browser.mode = BindMode;
 
      if (bind_buffer == NULL)
           bind_buffer = g_string_new ("");
@@ -60,6 +62,7 @@ gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj
 
                echo (obj, "");
                gtk_widget_grab_focus (obj->creamview);
+               global.browser.mode = InsertMode;
                break;
           }
 

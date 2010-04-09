@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -52,7 +53,8 @@ extern struct global_t global;
 
 gboolean cream_init (int *argc, char ***argv, GError **error);
 void cream_release (int exit_code);
-gboolean run_command (const gchar *cmd, GString **ret);
+CreamTabbed *get_current_creamtabbed (void);
+gboolean run_command (const gchar *cmd, GString **ret, CreamTabbed *obj);
 
 /* errors */
 typedef enum

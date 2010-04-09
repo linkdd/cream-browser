@@ -85,10 +85,19 @@ void cb_inputbox (GtkEntry *inputbox, CreamTabbed *obj)
      g_return_if_fail (text != NULL);
      g_return_if_fail (strlen (text) != 0);
 
-     if (MODULE_IS_WEB_VIEW (CREAM_VIEW (obj->creamview)->content))
-          webkit_web_view_unmark_text_matches (WEBKIT_WEB_VIEW (CREAM_VIEW (obj->creamview)->content));
+     if (global.browser.mode == CmdMode)
+     {
+          if (MODULE_IS_WEB_VIEW (CREAM_VIEW (obj->creamview)->content))
+               webkit_web_view_unmark_text_matches (WEBKIT_WEB_VIEW (CREAM_VIEW (obj->creamview)->content));
 
-     getcmd (inputbox, text, obj);
+          getcmd (inputbox, text, obj);
+     }
+     else
+     {
+          obj->wait_bind = FALSE;
+          obj->bind_str  = g_strdup (text);
+          gtk_entry_set_text (inputbox, "");
+     }
 }
 
 int cmd_open (int argc, char **argv, CreamTabbed *obj)

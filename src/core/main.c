@@ -218,6 +218,7 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
           /* restore bookmarks */;
      }
 
+     global.browser.mode = InsertMode;
 
      return TRUE;
 }
@@ -250,30 +251,14 @@ void cream_release (int exit_code)
      exit (exit_code);
 }
 
-gboolean run_command (const gchar *cmd, GString **ret)
+CreamTabbed *get_current_creamtabbed (void)
 {
-     extern struct cmd_t commands[];
-     GError *error = NULL;
-     gint argc;
-     gchar **argv;
-     int i;
+     GtkWidget *child;
 
-     if (!g_shell_parse_argv (cmd, &argc, &argv, &error) || error != NULL)
-     {
-          if (ret != NULL)
-               *ret = g_string_new (error->message);
-          g_error_free (error);
-          return FALSE;
-     }
+     child = gtk_notebook_get_nth_page (global.notebook,
+               gtk_notebook_get_current_page (global.notebook));
 
-     for (i = 0; i < argc; ++i)
-          printf ("[%s] ", argv[i]);
-     printf ("\n");
-
-     if (ret != NULL)
-          *ret = g_string_new ("success\r\n");
-
-     return TRUE;
+     return CREAM_TABBED (child);
 }
 
 int main (int argc, char **argv)

@@ -40,7 +40,7 @@ gboolean control_socket (GIOChannel *channel)
 
 gboolean control_client_socket (GIOChannel *channel)
 {
-     GString *result = g_string_new ("");
+     GString *result = g_string_new ("\n");
      GError *error = NULL;
      GIOStatus ret;
      char *line;
@@ -63,7 +63,7 @@ gboolean control_client_socket (GIOChannel *channel)
 
      if (line)
      {
-          run_command (line, &result);
+          run_command (line, &result, get_current_creamtabbed ());
 
           ret = g_io_channel_write_chars (channel, result->str, result->len, &len, &error);
           if (ret == G_IO_STATUS_ERROR)
@@ -134,6 +134,7 @@ gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *
 
                echo (obj, "");
                gtk_widget_grab_focus (obj->inputbox);
+               global.browser.mode = CmdMode;
                break;
           }
 

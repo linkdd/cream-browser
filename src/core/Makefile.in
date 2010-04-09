@@ -48,7 +48,7 @@ PROGRAMS = $(bin_PROGRAMS)
 am_cream_OBJECTS = cream-main.$(OBJEXT) cream-marshal.$(OBJEXT) \
 	cream-CreamTabbed.$(OBJEXT) cream-interface.$(OBJEXT) \
 	cream-callbacks.$(OBJEXT) cream-command.$(OBJEXT) \
-	cream-bind.$(OBJEXT)
+	cream-bind.$(OBJEXT) cream-handler.$(OBJEXT)
 cream_OBJECTS = $(am_cream_OBJECTS)
 am__DEPENDENCIES_1 =
 cream_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -165,7 +165,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-cream_SOURCES = main.c marshal.c CreamTabbed.c interface.c callbacks.c command.c bind.c \
+cream_SOURCES = main.c marshal.c CreamTabbed.c interface.c callbacks.c command.c bind.c handler.c \
                 local.h structs.h marshal.h CreamTabbed.h interface.h callbacks.h command.h bind.h xdg.h
 
 cream_CPPFLAGS = $(GTK_CFLAGS) $(GNET_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS) \
@@ -267,6 +267,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-bind.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-callbacks.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-handler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-interface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cream-marshal.Po@am__quote@
@@ -383,6 +384,20 @@ cream-bind.obj: bind.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='bind.c' object='cream-bind.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cream_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cream-bind.obj `if test -f 'bind.c'; then $(CYGPATH_W) 'bind.c'; else $(CYGPATH_W) '$(srcdir)/bind.c'; fi`
+
+cream-handler.o: handler.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cream_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cream-handler.o -MD -MP -MF $(DEPDIR)/cream-handler.Tpo -c -o cream-handler.o `test -f 'handler.c' || echo '$(srcdir)/'`handler.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/cream-handler.Tpo $(DEPDIR)/cream-handler.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='handler.c' object='cream-handler.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cream_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cream-handler.o `test -f 'handler.c' || echo '$(srcdir)/'`handler.c
+
+cream-handler.obj: handler.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cream_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cream-handler.obj -MD -MP -MF $(DEPDIR)/cream-handler.Tpo -c -o cream-handler.obj `if test -f 'handler.c'; then $(CYGPATH_W) 'handler.c'; else $(CYGPATH_W) '$(srcdir)/handler.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/cream-handler.Tpo $(DEPDIR)/cream-handler.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='handler.c' object='cream-handler.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cream_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cream-handler.obj `if test -f 'handler.c'; then $(CYGPATH_W) 'handler.c'; else $(CYGPATH_W) '$(srcdir)/handler.c'; fi`
 
 creamctl-creamctl.o: creamctl.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(creamctl_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT creamctl-creamctl.o -MD -MP -MF $(DEPDIR)/creamctl-creamctl.Tpo -c -o creamctl-creamctl.o `test -f 'creamctl.c' || echo '$(srcdir)/'`creamctl.c
