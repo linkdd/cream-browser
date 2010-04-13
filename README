@@ -3,12 +3,9 @@ the graphical library GTK+. The interface looks like Vimperator, a Firefox addon
 to use Firefox like the famous text editor : Vim.
 
 To build Cream-Browser :
-     $ make               # Here you can use : make PREFIX=/usr
-     $ sudo make install  # Here you can use : make DESTDIR=/home/you/cream
-
-To build the documentation :
-     $ make doc
-Now, see the page doc/html/index.html
+     $ ./configure
+     $ make
+     $ sudo make install
 
 GNU General Public License v3 :
      This program is free software; you can redistribute it and/or modify it under the
