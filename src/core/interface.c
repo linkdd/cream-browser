@@ -99,6 +99,6 @@ GtkWidget *cream_interface_init (void)
 
      /* connect signals */
      g_signal_connect (G_OBJECT (main_window), "destroy", G_CALLBACK (cb_cream_destroy), NULL);
-
+     g_signal_connect (G_OBJECT (global.notebook), "key-press-event", G_CALLBACK (bind_getkey), NULL);
      return main_window;
 }

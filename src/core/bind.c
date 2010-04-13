@@ -44,6 +44,9 @@ gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj
 
      global.browser.mode = BindMode;
 
+     if (obj == NULL)
+          obj = get_current_creamtabbed ();
+
      if (bind_buffer == NULL)
           bind_buffer = g_string_new ("");
 
