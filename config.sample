@@ -25,10 +25,16 @@ handlers
 keys
 {
      bind "d" { cmd = "download %s" }
+
+     bind "h" { cmd = "open @home@" }
      bind "o" { cmd = "open %s" }
      bind "O" { cmd = "open @uri@" }
      bind "t" { cmd = "tabopen %s" }
+     bind "H" { cmd = "tabopen @home@" }
+
      bind "y" { cmd = "yank" }
      bind "p" { cmd = "paste" }
      bind "P" { cmd = "paste tab" }
+
+     bind "zZ" { cmd = "quit" }
 }

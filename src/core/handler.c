@@ -147,6 +147,13 @@ gboolean handle_open (int argc, char **argv, GString **ret, CreamTabbed *obj)
           gtk_entry_set_position (GTK_ENTRY (obj->inputbox), -1);
           global.browser.mode = CmdMode;
      }
+     else if (g_str_equal (argv[1], "@home@"))
+     {
+          if (global.cfg.global.homepage != NULL)
+               cream_tabbed_load_uri (obj, global.cfg.global.homepage);
+          else
+               cream_tabbed_load_uri (obj, "http://cream-browser.net");
+     }
      else
      {
           cream_tabbed_load_uri (obj, argv[1]);
@@ -176,6 +183,13 @@ gboolean handle_tabopen (int argc, char **argv, GString **ret, CreamTabbed *obj)
           gtk_widget_grab_focus (obj->inputbox);
           gtk_entry_set_position (GTK_ENTRY (obj->inputbox), -1);
           global.browser.mode = CmdMode;
+     }
+     else if (g_str_equal (argv[1], "@home@"))
+     {
+          if (global.cfg.global.homepage != NULL)
+               notebook_append_page (global.cfg.global.homepage);
+          else
+               notebook_append_page ("http://cream-browser.net");
      }
      else
      {
