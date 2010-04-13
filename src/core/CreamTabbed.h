@@ -59,9 +59,6 @@ struct _CreamTabbed
 
      GtkWidget *inputbox;          /*!< Inputbox of the CreamView object */
 
-     gboolean wait_bind;
-     gchar *bind_str;
-
      GtkAdjustment *adjust_v;
 };
 

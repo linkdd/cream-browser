@@ -92,12 +92,6 @@ void cb_inputbox (GtkEntry *inputbox, CreamTabbed *obj)
 
           getcmd (inputbox, text, obj);
      }
-     else
-     {
-          obj->wait_bind = FALSE;
-          obj->bind_str  = g_strdup (text);
-          gtk_entry_set_text (inputbox, "");
-     }
 }
 
 int cmd_open (int argc, char **argv, CreamTabbed *obj)

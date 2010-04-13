@@ -91,9 +91,6 @@ static void cream_tabbed_init (CreamTabbed *obj)
 
      obj->inputbox = NULL;
      obj->adjust_v = NULL;
-
-     obj->wait_bind = FALSE;
-     obj->bind_str = NULL;
 }
 
 /*!
