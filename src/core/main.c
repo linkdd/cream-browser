@@ -219,6 +219,7 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      }
 
      global.browser.mode = InsertMode;
+     global.browser.clipboard = gtk_clipboard_get (GDK_SELECTION_PRIMARY);
 
      return TRUE;
 }

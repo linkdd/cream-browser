@@ -32,6 +32,7 @@ struct global_t
      {
           enum { InsertMode, BindMode, CmdMode } mode;
           SoupCookieJar *cookies;
+          GtkClipboard *clipboard;
      } browser;
 
      struct

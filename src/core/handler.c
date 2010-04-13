@@ -29,6 +29,8 @@ gboolean handle_spawn (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_download (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_open (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_tabopen (int argc, char **argv, GString **ret, CreamTabbed *obj);
+gboolean handle_yank (int argc, char **argv, GString **ret, CreamTabbed *obj);
+gboolean handle_paste (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_set (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_get (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_quit (int argc, char **argv, GString **ret, CreamTabbed *obj);
@@ -39,6 +41,8 @@ static struct handler_cmd_t cmd_handlers[] =
      { "download", handle_download },
      { "open",     handle_open },
      { "tabopen",  handle_tabopen },
+     { "yank",     handle_yank },
+     { "paste",    handle_paste },
      { "set",      handle_set },
      { "get",      handle_get },
      { "quit",     handle_quit },
@@ -138,7 +142,7 @@ gboolean handle_open (int argc, char **argv, GString **ret, CreamTabbed *obj)
      }
      else if (g_str_equal (argv[1], "@uri@"))
      {
-          echo (obj, g_strconcat (":open ", cream_tabbed_get_uri (obj), NULL));
+          echo (obj, ":open %s", cream_tabbed_get_uri (obj));
           gtk_widget_grab_focus (obj->inputbox);
           gtk_entry_set_position (GTK_ENTRY (obj->inputbox), -1);
           global.browser.mode = CmdMode;
@@ -153,8 +157,55 @@ gboolean handle_open (int argc, char **argv, GString **ret, CreamTabbed *obj)
 
 gboolean handle_tabopen (int argc, char **argv, GString **ret, CreamTabbed *obj)
 {
-     if (ret != NULL)
-          *ret = g_string_new (g_strconcat ("Program: ", argv[0], "\n", NULL));
+     if (argc < 2 && ret != NULL)
+     {
+          *ret = g_string_new ("The function 'open' need an argument.\n");
+          return FALSE;
+     }
+
+     if (g_str_equal (argv[1], "%s"))
+     {
+          echo (obj, ":tabopen ");
+          gtk_widget_grab_focus (obj->inputbox);
+          gtk_entry_set_position (GTK_ENTRY (obj->inputbox), -1);
+          global.browser.mode = CmdMode;
+     }
+     else if (g_str_equal (argv[1], "@uri@"))
+     {
+          echo (obj, ":tabopen %s", cream_tabbed_get_uri (obj));
+          gtk_widget_grab_focus (obj->inputbox);
+          gtk_entry_set_position (GTK_ENTRY (obj->inputbox), -1);
+          global.browser.mode = CmdMode;
+     }
+     else
+     {
+          notebook_append_page (argv[1]);
+     }
+
+     return TRUE;
+}
+
+gboolean handle_yank (int argc, char **argv, GString **ret, CreamTabbed *obj)
+{
+     const gchar *uri = cream_tabbed_get_uri (obj);
+     echo (obj, "Yanked %s", uri);
+     gtk_clipboard_set_text (global.browser.clipboard, uri, -1);
+     return TRUE;
+}
+
+gboolean handle_paste (int argc, char **argv, GString **ret, CreamTabbed *obj)
+{
+     gboolean tabopen = FALSE;
+     gchar *uri = gtk_clipboard_wait_for_text (global.browser.clipboard);
+
+     if (argc >= 2 && g_str_equal (argv[1], "tab"))
+          tabopen = TRUE;
+
+     if (tabopen)
+          notebook_append_page (uri);
+     else
+          cream_tabbed_load_uri (obj, uri);
+
      return TRUE;
 }
 

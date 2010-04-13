@@ -28,4 +28,7 @@ keys
      bind "o" { cmd = "open %s" }
      bind "O" { cmd = "open @uri@" }
      bind "t" { cmd = "tabopen %s" }
+     bind "y" { cmd = "yank" }
+     bind "p" { cmd = "paste" }
+     bind "P" { cmd = "paste tab" }
 }
