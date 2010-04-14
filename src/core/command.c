@@ -92,6 +92,8 @@ void cb_inputbox (GtkEntry *inputbox, CreamTabbed *obj)
 
           getcmd (inputbox, text, obj);
      }
+
+     global.browser.mode = BindMode;
 }
 
 int cmd_open (int argc, char **argv, CreamTabbed *obj)

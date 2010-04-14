@@ -153,10 +153,12 @@ gboolean handle_open (int argc, char **argv, GString **ret, CreamTabbed *obj)
                cream_tabbed_load_uri (obj, global.cfg.global.homepage);
           else
                cream_tabbed_load_uri (obj, "http://cream-browser.net");
+          global.browser.mode = BindMode;
      }
      else
      {
           cream_tabbed_load_uri (obj, argv[1]);
+          global.browser.mode = BindMode;
      }
 
      return TRUE;
@@ -190,10 +192,12 @@ gboolean handle_tabopen (int argc, char **argv, GString **ret, CreamTabbed *obj)
                notebook_append_page (global.cfg.global.homepage);
           else
                notebook_append_page ("http://cream-browser.net");
+          global.browser.mode = BindMode;
      }
      else
      {
           notebook_append_page (argv[1]);
+          global.browser.mode = BindMode;
      }
 
      return TRUE;

@@ -54,7 +54,7 @@ gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj
      {
           case GDK_Escape:
           {
-               GtkWidget *content = cream_view_get_content (CREAM_VIEW (obj->creamview));
+               GtkWidget *content = cream_view_get_content (creamview);
 
                if (MODULE_IS_WEB_VIEW (content))
                {
@@ -64,14 +64,14 @@ gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj
                }
 
                echo (obj, "");
-               gtk_widget_grab_focus (obj->creamview);
-               global.browser.mode = InsertMode;
+               gtk_widget_grab_focus (GTK_WIDGET (creamview));
+               global.browser.mode = BindMode;
                break;
           }
 
           case GDK_Insert:
           {
-               GtkWidget *content = cream_view_get_content (CREAM_VIEW (obj->creamview));
+               GtkWidget *content = cream_view_get_content (creamview);
 
                if (MODULE_IS_WEB_VIEW (content))
                {
@@ -81,7 +81,8 @@ gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj
                }
 
                echo (obj, "-- CARET --");
-               gtk_widget_grab_focus (obj->creamview);
+               gtk_widget_grab_focus (GTK_WIDGET (creamview));
+               global.browser.mode = InsertMode;
                break;
           }
 
@@ -89,12 +90,14 @@ gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj
                echo (obj, ":");
                gtk_widget_grab_focus (obj->inputbox);
                gtk_entry_set_position (GTK_ENTRY (obj->inputbox), -1);
+               global.browser.mode = CmdMode;
                break;
 
           case GDK_slash:
                echo (obj, "/");
                gtk_widget_grab_focus (obj->inputbox);
                gtk_entry_set_position (GTK_ENTRY (obj->inputbox), -1);
+               global.browser.mode = CmdMode;
                break;
 
           default:
@@ -110,7 +113,7 @@ gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj
           bind_buffer = NULL;
      }
      else
-          bind_parse_buffer (obj);
+          ret = bind_parse_buffer (obj);
 
      return ret;
 }

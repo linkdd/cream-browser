@@ -103,42 +103,37 @@ gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *
 {
      gboolean ret = TRUE;
 
-     switch (event->keyval)
+     if (global.browser.mode == CmdMode && event->keyval == GDK_Escape)
      {
-          case GDK_Up:
-               /*! \todo Go up in the commands' history */
-               break;
+          echo (obj, "");
+          global.browser.mode = BindMode;
+          return ret;
+     }
+     else
+          ret = bind_getkey (CREAM_VIEW (obj->creamview), event, obj);
 
-          case GDK_Down:
-               /*! \todo Go down in the commands' history */
-               break;
-
-          case GDK_Tab:
-               /*! \todo Completion (next) */
-               break;
-
-          case GDK_ISO_Left_Tab:
-               /*! \todo Completion (previous) */
-               break;
-
-          case GDK_Escape:
+     if (!ret)
+     {
+          switch (event->keyval)
           {
-               GtkWidget *content = cream_view_get_content (CREAM_VIEW (obj->creamview));
+               case GDK_Up:
+                    /*! \todo Go up in the commands' history */
+                    break;
 
-               if (MODULE_IS_WEB_VIEW (content))
-               {
-                    WebKitWebSettings *settings = module_web_view_get_settings (MODULE_WEB_VIEW (content));
-                    g_object_set (settings, "enable-caret-browsing", FALSE, NULL);
-                    webkit_web_view_set_settings (WEBKIT_WEB_VIEW (content), settings);
-               }
+               case GDK_Down:
+                    /*! \todo Go down in the commands' history */
+                    break;
 
-               echo (obj, "");
-               gtk_widget_grab_focus (obj->inputbox);
-               global.browser.mode = CmdMode;
-               break;
+               case GDK_Tab:
+                    /*! \todo Completion (next) */
+                    break;
+
+               case GDK_ISO_Left_Tab:
+                    /*! \todo Completion (previous) */
+                    break;
+
+               default: ret = FALSE; break;
           }
-
-          default: ret = FALSE; break;
      }
 
      return ret;
