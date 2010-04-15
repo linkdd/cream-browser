@@ -20,6 +20,16 @@
 #ifndef __STRUCTS_H
 #define __STRUCTS_H
 
+struct variable_t
+{
+     char *key;
+     char *value;
+     gboolean readwrite; /* FALSE : read-only, TRUE : read-write */
+
+     enum { String, Integer, Boolean, None } type;
+     void *data;
+};
+
 struct global_t
 {
      struct
@@ -30,9 +40,11 @@ struct global_t
 
      struct
      {
-          enum { InsertMode, BindMode, CmdMode } mode;
+          enum { InsertMode = 0, BindMode, CmdMode, HintsMode } mode;
           SoupCookieJar *cookies;
           GtkClipboard *clipboard;
+          GSList *variables;
+          gchar *main_user_agent;
      } browser;
 
      struct

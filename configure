@@ -3899,6 +3899,62 @@ ac_config_headers="$ac_config_headers config.h"
 ac_config_files="$ac_config_files Makefile src/core/Makefile src/libs/Makefile"
 
 
+arch=`uname -m`
+uname_a=`uname -a`
+uname_s=`uname -s`
+uname_n=`uname -n`
+uname_r=`uname -r`
+uname_v=`uname -v`
+uname_p=`uname -p`
+uname_i=`uname -i`
+uname_o=`uname -o`
+
+
+cat >>confdefs.h <<_ACEOF
+#define ARCH "${arch}"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define UNAME_A "${uname_a}"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define UNAME_S "${uname_s}"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define UNAME_N "${uname_n}"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define UNAME_R "${uname_r}"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define UNAME_V "${uname_v}"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define UNAME_P "${uname_p}"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define UNAME_I "${uname_i}"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define UNAME_O "${uname_o}"
+_ACEOF
+
+
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure

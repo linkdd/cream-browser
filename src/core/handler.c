@@ -33,6 +33,7 @@ gboolean handle_yank (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_paste (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_set (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_get (int argc, char **argv, GString **ret, CreamTabbed *obj);
+gboolean handle_bind (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_quit (int argc, char **argv, GString **ret, CreamTabbed *obj);
 
 static struct handler_cmd_t cmd_handlers[] =
@@ -45,6 +46,7 @@ static struct handler_cmd_t cmd_handlers[] =
      { "paste",    handle_paste },
      { "set",      handle_set },
      { "get",      handle_get },
+     { "bind",     handle_bind },
      { "quit",     handle_quit },
      { NULL, NULL }
 };
@@ -71,57 +73,20 @@ gboolean run_command (const gchar *cmd, GString **ret, CreamTabbed *obj)
                     return cmd_handlers[i].func (argc, argv, ret, obj);
 
      if (ret != NULL)
-          *ret = g_string_new (g_strconcat ("Error: The command '", argv[0], "' isn't a browser's command.\n", NULL));
+          *ret = g_string_new (g_strdup_printf ("Error: The command '%s' isn't a browser's command.\n", argv[0]));
 
      return FALSE;
 }
 
 gboolean handle_spawn (int argc, char **argv, GString **ret, CreamTabbed *obj)
 {
-     char *sh;
-     int exit_code, i;
-     char *out, *err;
-     char *cmd = "";
-
-     if (argc < 2 && ret != NULL)
-     {
-          *ret = g_string_new ("The function 'spawn' need an argument.\n");
-          return FALSE;
-     }
-
-     for (i = 1; i < argc; ++i)
-     {
-          cmd = g_strconcat (cmd, " ", argv[i], NULL);
-     }
-
-     if ((sh = getenv ("SHELL")) == NULL)
-          sh = "/bin/sh";
-
-     g_spawn_command_line_sync (g_strconcat (sh, " -c \"", cmd, "\"", NULL), &out, &err, &exit_code, NULL);
-
-     if (exit_code != EXIT_SUCCESS)
-     {
-          if (ret != NULL)
-          {
-               *ret = g_string_new (g_strconcat ("cream-browser: spawn: ", cmd, ": ", err, "\n", NULL));
-          }
-          return FALSE;
-     }
-     else
-     {
-          if (ret != NULL)
-          {
-               *ret = g_string_new (g_strconcat (out, "\n", NULL));
-          }
-     }
-
-     return TRUE;
+     return FALSE;
 }
 
 gboolean handle_download (int argc, char **argv, GString **ret, CreamTabbed *obj)
 {
      if (ret != NULL)
-          *ret = g_string_new (g_strconcat ("Program: ", argv[0], "\n", NULL));
+          *ret = g_string_new (g_strdup_printf ("Program: %s\n", argv[0]));
      return TRUE;
 }
 
@@ -229,17 +194,79 @@ gboolean handle_paste (int argc, char **argv, GString **ret, CreamTabbed *obj)
 
 gboolean handle_set (int argc, char **argv, GString **ret, CreamTabbed *obj)
 {
-     if (ret != NULL)
-          *ret = g_string_new (g_strconcat ("Program: ", argv[0], "\n", NULL));
+     if (argc < 3)
+     {
+          if (ret != NULL)
+               *ret = g_string_new ("Usage : set <key> <value>\n");
+          return FALSE;
+     }
+
+     if (!set (argv[1], argv[2]))
+     {
+          if (ret != NULL)
+               *ret = g_string_new (g_strdup_printf ("set: Can't set '%s' to '%s' (read-only)\n", argv[1], argv[2]));
+          return FALSE;
+     }
+
      return TRUE;
 }
 
 gboolean handle_get (int argc, char **argv, GString **ret, CreamTabbed *obj)
 {
-     if (ret != NULL)
-          *ret = g_string_new (g_strconcat ("Program: ", argv[0], "\n", NULL));
+     char *tmp;
+
+     if (argc < 2)
+     {
+          if (ret != NULL)
+               *ret = g_string_new ("Usage : get <key>\n");
+          return FALSE;
+     }
+
+     tmp = get (argv[1]);
+
+     if (tmp == NULL)
+     {
+          if (ret != NULL)
+               *ret = g_string_new (g_strdup_printf ("get: Can't get value of '%s' (variable doesn't exist)\n", argv[1]));
+          return FALSE;
+     }
+     else
+     {
+          if (ret != NULL)
+               *ret = g_string_new (g_strdup_printf ("%s\n", tmp));
+     }
+
      return TRUE;
 }
+
+gboolean handle_bind (int argc, char **argv, GString **ret, CreamTabbed *obj)
+{
+     struct key_t *new, *tmp;
+
+     if (argc < 3)
+     {
+          if (ret != NULL)
+               *ret = g_string_new ("Usage : bind <key> <cmd>\n");
+          return -1;
+     }
+
+     new = malloc (sizeof (struct key_t));
+
+     new->bind = g_strdup (argv[1]);
+     new->cmd  = g_strdup (argv[2]);
+     new->next = NULL;
+
+     if (global.cfg.keys == NULL)
+          global.cfg.keys = new;
+     else
+     {
+          for (tmp = global.cfg.keys; tmp->next != NULL; tmp = tmp->next);
+          tmp->next = new;
+     }
+
+     return 0;
+}
+
 
 gboolean handle_quit (int argc, char **argv, GString **ret, CreamTabbed *obj)
 {

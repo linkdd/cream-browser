@@ -19,9 +19,9 @@
 
 #include "local.h"
 
-static GString *bind_buffer = NULL;
+GString *bind_buffer = NULL;
 
-static gboolean bind_parse_buffer (CreamTabbed *obj)
+gboolean bind_parse_buffer (CreamTabbed *obj)
 {
      struct key_t *tmp = global.cfg.keys;
 
@@ -64,7 +64,7 @@ gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj
                }
 
                echo (obj, "");
-               gtk_widget_grab_focus (GTK_WIDGET (creamview));
+               gtk_widget_grab_focus (GTK_WIDGET (obj));
                global.browser.mode = BindMode;
                break;
           }
@@ -81,7 +81,7 @@ gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj
                }
 
                echo (obj, "-- CARET --");
-               gtk_widget_grab_focus (GTK_WIDGET (creamview));
+               gtk_widget_grab_focus (GTK_WIDGET (obj));
                global.browser.mode = InsertMode;
                break;
           }

@@ -42,7 +42,7 @@ AC_SUBST(CONFUSE_LIBS, [-lconfuse])
 # Checks for library features
 
 if test "`curl-config --feature | grep SSL`" == "SSL"; then
-     AC_DEFINE([HAVE_CURL_SSL], [1], Have curl SSL support ?[])
+     AC_DEFINE([HAVE_CURL_SSL], [1], [Have curl SSL support ?])
 fi
 
 # Output files
@@ -53,5 +53,25 @@ AC_CONFIG_FILES([
      src/core/Makefile
      src/libs/Makefile
 ])
+
+arch=`uname -m`
+uname_a=`uname -a`
+uname_s=`uname -s`
+uname_n=`uname -n`
+uname_r=`uname -r`
+uname_v=`uname -v`
+uname_p=`uname -p`
+uname_i=`uname -i`
+uname_o=`uname -o`
+
+AC_DEFINE_UNQUOTED([ARCH],    "${arch}",    [Architecture])
+AC_DEFINE_UNQUOTED([UNAME_A], "${uname_a}", [All informations])
+AC_DEFINE_UNQUOTED([UNAME_S], "${uname_s}", [Kernel name])
+AC_DEFINE_UNQUOTED([UNAME_N], "${uname_n}", [Hostname])
+AC_DEFINE_UNQUOTED([UNAME_R], "${uname_r}", [Kernel release])
+AC_DEFINE_UNQUOTED([UNAME_V], "${uname_v}", [Kernel version])
+AC_DEFINE_UNQUOTED([UNAME_P], "${uname_p}", [Processor type])
+AC_DEFINE_UNQUOTED([UNAME_I], "${uname_i}", [Hardware platform])
+AC_DEFINE_UNQUOTED([UNAME_O], "${uname_o}", [Openrating System])
 
 AC_OUTPUT

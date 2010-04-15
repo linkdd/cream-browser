@@ -101,19 +101,25 @@ void cb_cream_notebook_close_page (GtkButton *button, GtkWidget *child)
 
 gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *obj)
 {
-     gboolean ret = TRUE;
+     gboolean ret = FALSE;
+     const gchar *text = gtk_entry_get_text (inputbox);
 
-     if (global.browser.mode == CmdMode && event->keyval == GDK_Escape)
+     if (strlen (text) == 0)
      {
-          echo (obj, "");
-          global.browser.mode = BindMode;
-          return ret;
+          if (bind_buffer != NULL)
+               g_string_free (bind_buffer, TRUE);
+          bind_buffer = g_string_new (event->string);
+
+          ret = bind_parse_buffer (obj);
      }
      else
-          ret = bind_getkey (CREAM_VIEW (obj->creamview), event, obj);
+     {
+          global.browser.mode = CmdMode;
+     }
 
      if (!ret)
      {
+          ret = TRUE;
           switch (event->keyval)
           {
                case GDK_Up:
@@ -130,6 +136,18 @@ gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *
 
                case GDK_ISO_Left_Tab:
                     /*! \todo Completion (previous) */
+                    break;
+
+               case GDK_Escape:
+                    echo (obj, "");
+                    global.browser.mode = BindMode;
+                    gtk_widget_grab_focus (GTK_WIDGET (obj));
+
+                    if (bind_buffer != NULL)
+                    {
+                         g_string_free (bind_buffer, TRUE);
+                         bind_buffer = NULL;
+                    }
                     break;
 
                default: ret = FALSE; break;

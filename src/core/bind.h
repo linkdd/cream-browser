@@ -20,6 +20,9 @@
 #ifndef __BIND_H
 #define __BIND_H
 
+extern GString *bind_buffer;
+
+gboolean bind_parse_buffer (CreamTabbed *obj);
 gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj);
 
 #endif /* __BIND_H */

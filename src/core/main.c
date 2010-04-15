@@ -144,6 +144,60 @@ void init_socket (void)
      g_io_add_watch (global.unix_sock.channel, G_IO_IN | G_IO_HUP, (GIOFunc) control_socket, NULL);
 }
 
+void init_variables (void)
+{
+     struct variable_t internal_variables[] =
+     {
+          /* <key>            <value>,  <read-write>   <type>    <storage> */
+          { "homepage",       NULL,          TRUE,     String,   &global.cfg.global.homepage },
+          { "encodage",       NULL,          TRUE,     String,   &global.cfg.global.encodage },
+          { "javascript",     NULL,          TRUE,     Boolean,  &global.cfg.global.javascript },
+          { "mode",           NULL,          TRUE,     Integer,  &global.browser.mode },
+          { "config",         NULL,          FALSE,    String,   &global.cmdline.config },
+          { "bookmarks",      NULL,          FALSE,    String,   &global.cfg.global.bookmarks },
+          { "history",        NULL,          FALSE,    String,   &global.cfg.global.history },
+          { "cookie",         NULL,          FALSE,    String,   &global.cfg.global.cookie },
+          /* browser variables */
+          { "version",        VERSION,       FALSE,    None,     NULL },
+          { "webkit_major",   WEBKIT_MAJOR,  FALSE,    None,     NULL },
+          { "webkit_minor",   WEBKIT_MINOR,  FALSE,    None,     NULL },
+          { "webkit_micro",   WEBKIT_MICRO,  FALSE,    None,     NULL },
+          /* system informations */
+          { "arch",           ARCH,          FALSE,    None,     NULL },
+          { "uname-a",        UNAME_A,       FALSE,    None,     NULL },
+          { "uname-s",        UNAME_S,       FALSE,    None,     NULL },
+          { "uname-n",        UNAME_N,       FALSE,    None,     NULL },
+          { "uname-r",        UNAME_R,       FALSE,    None,     NULL },
+          { "uname-v",        UNAME_V,       FALSE,    None,     NULL },
+          { "uname-p",        UNAME_P,       FALSE,    None,     NULL },
+          { "uname-i",        UNAME_I,       FALSE,    None,     NULL },
+          { "uname-o",        UNAME_O,       FALSE,    None,     NULL },
+
+          { NULL,             NULL,          FALSE,    None,     NULL }
+     };
+     int i;
+
+     for (i = 0; internal_variables[i].key != NULL; ++i)
+     {
+          struct variable_t *tmp = malloc (sizeof (struct variable_t));
+
+          tmp->key        = g_strdup (internal_variables[i].key);
+          if (internal_variables[i].value != NULL)
+          {
+               tmp->value = g_strdup (internal_variables[i].value);
+          }
+          else
+          {
+               tmp->value = NULL;
+          }
+          tmp->readwrite  = internal_variables[i].readwrite;
+          tmp->type       = internal_variables[i].type;
+          tmp->data       = internal_variables[i].data;
+
+          global.browser.variables = g_slist_append (global.browser.variables, tmp);
+     }
+}
+
 gboolean cream_init (int *argc, char ***argv, GError **error)
 {
      GError *local_error = NULL;
@@ -153,6 +207,8 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      /* init global structure */
      global.cmdline.config = NULL;
      global.cmdline.url = NULL;
+
+     global.browser.variables = NULL;
 
      global.notebook = NULL;
 
@@ -220,6 +276,8 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
      global.browser.mode = InsertMode;
      global.browser.clipboard = gtk_clipboard_get (GDK_SELECTION_PRIMARY);
+
+     init_variables ();
 
      return TRUE;
 }
@@ -298,3 +356,91 @@ GQuark cream_error_quark (void)
      return cream_error;
 }
 
+gboolean set (char *key, char *value)
+{
+     struct variable_t *tmp;
+     int i, len = g_slist_length (global.browser.variables);
+
+     for (i = 0; i < len; ++i)
+     {
+          tmp = (struct variable_t *) g_slist_nth_data (global.browser.variables, i);
+
+          if (g_str_equal (key, tmp->key))
+          {
+               if (tmp->readwrite)
+               {
+                    free (tmp->value);
+                    tmp->value = g_strdup (value);
+
+                    if (tmp->data != NULL)
+                    {
+                         switch (tmp->type)
+                         {
+                              case String:  *(char **) tmp->data = g_strdup (value); break;
+                              case Integer: *(int *) tmp->data = (int) strtol (value, NULL, 10); break;
+                              case Boolean:
+                                   if (!strcasecmp (value, "true"))
+                                        *(gboolean *) tmp->data = TRUE;
+                                   else
+                                        *(gboolean *) tmp->data = FALSE;
+                                   break;
+                             default: break;
+                         }
+                    }
+                    return TRUE;
+               }
+               else
+                    return FALSE;
+          }
+     }
+
+     tmp = malloc (sizeof (struct variable_t));
+     tmp->key       = g_strdup (key);
+     tmp->value     = g_strdup (value);
+     tmp->readwrite = TRUE;
+     tmp->type      = None;
+     tmp->data      = NULL;
+
+     global.browser.variables = g_slist_append (global.browser.variables, tmp);
+
+     return TRUE;
+}
+
+char *get (char *key)
+{
+     struct variable_t *tmp;
+     int i, len = g_slist_length (global.browser.variables);
+
+     for (i = 0; i < len; ++i)
+     {
+          tmp = (struct variable_t *) g_slist_nth_data (global.browser.variables, i);
+
+          if (g_str_equal (key, tmp->key))
+          {
+               if (tmp->value == NULL && tmp->type != None)
+               {
+                    switch (tmp->type)
+                    {
+                         case String:
+                              return *(char **) tmp->data;
+
+                         case Integer:
+                              return g_strdup_printf ("%d", * (int *) tmp->data);
+
+                         case Boolean:
+                              if ((* (gboolean *) tmp->data) == TRUE)
+                                   return "true";
+                              else
+                                   return "false";
+
+                         default:
+                              return NULL;
+                    }
+               }
+
+               return tmp->value;
+          }
+     }
+
+     return NULL;
+}

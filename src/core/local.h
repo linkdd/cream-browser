@@ -56,6 +56,9 @@ void cream_release (int exit_code);
 CreamTabbed *get_current_creamtabbed (void);
 gboolean run_command (const gchar *cmd, GString **ret, CreamTabbed *obj);
 
+gboolean set (char *key, char *value);
+char *get (char *key);
+
 /* errors */
 typedef enum
 {
@@ -65,5 +68,9 @@ typedef enum
 
 GQuark cream_error_quark (void);
 #define CREAM_ERROR cream_error_quark ()
+
+#define WEBKIT_MAJOR     g_strdup_printf ("%d", WEBKIT_MAJOR_VERSION)
+#define WEBKIT_MINOR     g_strdup_printf ("%d", WEBKIT_MINOR_VERSION)
+#define WEBKIT_MICRO     g_strdup_printf ("%d", WEBKIT_MICRO_VERSION)
 
 #endif /* __LOCAL_H */
