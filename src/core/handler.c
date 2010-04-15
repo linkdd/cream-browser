@@ -29,6 +29,7 @@ gboolean handle_spawn (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_download (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_open (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_tabopen (int argc, char **argv, GString **ret, CreamTabbed *obj);
+gboolean handle_close (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_yank (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_paste (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_set (int argc, char **argv, GString **ret, CreamTabbed *obj);
@@ -42,6 +43,7 @@ static struct handler_cmd_t cmd_handlers[] =
      { "download", handle_download },
      { "open",     handle_open },
      { "tabopen",  handle_tabopen },
+     { "close",    handle_close },
      { "yank",     handle_yank },
      { "paste",    handle_paste },
      { "set",      handle_set },
@@ -165,6 +167,12 @@ gboolean handle_tabopen (int argc, char **argv, GString **ret, CreamTabbed *obj)
           global.browser.mode = BindMode;
      }
 
+     return TRUE;
+}
+
+gboolean handle_close (int argc, char **argv, GString **ret, CreamTabbed *obj)
+{
+     cb_cream_notebook_close_page (NULL, GTK_WIDGET (obj));
      return TRUE;
 }
 

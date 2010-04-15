@@ -116,16 +116,18 @@ int cmd_tabopen (int argc, char **argv, CreamTabbed *obj)
 {
      int i;
 
-     for (i = 1; i < argc; ++i)
-          notebook_append_page (argv[i]);
+     if (argc == 1 || strlen (argv[1]) == 0)
+          notebook_append_page ("about:blank");
+     else
+          for (i = 1; i < argc; ++i)
+               notebook_append_page (argv[i]);
 
      return 0;
 }
 
 int cmd_close (int argc, char **argv, CreamTabbed *obj)
 {
-     gtk_notebook_remove_page (global.notebook,
-          gtk_notebook_get_current_page (global.notebook));
+     cb_cream_notebook_close_page (NULL, GTK_WIDGET (obj));
      return 0;
 }
 

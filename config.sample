@@ -36,5 +36,6 @@ keys
      bind "p" { cmd = "paste" }
      bind "P" { cmd = "paste tab" }
 
+     bind "c" { cmd = "close" }
      bind "zZ" { cmd = "quit" }
 }
