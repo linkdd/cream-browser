@@ -58,6 +58,7 @@ gboolean run_command (const gchar *cmd, GString **ret, CreamTabbed *obj);
 
 gboolean set (char *key, char *value);
 char *get (char *key);
+void set_user_agent (WebKitWebSettings *settings, const gchar *uri);
 
 /* errors */
 typedef enum

@@ -149,7 +149,7 @@ gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **er
 
      /* parse /global/ */
      cfg->global.homepage   = g_strdup (cfg_getstr (cream_cfg.global, "homepage"));
-     cfg->global.encodage   = g_strdup (cfg_getstr (cream_cfg.global, "encodage"));
+     cfg->global.encoding   = g_strdup (cfg_getstr (cream_cfg.global, "encodage"));
      cfg->global.javascript = cfg_getbool (cream_cfg.global, "javascript");
 
      cfg->global.bookmarks = g_strdup (cfg_getstr (cream_cfg.global, "bookmarks"));
@@ -206,7 +206,7 @@ void cream_config_free (struct cream_config_t *cfg)
      g_return_if_fail (cfg != NULL);
 
      free (cfg->global.homepage);
-     free (cfg->global.encodage);
+     free (cfg->global.encoding);
      free (cfg->global.bookmarks);
      free (cfg->global.history);
      free (cfg->global.cookie);

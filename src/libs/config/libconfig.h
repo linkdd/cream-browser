@@ -53,7 +53,7 @@ struct cream_config_t
      struct
      {
           char *homepage;
-          char *encodage;
+          char *encoding;
           gboolean javascript;
 
           struct user_agent_t *user_agent;

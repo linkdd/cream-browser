@@ -184,7 +184,29 @@ static void cream_tabbed_init_inputbox (CreamTabbed *obj)
  */
 void cream_tabbed_load_uri (CreamTabbed *obj, const gchar *uri)
 {
+     GtkWidget *content;
+
      cream_view_load_uri (CREAM_VIEW (obj->creamview), uri);
+
+     content = cream_view_get_content (CREAM_VIEW (obj->creamview));
+     if (MODULE_IS_WEB_VIEW (content))
+     {
+          WebKitWebSettings *settings = module_web_view_get_settings (MODULE_WEB_VIEW (content));
+
+          /* setting up encoding */
+          if (!g_str_equal (global.cfg.global.encoding, "default"))
+          {
+               g_object_set (settings, "default-encoding", global.cfg.global.encoding, NULL);
+          }
+
+          /* enable/disable Javascript */
+          g_object_set (settings, "enable-scripts", global.cfg.global.javascript, NULL);
+          /* set UserAgent */
+          set_user_agent (settings, uri);
+
+          /* Apply modifications */
+          webkit_web_view_set_settings (WEBKIT_WEB_VIEW (content), settings);
+     }
 }
 
 /*!

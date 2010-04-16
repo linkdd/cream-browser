@@ -150,7 +150,7 @@ void init_variables (void)
      {
           /* <key>            <value>,  <read-write>   <type>    <storage> */
           { "homepage",       NULL,          TRUE,     String,   &global.cfg.global.homepage },
-          { "encodage",       NULL,          TRUE,     String,   &global.cfg.global.encodage },
+          { "encodage",       NULL,          TRUE,     String,   &global.cfg.global.encoding },
           { "javascript",     NULL,          TRUE,     Boolean,  &global.cfg.global.javascript },
           { "mode",           NULL,          TRUE,     Integer,  &global.browser.mode },
           { "config",         NULL,          FALSE,    String,   &global.cmdline.config },
@@ -195,6 +195,58 @@ void init_variables (void)
           tmp->data       = internal_variables[i].data;
 
           global.browser.variables = g_slist_append (global.browser.variables, tmp);
+     }
+}
+
+void init_user_agent (void)
+{
+     struct user_agent_t *tmp = global.cfg.global.user_agent;
+
+     for (; tmp != NULL; tmp = tmp->next)
+     {
+          int i, len = g_slist_length (global.browser.variables);
+
+          for (i = 0; i < len; ++i)
+          {
+               struct variable_t *v = (struct variable_t *) g_slist_nth_data (global.browser.variables, i);
+
+               if (strstr (tmp->name, v->key))
+               {
+                    gchar *word = g_strdup_printf ("@%s@", v->key);
+                    gchar *val;
+
+                    if (v->value == NULL && v->type != None)
+                    {
+                         switch (v->type)
+                         {
+                              case String:
+                                   val = g_strdup (* (char **) v->data);
+                                   break;
+
+                              case Integer:
+                                   val = g_strdup_printf ("%d", * (int *) v->data);
+                                   break;
+
+                              case Boolean:
+                                   if (* (gboolean *) v->data == TRUE)
+                                        val = g_strdup ("true");
+                                   else
+                                        val = g_strdup ("false");
+                                   break;
+
+                              default:
+                                   val = word;
+                                   break;
+                         }
+                    }
+                    else
+                    {
+                         val = v->value;
+                    }
+
+                    tmp->name = str_replace (word, val, tmp->name);
+               }
+          }
      }
 }
 
@@ -278,6 +330,7 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      global.browser.clipboard = gtk_clipboard_get (GDK_SELECTION_PRIMARY);
 
      init_variables ();
+     init_user_agent ();
 
      return TRUE;
 }
@@ -443,4 +496,32 @@ char *get (char *key)
      }
 
      return NULL;
+}
+
+void set_user_agent (WebKitWebSettings *settings, const gchar *uri)
+{
+     gchar *global_user_agent = NULL;
+     struct user_agent_t *tmp = global.cfg.global.user_agent;
+
+     for (; tmp != NULL; tmp = tmp->next)
+     {
+          if (g_str_equal (tmp->domain, "@global@"))
+          {
+               global_user_agent = g_strdup (tmp->name);
+          }
+          else
+          {
+               GRegex *reg = g_regex_new (tmp->domain, 0, 0, NULL);
+
+               if (g_regex_match (reg, uri, 0, NULL))
+               {
+                    g_object_set (settings, "user-agent", tmp->name, NULL);
+                    return;
+               }
+
+               g_regex_unref (reg);
+          }
+     }
+
+     g_object_set (settings, "user-agent", global_user_agent, NULL);
 }
