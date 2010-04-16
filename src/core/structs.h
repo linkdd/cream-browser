@@ -54,6 +54,7 @@ struct global_t
           gchar *path;
      } unix_sock;
 
+     struct utsname uname;
      struct cream_config_t cfg;
      GtkNotebook *notebook;
 };

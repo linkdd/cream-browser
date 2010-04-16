@@ -14,7 +14,7 @@ libcream_a_SOURCES = CreamView/CreamView.c CreamView/CreamBackwardForwardList.c 
                      modules/ftp/FTPModule.h \
                      modules/www/WebViewModule.h modules/www/Favicon.h
 
-libcream_a_CPPFLAGS = $(GTK_CFLAGS) $(GNET_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS) \
+libcream_a_CPPFLAGS = $(GTK_CFLAGS) $(GNET_CFLAGS) $(WEBKIT_CFLAGS) $(CURL_CFLAGS) $(CONFUSE_CFLAGS) \
                        -I$(top_srcdir) -I$(top_srcdir)/src/core -I$(top_srcdir)/src/libs -I$(top_srcdir)/src/libs/config -I$(top_srcdir)/src/libs/CreamView -I$(top_srcdir)/src/libs/curl -I$(top_srcdir)/src/libs/gopher -I$(top_srcdir)/src/libs/modules \
                        -DPREFIX="\"$(prefix)\""
 

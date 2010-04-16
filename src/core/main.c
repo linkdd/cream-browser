@@ -163,15 +163,16 @@ void init_variables (void)
           { "webkit_minor",   WEBKIT_MINOR,  FALSE,    None,     NULL },
           { "webkit_micro",   WEBKIT_MICRO,  FALSE,    None,     NULL },
           /* system informations */
-          { "arch",           ARCH,          FALSE,    None,     NULL },
-          { "uname-a",        UNAME_A,       FALSE,    None,     NULL },
-          { "uname-s",        UNAME_S,       FALSE,    None,     NULL },
-          { "uname-n",        UNAME_N,       FALSE,    None,     NULL },
-          { "uname-r",        UNAME_R,       FALSE,    None,     NULL },
-          { "uname-v",        UNAME_V,       FALSE,    None,     NULL },
-          { "uname-p",        UNAME_P,       FALSE,    None,     NULL },
-          { "uname-i",        UNAME_I,       FALSE,    None,     NULL },
-          { "uname-o",        UNAME_O,       FALSE,    None,     NULL },
+          { "arch",           NULL,          FALSE,    String,   &global.uname.machine },
+          { "sys-sysname",    NULL,          FALSE,    String,   &global.uname.sysname },
+          { "sys-nodename",   NULL,          FALSE,    String,   &global.uname.nodename },
+          { "sys-release",    NULL,          FALSE,    String,   &global.uname.release },
+          { "sys-version",    NULL,          FALSE,    String,   &global.uname.version },
+#ifdef __USE_GNU
+          { "sys-domainname", NULL,          FALSE,    String,   &global.uname.domainname },
+#else
+          { "sys-domainname", NULL,          FALSE,    String,   &global.uname.__domainname },
+#endif
 
           { NULL,             NULL,          FALSE,    None,     NULL }
      };
@@ -220,7 +221,7 @@ void init_user_agent (void)
                          switch (v->type)
                          {
                               case String:
-                                   val = g_strdup (* (char **) v->data);
+                                   val = g_strdup ((char *) v->data);
                                    break;
 
                               case Integer:
@@ -328,6 +329,8 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
      global.browser.mode = InsertMode;
      global.browser.clipboard = gtk_clipboard_get (GDK_SELECTION_PRIMARY);
+
+     uname (&global.uname);
 
      init_variables ();
      init_user_agent ();

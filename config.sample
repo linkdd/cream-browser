@@ -6,7 +6,7 @@ global
 
      user-agent
      {
-          set "@global@" { name = "Cream-Browser @version@ (WebKit @webkit_major@.@webkit_minor@.@webkit_micro@) (@uname-s@ @uname-n@ @uname-r@ @uname-v@ [@arch@])" }
+          set "@global@" { name = "Cream-Browser @version@ (WebKit @webkit_major@.@webkit_minor@.@webkit_micro@) (@sys-nodename@ @sys-sysname@ @sys-release@ @sys-version@ [@arch@])" }
           # Use regex to set dynamic user agent according to a domain
           set "google\.(fr|com)" { name = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.1) Gecko/20100122 firefox/3.6.1" }
      }

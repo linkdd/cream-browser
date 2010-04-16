@@ -1,13 +1,7 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
-/* Architecture */
-#undef ARCH
-
 /* Have curl SSL support ? */
 #undef HAVE_CURL_SSL
-
-/* Define to 1 if you have the `confuse' library (-lconfuse). */
-#undef HAVE_LIBCONFUSE
 
 /* Name of package */
 #undef PACKAGE
@@ -29,30 +23,6 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
-
-/* All informations */
-#undef UNAME_A
-
-/* Hardware platform */
-#undef UNAME_I
-
-/* Hostname */
-#undef UNAME_N
-
-/* Openrating System */
-#undef UNAME_O
-
-/* Processor type */
-#undef UNAME_P
-
-/* Kernel release */
-#undef UNAME_R
-
-/* Kernel name */
-#undef UNAME_S
-
-/* Kernel version */
-#undef UNAME_V
 
 /* Version number of package */
 #undef VERSION

@@ -561,6 +561,7 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
 CONFUSE_LIBS
+CONFUSE_CFLAGS
 CURL_LIBS
 CURL_CFLAGS
 WEBKIT_LIBS
@@ -668,7 +669,9 @@ GTK_LIBS
 GNET_CFLAGS
 GNET_LIBS
 WEBKIT_CFLAGS
-WEBKIT_LIBS'
+WEBKIT_LIBS
+CONFUSE_CFLAGS
+CONFUSE_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1303,6 +1306,10 @@ Some influential environment variables:
   WEBKIT_CFLAGS
               C compiler flags for WEBKIT, overriding pkg-config
   WEBKIT_LIBS linker flags for WEBKIT, overriding pkg-config
+  CONFUSE_CFLAGS
+              C compiler flags for CONFUSE, overriding pkg-config
+  CONFUSE_LIBS
+              linker flags for CONFUSE, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -1421,52 +1428,6 @@ fi
   as_fn_set_status $ac_retval
 
 } # ac_fn_c_try_compile
-
-# ac_fn_c_try_link LINENO
-# -----------------------
-# Try to link conftest.$ac_ext, and return whether this succeeded.
-ac_fn_c_try_link ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  rm -f conftest.$ac_objext conftest$ac_exeext
-  if { { ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_link") 2>conftest.err
-  ac_status=$?
-  if test -s conftest.err; then
-    grep -v '^ *+' conftest.err >conftest.er1
-    cat conftest.er1 >&5
-    mv -f conftest.er1 conftest.err
-  fi
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 $as_test_x conftest$ac_exeext
-       }; then :
-  ac_retval=0
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	ac_retval=1
-fi
-  # Delete the IPA/IPO (Inter Procedural Analysis/Optimization) information
-  # created by the PGI compiler (conftest_ipa8_conftest.oo), as it would
-  # interfere with the next link command; also delete a directory that is
-  # left behind by Apple's compiler.  We do this before executing the actions.
-  rm -rf conftest.dSYM conftest_ipa8_conftest.oo
-  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
-  as_fn_set_status $ac_retval
-
-} # ac_fn_c_try_link
 cat >config.log <<_ACEOF
 This file contains any messages produced by compilers while
 running configure, to aid debugging if configure makes a mistake.
@@ -3833,51 +3794,92 @@ CURL_LIBS=`curl-config --libs`
 
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lconfuse" >&5
-$as_echo_n "checking for main in -lconfuse... " >&6; }
-if test "${ac_cv_lib_confuse_main+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lconfuse  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for CONFUSE" >&5
+$as_echo_n "checking for CONFUSE... " >&6; }
 
-
-int
-main ()
-{
-return main ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_confuse_main=yes
+if test -n "$CONFUSE_CFLAGS"; then
+    pkg_cv_CONFUSE_CFLAGS="$CONFUSE_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libconfuse\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libconfuse") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_CONFUSE_CFLAGS=`$PKG_CONFIG --cflags "libconfuse" 2>/dev/null`
 else
-  ac_cv_lib_confuse_main=no
+  pkg_failed=yes
 fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
+ else
+    pkg_failed=untried
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_confuse_main" >&5
-$as_echo "$ac_cv_lib_confuse_main" >&6; }
-if test "x$ac_cv_lib_confuse_main" = x""yes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBCONFUSE 1
-_ACEOF
-
-  LIBS="-lconfuse $LIBS"
-
+if test -n "$CONFUSE_LIBS"; then
+    pkg_cv_CONFUSE_LIBS="$CONFUSE_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libconfuse\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libconfuse") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_CONFUSE_LIBS=`$PKG_CONFIG --libs "libconfuse" 2>/dev/null`
 else
-
-echo "Library 'libconfuse' not found"
-exit -1
-
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
 fi
 
-CONFUSE_LIBS=-lconfuse
+
+
+if test $pkg_failed = yes; then
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        CONFUSE_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "libconfuse" 2>&1`
+        else
+	        CONFUSE_PKG_ERRORS=`$PKG_CONFIG --print-errors "libconfuse" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$CONFUSE_PKG_ERRORS" >&5
+
+	as_fn_error "Package requirements (libconfuse) were not met:
+
+$CONFUSE_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables CONFUSE_CFLAGS
+and CONFUSE_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+" "$LINENO" 5
+elif test $pkg_failed = untried; then
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables CONFUSE_CFLAGS
+and CONFUSE_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details." "$LINENO" 5; }
+else
+	CONFUSE_CFLAGS=$pkg_cv_CONFUSE_CFLAGS
+	CONFUSE_LIBS=$pkg_cv_CONFUSE_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+	:
+fi
+
 
 
 # Checks for library functions
@@ -3897,62 +3899,6 @@ fi
 ac_config_headers="$ac_config_headers config.h"
 
 ac_config_files="$ac_config_files Makefile src/core/Makefile src/libs/Makefile"
-
-
-arch=`uname -m`
-uname_a=`uname -a`
-uname_s=`uname -s`
-uname_n=`uname -n`
-uname_r=`uname -r`
-uname_v=`uname -v`
-uname_p=`uname -p`
-uname_i=`uname -i`
-uname_o=`uname -o`
-
-
-cat >>confdefs.h <<_ACEOF
-#define ARCH "${arch}"
-_ACEOF
-
-
-cat >>confdefs.h <<_ACEOF
-#define UNAME_A "${uname_a}"
-_ACEOF
-
-
-cat >>confdefs.h <<_ACEOF
-#define UNAME_S "${uname_s}"
-_ACEOF
-
-
-cat >>confdefs.h <<_ACEOF
-#define UNAME_N "${uname_n}"
-_ACEOF
-
-
-cat >>confdefs.h <<_ACEOF
-#define UNAME_R "${uname_r}"
-_ACEOF
-
-
-cat >>confdefs.h <<_ACEOF
-#define UNAME_V "${uname_v}"
-_ACEOF
-
-
-cat >>confdefs.h <<_ACEOF
-#define UNAME_P "${uname_p}"
-_ACEOF
-
-
-cat >>confdefs.h <<_ACEOF
-#define UNAME_I "${uname_i}"
-_ACEOF
-
-
-cat >>confdefs.h <<_ACEOF
-#define UNAME_O "${uname_o}"
-_ACEOF
 
 
 cat >confcache <<\_ACEOF

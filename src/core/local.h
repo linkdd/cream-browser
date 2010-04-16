@@ -28,6 +28,7 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include <sys/utsname.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
