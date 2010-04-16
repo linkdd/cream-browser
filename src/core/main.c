@@ -168,11 +168,6 @@ void init_variables (void)
           { "sys-nodename",   NULL,          FALSE,    String,   &global.uname.nodename },
           { "sys-release",    NULL,          FALSE,    String,   &global.uname.release },
           { "sys-version",    NULL,          FALSE,    String,   &global.uname.version },
-#ifdef __USE_GNU
-          { "sys-domainname", NULL,          FALSE,    String,   &global.uname.domainname },
-#else
-          { "sys-domainname", NULL,          FALSE,    String,   &global.uname.__domainname },
-#endif
 
           { NULL,             NULL,          FALSE,    None,     NULL }
      };
@@ -473,7 +468,7 @@ char *get (char *key)
 
           if (g_str_equal (key, tmp->key))
           {
-               if (tmp->value == NULL && tmp->type != None)
+               if (tmp->type != None)
                {
                     switch (tmp->type)
                     {
