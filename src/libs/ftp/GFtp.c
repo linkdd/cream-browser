@@ -37,10 +37,33 @@ static void g_ftp_class_init (GFtpClass *klass)
 static void g_ftp_init (GFtp *self)
 {
      g_return_if_fail (self != NULL);
+
+     self->conn = NULL;
 }
 
 GFtp *g_ftp_new (void)
 {
      return G_FTP (g_object_new (G_TYPE_FTP, NULL));
+}
+
+static void g_ftp_connect_func (GConn *conn, GConnEvent *event, GFtp *obj)
+{
+     switch (event->type)
+     {
+          case GNET_CONN_ERROR:
+          case GNET_CONN_CONNECT:
+          case GNET_CONN_CLOSE:
+          case GNET_CONN_TIMEOUT:
+          default:
+               break;
+     }
+}
+
+void g_ftp_connect (GFtp *obj, const gchar *hostname, gint port)
+{
+     g_return_if_fail (obj != NULL);
+
+     obj->conn = gnet_conn_new (hostname, port, g_ftp_connect_func, obj);
+     gnet_conn_connect (obj->conn);
 }
 
