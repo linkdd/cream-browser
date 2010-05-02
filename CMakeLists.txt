@@ -93,15 +93,13 @@ set(CREAM_IN_PACKAGE_NAME ${CREAM_PACKAGE})
 # PREFIX
 if(CMAKE_SYSTEM_NAME MATCHES FreeBSD)
     set(PREFIX "/usr/local")
-endif(CMAKE_SYSTEM_NAME MATCHES FreeBSD)
-
-if(CMAKE_SYSTEM_NAME MATCHES NetBSD)
+elseif(CMAKE_SYSTEM_NAME MATCHES NetBSD)
     set(PREFIX "/usr/pkg")
-endif(CMAKE_SYSTEM_NAME MATCHES NetBSD)
-
-if(CMAKE_SYSTEM_NAME MATCHES Linux)
+elseif(CMAKE_SYSTEM_NAME MATCHES Linux)
     set(PREFIX "/usr")
-endif(CMAKE_SYSTEM_NAME MATCHES Linux)
+else()
+    message(FATAL_ERROR "Please add your OS in the CMakeLists.txt for PREFIX then send it to authors")
+endif(CMAKE_SYSTEM_NAME MATCHES FreeBSD)
 
 set(CMAKE_INSTALL_PREFIX ${PREFIX})
 set(CMAKE_INSTALL_RPATH "${PREFIX}/lib")
