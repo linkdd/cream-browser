@@ -38,7 +38,10 @@ static void g_ftp_init (GFtp *self)
 {
      g_return_if_fail (self != NULL);
 
-     self->conn = NULL;
+     self->socket_id = NULL;
+     self->iochannel = NULL;
+     self->hostname  = NULL;
+     self->port      = 0;
 }
 
 GFtp *g_ftp_new (void)
@@ -46,24 +49,59 @@ GFtp *g_ftp_new (void)
      return G_FTP (g_object_new (G_TYPE_FTP, NULL));
 }
 
-static void g_ftp_connect_func (GConn *conn, GConnEvent *event, GFtp *obj)
+static gboolean g_ftp_control_client (GIOChannel *channel)
 {
-     switch (event->type)
+     GError *error = NULL;
+     GIOStatus ret;
+
+     gchar *line;
+     gsize len;
+
+     ret = g_io_channel_read_line (channel, &line, &len, NULL, &error);
+     if (ret == G_IO_STATUS_ERROR)
      {
-          case GNET_CONN_ERROR:
-          case GNET_CONN_CONNECT:
-          case GNET_CONN_CLOSE:
-          case GNET_CONN_TIMEOUT:
-          default:
-               break;
+          g_warning ("Error reading socket : %s", error->message);
+          g_io_channel_shutdown (channel, TRUE, NULL);
+          g_error_free (error);
+          return FALSE;
      }
+     else if (ret == G_IO_STATUS_EOF)
+     {
+          /* shutdown and remove channel watch from main loop */
+          g_io_channel_shutdown (channel, TRUE, NULL);
+          return FALSE;
+     }
+
+     if (line)
+     {
+          /* parse command
+           * send response
+           */
+     }
+
+     g_free (line);
+     return TRUE;
 }
 
-void g_ftp_connect (GFtp *obj, const gchar *hostname, gint port)
+gboolean g_ftp_connect (GFtp *obj, const gchar *hostname, gint port)
 {
-     g_return_if_fail (obj != NULL);
+     GInetAddr *addr;
 
-     obj->conn = gnet_conn_new (hostname, port, g_ftp_connect_func, obj);
-     gnet_conn_connect (obj->conn);
+     g_return_val_if_fail (obj != NULL, FALSE);
+
+     obj->hostname = g_strdup (hostname);
+     obj->port     = port;
+
+     addr = gnet_inetaddr_new (obj->hostname, obj->port);
+     g_return_val_if_fail (addr != NULL, FALSE);
+
+     obj->socket = gnet_tcp_socket_new (addr);
+     g_return_val_if_fail (obj->socket != NULL, FALSE);
+
+     obj->iochannel = gnet_tcp_socket_get_io_channel (obj->socket);
+
+     g_io_add_watch (obj->iochannel, G_IO_IN | G_IO_HUP, (GIOFunc) g_ftp_control_client, NULL);
+     /* send requests */
+
+     return TRUE;
 }
-

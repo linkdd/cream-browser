@@ -45,7 +45,11 @@ struct _GFtp
 {
      GObject parent;
 
-     GConn *conn;
+     GTcpSocket *socket;
+
+     GIOChannel *iochannel;
+     gchar *hostname;
+     gint port;
 };
 
 struct _GFtpClass
@@ -56,6 +60,6 @@ struct _GFtpClass
 GType g_ftp_get_type (void);
 
 GFtp *g_ftp_new (void);
-void g_ftp_connect (GFtp *obj, const gchar *hostname, gint port);
+gboolean g_ftp_connect (GFtp *obj, const gchar *hostname, gint port);
 
 #endif /* __CLASS_G_FTP_H */
