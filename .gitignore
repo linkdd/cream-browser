@@ -6,5 +6,5 @@ cream
 creamctl
 *.a
 doc/html
-__build__
+_build
 autom4te.cache
