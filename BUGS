@@ -1,1 +1,1 @@
-With CMake and after install, the binaries doesn't found any libs
+With CMake and after install, `cream' are not linked to anything
