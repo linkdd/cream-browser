@@ -1,6 +1,7 @@
 include_directories(
     ${CREAM_INCLUDES}
     ${TOP_SRCDIR}
+    ${TOP_BUILDDIR}
     ${TOP_SRCDIR}/src/core
     ${TOP_SRCDIR}/src/libs
     ${TOP_SRCDIR}/src/libs/config
