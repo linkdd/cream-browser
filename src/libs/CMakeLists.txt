@@ -32,4 +32,3 @@ set(libcream_SRCS
     )
 
 add_library(cream ${libcream_SRCS})
-

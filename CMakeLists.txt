@@ -8,10 +8,13 @@ include(FindPkgConfig)
 CONFIGURE_FILE(
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-    IMMEDIATE @ONLY)
+    IMMEDIATE
+    @ONLY
+    )
 
 ADD_CUSTOM_TARGET(uninstall
-    "${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+    "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    )
 
 # Dependencies
 
@@ -136,3 +139,9 @@ message("-- Build infos")
 message("--  System: ${CMAKE_SYSTEM_NAME}")
 message("--  Prefix: ${PREFIX}")
 message("--  Project version: ${VERSION}")
+
+#set(CREAM_XDG_CONFIG "${TOP_SRCDIR}/config.sample")
+
+# Install things
+# Install targets are in src/core/CMakeLists.txt
+install(FILES ${CREAM_XDG_CONFIG} DESTINATION "${PREFIX}/etc/xdg/cream-browser/config")

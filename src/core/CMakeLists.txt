@@ -54,3 +54,6 @@ target_link_libraries(creamctl
     ${GTK2_LDFLAGS}
     ${GTK2_LDFLAGS_OTHER}
     )
+
+install(TARGETS cream_bin RUNTIME DESTINATION bin)
+install(TARGETS creamctl RUNTIME DESTINATION bin)
