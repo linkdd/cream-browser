@@ -2,9 +2,6 @@
 # vim:set et sts=4 ts=4 tw=80:
 echo '==> rm -r _build'
 rm -r _build
-if [ "$?" != "0" ]; then
-    exit 1
-fi
 
 echo '==> mkdir _build'
 mkdir _build
