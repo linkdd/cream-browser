@@ -132,14 +132,15 @@ add_definitions("-DPREFIX=\"${PREFIX}\"")
 add_subdirectory( src/libs )
 # Core (creamctl and cream-browser) (cream is linked to libcream!)
 add_subdirectory( src/core )
+# Docs
+add_subdirectory( doc )
 
 message("-- Build infos")
 message("--  System: ${CMAKE_SYSTEM_NAME}")
 message("--  Prefix: ${PREFIX}")
 message("--  Project version: ${VERSION}")
 
-#set(CREAM_XDG_CONFIG "${TOP_SRCDIR}/config.sample")
-
+set(CREAM_XDG_CONFIG "${TOP_SRCDIR}/config.sample")
 # Install things
 # Install targets are in src/core/CMakeLists.txt
 install(FILES ${CREAM_XDG_CONFIG} DESTINATION "${PREFIX}/etc/xdg/cream-browser/config")
