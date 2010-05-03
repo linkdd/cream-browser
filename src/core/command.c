@@ -34,16 +34,18 @@ int cmd_set (int argc, char **argv, CreamTabbed *obj);
 int cmd_get (int argc, char **argv, CreamTabbed *obj);
 int cmd_bind (int argc, char **argv, CreamTabbed *obj);
 int cmd_quit (int argc, char **argv, CreamTabbed *obj);
+int cmd_hardcopy (int argc, char **argv, CreamTabbed *obj);
 
 struct cmd_t commands[] =
 {
-     { "open",    cmd_open },
-     { "tabopen", cmd_tabopen },
-     { "close",   cmd_close },
-     { "set",     cmd_set },
-     { "get",     cmd_get },
-     { "bind",    cmd_bind },
-     { "quit",    cmd_quit },
+     { "open",     cmd_open },
+     { "tabopen",  cmd_tabopen },
+     { "close",    cmd_close },
+     { "set",      cmd_set },
+     { "get",      cmd_get },
+     { "bind",     cmd_bind },
+     { "quit",     cmd_quit },
+     { "hardcopy",	cmd_hardcopy },
      { NULL, NULL }
 };
 
@@ -211,3 +213,16 @@ int cmd_quit (int argc, char **argv, CreamTabbed *obj)
      return 0;
 }
 
+/*
+ * CMD: hardcopy
+ * DESCR: Print current page
+ * webkit_web_frame_print()
+ * http://webkitgtk.org/reference/webkitgtk-WebKitWebFrame.html#webkit-web-frame-print
+ */
+int cmd_hardcopy (int argc, char **argv, CreamTabbed *obj)
+{
+     WebKitWebView *view = WEBKIT_WEB_VIEW (CREAM_VIEW (obj->creamview)->content);
+     WebKitWebFrame *frame = webkit_web_view_get_main_frame (view);
+     (void) webkit_web_frame_print (frame);
+     return 0;
+}
