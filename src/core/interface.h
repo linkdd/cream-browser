@@ -33,6 +33,6 @@
 GtkWidget *cream_create_tab_label (CreamTabbed *obj);
 void notebook_append_page (const gchar *uri);
 GtkWidget *cream_interface_init (void);
-GtkWidget *cream_icon_init (GtkWidget *window);
+GtkStatusIcon *cream_icon_init (GtkWidget *window);
 
 #endif /* __INTERFACE_H */

@@ -112,7 +112,7 @@ GtkWidget *cream_interface_init (void)
      return main_window;
 }
 
-GtkWidget *cream_icon_init (GtkWidget *window)
+GtkStatusIcon *cream_icon_init (GtkWidget *window)
 {
      GtkStatusIcon *CreamIcon;
      GtkWidget *menu, *menuItemView, *menuItemHide, *menuItemQuit;
@@ -144,5 +144,5 @@ GtkWidget *cream_icon_init (GtkWidget *window)
 
      gtk_widget_show_all(menu);
 
-     return GTK_WIDGET (CreamIcon);
+     return GTK_STATUS_ICON (CreamIcon);
 }

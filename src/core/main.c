@@ -343,6 +343,7 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
 void cream_release (int exit_code)
 {
+     printf ("exit.\n");
      soup_cookie_jar_save (global.browser.cookies);
 
      if (global.cfg.global.history != NULL)
@@ -382,7 +383,8 @@ CreamTabbed *get_current_creamtabbed (void)
 int main (int argc, char **argv)
 {
      GError *error = NULL;
-     GtkWidget *win, *creamicon;
+     GtkWidget *win;
+     GtkStatusIcon *creamicon;
 
      if (!cream_init (&argc, &argv, &error) || error != NULL)
      {

@@ -38,13 +38,13 @@ int cmd_hardcopy (int argc, char **argv, CreamTabbed *obj);
 
 struct cmd_t commands[] =
 {
-     { "open",     cmd_open },
-     { "tabopen",  cmd_tabopen },
-     { "close",    cmd_close },
-     { "set",      cmd_set },
-     { "get",      cmd_get },
-     { "bind",     cmd_bind },
-     { "quit",     cmd_quit },
+     { "open",      cmd_open },
+     { "tabopen",   cmd_tabopen },
+     { "close",     cmd_close },
+     { "set",       cmd_set },
+     { "get",       cmd_get },
+     { "bind",      cmd_bind },
+     { "quit",      cmd_quit },
      { "hardcopy",	cmd_hardcopy },
      { NULL, NULL }
 };
