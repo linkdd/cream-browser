@@ -164,40 +164,39 @@ gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *
      return ret;
 }
 
-void
-cb_tray_view(GtkMenuItem *item, gpointer window)
+void cb_tray_view (GtkMenuItem *item, gpointer window)
 {
-    gtk_widget_show(GTK_WIDGET(window));
-    gtk_window_deiconify(GTK_WINDOW(window));
+     gtk_widget_show (GTK_WIDGET (window));
+     gtk_window_deiconify (GTK_WINDOW (window));
 }
 
-void
-cb_tray_hide(GtkMenuItem *item, gpointer window)
+void cb_tray_hide (GtkMenuItem *item, gpointer window)
 {
-    gtk_widget_hide(GTK_WIDGET(window));
-    gtk_window_iconify(GTK_WINDOW(window));
+     gtk_widget_hide (GTK_WIDGET (window));
+     gtk_window_iconify (GTK_WINDOW (window));
 }
 
-void
-cb_tray_activated(GObject *trayIcon, gpointer window)
+void cb_tray_activated (GObject *trayIcon, gpointer window)
 {
-    /*
-     * XXX TODO FIXME
-     * On first start, need to click twice on the icon to hide ....
-     */
-    if (gtk_window_is_active(GTK_WINDOW(window)))
-    {
-	gtk_widget_hide(GTK_WIDGET(window));
-	gtk_window_iconify(GTK_WINDOW(window));
-    } else {
-	gtk_widget_show(GTK_WIDGET(window));
-	gtk_window_deiconify(GTK_WINDOW(window));
-	gtk_window_present(GTK_WINDOW(window));
-    }
+     /*
+      * XXX TODO FIXME
+      * On first start, need to click twice on the icon to hide ....
+      */
+     if (gtk_window_is_active (GTK_WINDOW (window)))
+     {
+	     gtk_widget_hide (GTK_WIDGET (window));
+	     gtk_window_iconify (GTK_WINDOW (window));
+     }
+     else
+     {
+	     gtk_widget_show (GTK_WIDGET (window));
+     	gtk_window_deiconify (GTK_WINDOW (window));
+     	gtk_window_present (GTK_WINDOW (window));
+     }
 }
 
-void
-cb_tray_popup(GtkStatusIcon *status_icon, guint button, guint32 activate_time, gpointer popUpMenu)
+void cb_tray_popup (GtkStatusIcon *status_icon, guint button, guint32 activate_time, gpointer popUpMenu)
 {
-    gtk_menu_popup(GTK_MENU(popUpMenu), NULL, NULL, gtk_status_icon_position_menu, status_icon, button, activate_time);
+     gtk_menu_popup (GTK_MENU (popUpMenu), NULL, NULL, gtk_status_icon_position_menu, status_icon, button, activate_time);
 }
+
