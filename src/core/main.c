@@ -382,7 +382,7 @@ CreamTabbed *get_current_creamtabbed (void)
 int main (int argc, char **argv)
 {
      GError *error = NULL;
-     GtkWidget *win;
+     GtkWidget *win, *creamicon;
 
      if (!cream_init (&argc, &argv, &error) || error != NULL)
      {
@@ -392,6 +392,7 @@ int main (int argc, char **argv)
      }
 
      win = cream_interface_init ();
+     creamicon = cream_icon_init (win);
 
      if (global.cmdline.url != NULL)
           notebook_append_page (global.cmdline.url);

@@ -163,3 +163,30 @@ gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *
 
      return ret;
 }
+
+void
+cb_tray_view(GtkMenuItem *item, gpointer window)
+{
+    gtk_widget_show(GTK_WIDGET(window));
+    gtk_window_deiconify(GTK_WINDOW(window));
+}
+
+void
+cb_tray_hide(GtkMenuItem *item, gpointer window)
+{
+    gtk_widget_hide(GTK_WIDGET(window));
+    gtk_window_iconify(GTK_WINDOW(window));
+}
+
+void
+cb_tray_activated(GObject *trayIcon, gpointer window)
+{
+    gtk_widget_show(GTK_WIDGET(window));
+    gtk_window_deiconify(GTK_WINDOW(window));
+}
+
+void
+cb_tray_popup(GtkStatusIcon *status_icon, guint button, guint32 activate_time, gpointer popUpMenu)
+{
+    gtk_menu_popup(GTK_MENU(popUpMenu), NULL, NULL, gtk_status_icon_position_menu, status_icon, button, activate_time);
+}

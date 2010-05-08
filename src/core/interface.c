@@ -110,3 +110,35 @@ GtkWidget *cream_interface_init (void)
      g_signal_connect (G_OBJECT (global.notebook), "key-press-event", G_CALLBACK (bind_getkey), NULL);
      return main_window;
 }
+
+GtkWidget *cream_icon_init(GtkWidget *window)
+{
+    GtkStatusIcon *CreamIcon;
+    GtkWidget *menu, *menuItemView, *menuItemHide;
+
+
+    /* System Tray Icon */
+    /* Tray icon file */
+    CreamIcon = gtk_status_icon_new_from_file("/home/marc/src/cream-browser/cream.png");
+
+    /* popup menu for tray icon */
+    menu = gtk_menu_new();
+    menuItemView = gtk_menu_item_new_with_label("View");
+    menuItemHide = gtk_menu_item_new_with_label("Hide");
+    gtk_menu_shell_append (GTK_MENU_SHELL(menu), menuItemView);
+    gtk_menu_shell_append (GTK_MENU_SHELL(menu), menuItemHide);
+
+    gtk_status_icon_set_tooltip(GTK_STATUS_ICON(CreamIcon),
+	    g_strdup_printf("CreamBrowser <%d>", getpid() ));
+    gtk_status_icon_set_visible(GTK_STATUS_ICON(CreamIcon), TRUE);
+
+    /* connect signals */
+    g_signal_connect (G_OBJECT (menuItemView), "activate", G_CALLBACK(cb_tray_view), window);
+    g_signal_connect (G_OBJECT (menuItemHide), "activate", G_CALLBACK(cb_tray_hide), window);
+    g_signal_connect (G_OBJECT (CreamIcon),    "activate", GTK_SIGNAL_FUNC(cb_tray_activated), window);
+    g_signal_connect (G_OBJECT (CreamIcon),    "popup-menu", GTK_SIGNAL_FUNC(cb_tray_popup), menu);
+
+    gtk_widget_show_all(menu);
+
+    return GTK_STATUS_ICON(CreamIcon);
+}
