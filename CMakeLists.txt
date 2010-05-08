@@ -143,4 +143,4 @@ message("--  Project version: ${VERSION}")
 set(CREAM_XDG_CONFIG "${TOP_SRCDIR}/config.sample")
 # Install things
 # Install targets are in src/core/CMakeLists.txt
-install(FILES ${CREAM_XDG_CONFIG} DESTINATION "${PREFIX}/etc/xdg/cream-browser/config")
+install(FILES ${CREAM_XDG_CONFIG} DESTINATION "${PREFIX}/etc/xdg/cream-browser" RENAME config)
