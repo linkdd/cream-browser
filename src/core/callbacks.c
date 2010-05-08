@@ -181,8 +181,19 @@ cb_tray_hide(GtkMenuItem *item, gpointer window)
 void
 cb_tray_activated(GObject *trayIcon, gpointer window)
 {
-    gtk_widget_show(GTK_WIDGET(window));
-    gtk_window_deiconify(GTK_WINDOW(window));
+    /*
+     * XXX TODO FIXME
+     * On first start, need to click twice on the icon to hide ....
+     */
+    if (gtk_window_is_active(GTK_WINDOW(window)))
+    {
+	gtk_widget_hide(GTK_WIDGET(window));
+	gtk_window_iconify(GTK_WINDOW(window));
+    } else {
+	gtk_widget_show(GTK_WIDGET(window));
+	gtk_window_deiconify(GTK_WINDOW(window));
+	gtk_window_present(GTK_WINDOW(window));
+    }
 }
 
 void
