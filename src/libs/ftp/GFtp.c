@@ -25,6 +25,14 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  @defgroup GFtp New FTP integration
+  @ingroup libcream
+  @brief Integration of the FTP protocol without curl
+
+  @{
+ */
+
 #include "GFtp.h"
 
 G_DEFINE_TYPE (GFtp, g_ftp, G_TYPE_OBJECT)
@@ -44,11 +52,28 @@ static void g_ftp_init (GFtp *self)
      self->port      = 0;
 }
 
+/*!
+  \fn GFtp *g_ftp_new (void)
+  \brief Create a new GFtp object. Connect to a repository with #g_ftp_connect()
+  \return New GFtp object
+ */
 GFtp *g_ftp_new (void)
 {
      return G_FTP (g_object_new (G_TYPE_FTP, NULL));
 }
 
+/*!
+  \fn static gboolean g_ftp_control_client (GIOChannel *channel)
+  \brief Control the client socket.
+
+  This function is a callback initialized in the function
+  #g_ftp_connect().
+
+  \param channel IOChannel associated to the socket
+  \return TRUE on success, FALSE if failed
+
+  \todo Parse commands and send response
+ */
 static gboolean g_ftp_control_client (GIOChannel *channel)
 {
      GError *error = NULL;
@@ -83,6 +108,17 @@ static gboolean g_ftp_control_client (GIOChannel *channel)
      return TRUE;
 }
 
+/*!
+  \fn gboolean g_ftp_connect (GFtp *obj, const gchar *hostname, gint port)
+  \brief Connect to a FTP repository
+
+  \param obj GFtp object
+  \param hostname Hostname of the FTP
+  \param port Port of the connection (default 21)
+  \return TRUE on success, FALSE if failed
+
+  \todo Send commands for login
+ */
 gboolean g_ftp_connect (GFtp *obj, const gchar *hostname, gint port)
 {
      GInetAddr *addr;
@@ -105,3 +141,5 @@ gboolean g_ftp_connect (GFtp *obj, const gchar *hostname, gint port)
 
      return TRUE;
 }
+
+/*! @} */

@@ -35,5 +35,10 @@ void cb_cream_destroy (GtkWidget *emit, gpointer data);
 void cb_cream_update_notebook_title (GtkWidget *child, gpointer data);
 void cb_cream_notebook_close_page (GtkButton *button, GtkWidget *child);
 gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *obj);
+void cb_tray_view (GtkMenuItem *item, gpointer window);
+void cb_tray_hide (GtkMenuItem *item, gpointer window);
+void cb_tray_activated (GObject *trayIcon, gpointer window);
+void cb_tray_popup (GtkStatusIcon *status_icon, guint button, guint32 activate_time, gpointer popUpMenu);
 
 #endif /* __CALLBACKS_H */
+

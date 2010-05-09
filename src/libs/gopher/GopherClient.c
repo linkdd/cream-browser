@@ -25,22 +25,32 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  @defgroup Gopher Gopher support
+  @ingroup libcream
+  @brief Support of the protocole Gopher
+
+  @{
+ */
+
 #include "GopherClient.h"
 
 #define GOPHER_CLIENT_GET_PRIVATE(obj)       (G_TYPE_INSTANCE_GET_PRIVATE ((obj), TYPE_GOPHER_CLIENT, GopherClientPrivate))
 
+/*! \typedef struct _GopherClientPrivate GopherClientPrivate */
 typedef struct _GopherClientPrivate GopherClientPrivate;
+/*! \struct _GopherClientPrivate */
 struct _GopherClientPrivate
 {
-     gchar *hostname;
-     gint port;
+     gchar *hostname;    /*!< Hostname */
+     gint port;          /*!< Port */
 
-     GTcpSocket *sock;
-     GIOChannel *chan;
-     GIOError error;
+     GTcpSocket *sock;   /*!< Socket */
+     GIOChannel *chan;   /*!< IOChannel associated to the socket */
+     GIOError error;     /*!< Error from the IOChannel */
 
-     gchar buffer[1024];
-     gsize length;
+     gchar buffer[1024]; /*!< Buffer */
+     gsize length;       /*!< Buffer length */
 };
 
 static GObject *gopher_client_constructor (GType type, guint n_properties, GObjectConstructParam *properties);
@@ -100,6 +110,11 @@ static void gopher_client_finalize (GObject *self)
      G_OBJECT_CLASS (gopher_client_parent_class)->finalize (self);
 }
 
+/*!
+  \fn GopherClient *gopher_client_new (void)
+  \brief Create a new gopher client
+  \return A #GopherClient object
+ */
 GopherClient *gopher_client_new (void)
 {
      GopherClient *obj = g_object_new (TYPE_GOPHER_CLIENT, NULL);
@@ -155,6 +170,13 @@ static void *gopher_client_load_uri_thread (void *data)
      return NULL;
 }
 
+/*!
+  \fn void gopher_client_load_uri (GopherClient *obj, gchar *uri)
+  \brief Load a new URI
+
+  \param obj #GopherClient object
+  \param uri New URI to load
+ */
 void gopher_client_load_uri (GopherClient *obj, gchar *uri)
 {
      /* load committed */
@@ -167,3 +189,4 @@ void gopher_client_load_uri (GopherClient *obj, gchar *uri)
      }
 }
 
+/*! @} */

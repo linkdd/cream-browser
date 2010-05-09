@@ -25,17 +25,17 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file Favicon.h
-  \brief Favicon definition
-  \author David Delassus
- */
-
 #ifndef __CLASS_FAVICON_H
 #define __CLASS_FAVICON_H
 
+/*!
+  @addtogroup WebView
+  @{
+ */
+
 #include <gtk/gtk.h>
 
+/*! \typedef struct _Favicon Favicon */
 typedef struct _Favicon Favicon;
 
 /*! \struct _Favicon */
@@ -51,5 +51,7 @@ struct _Favicon
 
 Favicon *favicon_new (const gchar *uri);
 void favicon_destroy (Favicon *obj);
+
+/*! @} */
 
 #endif /* __CLASS_FAVICON_H */

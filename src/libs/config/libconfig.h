@@ -25,6 +25,11 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  @addtogroup libconfig
+  @{
+ */
+
 #ifndef __LIB_CONFIG_H
 #define __LIB_CONFIG_H
 
@@ -32,50 +37,56 @@
 #include <glib.h>
 #include <confuse.h>
 
+/*! \struct user_agent_t */
 struct user_agent_t
 {
-     char *domain;
-     char *name;
+     char *domain;                 /*!< Dynamic domain name */
+     char *name;                   /*!< User-Agent to use according to the domain-name */
 
-     struct user_agent_t *next;
+     struct user_agent_t *next;    /*!< Next list entry */
 };
 
+/*! \struct handler_t */
 struct handler_t
 {
-     char *name;
-     char *cmd;
+     char *name;              /*!< Handler's name */
+     char *cmd;               /*!< Command to execute */
 
-     struct handler_t *next;
+     struct handler_t *next;  /*!< Next list entry */
 };
 
+/*! \struct key_t */
 struct key_t
 {
-     char *bind;
-     char *cmd;
+     char *bind;         /*!< Key-binding */
+     char *cmd;          /*!< Command to execute when the user type the previous key-binding */
 
-     struct key_t *next;
+     struct key_t *next; /*!< Next list entry */
 };
 
+/*! \struct cream_config_t */
 struct cream_config_t
 {
      struct
      {
-          char *homepage;
-          char *encoding;
-          gboolean javascript;
+          char *homepage;                    /*!< Browser's homepage */
+          char *encoding;                    /*!< Default encoding used for web-pages */
+          gboolean javascript;               /*!< Is javascript enable ? */
 
-          struct user_agent_t *user_agent;
+          struct user_agent_t *user_agent;   /*!< List of user-agent */
 
-          char *bookmarks;
-          char *history;
-          char *cookie;
-     } global;
+          char *bookmarks;                   /*!< Bookmarks file */
+          char *history;                     /*!< History file */
+          char *cookie;                      /*!< Cookie file */
+     } global;                               /*!< Global browser options */
 
-     struct handler_t *handlers;
-     struct key_t *keys;
+     struct handler_t *handlers;             /*!< List of handlers */
+     struct key_t *keys;                     /*!< List of key-bindings */
 };
 
 gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **error);
 void cream_config_free (struct cream_config_t *cfg);
+
+/*! @} */
 
 #endif /* __LIB_CONFIG_H */

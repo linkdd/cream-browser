@@ -26,9 +26,8 @@
  */
 
 /*!
-  \file Favicon.c
-  \brief Favicon definition
-  \author David Delassus
+  @addtogroup WebView
+  @{
  */
 
 #include <config.h>
@@ -200,3 +199,5 @@ void favicon_destroy (Favicon *obj)
      g_hash_table_destroy (obj->memory);
      g_free (obj);
 }
+
+/*! @} */

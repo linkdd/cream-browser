@@ -25,14 +25,13 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file CreamBackwardForwardList.h
-  \brief History managment's header
-  \author David Delassus
- */
-
 #ifndef __CREAM_BACKWARD_FORWARD_LIST_H
 #define __CREAM_BACKWARD_FORWARD_LIST_H
+
+/*!
+  @addtogroup CreamBackwardForwardList
+  @{
+ */
 
 #include <glib.h>
 #include <time.h>
@@ -63,5 +62,7 @@ CreamHistoryItem *cream_backward_forward_list_del_head_backward_item (CreamBackw
 
 void cream_backward_forward_list_add_head_forward_item (CreamBackwardForwardList *list, CreamHistoryItem *item);
 CreamHistoryItem *cream_backward_forward_list_del_head_forward_item (CreamBackwardForwardList *list);
+
+/*! @} */
 
 #endif /* __CREAM_BACKWARD_FORWARD_LIST_H */

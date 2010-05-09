@@ -343,6 +343,7 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
 void cream_release (int exit_code)
 {
+     printf ("exit.\n");
      soup_cookie_jar_save (global.browser.cookies);
 
      if (global.cfg.global.history != NULL)
@@ -383,6 +384,7 @@ int main (int argc, char **argv)
 {
      GError *error = NULL;
      GtkWidget *win;
+     GtkStatusIcon *creamicon;
 
      if (!cream_init (&argc, &argv, &error) || error != NULL)
      {
@@ -392,6 +394,7 @@ int main (int argc, char **argv)
      }
 
      win = cream_interface_init ();
+     creamicon = cream_icon_init (win);
 
      if (global.cmdline.url != NULL)
           notebook_append_page (global.cmdline.url);

@@ -287,4 +287,5 @@ gboolean handle_bind (int argc, char **argv, GString **ret, CreamTabbed *obj)
 gboolean handle_quit (int argc, char **argv, GString **ret, CreamTabbed *obj)
 {
      cream_release (EXIT_SUCCESS);
+     return TRUE;
 }

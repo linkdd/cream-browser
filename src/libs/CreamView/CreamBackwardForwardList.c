@@ -26,9 +26,11 @@
  */
 
 /*!
-  \file CreamBackwardForwardList.c
-  \brief History managment
-  \author David Delassus
+  @defgroup CreamBackwardForwardList Cream History
+  @ingroup CreamView
+  @brief Functions to use the history
+
+  @{
  */
 
 #include "CreamBackwardForwardList.h"
@@ -151,3 +153,4 @@ CreamHistoryItem *cream_backward_forward_list_del_forward_item (CreamBackwardFor
 
 }
 
+/*! @} */

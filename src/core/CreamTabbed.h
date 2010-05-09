@@ -25,14 +25,13 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file CreamTabbed.h
-  \brief CreamTabbed object header
-  \author David Delassus
- */
-
 #ifndef __CLASS_CREAM_TABBED_H
 #define __CLASS_CREAM_TABBED_H
+
+/*!
+  @addtogroup CreamTabbed
+  @{
+ */
 
 #include <gtk/gtk.h>
 #include <gtk/gtkwidget.h>
@@ -48,10 +47,16 @@ G_BEGIN_DECLS
 #define IS_CREAM_TABBED(obj)       \
      GTK_CHECK_TYPE(obj, cream_tabbed_get_type ());
 
+/*! \typedef struct _CreamTabbed CreamTabbed */
+/*! \typedef struct _CreamTabbedClass CreamTabbedClass */
+
 typedef struct _CreamTabbed CreamTabbed;
 typedef struct _CreamTabbedClass CreamTabbedClass;
 
-/*! \struct _CreamTabbed */
+/*!
+  \struct _CreamTabbed
+  \implements CreamView
+ */
 struct _CreamTabbed
 {
      GtkVBox parent;               /*!< Parent instance */
@@ -92,5 +97,7 @@ GdkPixbuf *cream_tabbed_get_favicon (CreamTabbed *obj);
 void echo (CreamTabbed *obj, const gchar *format, ...);
 
 G_END_DECLS
+
+/*! @} */
 
 #endif /* __CLASS_CREAM_TABBED_H */

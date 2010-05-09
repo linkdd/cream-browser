@@ -25,4 +25,14 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  @defgroup About Module 'About'
+  @ingroup modules
+  @brief Internal browser protocole 'about:' to show history/bookmarks/etc...
+
+  @{
+ */
+
 #include "AboutModule.h"
+
+/*! @} */

@@ -25,15 +25,24 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  @defgroup libconfig Cream-Browser configuration
+  @ingroup libcream
+  @brief Functions to load the configuration file into a structure #cream_config_t
+
+  @{
+ */
+
 #include "libconfig.h"
 
 #define CREAM_CONFIG_ERROR cream_config_error_quark ()
 
+/*! \enum CreamCfgError */
 typedef enum
 {
-     CREAM_CFG_ERROR_OPTS,
-     CREAM_CFG_ERROR_PARSE,
-     CREAM_CFG_ERROR_FAILED
+     CREAM_CFG_ERROR_OPTS,    /*!< Option error */
+     CREAM_CFG_ERROR_PARSE,   /*!< Parsing error (from confuse) */
+     CREAM_CFG_ERROR_FAILED   /*!< Unknow error */
 } CreamCfgError;
 
 GQuark cream_config_error_quark (void)
@@ -48,21 +57,30 @@ GQuark cream_config_error_quark (void)
      return cream_config_error;
 }
 
-/* /global/user-agent/set() */
+/*!
+  \var static cfg_opt_t config_user_agent_set_opts[]
+  \brief Options for the section '/global/user-agent/set()'
+ */
 static cfg_opt_t config_user_agent_set_opts[] =
 {
      CFG_STR ("name", "", CFGF_NONE),
      CFG_END ()
 };
 
-/* /global/user-agent/ */
+/*!
+  \var static cfg_opt_t config_user_agent_opts[]#
+  \brief Options for the section '/global/user-agent'
+ */
 static cfg_opt_t config_user_agent_opts[] =
 {
      CFG_SEC ("set", config_user_agent_set_opts, CFGF_TITLE | CFGF_MULTI),
      CFG_END ()
 };
 
-/* /global/ */
+/*!
+  \var static cfg_opt_t config_global_opts[]
+  \brief Options for the section '/global'
+ */
 static cfg_opt_t config_global_opts[] =
 {
      CFG_STR  ("homepage",   "http://cream-browser.net/", CFGF_NONE),
@@ -77,35 +95,50 @@ static cfg_opt_t config_global_opts[] =
      CFG_END  ()
 };
 
-/* /handlers/set() */
+/*!
+  \var static cfg_opt_t config_handlers_set_opts[]
+  \brief Options for the section '/handler/set()'
+ */
 static cfg_opt_t config_handlers_set_opts[] =
 {
      CFG_STR ("handler", "", CFGF_NONE),
      CFG_END ()
 };
 
-/* /handlers/ */
+/*!
+  \var static cfg_opt_t config_handlers_opts[]
+  \brief Options for the section '/handlers'
+ */
 static cfg_opt_t config_handlers_opts[] =
 {
      CFG_SEC ("set", config_handlers_set_opts, CFGF_TITLE | CFGF_MULTI),
      CFG_END ()
 };
 
-/* /keys/bind() */
+/*!
+  \var static cfg_opt_t config_keys_bind_opts[]
+  \brief Options for the section '/keys/bind()'
+ */
 static cfg_opt_t config_keys_bind_opts[] =
 {
      CFG_STR ("cmd", "", CFGF_NONE),
      CFG_END ()
 };
 
-/* /keys/ */
+/*!
+  \var static cfg_opt_t config_keys_opts[]
+  \brief Options for the section '/keys'
+ */
 static cfg_opt_t config_keys_opts[] =
 {
      CFG_SEC ("bind", config_keys_bind_opts, CFGF_TITLE | CFGF_MULTI),
      CFG_END ()
 };
 
-/* / */
+/*!
+  \var static cfg_opt_t config_root_opts[]
+  \brief Options for all the configuration
+ */
 static cfg_opt_t config_root_opts[] =
 {
      CFG_SEC ("global",   config_global_opts,   CFGF_NONE),
@@ -114,7 +147,15 @@ static cfg_opt_t config_root_opts[] =
      CFG_END ()
 };
 
+/*!
+  \fn gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **error)
+  \brief Load a new configuration file and store it in a structure #cream_config_t
 
+  \param path Path of the configuration file
+  \param cfg Pointer to the structure to store the new configuration
+  \param error GError object or NULL
+  \return TRUE on succes, FALSE if failed
+ */
 gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **error)
 {
      int i = 0;
@@ -205,6 +246,12 @@ gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **er
      return TRUE;
 }
 
+/*!
+  \fn void cream_config_free (struct cream_config_t *cfg)
+  \brief Free memory used by the structure #cream_config_t
+
+  \param cfg Pointer to the structure previously allocated by #cream_config_load()
+ */
 void cream_config_free (struct cream_config_t *cfg)
 {
      struct user_agent_t *tmp_ua = NULL;
@@ -256,3 +303,4 @@ void cream_config_free (struct cream_config_t *cfg)
      }
 }
 
+/*! @} */

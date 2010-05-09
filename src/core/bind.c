@@ -95,17 +95,23 @@ gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj
           }
 
           case GDK_colon:
-               echo (obj, ":");
-               gtk_widget_grab_focus (obj->inputbox);
-               gtk_entry_set_position (GTK_ENTRY (obj->inputbox), -1);
-               global.browser.mode = CmdMode;
+               if (!gtk_entry_get_text (GTK_ENTRY (obj->inputbox)))
+               {
+                    echo (obj, ":");
+                    gtk_widget_grab_focus (obj->inputbox);
+                    gtk_entry_set_position (GTK_ENTRY (obj->inputbox), -1);
+                    global.browser.mode = CmdMode;
+               }
                break;
 
           case GDK_slash:
-               echo (obj, "/");
-               gtk_widget_grab_focus (obj->inputbox);
-               gtk_entry_set_position (GTK_ENTRY (obj->inputbox), -1);
-               global.browser.mode = CmdMode;
+               if (!gtk_entry_get_text (GTK_ENTRY (obj->inputbox)))
+               {
+                    echo (obj, "/");
+                    gtk_widget_grab_focus (obj->inputbox);
+                    gtk_entry_set_position (GTK_ENTRY (obj->inputbox), -1);
+                    global.browser.mode = CmdMode;
+               }
                break;
 
           default:

@@ -26,9 +26,11 @@
  */
 
 /*!
-  \file CurlClient.c
-  \brief Curl integration
-  \author David Delassus
+  @defgroup curl Curl integration
+  @ingroup libcream
+  @brief Object which define a Curl instance
+
+  @{
  */
 
 #include "CurlClient.h"
@@ -53,7 +55,6 @@ struct _CurlClientPrivate
 static GObject *curl_client_constructor (GType type, guint n_properties, GObjectConstructParam *properties);
 static void curl_client_finalize (GObject *self);
 
-/*! \brief CurlClient signals definition */
 enum
 {
      LOAD_COMMITTED_SIGNAL,
@@ -69,6 +70,10 @@ enum
      NB_SIGNALS
 };
 
+/*!
+  \var static guint curl_client_signals[NB_SIGNALS]
+  \brief CurlClient signals definition
+ */
 static guint curl_client_signals[NB_SIGNALS] = {0};
 
 /*!
@@ -467,3 +472,4 @@ const gchar *curl_client_get_content (CurlClient *obj)
      return (const gchar *) ret;
 }
 
+/*! @} */
