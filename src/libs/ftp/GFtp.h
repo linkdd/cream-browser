@@ -28,6 +28,11 @@
 #ifndef __CLASS_G_FTP_H
 #define __CLASS_G_FTP_H
 
+/*!
+  @addtogroup GFtp
+  @{
+ */
+
 #include <glib-object.h>
 #include <gnet.h>
 
@@ -38,20 +43,31 @@
 #define G_IS_FTP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), G_TYPE_FTP))
 #define G_FTP_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), G_TYPE_FTP, GFtpClass))
 
+/*! \typedef struct _GFtp GFtp */
+/*! \typedef struct _GFtpClass GFtpClass */
+
 typedef struct _GFtp GFtp;
 typedef struct _GftpClass GFtpClass;
 
+/*!
+  \struct _GFtp
+  \todo Implements FTP protocol
+ */
 struct _GFtp
 {
      GObject parent;
 
-     GTcpSocket *socket;
+     GTcpSocket *socket;      /*!< Socket */
 
-     GIOChannel *iochannel;
-     gchar *hostname;
-     gint port;
+     GIOChannel *iochannel;   /*!< IOChannel associated to the socket */
+     gchar *hostname;         /*!< Hostname */
+     gint port;               /*!< Port */
 };
 
+/*!
+  \struct _GFtpClass
+  \todo Add signals (for connection, loading, etc...)
+ */
 struct _GFtpClass
 {
      GObjectClass parent;
@@ -61,5 +77,7 @@ GType g_ftp_get_type (void);
 
 GFtp *g_ftp_new (void);
 gboolean g_ftp_connect (GFtp *obj, const gchar *hostname, gint port);
+
+/* @} */
 
 #endif /* __CLASS_G_FTP_H */
