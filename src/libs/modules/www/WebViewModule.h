@@ -54,7 +54,11 @@ G_BEGIN_DECLS
 typedef struct _ModuleWebView ModuleWebView;
 typedef struct _ModuleWebViewClass ModuleWebViewClass;
 
-/*! \struct _ModuleWebView */
+/*!
+  \struct _ModuleWebView
+  \implements WebKit
+  \implements Favicon
+ */
 struct _ModuleWebView
 {
      WebKitWebView parent_widget;       /*!< Parent instance */

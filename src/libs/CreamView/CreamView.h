@@ -54,7 +54,13 @@ G_BEGIN_DECLS
 typedef struct _CreamView CreamView;
 typedef struct _CreamViewClass CreamViewClass;
 
-/*! \struct _CreamView */
+/*!
+  \struct _CreamView
+  \implements CreamBackwardForwardList
+  \implements ModuleWebView
+  \implements ModuleFtp
+  \implements ModuleAbout
+ */
 struct _CreamView
 {
      GtkScrolledWindow scroll;          /*!< Parent instance */

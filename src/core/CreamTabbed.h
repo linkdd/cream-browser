@@ -53,7 +53,10 @@ G_BEGIN_DECLS
 typedef struct _CreamTabbed CreamTabbed;
 typedef struct _CreamTabbedClass CreamTabbedClass;
 
-/*! \struct _CreamTabbed */
+/*!
+  \struct _CreamTabbed
+  \implements CreamView
+ */
 struct _CreamTabbed
 {
      GtkVBox parent;               /*!< Parent instance */

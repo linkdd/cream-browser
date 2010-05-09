@@ -25,14 +25,13 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file FTPModule.h
-  \brief Module FTP header
-  \author David Delassus
- */
-
 #ifndef __CLASS_FTP_MODULE_H
 #define __CLASS_FTP_MODULE_H
+
+/*!
+  @addtogroup FTP
+  @{
+ */
 
 #include <gtk/gtk.h>
 #include <gtk/gtkwidget.h>
@@ -53,7 +52,10 @@ G_BEGIN_DECLS
 typedef struct _ModuleFtp ModuleFtp;
 typedef struct _ModuleFtpClass ModuleFtpClass;
 
-/*! \struct _ModuleFtp */
+/*!
+  \struct _ModuleFtp
+  \implements CurlClient
+ */
 struct _ModuleFtp
 {
      GtkTreeView parent;           /*!< Parent instance */
@@ -83,5 +85,7 @@ GtkWidget *module_ftp_new (void);
 void module_ftp_load_uri (ModuleFtp *obj, gchar *uri);
 
 G_END_DECLS
+
+/*! @} */
 
 #endif /* __CLASS_FTP_MODULE_H */
