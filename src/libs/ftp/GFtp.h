@@ -47,7 +47,7 @@
 /*! \typedef struct _GFtpClass GFtpClass */
 
 typedef struct _GFtp GFtp;
-typedef struct _GftpClass GFtpClass;
+typedef struct _GFtpClass GFtpClass;
 
 /*!
   \struct _GFtp
