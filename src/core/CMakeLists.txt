@@ -40,6 +40,8 @@ target_link_libraries(cream_bin
     ${GNET_LDFLAGS_OTHER}
     ${CONFUSE_LDFLAGS}
     ${CONFUSE_LDFLAGS_OTHER}
+    ${VTE_LDFLAGS}
+    ${VTE_LDFLAGS_OTHER}
     ${CREAM_LIBCREAM_LDFLAGS}
     )
 

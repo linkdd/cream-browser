@@ -21,15 +21,7 @@ set(libcream_SRCS
     modules/ftp/FTPModule.c
     modules/www/WebViewModule.c
     modules/www/Favicon.c
-    CreamView/CreamView.h
-    CreamView/CreamBackwardForwardList.h
-    config/libconfig.h
-    curl/CurlClient.h
-    gopher/GopherClient.h
-    modules/about/AboutModule.h
-    modules/ftp/FTPModule.h
-    modules/www/WebViewModule.h
-    modules/www/Favicon.h
+    modules/vte/VTEModule.c
     )
 
 add_library(cream ${libcream_SRCS})

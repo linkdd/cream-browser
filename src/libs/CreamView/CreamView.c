@@ -96,6 +96,7 @@ static void cream_view_mailto_callback (CreamView *obj, gchar *uri);
 static void cream_view_about_callback (CreamView *obj, gchar *uri);
 static void cream_view_http_callback (CreamView *obj, gchar *uri);
 static void cream_view_ftp_callback (CreamView *obj, gchar *uri);
+static void cream_view_vte_callback (CreamView *obj, gchar *uri);
 
 /*!
   \var struct protocols_t cream_available_protocols[]
@@ -113,6 +114,7 @@ struct protocols_t cream_available_protocols[] =
      { "ftps://",   cream_view_ftp_callback }, /*! \todo Manage SSL certification */
 #endif
      { "gopher://", NULL },
+     { "vte://",    cream_view_vte_callback },
      { NULL,        NULL }
 };
 
@@ -234,6 +236,12 @@ static void cream_view_ftp_callback (CreamView *obj, gchar *uri)
 {
      obj->content = module_ftp_new ();
      module_ftp_load_uri (MODULE_FTP (obj->content), uri);
+}
+
+static void cream_view_vte_callback (CreamView *obj, gchar *uri)
+{
+     obj->content = module_vte_new ();
+     module_vte_load_shell_with_uri (MODULE_VTE (obj->content), uri);
 }
 
 /*!

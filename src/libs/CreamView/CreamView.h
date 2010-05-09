@@ -39,6 +39,7 @@
 #include <about/AboutModule.h>
 #include <ftp/FTPModule.h>
 #include <www/WebViewModule.h>
+#include <vte/VTEModule.h>
 
 #include "CreamBackwardForwardList.h"
 

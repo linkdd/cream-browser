@@ -67,6 +67,14 @@ else(CONFUSE_FOUND)
     message(FATAL_ERROR, "Could not find libconfuse")
 endif(CONFUSE_FOUND)
 
+####
+# VTE		XXX TODO: Disable VTE module if no VTE present
+pkg_check_modules(VTE REQUIRED vte)
+if(VTE_FOUND)
+else(VTE_FOUND)
+    message(FATAL_ERROR, "Could not find vte")
+endif(VTE_FOUND)
+
 # Includes
 set(CREAM_INCLUDES
     ${CURL_INCLUDE_DIRS}
@@ -74,6 +82,7 @@ set(CREAM_INCLUDES
     ${WEBKIT_INCLUDE_DIRS}
     ${GNET_INCLUDE_DIRS}
     ${CONFUSE_INCLUDE_DIRS}
+    ${VTE_INCLUDE_DIRS}
     )
 
 # Some things
@@ -110,7 +119,7 @@ endif(NOT DEFINED SYSCONFDIR)
 set(CMAKE_INSTALL_PREFIX ${PREFIX})
 set(CMAKE_INSTALL_RPATH "${PREFIX}/lib")
 
-set(CFLAGS "-Wall")
+set(CFLAGS "-Wall -g -ggdb3 -fno-inline")
 set(CMAKE_C_FLAGS ${CFLAGS})
 set(DEFAULT_LDFLAGS "${PREFIX}/lib")
 

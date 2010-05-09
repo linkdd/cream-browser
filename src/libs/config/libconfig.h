@@ -72,6 +72,7 @@ struct cream_config_t
           char *homepage;                    /*!< Browser's homepage */
           char *encoding;                    /*!< Default encoding used for web-pages */
           gboolean javascript;               /*!< Is javascript enable ? */
+	  char *vteshell;		     /*!< VTE Terminal shell */
 
           struct user_agent_t *user_agent;   /*!< List of user-agent */
 
@@ -82,6 +83,14 @@ struct cream_config_t
 
      struct handler_t *handlers;             /*!< List of handlers */
      struct key_t *keys;                     /*!< List of key-bindings */
+
+     struct
+     {
+	 char *shell;
+	 gboolean reverse;
+	 gboolean doublebuffer;
+	 gboolean hints;
+     } vte;
 };
 
 gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **error);

@@ -135,6 +135,15 @@ static cfg_opt_t config_keys_opts[] =
      CFG_END ()
 };
 
+static cfg_opt_t config_vte_opts[] =
+{
+    CFG_STR  ("shell",   NULL,                  CFGF_NONE),
+    CFG_BOOL ("reverse", cfg_false,		CFGF_NONE),
+    CFG_BOOL ("doublebuffer", cfg_true,		CFGF_NONE),
+    CFG_BOOL ("hints", cfg_true,		CFGF_NONE),
+    CFG_END ()
+};
+
 /*!
   \var static cfg_opt_t config_root_opts[]
   \brief Options for all the configuration
@@ -144,6 +153,7 @@ static cfg_opt_t config_root_opts[] =
      CFG_SEC ("global",   config_global_opts,   CFGF_NONE),
      CFG_SEC ("handlers", config_handlers_opts, CFGF_NONE),
      CFG_SEC ("keys",     config_keys_opts,     CFGF_NONE),
+     CFG_SEC ("vte",      config_vte_opts,      CFGF_NONE),
      CFG_END ()
 };
 
@@ -167,6 +177,7 @@ gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **er
           cfg_t *user_agent;
           cfg_t *handlers;
           cfg_t *keys;
+	  cfg_t *vte;
      } cream_cfg;
 
      if (path == NULL || cfg == NULL)

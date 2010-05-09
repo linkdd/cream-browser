@@ -39,3 +39,12 @@ keys
      bind "c" { cmd = "close" }
      bind "zZ" { cmd = "quit" }
 }
+
+vte
+{
+    shell = "/bin/sh"
+    reverse = FALSE
+    doublebuffer = TRUE
+    hints = TRUE
+}
+
