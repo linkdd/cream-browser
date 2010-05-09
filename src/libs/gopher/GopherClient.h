@@ -25,15 +25,13 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file GopherClient.h
-  \brief Gopher client header's file
-  \author David Delassus
-  \todo
- */
-
 #ifndef __CLASS_GOPHER_CLIENT_H
 #define __CLASS_GOPHER_CLIENT_H
+
+/*!
+  @addtogroup Gopher
+  @{
+ */
 
 #include <glib-object.h>
 #include <gnet.h>
@@ -45,21 +43,28 @@
 #define IS_GOPHER_CLIENT_CLASS(klass)   (G_TYPE_CLASS_TYPE ((klass), TYPE_GOPHER_CLIENT))
 #define GOPHER_CLIENT_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_GOPHER_CLIENT, GopherClientClass))
 
+/*! \typedef struct _GopherClient GopherClient */
+/*! \typedef struct _GopherClientClass GopherClientClass */
+
 typedef struct _GopherClient GopherClient;
 typedef struct _GopherClientClass GopherClientClass;
 
+/*! \struct _GopherClient */
 struct _GopherClient
 {
      GObject parent;
 
-     GURI *uri;
-     gchar *status;
+     GURI *uri;          /*!< URI to load */
+     gchar *status;      /*!< Loading status */
 };
 
+/*! \struct _GopherClientClass */
 struct _GopherClientClass
 {
      GObjectClass parent;
      GObject *instance;
 };
+
+/*! @} */
 
 #endif /* __CLASS_GOPHER_CLIENT_H */

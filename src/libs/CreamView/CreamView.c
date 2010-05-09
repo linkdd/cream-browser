@@ -26,12 +26,25 @@
  */
 
 /*!
-  \file CreamView.c
-  \brief CreamView object
-  \author David Delassus
+  @defgroup CreamView Generic WebView object
+  @ingroup libcream
+  @brief Functions to use the #CreamView object
 
-  This object will load an object according to
-  the used protocol.
+  This object load a module according to the URL. For
+  example, load this URL : "http://www.google.com" will
+  use the WebViewModule and this URL : "ftp://website.com"
+  will use the FTPModule.
+ */
+
+/*!
+  @defgroup modules Web Modules
+  @ingroup CreamView
+  @brief Object to show special protocoles (like HTTP/HTTPS/FTP/Gopher)
+ */
+
+/*!
+  @addtogroup CreamView
+  @{
  */
 
 #include <config.h>
@@ -84,7 +97,10 @@ static void cream_view_about_callback (CreamView *obj, gchar *uri);
 static void cream_view_http_callback (CreamView *obj, gchar *uri);
 static void cream_view_ftp_callback (CreamView *obj, gchar *uri);
 
-/*! \brief Available protocoles and their callbacks */
+/*!
+  \var struct protocols_t cream_available_protocols[]
+  \brief Available protocoles and their callbacks
+ */
 struct protocols_t cream_available_protocols[] =
 {
      { "mailto:",   cream_view_mailto_callback },
@@ -343,25 +359,37 @@ void cream_view_set_view_source_mode (CreamView *obj, gboolean mode)
      obj->view_source_mode = mode;
 }
 
-/*! \fn gboolean cream_view_can_go_back (CreamView *obj) */
+/*!
+  \fn gboolean cream_view_can_go_back (CreamView *obj)
+  \todo Implement History
+ */
 gboolean cream_view_can_go_back (CreamView *obj)
 {
      return FALSE; /* TODO */
 }
 
-/*! \fn gboolean cream_view_can_go_forward (CreamView *obj) */
+/*!
+  \fn gboolean cream_view_can_go_forward (CreamView *obj)
+  \todo Implement History
+ */
 gboolean cream_view_can_go_forward (CreamView *obj)
 {
      return FALSE; /* TODO */
 }
 
-/*! \fn void cream_view_go_back (CreamView *obj) */
+/*!
+  \fn void cream_view_go_back (CreamView *obj)
+  \todo Implement History
+ */
 void cream_view_go_back (CreamView *obj)
 {
      /* TODO */;
 }
 
-/*! \fn void cream_view_go_forward (CreamView *obj) */
+/*!
+  \fn void cream_view_go_forward (CreamView *obj)
+  \todo Implement History
+ */
 void cream_view_go_forward (CreamView *obj)
 {
      /* TODO */;
@@ -508,3 +536,5 @@ static gboolean cream_view_switch_module_cb (GtkWidget *w, gchar *new_uri, Cream
      cream_view_load_uri (view, new_uri);
      return TRUE;
 }
+
+/*! @} */

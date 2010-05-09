@@ -25,17 +25,13 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file CreamView.c
-  \brief CreamView object
-  \author David Delassus
-
-  This object will load an object according to
-  the used protocol.
- */
-
 #ifndef __CLASS_CREAM_VIEW_H
 #define __CLASS_CREAM_VIEW_H
+
+/*!
+  @addtogroup CreamView
+  @{
+ */
 
 #include <gtk/gtk.h>
 #include <gtk/gtkwidget.h>
@@ -132,5 +128,7 @@ const gchar *cream_view_get_status (CreamView *obj);
 GdkPixbuf *cream_view_get_favicon (CreamView *obj);
 
 G_END_DECLS
+
+/*! @} */
 
 #endif /* __CLASS_CREAM_VIEW_H */

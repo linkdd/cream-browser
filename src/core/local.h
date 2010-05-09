@@ -28,6 +28,28 @@
 #ifndef __LOCAL_H
 #define __LOCAL_H
 
+/*!
+  @defgroup libcream Internal browser library
+  @brief This library implements every tools needed by the browser.
+
+  Tools like #CreamView object, confuse integration (for the
+  configuration file), and other.
+ */
+
+/*!
+  @mainpage
+
+  This manual documents the <strong>Cream-Browser C API</strong>
+  of its library. It describe how to use the main objects of the
+  browser (like #CreamView). If you need some help even with this
+  documentation, you can come on the IRC channel :
+
+  <strong>Server :</strong> Freenode<br/>
+  <strong>Channel :</strong> \#cream-browser
+
+  http://cream-browser.net
+ */
+
 #include <config.h>
 
 #include <stdio.h>

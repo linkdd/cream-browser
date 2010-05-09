@@ -25,14 +25,13 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file WebViewModule.h
-  \brief WebKit integration
-  \author David Delassus
- */
-
 #ifndef __CLASS_WEB_VIEW_MODULE_H
 #define __CLASS_WEB_VIEW_MODULE_H
+
+/*!
+  @addtogroup WebView
+  @{
+ */
 
 #include <gtk/gtk.h>
 #include <gtk/gtkwidget.h>
@@ -48,6 +47,9 @@ G_BEGIN_DECLS
      GTK_CHECK_CLASS_CAST (klass, module_web_view_get_type (), ModuleWebViewClass)
 #define MODULE_IS_WEB_VIEW(obj)         \
      GTK_CHECK_TYPE (obj, module_web_view_get_type ())
+
+/*! \typedef struct _ModuleWebView ModuleWebView */
+/*! \typedef struct _ModuleWebViewClass ModuleWebViewClass */
 
 typedef struct _ModuleWebView ModuleWebView;
 typedef struct _ModuleWebViewClass ModuleWebViewClass;
@@ -103,5 +105,7 @@ WebKitWebSettings *module_web_view_get_settings (ModuleWebView *view);
 Favicon *module_web_view_get_favicon (ModuleWebView *view);
 
 G_END_DECLS
+
+/*! @} */
 
 #endif /* __CLASS_WEB_VIEW_MODULE_H */

@@ -25,14 +25,13 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file CurlClient.h
-  \brief Curl integration
-  \author David Delassus
- */
-
 #ifndef __CLASS_CURL_CLIENT_H
 #define __CLASS_CURL_CLIENT_H
+
+/*!
+  @addtogroup curl
+  @{
+ */
 
 #include <glib-object.h>
 #include <gnet.h>
@@ -127,5 +126,7 @@ GURI *curl_client_get_guri (CurlClient *obj);
 const gchar *curl_client_get_status (CurlClient *obj);
 CurlLoadStatus curl_client_get_load_status (CurlClient *obj);
 const gchar *curl_client_get_content (CurlClient *obj);
+
+/*! @} */
 
 #endif /* __CLASS_CURL_CLIENT_H */

@@ -26,9 +26,11 @@
  */
 
 /*!
-  \file WebKitWebView.c
-  \brief WebKit integration
-  \author David Delassus
+  @defgroup WebView WebKit integration
+  @ingroup modules
+  @brief The #ModuleWebView is used to show HTTP/HTTPS web-pages
+
+  @{
  */
 
 #include "WebViewModule.h"
@@ -37,6 +39,7 @@
 
 #define MODULE_WEB_VIEW_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE ((obj), module_web_view_get_type (), ModuleWebViewPrivate))
 
+/*! \typedef struct _ModuleWebViewPrivate ModuleWebViewPrivate */
 typedef struct _ModuleWebViewPrivate ModuleWebViewPrivate;
 
 /*! \struct _ModuleWebViewPrivate */
@@ -55,6 +58,10 @@ enum
      NB_SIGNALS
 };
 
+/*!
+  \var static guint module_web_view_signals[NB_SIGNALS]
+  \brief Signal definitions
+ */
 static guint module_web_view_signals[NB_SIGNALS] = { 0 };
 
 static void module_web_view_class_init (ModuleWebViewClass *class);

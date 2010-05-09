@@ -26,9 +26,10 @@
  */
 
 /*!
-  \file CreamTabbed.c
-  \brief CreamTabbed object
-  \author David Delassus
+  @defgroup CreamTabbed Tabbed CreamView
+  @brief Object which implement a #CreamView, a statusbar and an inputbox
+
+  @{
  */
 
 #include "local.h"
@@ -39,6 +40,10 @@ enum
      NB_SIGNALS
 };
 
+/*!
+  \var static guint cream_tabbed_signals[NB_SIGNALS]
+  \brief Signal definitions
+ */
 static guint cream_tabbed_signals[NB_SIGNALS] = { 0 };
 
 static void cream_tabbed_class_init (CreamTabbedClass *class);
@@ -346,3 +351,5 @@ static void cream_tabbed_scroll_cb (GtkAdjustment *vadjust, CreamTabbed *obj)
 
      gtk_label_set_markup (GTK_LABEL (obj->statusbar.state), g_markup_printf_escaped ("<span font=\"monospace bold 8\">%s</span>", str));
 }
+
+/*! @} */

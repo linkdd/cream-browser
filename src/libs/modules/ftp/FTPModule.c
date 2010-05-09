@@ -26,9 +26,11 @@
  */
 
 /*!
-  \file FTPModule.c
-  \brief Module FTP definition
-  \author David Delassus
+  @defgroup FTP Module 'FTP'
+  @ingroup modules
+  @brief Object which show a FTP repository
+
+  @{
  */
 
 #include "FTPModule.h"
@@ -46,6 +48,10 @@ enum
      NB_SIGNALS
 };
 
+/*!
+  \var static guint module_ftp_signals[NB_SIGNALS]
+  \brief Signal definitions
+ */
 static guint module_ftp_signals[NB_SIGNALS] = { 0 };
 
 /*!
@@ -178,6 +184,11 @@ static void module_ftp_init (ModuleFtp *obj)
      obj->view_source_mode = FALSE;
 }
 
+/*!
+  \fn GtkWidget *module_ftp_new (void)
+  \brief Create a new #ModuleFtp object
+  \return The new #ModuleFtp object
+ */
 GtkWidget *module_ftp_new (void)
 {
      ModuleFtp *obj = gtk_type_new (module_ftp_get_type ());
@@ -224,6 +235,13 @@ GtkWidget *module_ftp_new (void)
      return GTK_WIDGET (obj);
 }
 
+/*!
+  \fn void module_ftp_load_uri (ModuleFtp *obj, gchar *uri)
+  \brief Load a new URI
+
+  \param obj ModuleFtp object
+  \param uri New URI to load
+ */
 void module_ftp_load_uri (ModuleFtp *obj, gchar *uri)
 {
      ModuleFtpPrivate *priv = MODULE_FTP_GET_PRIVATE (obj);
@@ -457,4 +475,4 @@ static gboolean module_ftp_download_requested_cb (CurlClient *curl, gchar *uri, 
      return ret;
 }
 
-
+/*! @} */
