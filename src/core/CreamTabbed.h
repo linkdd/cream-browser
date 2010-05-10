@@ -56,6 +56,7 @@ typedef struct _CreamTabbedClass CreamTabbedClass;
 /*!
   \struct _CreamTabbed
   \implements CreamView
+  \todo Split the view when opening the WebInspector (instead of opening in a new window)
  */
 struct _CreamTabbed
 {
