@@ -27,7 +27,7 @@
 
 /*!
   @defgroup GFtp New FTP integration
-  @ingroup libcream
+  @ingroup FTP
   @brief Integration of the FTP protocol without curl
 
   @{
