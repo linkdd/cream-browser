@@ -244,21 +244,25 @@ static void cream_view_ftp_callback (CreamView *obj, gchar *uri)
  */
 static void cream_view_load_content (CreamView *view)
 {
+     static gchar *old_prefix = NULL;
      gchar *uri = (view->uri[0] == '/' ? g_strconcat ("file://", view->uri, NULL) : view->uri);
      gboolean success = FALSE;
      int i;
+
+     if (old_prefix != NULL && g_str_has_prefix (uri, old_prefix))
+          return;
 
      for (i = 0; cream_available_protocols[i].prefix != NULL; ++i)
      {
           if (g_str_has_prefix (uri, cream_available_protocols[i].prefix)
                && cream_available_protocols[i].func != NULL)
           {
+               old_prefix = cream_available_protocols[i].prefix;
                cream_available_protocols[i].func (view, uri);
                success = TRUE;
                break;
           }
      }
-
 
      if (!success)
      {
