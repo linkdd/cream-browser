@@ -135,12 +135,16 @@ static cfg_opt_t config_keys_opts[] =
      CFG_END ()
 };
 
+/*!
+  \var static cfg_opt_t config_vte_opts[]
+  \brief Options for the section '/vte'
+ */
 static cfg_opt_t config_vte_opts[] =
 {
-    CFG_STR  ("shell",   NULL,                  CFGF_NONE),
-    CFG_BOOL ("reverse", cfg_false,		CFGF_NONE),
-    CFG_BOOL ("doublebuffer", cfg_true,		CFGF_NONE),
-    CFG_BOOL ("hints", cfg_true,		CFGF_NONE),
+    CFG_STR  ("shell",        NULL,      CFGF_NONE),
+    CFG_BOOL ("reverse",      cfg_false, CFGF_NONE),
+    CFG_BOOL ("doublebuffer", cfg_true,  CFGF_NONE),
+    CFG_BOOL ("hints",        cfg_true,  CFGF_NONE),
     CFG_END ()
 };
 
@@ -177,7 +181,7 @@ gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **er
           cfg_t *user_agent;
           cfg_t *handlers;
           cfg_t *keys;
-	  cfg_t *vte;
+          cfg_t *vte;
      } cream_cfg;
 
      if (path == NULL || cfg == NULL)
@@ -206,6 +210,7 @@ gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **er
      cream_cfg.user_agent = cfg_getsec (cream_cfg.global, "user-agent");
      cream_cfg.handlers   = cfg_getsec (cream_cfg.root,   "handlers");
      cream_cfg.keys       = cfg_getsec (cream_cfg.root,   "keys");
+     cream_cfg.vte        = cfg_getsec (cream_cfg.root,   "vte");
 
      /* parse /global/ */
      cfg->global.homepage   = g_strdup (cfg_getstr (cream_cfg.global, "homepage"));
@@ -251,6 +256,12 @@ gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **er
           tmp->next = cfg->keys;
           cfg->keys = tmp;
      }
+
+     /* parse /vte/ */
+     cfg->vte.shell        = g_strdup (cfg_getstr (cream_cfg.vte, "shell"));
+     cfg->vte.reverse      = cfg_getbool (cream_cfg.vte, "reverse");
+     cfg->vte.doublebuffer = cfg_getbool (cream_cfg.vte, "doublebuffer");
+     cfg->vte.hints        = cfg_getbool (cream_cfg.vte, "hints");
 
      cfg_free (cream_cfg.root);
 
@@ -312,6 +323,8 @@ void cream_config_free (struct cream_config_t *cfg)
 
           tmp_key = next;
      }
+
+     free (cfg->vte.shell);
 }
 
 /*! @} */

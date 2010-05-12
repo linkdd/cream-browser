@@ -42,9 +42,9 @@ keys
 
 vte
 {
-    shell = "/bin/sh"
-    reverse = FALSE
-    doublebuffer = TRUE
-    hints = TRUE
+     shell = "/bin/sh"
+     reverse = FALSE
+     doublebuffer = TRUE
+     hints = TRUE
 }
 

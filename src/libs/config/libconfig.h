@@ -72,7 +72,6 @@ struct cream_config_t
           char *homepage;                    /*!< Browser's homepage */
           char *encoding;                    /*!< Default encoding used for web-pages */
           gboolean javascript;               /*!< Is javascript enable ? */
-	  char *vteshell;		     /*!< VTE Terminal shell */
 
           struct user_agent_t *user_agent;   /*!< List of user-agent */
 
@@ -86,10 +85,10 @@ struct cream_config_t
 
      struct
      {
-	 char *shell;
-	 gboolean reverse;
-	 gboolean doublebuffer;
-	 gboolean hints;
+          char *shell;                       /*!< VTE Terminal shell */
+          gboolean reverse;                  /*!< Reverse color */
+          gboolean doublebuffer;             /*!< Use doublebuffer */
+          gboolean hints;
      } vte;
 };
 

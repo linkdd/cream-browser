@@ -61,6 +61,7 @@ typedef struct _CreamViewClass CreamViewClass;
   \implements ModuleWebView
   \implements ModuleFtp
   \implements ModuleAbout
+  \implements ModuleVte
  */
 struct _CreamView
 {
