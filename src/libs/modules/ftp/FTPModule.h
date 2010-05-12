@@ -55,6 +55,7 @@ typedef struct _ModuleFtpClass ModuleFtpClass;
 /*!
   \struct _ModuleFtp
   \implements CurlClient
+  \implements GFtp
  */
 struct _ModuleFtp
 {

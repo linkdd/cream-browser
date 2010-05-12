@@ -27,7 +27,7 @@
 
 /*!
   @defgroup curl Curl integration
-  @ingroup libcream
+  @ingroup FTP
   @brief Object which define a Curl instance
 
   @{
