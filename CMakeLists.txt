@@ -69,10 +69,12 @@ endif(CONFUSE_FOUND)
 
 ####
 # VTE
-pkg_check_modules(VTE vte)
-if(VTE_FOUND)
-     set (CREAM_IN_HAVE_VTE "#define HAVE_VTE 1")
-endif(VTE_FOUND)
+if(NOT USE_VTE MATCHES "no")
+     pkg_check_modules(VTE vte)
+     if(VTE_FOUND)
+          set (CREAM_IN_HAVE_VTE "#define HAVE_VTE 1")
+     endif(VTE_FOUND)
+endif(NOT USE_VTE MATCHES "no")
 
 # Includes
 set(CREAM_INCLUDES
