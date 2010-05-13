@@ -6,5 +6,9 @@
 
 /* Have curl SSL support ? */
 @CREAM_IN_HAVE_CURL_SSL@
+
 /* Version number of package */
 #define	VERSION	"@CREAM_IN_VERSION@"
+
+/* Have VTE Terminal ? */
+@CREAM_IN_HAVE_VTE@

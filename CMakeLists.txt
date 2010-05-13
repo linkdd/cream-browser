@@ -68,11 +68,10 @@ else(CONFUSE_FOUND)
 endif(CONFUSE_FOUND)
 
 ####
-# VTE		XXX TODO: Disable VTE module if no VTE present
-pkg_check_modules(VTE REQUIRED vte)
+# VTE
+pkg_check_modules(VTE vte)
 if(VTE_FOUND)
-else(VTE_FOUND)
-    message(FATAL_ERROR, "Could not find vte")
+     set (CREAM_IN_HAVE_VTE "#define HAVE_VTE 1")
 endif(VTE_FOUND)
 
 # Includes
@@ -153,7 +152,7 @@ add_subdirectory( doc )
 message("-- Build infos")
 message("--  System: ${CMAKE_SYSTEM_NAME}")
 message("--  Prefix: ${PREFIX}")
-message("--  /etc prefix: ${SYSCONFDIR}")
+message("--  Sysconfdir: ${SYSCONFDIR}")
 message("--  Project version: ${VERSION}")
 
 set(CREAM_XDG_CONFIG "${TOP_SRCDIR}/config.sample")

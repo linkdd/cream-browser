@@ -343,7 +343,6 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
 void cream_release (int exit_code)
 {
-     printf ("exit.\n");
      soup_cookie_jar_save (global.browser.cookies);
 
      if (global.cfg.global.history != NULL)

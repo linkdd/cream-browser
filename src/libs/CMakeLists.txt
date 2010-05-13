@@ -11,17 +11,31 @@ include_directories(
     ${TOP_SRCDIR}/src/libs/modules
     )
 
-set(libcream_SRCS
-    CreamView/CreamView.c
-    CreamView/CreamBackwardForwardList.c
-    config/libconfig.c
-    curl/CurlClient.c
-    gopher/GopherClient.c
-    modules/about/AboutModule.c
-    modules/ftp/FTPModule.c
-    modules/www/WebViewModule.c
-    modules/www/Favicon.c
-    modules/vte/VTEModule.c
-    )
+if(VTE_FOUND)
+    set(libcream_SRCS
+        CreamView/CreamView.c
+        CreamView/CreamBackwardForwardList.c
+        config/libconfig.c
+        curl/CurlClient.c
+        gopher/GopherClient.c
+        modules/about/AboutModule.c
+        modules/ftp/FTPModule.c
+        modules/www/WebViewModule.c
+        modules/www/Favicon.c
+        modules/vte/VTEModule.c
+        )
+else(VTE_FOUND)
+    set(libcream_SRCS
+        CreamView/CreamView.c
+        CreamView/CreamBackwardForwardList.c
+        config/libconfig.c
+        curl/CurlClient.c
+        gopher/GopherClient.c
+        modules/about/AboutModule.c
+        modules/ftp/FTPModule.c
+        modules/www/WebViewModule.c
+        modules/www/Favicon.c
+        )
+endif(VTE_FOUND)
 
 add_library(cream ${libcream_SRCS})
