@@ -16,7 +16,7 @@ if(VTE_FOUND)
         CreamView/CreamView.c
         CreamView/CreamBackwardForwardList.c
         config/libconfig.c
-        ftp/CreamFtp.c
+        ftp/FtpClient.c
         gopher/GopherClient.c
         modules/about/AboutModule.c
         modules/ftp/FTPModule.c
@@ -29,7 +29,7 @@ else(VTE_FOUND)
         CreamView/CreamView.c
         CreamView/CreamBackwardForwardList.c
         config/libconfig.c
-        ftp/CreamFtp.c
+        ftp/FtpClient.c
         gopher/GopherClient.c
         modules/about/AboutModule.c
         modules/ftp/FTPModule.c
