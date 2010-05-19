@@ -26,7 +26,7 @@
  */
 
 /*!
-  @defgroup About Module 'About'
+  @defgroup About Module About
   @ingroup modules
   @brief Internal browser protocole 'about:' to show history/bookmarks/etc...
 
@@ -396,12 +396,6 @@ void module_about_load_uri (ModuleAbout *view, const gchar *uri)
 {
      gchar **cmd = g_strsplit (&uri[6], "/", -1);
      gint cmdc = g_strv_length (cmd);
-     gint i;
-
-     printf ("about:");
-     for (i = 0; i < cmdc; ++i)
-          printf ("%s/", cmd[i]);
-     printf ("\n");
 
      if (cmdc == 1) /* about:<command> */
      {

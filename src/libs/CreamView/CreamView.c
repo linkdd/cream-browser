@@ -50,9 +50,7 @@
 #include <config.h>
 #include "CreamView.h"
 #include <marshal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#include "local.h"
 
 static void cream_view_class_init (CreamViewClass *class);
 static void cream_view_init (CreamView *view);
@@ -234,10 +232,14 @@ static void cream_view_http_callback (CreamView *obj, gchar *uri)
 }
 
 static void cream_view_ftp_callback (CreamView *obj, gchar *uri)
-{/*
-     obj->content = module_ftp_new ();
-     module_ftp_load_uri (MODULE_FTP (obj->content), uri);
-*/}
+{
+     obj->content = module_web_view_new ();
+     webkit_web_view_load_string (WEBKIT_WEB_VIEW (obj->content),
+               "<h1>Disactivated</h1>",
+               "text/html",
+               global.cfg.global.encoding,
+               uri);
+}
 
 #ifdef HAVE_VTE
 static void cream_view_vte_callback (CreamView *obj, gchar *uri)
