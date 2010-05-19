@@ -36,7 +36,7 @@
 #include <gtk/gtk.h>
 #include <gtk/gtkwidget.h>
 
-#include <CreamFtp.h>
+#include <FtpClient.h>
 #include <webkit/webkit.h>
 
 G_BEGIN_DECLS
@@ -53,7 +53,7 @@ typedef struct _ModuleFtpClass ModuleFtpClass;
 
 /*!
   \struct _ModuleFtp
-  \implements CreamFtp
+  \implements FtpClient
  */
 struct _ModuleFtp
 {

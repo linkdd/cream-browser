@@ -26,14 +26,14 @@
  */
 
 /*!
-  @defgroup CreamFtp New FTP integration
+  @defgroup FtpClient New FTP integration
   @ingroup FTP
   @brief Integration of the FTP protocol without curl
 
   @{
  */
 
-#include "CreamFtp.h"
+#include "FtpClient.h"
 
 #include <stdio.h>
 #include <sys/socket.h>
@@ -41,14 +41,14 @@
 #include <fcntl.h>
 #include <netdb.h>
 
-G_DEFINE_TYPE (CreamFtp, cream_ftp, G_TYPE_OBJECT)
+G_DEFINE_TYPE (FtpClient, ftp_client, G_TYPE_OBJECT)
 
-static void cream_ftp_class_init (CreamFtpClass *klass)
+static void ftp_client_class_init (FtpClientClass *klass)
 {
      g_return_if_fail (klass != NULL);
 }
 
-static void cream_ftp_init (CreamFtp *self)
+static void ftp_client_init (FtpClient *self)
 {
      g_return_if_fail (self != NULL);
 
@@ -58,28 +58,28 @@ static void cream_ftp_init (CreamFtp *self)
 }
 
 /*!
-  \fn CreamFtp *cream_ftp_new (void)
-  \brief Create a new CreamFtp object. Connect to a repository with #cream_ftp_connect()
-  \return New CreamFtp object
+  \fn FtpClient *ftp_client_new (void)
+  \brief Create a new FtpClient object. Connect to a repository with #ftp_client_connect()
+  \return New FtpClient object
  */
-CreamFtp *cream_ftp_new (void)
+FtpClient *ftp_client_new (void)
 {
-     return CREAM_FTP (g_object_new (CREAM_TYPE_FTP, NULL));
+     return FTP_CLIENT (g_object_new (FTP_CLIENT_TYPE, NULL));
 }
 
 /*!
-  \fn static gboolean cream_ftp_control_client (GIOChannel *channel)
+  \fn static gboolean ftp_client_control_client (GIOChannel *channel)
   \brief Control the client socket.
 
   This function is a callback initialized in the function
-  #cream_ftp_connect().
+  #ftp_client_connect().
 
   \param channel IOChannel associated to the socket
   \return TRUE on success, FALSE if failed
 
   \todo Parse commands and send response
  */
-static gboolean cream_ftp_control_client (GIOChannel *channel)
+static gboolean ftp_client_control_client (GIOChannel *channel)
 {
      GError *error = NULL;
      GIOStatus ret;
@@ -114,10 +114,10 @@ static gboolean cream_ftp_control_client (GIOChannel *channel)
 }
 
 /*!
-  \fn gboolean cream_ftp_connect (CreamFtp *obj, const gchar *hostname, gint port)
+  \fn gboolean ftp_client_connect (FtpClient *obj, const gchar *hostname, gint port)
   \brief Connect to a FTP repository
 
-  \param obj CreamFtp object
+  \param obj FtpClient object
   \param hostname Hostname of the FTP
   \param port Port of the connection (default 21)
   \return TRUE on success, FALSE if failed
@@ -125,7 +125,7 @@ static gboolean cream_ftp_control_client (GIOChannel *channel)
   \todo Send requests to the server (login, etc...)
   \todo Send errors to the browser
  */
-gboolean cream_ftp_connect (CreamFtp *obj, const gchar *hostname, gint port)
+gboolean ftp_client_connect (FtpClient *obj, const gchar *hostname, gint port)
 {
      struct hostent *hostinfo = NULL;
      struct sockaddr_in sin = { 0 };
@@ -179,7 +179,7 @@ gboolean cream_ftp_connect (CreamFtp *obj, const gchar *hostname, gint port)
      /* create IOChannel */
      obj->iochannel = g_io_channel_unix_new (obj->sock);
 
-     g_io_add_watch (obj->iochannel, G_IO_IN | G_IO_HUP, (GIOFunc) cream_ftp_control_client, NULL);
+     g_io_add_watch (obj->iochannel, G_IO_IN | G_IO_HUP, (GIOFunc) ftp_client_control_client, NULL);
      /* send requests */
 
      return TRUE;

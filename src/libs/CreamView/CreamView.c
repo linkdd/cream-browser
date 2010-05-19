@@ -235,7 +235,7 @@ static void cream_view_ftp_callback (CreamView *obj, gchar *uri)
 {
      obj->content = module_web_view_new ();
      webkit_web_view_load_string (WEBKIT_WEB_VIEW (obj->content),
-               "<h1>Disactivated</h1>",
+               "<h1>Disabled</h1>",
                "text/html",
                global.cfg.global.encoding,
                uri);
