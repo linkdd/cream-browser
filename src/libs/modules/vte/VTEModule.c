@@ -276,7 +276,7 @@ static void module_vte_cb_status_line_changed (ModuleVte *obj, gpointer data)
 static void module_vte_cb_window_title_changed (ModuleVte *obj, gpointer data)
 {
      const gchar *tmp = vte_terminal_get_window_title (VTE_TERMINAL (obj));
-     if (obj->title != NULL)
+     if (obj->title != NULL || g_str_equal (obj->title, ""))
           g_free (obj->title);
 
      obj->title = g_strdup (tmp ? tmp : "Terminal");

@@ -6,7 +6,7 @@ include_directories(
     ${TOP_SRCDIR}/src/libs
     ${TOP_SRCDIR}/src/libs/config
     ${TOP_SRCDIR}/src/libs/CreamView
-    ${TOP_SRCDIR}/src/libs/curl
+    ${TOP_SRCDIR}/src/libs/ftp
     ${TOP_SRCDIR}/src/libs/gopher
     ${TOP_SRCDIR}/src/libs/modules
     )
@@ -31,13 +31,10 @@ add_executable(creamctl ${creamctl_SRCS})
 
 # It's _LIBRARIES_DIR for pkg-config checked packages
 target_link_libraries(cream_bin
-    ${CURL_LIBRARIES}
     ${GTK2_LDFLAGS}
     ${GTK2_LDFLAGS_OTHER}
     ${WEBKIT_LDFLAGS}
     ${WEBKIT_LDFLAGS_OTHER}
-    ${GNET_LDFLAGS}
-    ${GNET_LDFLAGS_OTHER}
     ${CONFUSE_LDFLAGS}
     ${CONFUSE_LDFLAGS_OTHER}
     ${VTE_LDFLAGS}

@@ -35,7 +35,6 @@
 
 #include "WebViewModule.h"
 #include <marshal.h>
-#include <gnet.h>
 
 #define MODULE_WEB_VIEW_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE ((obj), module_web_view_get_type (), ModuleWebViewPrivate))
 

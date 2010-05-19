@@ -57,7 +57,6 @@ struct global_t
 
      struct
      {
-          GUnixSocket *sock;
           GIOChannel *channel;
           gchar *path;
      } unix_sock;

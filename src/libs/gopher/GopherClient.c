@@ -45,7 +45,7 @@ struct _GopherClientPrivate
      gchar *hostname;    /*!< Hostname */
      gint port;          /*!< Port */
 
-     GTcpSocket *sock;   /*!< Socket */
+     int sock;           /*!< Socket */
      GIOChannel *chan;   /*!< IOChannel associated to the socket */
      GIOError error;     /*!< Error from the IOChannel */
 
@@ -75,7 +75,6 @@ static void gopher_client_init (GopherClient *self)
 
      priv->hostname = NULL;
      priv->port = 0;
-     priv->sock = NULL;
      priv->chan = NULL;
      priv->error = G_IO_ERROR_NONE;
      priv->length = 0;
@@ -121,72 +120,19 @@ GopherClient *gopher_client_new (void)
      return obj;
 }
 
-static void *gopher_client_load_uri_thread (void *data)
-{
-     GopherClient *obj = (GopherClient *) data;
-     GopherClientPrivate *priv = GOPHER_CLIENT_GET_PRIVATE (obj);
-     GInetAddr *addr;
-
-     priv->hostname = obj->uri->hostname;
-     priv->port = 70;
-
-     /* Create the address */
-     addr = gnet_inetaddr_new (priv->hostname, priv->port);
-     if (!addr)
-     {
-          /* load error */
-          return NULL;
-     }
-
-     /* Create socket */
-     priv->sock = gnet_tcp_socket_new (addr);
-     gnet_inetaddr_delete (addr);
-
-     if (!priv->sock)
-     {
-          /* load error */
-          return NULL;
-     }
-
-     priv->chan = gnet_tcp_socket_get_io_channel (priv->sock);
-
-     /* Send command */
-     priv->error = gnet_io_channel_writen (priv->chan, priv->buffer, priv->length, &priv->length);
-     if (priv->error != G_IO_ERROR_NONE)
-     {
-          /* load error */
-          return NULL;
-     }
-
-     /* receive data */
-     priv->error = gnet_io_channel_readn (priv->chan, priv->buffer, priv->length, &priv->length);
-     if (priv->error != G_IO_ERROR_NONE)
-     {
-          /* load error */
-          return NULL;
-     }
-
-     /* load finished */
-     return NULL;
-}
-
 /*!
   \fn void gopher_client_load_uri (GopherClient *obj, gchar *uri)
   \brief Load a new URI
 
   \param obj #GopherClient object
   \param uri New URI to load
+
+  \todo Connect to socket
+  \todo Send commands
  */
 void gopher_client_load_uri (GopherClient *obj, gchar *uri)
 {
-     /* load committed */
-
-     obj->uri = gnet_uri_new (uri);
-
-     if (!g_thread_create (&gopher_client_load_uri_thread, obj, FALSE, NULL) != 0)
-     {
-          /* load error */
-     }
+     return;
 }
 
 /*! @} */

@@ -25,59 +25,57 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __CLASS_G_FTP_H
-#define __CLASS_G_FTP_H
+#ifndef __CLASS_CREAM_FTP_H
+#define __CLASS_CREAM_FTP_H
 
 /*!
-  @addtogroup GFtp
+  @addtogroup CreamFtp
   @{
  */
 
 #include <glib-object.h>
-#include <gnet.h>
 
-#define G_TYPE_FTP            (g_ftp_get_type ())
-#define G_FTP(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), G_TYPE_FTP, GFtp))
-#define G_FTP_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), G_TYPE_FTP, GFtpClass))
-#define G_IS_FTP(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), G_TYPE_FTP))
-#define G_IS_FTP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), G_TYPE_FTP))
-#define G_FTP_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), G_TYPE_FTP, GFtpClass))
+#define CREAM_TYPE_FTP            (cream_ftp_get_type ())
+#define CREAM_FTP(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), CREAM_TYPE_FTP, CreamFtp))
+#define CREAM_FTP_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), CREAM_TYPE_FTP, CreamFtpClass))
+#define CREAM_IS_FTP(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), CREAM_TYPE_FTP))
+#define CREAM_IS_FTP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), CREAM_TYPE_FTP))
+#define CREAM_FTP_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), CREAM_TYPE_FTP, CreamFtpClass))
 
-/*! \typedef struct _GFtp GFtp */
-/*! \typedef struct _GFtpClass GFtpClass */
+/*! \typedef struct _CreamFtp CreamFtp */
+/*! \typedef struct _CreamFtpClass CreamFtpClass */
 
-typedef struct _GFtp GFtp;
-typedef struct _GFtpClass GFtpClass;
+typedef struct _CreamFtp CreamFtp;
+typedef struct _CreamFtpClass CreamFtpClass;
 
 /*!
-  \struct _GFtp
+  \struct _CreamFtp
   \todo Implements FTP protocol
  */
-struct _GFtp
+struct _CreamFtp
 {
      GObject parent;
 
-     GTcpSocket *socket;      /*!< Socket */
-
+     int sock;                /*!< Socket */
      GIOChannel *iochannel;   /*!< IOChannel associated to the socket */
      gchar *hostname;         /*!< Hostname */
      gint port;               /*!< Port */
 };
 
 /*!
-  \struct _GFtpClass
+  \struct _CreamFtpClass
   \todo Add signals (for connection, loading, etc...)
  */
-struct _GFtpClass
+struct _CreamFtpClass
 {
      GObjectClass parent;
 };
 
-GType g_ftp_get_type (void);
+GType cream_ftp_get_type (void);
 
-GFtp *g_ftp_new (void);
-gboolean g_ftp_connect (GFtp *obj, const gchar *hostname, gint port);
+CreamFtp *cream_ftp_new (void);
+gboolean cream_ftp_connect (CreamFtp *obj, const gchar *hostname, gint port);
 
 /* @} */
 
-#endif /* __CLASS_G_FTP_H */
+#endif /* __CLASS_CREAM_FTP_H */

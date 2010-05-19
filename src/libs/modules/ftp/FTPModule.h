@@ -36,9 +36,8 @@
 #include <gtk/gtk.h>
 #include <gtk/gtkwidget.h>
 
-#include <CurlClient.h>
+#include <CreamFtp.h>
 #include <webkit/webkit.h>
-#include <gnet.h>
 
 G_BEGIN_DECLS
 
@@ -54,8 +53,7 @@ typedef struct _ModuleFtpClass ModuleFtpClass;
 
 /*!
   \struct _ModuleFtp
-  \implements CurlClient
-  \implements GFtp
+  \implements CreamFtp
  */
 struct _ModuleFtp
 {

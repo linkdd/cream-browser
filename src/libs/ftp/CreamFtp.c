@@ -26,55 +26,60 @@
  */
 
 /*!
-  @defgroup GFtp New FTP integration
+  @defgroup CreamFtp New FTP integration
   @ingroup FTP
   @brief Integration of the FTP protocol without curl
 
   @{
  */
 
-#include "GFtp.h"
+#include "CreamFtp.h"
 
-G_DEFINE_TYPE (GFtp, g_ftp, G_TYPE_OBJECT)
+#include <stdio.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <netdb.h>
 
-static void g_ftp_class_init (GFtpClass *klass)
+G_DEFINE_TYPE (CreamFtp, cream_ftp, G_TYPE_OBJECT)
+
+static void cream_ftp_class_init (CreamFtpClass *klass)
 {
      g_return_if_fail (klass != NULL);
 }
 
-static void g_ftp_init (GFtp *self)
+static void cream_ftp_init (CreamFtp *self)
 {
      g_return_if_fail (self != NULL);
 
-     self->socket_id = NULL;
      self->iochannel = NULL;
      self->hostname  = NULL;
      self->port      = 0;
 }
 
 /*!
-  \fn GFtp *g_ftp_new (void)
-  \brief Create a new GFtp object. Connect to a repository with #g_ftp_connect()
-  \return New GFtp object
+  \fn CreamFtp *cream_ftp_new (void)
+  \brief Create a new CreamFtp object. Connect to a repository with #cream_ftp_connect()
+  \return New CreamFtp object
  */
-GFtp *g_ftp_new (void)
+CreamFtp *cream_ftp_new (void)
 {
-     return G_FTP (g_object_new (G_TYPE_FTP, NULL));
+     return CREAM_FTP (g_object_new (CREAM_TYPE_FTP, NULL));
 }
 
 /*!
-  \fn static gboolean g_ftp_control_client (GIOChannel *channel)
+  \fn static gboolean cream_ftp_control_client (GIOChannel *channel)
   \brief Control the client socket.
 
   This function is a callback initialized in the function
-  #g_ftp_connect().
+  #cream_ftp_connect().
 
   \param channel IOChannel associated to the socket
   \return TRUE on success, FALSE if failed
 
   \todo Parse commands and send response
  */
-static gboolean g_ftp_control_client (GIOChannel *channel)
+static gboolean cream_ftp_control_client (GIOChannel *channel)
 {
      GError *error = NULL;
      GIOStatus ret;
@@ -109,34 +114,72 @@ static gboolean g_ftp_control_client (GIOChannel *channel)
 }
 
 /*!
-  \fn gboolean g_ftp_connect (GFtp *obj, const gchar *hostname, gint port)
+  \fn gboolean cream_ftp_connect (CreamFtp *obj, const gchar *hostname, gint port)
   \brief Connect to a FTP repository
 
-  \param obj GFtp object
+  \param obj CreamFtp object
   \param hostname Hostname of the FTP
   \param port Port of the connection (default 21)
   \return TRUE on success, FALSE if failed
 
-  \todo Send commands for login
+  \todo Send requests to the server (login, etc...)
+  \todo Send errors to the browser
  */
-gboolean g_ftp_connect (GFtp *obj, const gchar *hostname, gint port)
+gboolean cream_ftp_connect (CreamFtp *obj, const gchar *hostname, gint port)
 {
-     GInetAddr *addr;
+     struct hostent *hostinfo = NULL;
+     struct sockaddr_in sin = { 0 };
+     int flags;
 
      g_return_val_if_fail (obj != NULL, FALSE);
 
      obj->hostname = g_strdup (hostname);
      obj->port     = port;
 
-     addr = gnet_inetaddr_new (obj->hostname, obj->port);
-     g_return_val_if_fail (addr != NULL, FALSE);
+     if (-1 == (obj->sock = socket (AF_INET, SOCK_STREAM, 0)))
+     {
+          perror ("socket()");
+          return FALSE;
+     }
 
-     obj->socket = gnet_tcp_socket_new (addr);
-     g_return_val_if_fail (obj->socket != NULL, FALSE);
+     if (-1 == (flags = fcntl (obj->sock, F_GETFL, 0)))
+     {
+          perror ("fcntl()");
+          close (obj->sock);
+          return FALSE;
+     }
 
-     obj->iochannel = gnet_tcp_socket_get_io_channel (obj->socket);
+     /* Make the socket non-blocking */
+     if (-1 == fcntl (obj->sock, F_SETFL, flags | O_NONBLOCK))
+     {
+          perror ("fcntl()");
+          close (obj->sock);
+          return FALSE;
+     }
 
-     g_io_add_watch (obj->iochannel, G_IO_IN | G_IO_HUP, (GIOFunc) g_ftp_control_client, NULL);
+     /* get host and connect */
+     if (NULL == (hostinfo = gethostbyname (hostname)))
+     {
+          /* send "Unknow host" to the browser */
+          close (obj->sock);
+          return FALSE;
+     }
+
+     sin.sin_addr   = *(struct in_addr *) hostinfo->h_addr;
+     sin.sin_port   = htons (port);
+     sin.sin_family = AF_INET;
+
+     if (-1 == connect (obj->sock, (struct sockaddr *) &sin, sizeof (struct sockaddr)))
+     {
+          perror ("connect()");
+          close (obj->sock);
+          return FALSE;
+     }
+
+     /* create IOChannel */
+     obj->iochannel = g_io_channel_unix_new (obj->sock);
+
+     g_io_add_watch (obj->iochannel, G_IO_IN | G_IO_HUP, (GIOFunc) cream_ftp_control_client, NULL);
      /* send requests */
 
      return TRUE;

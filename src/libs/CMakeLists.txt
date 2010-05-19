@@ -6,7 +6,7 @@ include_directories(
     ${TOP_SRCDIR}/src/libs
     ${TOP_SRCDIR}/src/libs/config
     ${TOP_SRCDIR}/src/libs/CreamView
-    ${TOP_SRCDIR}/src/libs/curl
+    ${TOP_SRCDIR}/src/libs/ftp
     ${TOP_SRCDIR}/src/libs/gopher
     ${TOP_SRCDIR}/src/libs/modules
     )
@@ -16,7 +16,7 @@ if(VTE_FOUND)
         CreamView/CreamView.c
         CreamView/CreamBackwardForwardList.c
         config/libconfig.c
-        curl/CurlClient.c
+        ftp/CreamFtp.c
         gopher/GopherClient.c
         modules/about/AboutModule.c
         modules/ftp/FTPModule.c
@@ -29,7 +29,7 @@ else(VTE_FOUND)
         CreamView/CreamView.c
         CreamView/CreamBackwardForwardList.c
         config/libconfig.c
-        curl/CurlClient.c
+        ftp/CreamFtp.c
         gopher/GopherClient.c
         modules/about/AboutModule.c
         modules/ftp/FTPModule.c

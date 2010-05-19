@@ -34,7 +34,6 @@
  */
 
 #include <glib-object.h>
-#include <gnet.h>
 
 #define TYPE_GOPHER_CLIENT              (gopher_client_get_type ())
 #define GOPHER_CLIENT(obj)              (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_GOPHER_CLIENT, GopherClient))
@@ -54,7 +53,7 @@ struct _GopherClient
 {
      GObject parent;
 
-     GURI *uri;          /*!< URI to load */
+     gchar *uri;          /*!< URI to load */
      gchar *status;      /*!< Loading status */
 };
 

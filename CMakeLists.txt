@@ -18,19 +18,6 @@ ADD_CUSTOM_TARGET(uninstall
 
 # Dependencies
 
-####
-# CURL
-# CURL_FOUND	CURL_INCLUDE_DIRS	CURL_LIBRARIES
-find_package(CURL)
-if(CURL_FOUND)
-else(CURL_FOUND)
-    message(FATAL_ERROR "Could not find Curl")
-endif(CURL_FOUND)
-
-# Need test SSL : curl-config --feature | grep SSL`" == "SSL"
-# to define HAVE_CURL_SSL
-set(CURL_HAVE_SSL "#define HAVE_CURL_SSL 1")
-
 # For pkg_check
 # _LIBRARIES	_LIBRARY_DIRS	_LDFLAGS	_LDFLAGS_OTHER
 # _INCLUDE_DIRS	_CFLAGS	_CFLAGS_OTHER
@@ -52,14 +39,6 @@ else(WEBKIT_FOUND)
 endif(WEBKIT_FOUND)
 
 ####
-# GNet
-pkg_check_modules(GNET REQUIRED gnet-2.0)
-if(GNET_FOUND)
-else(GNET_FOUND)
-    message(FATAL_ERROR "Could not find gnet-2.0")
-endif(GNET_FOUND)
-
-####
 # Confuse
 pkg_check_modules(CONFUSE REQUIRED libconfuse)
 if(CONFUSE_FOUND)
@@ -78,10 +57,8 @@ endif(NOT USE_VTE MATCHES "no")
 
 # Includes
 set(CREAM_INCLUDES
-    ${CURL_INCLUDE_DIRS}
     ${GTK2_INCLUDE_DIRS}
     ${WEBKIT_INCLUDE_DIRS}
-    ${GNET_INCLUDE_DIRS}
     ${CONFUSE_INCLUDE_DIRS}
     ${VTE_INCLUDE_DIRS}
     )

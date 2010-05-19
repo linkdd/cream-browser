@@ -33,6 +33,59 @@
   @{
  */
 
+#include <gtk/gtk.h>
+#include <gtk/gtkwidget.h>
+#include <webkit/webkit.h>
+
+G_BEGIN_DECLS
+
+#define MODULE_ABOUT(obj)            \
+     GTK_CHECK_CAST (obj, module_about_get_type (), ModuleAbout)
+#define MODULE_ABOUT_CLASS(klass)    \
+     GTK_CHECK_CLASS_CAST (klass, module_about_get_type (), ModuleAboutClass)
+#define MODULE_IS_ABOUT(obj)         \
+     GTK_CHECK_TYPE (obj, module_about_get_type ())
+
+/*! \typedef struct _ModuleAbout ModuleAbout */
+/*! \typedef struct _ModuleAboutClass ModuleAboutClass */
+
+typedef struct _ModuleAbout ModuleAbout;
+typedef struct _ModuleAboutClass ModuleAboutClass;
+
+/*!
+  \struct _ModuleAbout
+  \implements WebKit
+ */
+struct _ModuleAbout
+{
+     WebKitWebView parent;    /*!< Parent instance */
+
+     gchar *uri;
+     gchar *title;
+     gchar *status;
+
+     WebKitWebInspector *inspector;
+     WebKitWebSettings *settings;
+};
+
+/*! \struct _ModuleAboutClass */
+struct _ModuleAboutClass
+{
+     WebKitWebViewClass parent_class; /*!< Parent class */
+
+     void (*uri_changed) (ModuleAbout *obj, gchar *url);
+     void (*new_title) (ModuleAbout *obj, gchar *title);
+     void (*status_changed) (ModuleAbout *obj, gchar *status);
+     gboolean (*new_download) (ModuleAbout *obj, WebKitDownload *download);
+     gboolean (*switch_module) (ModuleAbout *obj, gchar *new_uri);
+};
+
+GtkType module_about_get_type (void);
+GtkWidget *module_about_new (void);
+
+void module_about_load_uri (ModuleAbout *view, const gchar *uri);
+
 /*! @} */
 
 #endif /* __CLASS_ABOUT_MODULE_H */
+

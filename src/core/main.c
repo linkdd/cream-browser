@@ -143,12 +143,60 @@ gchar *find_xdg_file (int xdg_type, const char *filename)
 
 void init_socket (void)
 {
-     /* Init UNIX socket */
-     gnet_init ();
+     struct sockaddr_un sa_un;
+     int sock_fd;
+     int flags;
+     socklen_t n;
 
+     /* create path */
      global.unix_sock.path    = g_strdup_printf ("%s/%s_%d_socket", g_get_tmp_dir (), PACKAGE, getpid ());
-     global.unix_sock.sock    = gnet_unix_socket_server_new (global.unix_sock.path);
-     global.unix_sock.channel = gnet_unix_socket_get_io_channel (global.unix_sock.sock);
+
+     /* create socket */
+     strncpy (sa_un.sun_path, global.unix_sock.path, sizeof (sa_un.sun_path) - 1);
+     sa_un.sun_family = AF_UNIX;
+
+     if (!(sock_fd = socket (AF_UNIX, SOCK_STREAM, 0)))
+     {
+          g_warning ("socket(%s) failed: %s", global.unix_sock.path, g_strerror (errno));
+          return;
+     }
+
+     if (-1 == (flags = fcntl (sock_fd, F_GETFL, 0)))
+     {
+          g_warning ("fcntl(%s) failed: %s", global.unix_sock.path, g_strerror (errno));
+          close (sock_fd);
+          return;
+     }
+
+     /* Make the socket non-blocking */
+     if (-1 == fcntl (sock_fd, F_SETFL, flags | O_NONBLOCK))
+     {
+          g_warning ("fcntl(%s) failed: %s", global.unix_sock.path, g_strerror (errno));
+          close (sock_fd);
+          return;
+     }
+
+     if (0 != bind (sock_fd, (struct sockaddr *) &sa_un, sizeof (struct sockaddr *)))
+     {
+          close (sock_fd);
+          return;
+     }
+
+     n = sizeof (sa_un);
+     if (0 != getsockname (sock_fd, (struct sockaddr *) &sa_un, &n))
+     {
+          close (sock_fd);
+          return;
+     }
+
+     if (0 != listen (sock_fd, 10))
+     {
+          close (sock_fd);
+          return;
+     }
+
+     /* create channel */
+     global.unix_sock.channel = g_io_channel_unix_new (sock_fd);
      g_io_add_watch (global.unix_sock.channel, G_IO_IN | G_IO_HUP, (GIOFunc) control_socket, NULL);
 }
 
@@ -307,9 +355,6 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
      init_socket ();
 
-     /* init CURL before any thread started */
-     curl_global_init (CURL_GLOBAL_DEFAULT);
-
      /* restore cookies */
      if ((cookie = global.cfg.global.cookie) == NULL)
      {
@@ -365,7 +410,6 @@ void cream_release (int exit_code)
 
      gtk_main_quit ();
 
-     curl_global_cleanup ();
      exit (exit_code);
 }
 

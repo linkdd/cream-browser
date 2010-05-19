@@ -62,12 +62,11 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
+#include <fcntl.h>
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <webkit/webkit.h>
-#include <curl/curl.h>
-#include <gnet.h>
 
 #include <libconfig.h>
 

@@ -112,9 +112,6 @@ struct protocols_t cream_available_protocols[] =
      { "http://",   cream_view_http_callback },
      { "https://",  cream_view_http_callback },
      { "ftp://",    cream_view_ftp_callback },
-#ifdef HAVE_CURL_SSL
-     { "ftps://",   cream_view_ftp_callback }, /*! \todo Manage SSL certification */
-#endif
      { "gopher://", NULL },
 #ifdef HAVE_VTE
      { "vte://",    cream_view_vte_callback },
@@ -221,8 +218,8 @@ static void cream_view_mailto_callback (CreamView *view, gchar *uri)
 
 static void cream_view_about_callback (CreamView *obj, gchar *uri)
 {
-     obj->content = module_web_view_new ();
-     module_web_view_load_uri (MODULE_WEB_VIEW (obj->content), uri);
+     obj->content = module_about_new ();
+     module_about_load_uri (MODULE_ABOUT (obj->content), uri);
 }
 
 static void cream_view_http_callback (CreamView *obj, gchar *uri)
@@ -237,10 +234,10 @@ static void cream_view_http_callback (CreamView *obj, gchar *uri)
 }
 
 static void cream_view_ftp_callback (CreamView *obj, gchar *uri)
-{
+{/*
      obj->content = module_ftp_new ();
      module_ftp_load_uri (MODULE_FTP (obj->content), uri);
-}
+*/}
 
 #ifdef HAVE_VTE
 static void cream_view_vte_callback (CreamView *obj, gchar *uri)
@@ -258,20 +255,15 @@ static void cream_view_vte_callback (CreamView *obj, gchar *uri)
  */
 static void cream_view_load_content (CreamView *view)
 {
-     static gchar *old_prefix = NULL;
      gchar *uri = (view->uri[0] == '/' ? g_strconcat ("file://", view->uri, NULL) : view->uri);
      gboolean success = FALSE;
      int i;
-
-     if (old_prefix != NULL && g_str_has_prefix (uri, old_prefix))
-          return;
 
      for (i = 0; cream_available_protocols[i].prefix != NULL; ++i)
      {
           if (g_str_has_prefix (uri, cream_available_protocols[i].prefix)
                && cream_available_protocols[i].func != NULL)
           {
-               old_prefix = cream_available_protocols[i].prefix;
                cream_available_protocols[i].func (view, uri);
                success = TRUE;
                break;

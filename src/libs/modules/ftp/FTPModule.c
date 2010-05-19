@@ -78,8 +78,8 @@ struct _ModuleFtpPrivate
 {
      GList *files;                 /*!< List of all files on the FTP */
      GtkListStore *list_store;     /*!< Files list for the GtkTreeView object */
-     GURI *uri;                    /*!< GURI object, to have the hostname, user and password, etc... */
-     CurlClient *curl;             /*!< CURL object */
+     gchar *uri;                   /*!< URL of the FTP */
+     CreamFtp *client;             /*!< Client socket */
 };
 
 /* End of private data */
@@ -91,12 +91,6 @@ static gchar **cream_strsplit (gchar *str, gchar *delim);
 static void module_ftp_update_model (ModuleFtp *obj);
 
 static void module_ftp_row_activated_cb (ModuleFtp *obj, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data);
-static void module_ftp_load_finished_cb (CurlClient *curl, ModuleFtp *obj);
-static void module_ftp_load_error_cb (CurlClient *curl, gchar *uri, gpointer error, ModuleFtp *obj);
-static void module_ftp_progress_changed_cb (CurlClient *curl, gfloat progress, ModuleFtp *obj);
-static void module_ftp_uri_changed_cb (CurlClient *curl, gchar *uri, ModuleFtp *obj);
-static void module_ftp_status_changed_cb (CurlClient *curl, gchar *status, ModuleFtp *obj);
-static gboolean module_ftp_download_requested_cb (CurlClient *curl, gchar *uri, ModuleFtp *obj);
 
 GtkType module_ftp_get_type (void)
 {
@@ -196,10 +190,10 @@ GtkWidget *module_ftp_new (void)
      GtkTreeViewColumn *col;
      GtkCellRenderer *cell;
 
-     /* Init CURL */
+     /* Init CreamFtp */
      priv->files = NULL;
      priv->uri = NULL;
-     priv->curl = curl_client_new ();
+     priv->client = cream_ftp_new ();
 
      /* add files to the iconview */
      priv->list_store = gtk_list_store_new (4, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
@@ -222,15 +216,7 @@ GtkWidget *module_ftp_new (void)
      col = gtk_tree_view_column_new_with_attributes ("Type", cell, "text", 3, NULL);
      gtk_tree_view_append_column (GTK_TREE_VIEW (obj), col);
 
-     g_signal_connect (G_OBJECT (obj),        "row-activated", G_CALLBACK (module_ftp_row_activated_cb), NULL);
-     g_object_connect (G_OBJECT (priv->curl),
-          "signal::load-finished",         G_CALLBACK (module_ftp_load_finished_cb),      obj,
-          "signal::load-error",            G_CALLBACK (module_ftp_load_error_cb),         obj,
-          "signal::load-progress-changed", G_CALLBACK (module_ftp_progress_changed_cb),   obj,
-          "signal::uri-changed",           G_CALLBACK (module_ftp_uri_changed_cb),        obj,
-          "signal::status-changed",        G_CALLBACK (module_ftp_status_changed_cb),     obj,
-          "signal::download-requested",    G_CALLBACK (module_ftp_download_requested_cb), obj,
-     NULL);
+     g_signal_connect (G_OBJECT (obj), "row-activated", G_CALLBACK (module_ftp_row_activated_cb), NULL);
 
      return GTK_WIDGET (obj);
 }
@@ -241,13 +227,20 @@ GtkWidget *module_ftp_new (void)
 
   \param obj ModuleFtp object
   \param uri New URI to load
+
+  \todo Do the same with #CreamFtp
  */
 void module_ftp_load_uri (ModuleFtp *obj, gchar *uri)
 {
      ModuleFtpPrivate *priv = MODULE_FTP_GET_PRIVATE (obj);
+     gchar *hostname = uri;
+     int port = 21;
 
-     curl_client_load_uri (priv->curl, uri);
-     priv->uri = curl_client_get_guri (priv->curl);
+     if (priv->uri != NULL)
+          g_free (priv->uri);
+     priv->uri = g_strdup (uri);
+
+     cream_ftp_connect (priv->client, hostname, port);
 }
 
 static gchar **cream_strsplit (gchar *string, gchar *delim)
@@ -288,7 +281,7 @@ static void module_ftp_update_model (ModuleFtp *obj)
      file = gdk_pixbuf_new_from_file (find_xdg_file (XDG_TYPE_DATA, "cream-browser/icons/file.png"), NULL);
      folder = gdk_pixbuf_new_from_file (find_xdg_file (XDG_TYPE_DATA, "cream-browser/icons/folder.png"), NULL);
 
-     if (CURL_LOAD_PROVISIONAL != curl_client_get_load_status (priv->curl))
+     if (1 /*CURL_LOAD_PROVISIONAL != curl_client_get_load_status (priv->curl)*/)
      {
           gtk_list_store_clear (priv->list_store);
 
@@ -322,7 +315,6 @@ static void module_ftp_row_activated_cb (ModuleFtp *obj, GtkTreePath *path, GtkT
      GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (obj));
      gchar *filepath;
      gchar *type;
-     GURI *tmp = gnet_uri_new (obj->uri);
 
      gtk_tree_model_get_iter (model, &iter, path);
      gtk_tree_model_get (model, &iter, 1, &filepath, 3, &type, -1);
@@ -332,7 +324,7 @@ static void module_ftp_row_activated_cb (ModuleFtp *obj, GtkTreePath *path, GtkT
           gint l = strlen (obj->uri);
           gchar *p;
 
-          if (g_str_equal (tmp->path, "/"))
+          if (g_str_equal (strchr (&obj->uri[6], '/'), "/"))
                return;
 
           obj->uri[l - 1] = 0;
@@ -361,118 +353,6 @@ static void module_ftp_row_activated_cb (ModuleFtp *obj, GtkTreePath *path, GtkT
           if (!ret)
                printf ("Download requested: %s\n", g_strconcat (obj->uri, filepath, NULL));
      }
-}
-
-static void module_ftp_load_finished_cb (CurlClient *curl, ModuleFtp *obj)
-{
-     ModuleFtpPrivate *priv = MODULE_FTP_GET_PRIVATE (obj);
-     gchar *tmp = g_strdup (curl_client_get_content (curl));
-     gchar **lines = cream_strsplit (tmp, "\n");
-     gint i, l = g_strv_length (lines);
-
-     g_list_free (priv->files);
-     priv->files = NULL;
-     for (i = 0; i < l; ++i)
-     {
-          FtpFile *el = g_malloc (sizeof (FtpFile));
-          gchar **cols = cream_strsplit (lines[i], " ");
-
-          if (cols[0][0] == 'd')
-               el->is_dir = TRUE;
-
-          el->size = g_ascii_strtoll (cols[4], NULL, 10);
-          el->path = g_strdup (cols[8]);
-
-          priv->files = g_list_append (priv->files, el);
-     }
-
-     module_ftp_update_model (obj);
-     gtk_widget_show_all (GTK_WIDGET (obj));
-
-     priv->uri = curl_client_get_guri (curl);
-     g_free (obj->uri);
-     obj->uri = g_strdup (gnet_uri_get_string (priv->uri));
-
-     g_signal_emit (
-          G_OBJECT (obj),
-          module_ftp_signals[URI_CHANGED_SIGNAL],
-          0, obj->uri
-     );
-
-     obj->status = g_strdup (obj->uri);
-     g_signal_emit (
-          G_OBJECT (obj),
-          module_ftp_signals[STATUS_CHANGED_SIGNAL],
-          0, obj->status
-     );
-
-     obj->title = g_strdup_printf ("Index of %s", priv->uri->path);
-     g_signal_emit (
-          G_OBJECT (obj),
-          module_ftp_signals[NEW_TITLE_SIGNAL],
-          0, obj->title
-     );
-}
-
-static void module_ftp_load_error_cb (CurlClient *curl, gchar *uri, gpointer error, ModuleFtp *obj)
-{
-     printf ("Error '%s' : %s\n", uri, ((GError *) error)->message);
-}
-
-static void module_ftp_progress_changed_cb (CurlClient *curl, gfloat progress, ModuleFtp *obj)
-{
-     ModuleFtpPrivate *priv = MODULE_FTP_GET_PRIVATE (obj);
-
-     g_free (obj->status);
-     obj->status = g_strdup_printf ("Transfering data from %s ...", priv->uri->hostname);
-     g_signal_emit (
-          G_OBJECT (obj),
-          module_ftp_signals[STATUS_CHANGED_SIGNAL],
-          0, obj->status
-     );
-}
-
-static void module_ftp_uri_changed_cb (CurlClient *curl, gchar *uri, ModuleFtp *obj)
-{
-     ModuleFtpPrivate *priv = MODULE_FTP_GET_PRIVATE (obj);
-     priv->uri = curl_client_get_guri (curl);
-
-     g_free (obj->uri);
-     obj->uri = g_strdup (uri);
-
-     g_signal_emit (
-          G_OBJECT (obj),
-          module_ftp_signals[URI_CHANGED_SIGNAL],
-          0, obj->uri
-     );
-}
-
-static void module_ftp_status_changed_cb (CurlClient *curl, gchar *status, ModuleFtp *obj)
-{
-     g_free (obj->status);
-     obj->status = g_strdup (status);
-
-     g_signal_emit (
-          G_OBJECT (obj),
-          module_ftp_signals[STATUS_CHANGED_SIGNAL],
-          0, obj->status
-     );
-}
-
-static gboolean module_ftp_download_requested_cb (CurlClient *curl, gchar *uri, ModuleFtp *obj)
-{
-     WebKitNetworkRequest *tmp = webkit_network_request_new (uri);
-     WebKitDownload *dl = webkit_download_new (tmp);
-     gboolean ret = FALSE;
-
-     g_signal_emit (
-          G_OBJECT (obj),
-          module_ftp_signals[NEW_DOWNLOAD_SIGNAL],
-          0, dl,
-          &ret
-     );
-
-     return ret;
 }
 
 /*! @} */
