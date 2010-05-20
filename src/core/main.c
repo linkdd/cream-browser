@@ -176,7 +176,7 @@ void init_socket (void)
           return;
      }
 
-     if (0 != bind (sock_fd, (struct sockaddr *) &sa_un, sizeof (struct sockaddr *)))
+     if (0 != bind (sock_fd, (struct sockaddr *) &sa_un, SUN_LEN (&sa_un)))
      {
           close (sock_fd);
           return;
