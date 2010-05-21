@@ -75,6 +75,8 @@ GType ftp_client_get_type (void);
 
 FtpClient *ftp_client_new (void);
 gboolean ftp_client_connect (FtpClient *obj, const gchar *hostname, gint port);
+gboolean ftp_client_login (FtpClient *obj, const gchar *username, const gchar *password);
+gboolean ftp_client_set_mode (FtpClient *obj, gint mode);
 
 /* @} */
 

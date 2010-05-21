@@ -36,6 +36,7 @@
 #include "FtpClient.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -65,6 +66,33 @@ static void ftp_client_init (FtpClient *self)
 FtpClient *ftp_client_new (void)
 {
      return FTP_CLIENT (g_object_new (FTP_CLIENT_TYPE, NULL));
+}
+
+/*!
+  \fn static gboolean ftp_client_send_cmd (FtpClient *obj, const gchar *cmd)
+  \brief Send a command to the server
+
+  \param obj FTP client
+  \param cmd Command to send
+
+  \return TRUE on success, FALSE if fail
+ */
+static gboolean ftp_client_send_cmd (FtpClient *obj, const gchar *cmd)
+{
+     gsize written = 0;
+     gssize len = strlen (cmd);
+     GIOStatus status;
+
+     g_return_val_if_fail (obj != NULL, FALSE);
+
+     status = g_io_channel_write_chars (obj->iochannel, cmd, len, &written, NULL);
+     if (status != G_IO_STATUS_NORMAL || len != written)
+     {
+          g_warning ("FTP: Error while sending command '%s'", cmd);
+          return FALSE;
+     }
+
+     return TRUE;
 }
 
 /*!
@@ -122,7 +150,6 @@ static gboolean ftp_client_control_client (GIOChannel *channel)
   \param port Port of the connection (default 21)
   \return TRUE on success, FALSE if failed
 
-  \todo Send requests to the server (login, etc...)
   \todo Send errors to the browser
  */
 gboolean ftp_client_connect (FtpClient *obj, const gchar *hostname, gint port)
@@ -136,6 +163,7 @@ gboolean ftp_client_connect (FtpClient *obj, const gchar *hostname, gint port)
      obj->hostname = g_strdup (hostname);
      obj->port     = port;
 
+     /* Create Socket */
      if (-1 == (obj->sock = socket (AF_INET, SOCK_STREAM, 0)))
      {
           perror ("socket()");
@@ -178,9 +206,74 @@ gboolean ftp_client_connect (FtpClient *obj, const gchar *hostname, gint port)
 
      /* create IOChannel */
      obj->iochannel = g_io_channel_unix_new (obj->sock);
-
      g_io_add_watch (obj->iochannel, G_IO_IN | G_IO_HUP, (GIOFunc) ftp_client_control_client, NULL);
-     /* send requests */
+
+     return TRUE;
+}
+
+/*!
+  \fn gboolean ftp_client_login (FtpClient *obj, const gchar *username, const gchar *password)
+  \brief Send login informations to the FTP server
+
+  \param obj The FTP client
+  \param username Account's username, maybe "anonymous" ?
+  \param password Account's password, NULL if no password is needed (for anonymous account)
+
+  \return TRUE on success, FALSE if fail
+
+  \todo Check response
+ */
+gboolean ftp_client_login (FtpClient *obj, const gchar *username, const gchar *password)
+{
+     gchar *buf;
+
+     g_return_val_if_fail (obj != NULL, FALSE);
+     g_return_val_if_fail (username != NULL, FALSE);
+
+     buf = g_strdup_printf ("USER %s\r\n", username);
+     if (!ftp_client_send_cmd (obj, buf))
+     {
+          g_warning ("FTP: Error: Can't send username.");
+          return FALSE;
+     }
+     g_free (buf);
+
+     if (password != NULL)
+     {
+          buf = g_strdup_printf ("PASS %s\r\n", password);
+          if (!ftp_client_send_cmd (obj, buf))
+          {
+               g_warning ("FTP: Error: Can't send password.");
+               return FALSE;
+          }
+          g_free (buf);
+     }
+
+     return TRUE;
+}
+
+/*!
+  \fn gboolean ftp_client_set_mode (FtpClient *obj, gint mode)
+  \brief Set transfer mode for FTP server
+
+  \param obj FTP client
+  \param mode Transfer mode
+
+  \return TRUE on success, FALSE if fail
+ */
+gboolean ftp_client_set_mode (FtpClient *obj, gint mode)
+{
+     gchar *buf;
+
+     g_return_val_if_fail (obj != NULL, FALSE);
+
+     buf = g_strdup_printf ("TYPE %c\r\n", mode);
+     if (!ftp_client_send_cmd (obj, buf))
+     {
+          g_warning ("FTP: Error: Can't set mode");
+          return FALSE;
+     }
+     g_free (buf);
 
      return TRUE;
 }
