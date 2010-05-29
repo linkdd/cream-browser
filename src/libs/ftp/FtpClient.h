@@ -48,6 +48,15 @@
 typedef struct _FtpClient FtpClient;
 typedef struct _FtpClientClass FtpClientClass;
 
+/*! \enum FTPLoadStatus */
+typedef enum
+{
+     FTP_LOAD_STATUS_PROVISIONNAL,
+     FTP_LOAD_STATUS_WAITING_RESPONSE,  /*!< The client is waiting a response to continue */
+     FTP_LOAD_STATUS_WAITING_COMMAND,   /*!< The server is waiting a command to continue */
+     FTP_LOAD_STATUS_COMMAND_REFUSED    /*!< The command was refused, the server is waiting for another command */
+} FTPLoadStatus;
+
 /*!
   \struct _FtpClient
   \todo Implements FTP protocol
@@ -60,6 +69,7 @@ struct _FtpClient
      GIOChannel *iochannel;   /*!< IOChannel associated to the socket */
      gchar *hostname;         /*!< Hostname */
      gint port;               /*!< Port */
+     FTPLoadStatus status;    /*!< Connection status */
 };
 
 /*!
@@ -69,6 +79,8 @@ struct _FtpClient
 struct _FtpClientClass
 {
      GObjectClass parent;
+
+     void (*load_status_changed) (FtpClient *obj, const gchar *response);
 };
 
 GType ftp_client_get_type (void);

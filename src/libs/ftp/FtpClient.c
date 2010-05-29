@@ -42,11 +42,33 @@
 #include <fcntl.h>
 #include <netdb.h>
 
+enum
+{
+     LOAD_STATUS_CHANGED_SIGNAL,
+     NB_SIGNALS
+};
+
+/*!
+  \var static guint ftp_client_signals[NB_SIGNALS]
+  \brief Signals definition
+ */
+static guint ftp_client_signals[NB_SIGNALS] = { 0 };
+
 G_DEFINE_TYPE (FtpClient, ftp_client, G_TYPE_OBJECT)
 
 static void ftp_client_class_init (FtpClientClass *klass)
 {
      g_return_if_fail (klass != NULL);
+
+     ftp_client_signals[LOAD_STATUS_CHANGED_SIGNAL] = g_signal_new (
+          "load-status-changed",
+          G_TYPE_FROM_CLASS (klass),
+          G_SIGNAL_RUN_LAST,
+          G_STRUCT_OFFSET (FtpClientClass, load_status_changed),
+          NULL, NULL,
+          g_cclosure_marshal_VOID__STRING,
+          G_TYPE_NONE,
+          1, G_TYPE_STRING);
 }
 
 static void ftp_client_init (FtpClient *self)
@@ -56,6 +78,7 @@ static void ftp_client_init (FtpClient *self)
      self->iochannel = NULL;
      self->hostname  = NULL;
      self->port      = 0;
+     self->status    = FTP_LOAD_STATUS_PROVISIONNAL;
 }
 
 /*!
@@ -91,6 +114,7 @@ static gboolean ftp_client_send_cmd (FtpClient *obj, const gchar *cmd)
           g_warning ("FTP: Error while sending command '%s'", cmd);
           return FALSE;
      }
+     obj->status = FTP_LOAD_STATUS_WAITING_RESPONSE;
 
      return TRUE;
 }
@@ -103,11 +127,12 @@ static gboolean ftp_client_send_cmd (FtpClient *obj, const gchar *cmd)
   #ftp_client_connect().
 
   \param channel IOChannel associated to the socket
+  \param obj FtpClient object which use the IOChannel
   \return TRUE on success, FALSE if failed
 
   \todo Parse commands and send response
  */
-static gboolean ftp_client_control_client (GIOChannel *channel)
+static gboolean ftp_client_control_client (GIOChannel *channel, GIOCondition cond, FtpClient *obj)
 {
      GError *error = NULL;
      GIOStatus ret;
@@ -132,10 +157,21 @@ static gboolean ftp_client_control_client (GIOChannel *channel)
 
      if (line)
      {
-          /* parse command
-           * send response
-           */
+          switch (line[0])
+          {
+               case '1': obj->status = FTP_LOAD_STATUS_WAITING_RESPONSE; break;
+               case '2': obj->status = FTP_LOAD_STATUS_WAITING_COMMAND;  break;
+               case '3':
+               case '4':
+               case '5': obj->status = FTP_LOAD_STATUS_COMMAND_REFUSED;  break;
+          }
      }
+
+     g_signal_emit (
+          G_OBJECT (obj),
+          ftp_client_signals[LOAD_STATUS_CHANGED_SIGNAL],
+          0, line
+     );
 
      g_free (line);
      return TRUE;
@@ -156,7 +192,6 @@ gboolean ftp_client_connect (FtpClient *obj, const gchar *hostname, gint port)
 {
      struct hostent *hostinfo = NULL;
      struct sockaddr_in sin = { 0 };
-     int flags;
 
      g_return_val_if_fail (obj != NULL, FALSE);
 
@@ -167,21 +202,6 @@ gboolean ftp_client_connect (FtpClient *obj, const gchar *hostname, gint port)
      if (-1 == (obj->sock = socket (AF_INET, SOCK_STREAM, 0)))
      {
           perror ("socket()");
-          return FALSE;
-     }
-
-     if (-1 == (flags = fcntl (obj->sock, F_GETFL, 0)))
-     {
-          perror ("fcntl()");
-          close (obj->sock);
-          return FALSE;
-     }
-
-     /* Make the socket non-blocking */
-     if (-1 == fcntl (obj->sock, F_SETFL, flags | O_NONBLOCK))
-     {
-          perror ("fcntl()");
-          close (obj->sock);
           return FALSE;
      }
 
@@ -206,7 +226,7 @@ gboolean ftp_client_connect (FtpClient *obj, const gchar *hostname, gint port)
 
      /* create IOChannel */
      obj->iochannel = g_io_channel_unix_new (obj->sock);
-     g_io_add_watch (obj->iochannel, G_IO_IN | G_IO_HUP, (GIOFunc) ftp_client_control_client, NULL);
+     g_io_add_watch (obj->iochannel, G_IO_IN | G_IO_HUP, (GIOFunc) ftp_client_control_client, obj);
 
      return TRUE;
 }
