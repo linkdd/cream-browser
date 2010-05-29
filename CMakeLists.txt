@@ -46,6 +46,12 @@ else(CONFUSE_FOUND)
     message(FATAL_ERROR, "Could not find libconfuse")
 endif(CONFUSE_FOUND)
 
+pkg_check_modules(GTHREAD REQUIRED gthread-2.0)
+if(GTHREAD_FOUND)
+else(GTHREAD_FOUND)
+    message(FATAL_ERROR, "Could not find ghtread")
+endif(GTHREAD_FOUND)
+
 ####
 # VTE
 if(NOT USE_VTE MATCHES "no")
@@ -60,6 +66,7 @@ set(CREAM_INCLUDES
     ${GTK2_INCLUDE_DIRS}
     ${WEBKIT_INCLUDE_DIRS}
     ${CONFUSE_INCLUDE_DIRS}
+    ${GTHREAD_INCLUDE_DIRS}
     ${VTE_INCLUDE_DIRS}
     )
 
@@ -85,6 +92,8 @@ if(NOT DEFINED PREFIX)
         set(PREFIX "/usr/pkg")
     elseif(CMAKE_SYSTEM_NAME MATCHES Linux)
         set(PREFIX "/usr")
+    elseif(CMAKE_SYSTEM_NAME MATCHES Darwin)
+	set(PREFIX "/opt/local")
     else()
         message(FATAL_ERROR "Please add your OS in the CMakeLists.txt for PREFIX then send it to authors")
     endif(CMAKE_SYSTEM_NAME MATCHES FreeBSD)
