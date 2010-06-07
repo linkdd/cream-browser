@@ -93,7 +93,7 @@ if(NOT DEFINED PREFIX)
     elseif(CMAKE_SYSTEM_NAME MATCHES Linux)
         set(PREFIX "/usr")
     elseif(CMAKE_SYSTEM_NAME MATCHES Darwin)
-	set(PREFIX "/opt/local")
+        set(PREFIX "/opt/local")
     else()
         message(FATAL_ERROR "Please add your OS in the CMakeLists.txt for PREFIX then send it to authors")
     endif(CMAKE_SYSTEM_NAME MATCHES FreeBSD)
@@ -119,9 +119,9 @@ macro(a_configure_file file)
     string(REGEX REPLACE ".in\$" "" outfile ${file})
     message(STATUS "Configuring ${outfile}")
     configure_file(${SOURCE_DIR}/${file}
-		   ${BUILD_DIR}/${outfile}
-		   ESCAPE_QUOTE
-		   @ONLY)
+              ${BUILD_DIR}/${outfile}
+              ESCAPE_QUOTE
+              @ONLY)
 endmacro()
 
 foreach(file ${dot_in_files})

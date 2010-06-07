@@ -50,7 +50,7 @@ target_link_libraries(creamctl
     )
 
 # We can't have two target with same name :)
-set_target_properties(cream_bin PROPERTIES OUTPUT_NAME cream)
+set_target_properties(cream_bin PROPERTIES OUTPUT_NAME cream-browser)
 
 install(TARGETS cream_bin RUNTIME DESTINATION bin)
 install(TARGETS creamctl RUNTIME DESTINATION bin)
