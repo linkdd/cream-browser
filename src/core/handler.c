@@ -108,9 +108,15 @@ gboolean handle_open (int argc, char **argv, GString **ret, CreamTabbed *obj)
           return FALSE;
      }
 
-     if (g_str_equal (argv[1], "%s"))
+     if (g_str_has_suffix (argv[1], "%s"))
      {
-          echo (obj, ":open ");
+          if (g_str_equal (argv[1], "%s"))
+               echo (obj, ":open ");
+          else
+          {
+               argv[1][strlen (argv[1]) - 2] = 0;
+               echo (obj, ":open %s", argv[1]);
+          }
           gtk_widget_grab_focus (obj->inputbox);
           gtk_entry_set_position (GTK_ENTRY (obj->inputbox), -1);
           global.browser.mode = CmdMode;
@@ -147,9 +153,15 @@ gboolean handle_tabopen (int argc, char **argv, GString **ret, CreamTabbed *obj)
           return FALSE;
      }
 
-     if (g_str_equal (argv[1], "%s"))
+     if (g_str_has_suffix (argv[1], "%s"))
      {
-          echo (obj, ":tabopen ");
+          if (g_str_equal (argv[1], "%s"))
+               echo (obj, ":tabopen ");
+          else
+          {
+               argv[1][strlen (argv[1]) - 2] = 0;
+               echo (obj, ":tabopen %s", argv[1]);
+          }
           gtk_widget_grab_focus (obj->inputbox);
           gtk_entry_set_position (GTK_ENTRY (obj->inputbox), -1);
           global.browser.mode = CmdMode;
