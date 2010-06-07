@@ -85,11 +85,30 @@ struct cream_config_t
 
      struct
      {
-          char *shell;                       /*!< VTE Terminal shell */
-          gboolean reverse;                  /*!< Reverse color */
-          gboolean doublebuffer;             /*!< Use doublebuffer */
-          gboolean hints;
-     } vte;
+          struct
+          {
+               char *font;                   /*!< Font of the inputbox */
+          } inputbox;                        /*!< Inputbox options */
+
+          struct
+          {
+               char *font;                   /*!< Font of the statusbar */
+               struct
+               {
+                    char *normal;            /*!< Color of normal website (for example: http://) */
+                    char *ssl;               /*!< Color of SSL website (for example: https://) */
+               } bg, fg;
+          } statusbar;                       /*!< Statusbar options */
+
+          struct
+          {
+               char *font;                   /*!< VTE Terminal font */
+               char *shell;                  /*!< VTE Terminal shell */
+               gboolean reverse;             /*!< Reverse color */
+               gboolean doublebuffer;        /*!< Use doublebuffer */
+               gboolean hints;
+          } vte;                             /*!< VTE Terminal options */
+     } gui;                                  /*!< GUI options */
 };
 
 gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **error);

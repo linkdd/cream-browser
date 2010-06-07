@@ -148,10 +148,10 @@ static void cream_tabbed_init_statusbar (CreamTabbed *obj)
      obj->statusbar.state    = gtk_label_new (NULL);
 
      /* change statusbar color */
-     gdk_color_parse ("#000000", &bg);
+     gdk_color_parse (global.cfg.gui.statusbar.bg.normal, &bg);
      gtk_widget_modify_bg (obj->statusbar.eventbox, GTK_STATE_NORMAL, &bg);
 
-     gdk_color_parse ("#FFFFFF", &fg);
+     gdk_color_parse (global.cfg.gui.statusbar.fg.normal, &fg);
      gtk_widget_modify_fg (obj->statusbar.url, GTK_STATE_NORMAL, &fg);
      gtk_widget_modify_fg (obj->statusbar.state, GTK_STATE_NORMAL, &fg);
 
@@ -175,7 +175,7 @@ static void cream_tabbed_init_inputbox (CreamTabbed *obj)
 
      /* Change inputbox style */
      /* font */
-     font = pango_font_description_from_string ("monospace normal 8");
+     font = pango_font_description_from_string (global.cfg.gui.inputbox.font);
      gtk_widget_modify_font (obj->inputbox, font);
      pango_font_description_free (font);
 
@@ -287,20 +287,24 @@ static void cream_tabbed_uri_changed_cb (CreamView *view, gchar *uri, CreamTabbe
      if (back || fwd)
      {
           gtk_label_set_markup (GTK_LABEL (obj->statusbar.url), g_markup_printf_escaped (
-               "<span font=\"monospace bold 8\">%s</span> [%s%s]", uri, (back ? "+" : ""), (fwd ? "-" : ""))
+               "<span font=\"%s\">%s</span> [%s%s]",
+                    global.cfg.gui.statusbar.font,
+                    uri, (back ? "+" : ""), (fwd ? "-" : ""))
           );
      }
      else
      {
           gtk_label_set_markup (GTK_LABEL (obj->statusbar.url), g_markup_printf_escaped (
-               "<span font=\"monospace bold 8\">%s</span>", uri)
+               "<span font=\"%s\">%s</span>",
+                    global.cfg.gui.statusbar.font,
+                    uri)
           );
      }
 
-     gdk_color_parse ((ssl ? "#B0FF00" : "#000000"), &color);
+     gdk_color_parse ((ssl ? global.cfg.gui.statusbar.bg.ssl : global.cfg.gui.statusbar.bg.normal), &color);
      gtk_widget_modify_bg (obj->statusbar.eventbox, GTK_STATE_NORMAL, &color);
 
-     gdk_color_parse ((ssl ? "#000000" : "#FFFFFF"), &color);
+     gdk_color_parse ((ssl ? global.cfg.gui.statusbar.fg.ssl : global.cfg.gui.statusbar.fg.normal), &color);
      gtk_widget_modify_fg (obj->statusbar.url, GTK_STATE_NORMAL, &color);
      gtk_widget_modify_fg (obj->statusbar.state, GTK_STATE_NORMAL, &color);
 
@@ -323,7 +327,7 @@ static void cream_tabbed_new_title_cb (CreamView *view, gchar *title, CreamTabbe
 static void cream_tabbed_status_changed_cb (CreamView *view, gchar *status, CreamTabbed *obj)
 {
      gtk_label_set_markup (GTK_LABEL (obj->statusbar.url), g_markup_printf_escaped (
-          "<span font=\"monospace bold 8\">%s</span>", status)
+          "<span font=\"%s\">%s</span>", global.cfg.gui.statusbar.font, status)
      );
 }
 
@@ -349,7 +353,12 @@ static void cream_tabbed_scroll_cb (GtkAdjustment *vadjust, CreamTabbed *obj)
      else
           str = g_strdup_printf ("%d%%", val);
 
-     gtk_label_set_markup (GTK_LABEL (obj->statusbar.state), g_markup_printf_escaped ("<span font=\"monospace bold 8\">%s</span>", str));
+     gtk_label_set_markup (GTK_LABEL (obj->statusbar.state),
+          g_markup_printf_escaped ("<span font=\"%s\">%s</span>",
+               global.cfg.gui.statusbar.font,
+               str
+          )
+     );
 }
 
 /*! @} */

@@ -136,16 +136,53 @@ static cfg_opt_t config_keys_opts[] =
 };
 
 /*!
-  \var static cfg_opt_t config_vte_opts[]
-  \brief Options for the section '/vte'
+  \var static cfg_opt_t config_gui_inputbox_opts[]
+  \brief Options for the section '/gui/inputbox'
  */
-static cfg_opt_t config_vte_opts[] =
+static cfg_opt_t config_gui_inputbox_opts[] =
 {
-    CFG_STR  ("shell",        NULL,      CFGF_NONE),
-    CFG_BOOL ("reverse",      cfg_false, CFGF_NONE),
-    CFG_BOOL ("doublebuffer", cfg_true,  CFGF_NONE),
-    CFG_BOOL ("hints",        cfg_true,  CFGF_NONE),
+     CFG_STR ("font", "monospace sans 8", CFGF_NONE),
+     CFG_END ()
+};
+
+/*!
+  \var static cfg_opt_t config_gui_statusbar_opts[]
+  \brief Options for the section '/gui/statusbar'
+ */
+static cfg_opt_t config_gui_statusbar_opts[] =
+{
+     CFG_STR ("font",      "monospace bold 8", CFGF_NONE),
+     CFG_STR ("bg_normal", "#000000",          CFGF_NONE),
+     CFG_STR ("fg_normal", "#FFFFFF",          CFGF_NONE),
+     CFG_STR ("bg_ssl",    "#B0FF00",          CFGF_NONE),
+     CFG_STR ("fg_ssl",    "#000000",          CFGF_NONE),
+     CFG_END ()
+};
+
+/*!
+  \var static cfg_opt_t config_gui_vte_opts[]
+  \brief Options for the section '/gui/vte'
+ */
+static cfg_opt_t config_gui_vte_opts[] =
+{
+    CFG_STR  ("font",         "monospace normal 8", CFGF_NONE),
+    CFG_STR  ("shell",        NULL,                 CFGF_NONE),
+    CFG_BOOL ("reverse",      cfg_false,            CFGF_NONE),
+    CFG_BOOL ("doublebuffer", cfg_true,             CFGF_NONE),
+    CFG_BOOL ("hints",        cfg_true,             CFGF_NONE),
     CFG_END ()
+};
+
+/*!
+  \var static cfg_opt_t config_gui_opts[]
+  \brief Options for the section '/gui'
+ */
+static cfg_opt_t config_gui_opts[] =
+{
+     CFG_SEC ("inputbox",  config_gui_inputbox_opts,  CFGF_NONE),
+     CFG_SEC ("statusbar", config_gui_statusbar_opts, CFGF_NONE),
+     CFG_SEC ("vte",       config_gui_vte_opts,       CFGF_NONE),
+     CFG_END ()
 };
 
 /*!
@@ -157,7 +194,7 @@ static cfg_opt_t config_root_opts[] =
      CFG_SEC ("global",   config_global_opts,   CFGF_NONE),
      CFG_SEC ("handlers", config_handlers_opts, CFGF_NONE),
      CFG_SEC ("keys",     config_keys_opts,     CFGF_NONE),
-     CFG_SEC ("vte",      config_vte_opts,      CFGF_NONE),
+     CFG_SEC ("gui",      config_gui_opts,      CFGF_NONE),
      CFG_END ()
 };
 
@@ -181,6 +218,9 @@ gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **er
           cfg_t *user_agent;
           cfg_t *handlers;
           cfg_t *keys;
+          cfg_t *gui;
+          cfg_t *inputbox;
+          cfg_t *statusbar;
           cfg_t *vte;
      } cream_cfg;
 
@@ -210,7 +250,10 @@ gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **er
      cream_cfg.user_agent = cfg_getsec (cream_cfg.global, "user-agent");
      cream_cfg.handlers   = cfg_getsec (cream_cfg.root,   "handlers");
      cream_cfg.keys       = cfg_getsec (cream_cfg.root,   "keys");
-     cream_cfg.vte        = cfg_getsec (cream_cfg.root,   "vte");
+     cream_cfg.gui        = cfg_getsec (cream_cfg.root,   "gui");
+     cream_cfg.inputbox   = cfg_getsec (cream_cfg.gui,    "inputbox");
+     cream_cfg.statusbar  = cfg_getsec (cream_cfg.gui,    "statusbar");
+     cream_cfg.vte        = cfg_getsec (cream_cfg.gui,    "vte");
 
      /* parse /global/ */
      cfg->global.homepage   = g_strdup (cfg_getstr (cream_cfg.global, "homepage"));
@@ -257,11 +300,22 @@ gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **er
           cfg->keys = tmp;
      }
 
-     /* parse /vte/ */
-     cfg->vte.shell        = g_strdup (cfg_getstr (cream_cfg.vte, "shell"));
-     cfg->vte.reverse      = cfg_getbool (cream_cfg.vte, "reverse");
-     cfg->vte.doublebuffer = cfg_getbool (cream_cfg.vte, "doublebuffer");
-     cfg->vte.hints        = cfg_getbool (cream_cfg.vte, "hints");
+     /* parse /gui/inputbox */
+     cfg->gui.inputbox.font = g_strdup (cfg_getstr (cream_cfg.inputbox, "font"));
+
+     /* parse /gui/statusbar */
+     cfg->gui.statusbar.font      = g_strdup (cfg_getstr (cream_cfg.statusbar, "font"));
+     cfg->gui.statusbar.bg.normal = g_strdup (cfg_getstr (cream_cfg.statusbar, "bg_normal"));
+     cfg->gui.statusbar.fg.normal = g_strdup (cfg_getstr (cream_cfg.statusbar, "fg_normal"));
+     cfg->gui.statusbar.bg.ssl    = g_strdup (cfg_getstr (cream_cfg.statusbar, "bg_ssl"));
+     cfg->gui.statusbar.fg.ssl    = g_strdup (cfg_getstr (cream_cfg.statusbar, "fg_ssl"));
+
+     /* parse /gui/vte/ */
+     cfg->gui.vte.font         = g_strdup (cfg_getstr (cream_cfg.vte, "font"));
+     cfg->gui.vte.shell        = g_strdup (cfg_getstr (cream_cfg.vte, "shell"));
+     cfg->gui.vte.reverse      = cfg_getbool (cream_cfg.vte, "reverse");
+     cfg->gui.vte.doublebuffer = cfg_getbool (cream_cfg.vte, "doublebuffer");
+     cfg->gui.vte.hints        = cfg_getbool (cream_cfg.vte, "hints");
 
      cfg_free (cream_cfg.root);
 
@@ -324,7 +378,14 @@ void cream_config_free (struct cream_config_t *cfg)
           tmp_key = next;
      }
 
-     free (cfg->vte.shell);
+     free (cfg->gui.inputbox.font);
+     free (cfg->gui.statusbar.font);
+     free (cfg->gui.statusbar.bg.normal);
+     free (cfg->gui.statusbar.fg.normal);
+     free (cfg->gui.statusbar.bg.ssl);
+     free (cfg->gui.statusbar.fg.ssl);
+     free (cfg->gui.vte.font);
+     free (cfg->gui.vte.shell);
 }
 
 /*! @} */

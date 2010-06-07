@@ -164,14 +164,14 @@ GtkWidget *module_vte_new (void)
      gchar *font = NULL;
      gchar *termcap = NULL;
 
-     if (global.cfg.vte.reverse == FALSE)
+     if (global.cfg.gui.vte.reverse == FALSE)
      {
-	     back.red = back.green = back.blue = 0xFFFF;
-	     fore.red = fore.green = fore.blue = 0x0000;
+          back.red = back.green = back.blue = 0xFFFF;
+          fore.red = fore.green = fore.blue = 0x0000;
      }
      else
      {
-	     back.red = back.green = back.blue = 0x0000;
+          back.red = back.green = back.blue = 0x0000;
           fore.red = fore.green = fore.blue = 0xFFFF;
      }
 
@@ -181,10 +181,10 @@ GtkWidget *module_vte_new (void)
      tint.red = tint.green = tint.blue = 0;
      tint = back;
 
-     if (global.cfg.vte.doublebuffer == FALSE)
+     if (global.cfg.gui.vte.doublebuffer == FALSE)
           gtk_widget_set_double_buffered (GTK_WIDGET (obj), FALSE);
 
-     if (global.cfg.vte.hints == TRUE)
+     if (global.cfg.gui.vte.hints == TRUE)
      {
           ;
      }
@@ -207,7 +207,7 @@ GtkWidget *module_vte_new (void)
           vte_terminal_set_emulation (VTE_TERMINAL (obj), termcap);
 
      if (font == NULL)
-          vte_terminal_set_font_from_string (VTE_TERMINAL (obj), "monospace normal 8");
+          vte_terminal_set_font_from_string (VTE_TERMINAL (obj), global.cfg.gui.vte.font);
      else
           vte_terminal_set_font_from_string (VTE_TERMINAL (obj), font);
 
@@ -249,7 +249,7 @@ void module_vte_load_shell_with_uri (ModuleVte *obj, gchar *uri)
  */
 gchar *get_user_shell (void)
 {
-     gchar *shell = global.cfg.vte.shell;
+     gchar *shell = global.cfg.gui.vte.shell;
 
      if (shell == NULL)
           shell = getenv ("SHELL");

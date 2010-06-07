@@ -40,11 +40,25 @@ keys
      bind "zZ" { cmd = "quit" }
 }
 
-vte
+gui
 {
-     shell = "/bin/sh"
-     reverse = FALSE
-     doublebuffer = TRUE
-     hints = TRUE
+     inputbox { font = "monospace normal 8" }
+
+     statusbar
+     {
+          font = "monospace bold 8"
+
+          bg_normal = "#000000" fg_normal = "#FFFFFF"
+          bg_ssl    = "#B0FF00" fg_ssl    = "#000000"
+     }
+
+     vte
+     {
+          font         = "monospace normal 8"
+          shell        = "/bin/sh"
+          reverse      = FALSE
+          doublebuffer = TRUE
+          hints        = TRUE
+     }
 }
 
