@@ -46,14 +46,14 @@ gboolean bind_parse_buffer (CreamTabbed *obj)
      return FALSE;
 }
 
-gboolean bind_getkey (GtkNotebook *notebook, GdkEventKey *event, CreamTabbed *obj)
+gboolean bind_getkey (GtkNotebook *notebook, GdkEventKey *event)
 {
+     CreamTabbed *obj;
      gboolean ret = TRUE;
 
      global.browser.mode = BindMode;
 
-     if (obj == NULL)
-          obj = get_current_creamtabbed ();
+     obj = get_current_creamtabbed ();
 
      if (bind_buffer == NULL)
           bind_buffer = g_string_new ("");

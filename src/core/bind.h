@@ -31,6 +31,6 @@
 extern GString *bind_buffer;
 
 gboolean bind_parse_buffer (CreamTabbed *obj);
-gboolean bind_getkey (GtkNotebook *notebook, GdkEventKey *event, CreamTabbed *obj);
+gboolean bind_getkey (GtkNotebook *notebook, GdkEventKey *event);
 
 #endif /* __BIND_H */
