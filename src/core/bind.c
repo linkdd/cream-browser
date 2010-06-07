@@ -46,7 +46,7 @@ gboolean bind_parse_buffer (CreamTabbed *obj)
      return FALSE;
 }
 
-gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj)
+gboolean bind_getkey (GtkNotebook *notebook, GdkEventKey *event, CreamTabbed *obj)
 {
      gboolean ret = TRUE;
 
@@ -62,7 +62,7 @@ gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj
      {
           case GDK_Escape:
           {
-               GtkWidget *content = cream_view_get_content (creamview);
+               GtkWidget *content = cream_view_get_content (CREAM_VIEW (obj->creamview));
 
                if (MODULE_IS_WEB_VIEW (content))
                {
@@ -79,7 +79,7 @@ gboolean bind_getkey (CreamView *creamview, GdkEventKey *event, CreamTabbed *obj
 
           case GDK_Insert:
           {
-               GtkWidget *content = cream_view_get_content (creamview);
+               GtkWidget *content = cream_view_get_content (CREAM_VIEW (obj->creamview));
 
                if (MODULE_IS_WEB_VIEW (content))
                {

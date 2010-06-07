@@ -132,7 +132,7 @@ GtkStatusIcon *cream_icon_init (GtkWidget *window)
      gtk_menu_shell_append (GTK_MENU_SHELL(menu), menuItemQuit);
 
      gtk_status_icon_set_tooltip(GTK_STATUS_ICON(CreamIcon),
-	     g_strdup_printf("Cream-Browser <%d>", getpid() ));
+          g_strdup_printf("Cream-Browser <%d>", getpid() ));
      gtk_status_icon_set_visible(GTK_STATUS_ICON(CreamIcon), TRUE);
 
      /* connect signals */
