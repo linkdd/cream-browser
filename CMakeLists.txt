@@ -1,5 +1,5 @@
 project(cream-browser)
-set(VERSION 201005)
+set(VERSION 201006)
 set(PROJECT_NAME "cream-browser")
 
 cmake_minimum_required(VERSION 2.6)
