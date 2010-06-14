@@ -394,69 +394,50 @@ static void module_about_cb_hoverlink (ModuleAbout *webview, gchar *title, gchar
  */
 void module_about_load_uri (ModuleAbout *view, const gchar *uri)
 {
-     gchar **cmd = g_strsplit (&uri[6], "/", -1);
-     gint cmdc = g_strv_length (cmd);
+     const gchar *cmd = &uri[6];
 
-     if (cmdc == 1) /* about:<command> */
+     if (g_str_equal (cmd, "blank"))              /* about:blank */
      {
-          if (g_str_equal (cmd[0], "blank"))           /* about:blank */
-          {
-               webkit_web_view_load_uri (WEBKIT_WEB_VIEW (view), "about:blank");
-          }
-          else if (g_str_equal (cmd[0], "config"))     /* about:config */
-          {
-               webkit_web_view_load_string (WEBKIT_WEB_VIEW (view),
-                         "<h1>Config: Not yet implemented</h1>",
-                         "text/html",
-                         global.cfg.global.encoding,
-                         "about:config");
-          }
-          else
-          {
-               webkit_web_view_load_string (WEBKIT_WEB_VIEW (view),
-                         "<h1>Error: Unknow command</h1>",
-                         "text/html",
-                         global.cfg.global.encoding,
-                         "about:error");
-          }
+          webkit_web_view_load_uri (WEBKIT_WEB_VIEW (view), "about:blank");
      }
-     else if (cmdc >= 2) /* about:<command>/<actions...> */
+     else if (g_str_equal (cmd, "config"))        /* about:config */
      {
-          if (g_str_equal (cmd[0], "bookmarks"))       /* about:bookmarks/... */
+          webkit_web_view_load_string (WEBKIT_WEB_VIEW (view),
+                    "<h1>Config: Not yet implemented</h1>",
+                    "text/html",
+                    global.cfg.global.encoding,
+                    "about:config");
+     }
+     else if (g_str_equal (cmd, "bookmarks"))     /* about:bookmarks */
+     {
+          GString *str = g_string_new ("<h1>Your bookmarks</h1>\n<ul>\n");
+          int i;
+
+          for (i = 0; i < g_slist_length (global.browser.bookmarks); ++i)
           {
-               if (g_str_equal (cmd[1], "show"))       /* about:bookmarks/show */
-               {
-                    webkit_web_view_load_string (WEBKIT_WEB_VIEW (view),
-                              "<h1>bookmarks (show): Not yet implemented</h1>",
-                              "text/html",
-                              global.cfg.global.encoding,
-                              "about:bookmarks/show");
-               }
-               else if (g_str_equal (cmd[1], "add"))   /* about:bookmarks/add */
-               {
-                    webkit_web_view_load_string (WEBKIT_WEB_VIEW (view),
-                              "<h1>bookmarks (add): Not yet implemented</h1>",
-                              "text/html",
-                              global.cfg.global.encoding,
-                              "about:bookmarks/add");
-               }
+               struct bookmark_t *bm = (struct bookmark_t *) g_slist_nth_data (global.browser.bookmarks, i);
+
+               if (bm->title)
+                    g_string_append_printf (str, "<li><a href=\"%s\">%s</a></li>\n", bm->uri, bm->title);
                else
-               {
-                    webkit_web_view_load_string (WEBKIT_WEB_VIEW (view),
-                              "<h1>bookmarks: Unknow command</h1>",
-                              "text/html",
-                              global.cfg.global.encoding,
-                              "about:error");
-               }
+                    g_string_append_printf (str, "<li><a href=\"%s\">%s</a></li>\n", bm->uri, bm->uri);
           }
-          else
-          {
-               webkit_web_view_load_string (WEBKIT_WEB_VIEW (view),
-                         "<h1>Error: Unknow command</h1>",
-                         "text/html",
-                         global.cfg.global.encoding,
-                         "about:error");
-          }
+          g_string_append (str, "</ul>\n");
+
+          webkit_web_view_load_string (WEBKIT_WEB_VIEW (view),
+                    str->str,
+                    "text/html",
+                    global.cfg.global.encoding,
+                    "about:bookmarks");
+          g_string_free (str, TRUE);
+     }
+     else
+     {
+          webkit_web_view_load_string (WEBKIT_WEB_VIEW (view),
+                    "<h1>Error: Unknow command</h1>",
+                    "text/html",
+                    global.cfg.global.encoding,
+                    "about:error");
      }
 }
 

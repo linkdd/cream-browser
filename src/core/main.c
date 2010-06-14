@@ -302,6 +302,61 @@ void init_user_agent (void)
      }
 }
 
+void init_bookmarks (void)
+{
+     global.browser.bookmarks = NULL;
+
+     if (global.cfg.global.bookmarks && g_file_test (global.cfg.global.bookmarks, G_FILE_TEST_EXISTS))
+     {
+          gchar **lines;
+          gchar *buffer;
+          int i;
+
+          if (g_file_get_contents (global.cfg.global.bookmarks, &buffer, NULL, NULL))
+          {
+               lines = g_strsplit (buffer, "\n", -1);
+
+               for (i = 0; i < g_strv_length (lines); ++i)
+               {
+                    struct bookmark_t *bm = malloc (sizeof (struct bookmark_t));
+                    int j, x = 0;
+
+                    if (!bm) continue;
+
+                    for (j = 0; lines[i][j] != '\n'; ++j)
+                    {
+                         if (j > strlen (lines[i]))
+                         {
+                              j = strlen (lines[i]);
+                              break;
+                         }
+
+                         if (lines[i][j] == ' ' && x == 0)
+                              x = j;
+                    }
+                    lines[i][j] = 0;
+
+                    if (strlen (lines[i]) == 0)
+                         continue;
+
+                    if (x != 0)
+                    {
+                         lines[i][x] = 0;
+                         bm->uri   = g_strdup (lines[i]);
+                         bm->title = g_strdup (&lines[i][x + 1]);
+                    }
+                    else
+                    {
+                         bm->uri   = g_strdup (lines[i]);
+                         bm->title = NULL;
+                    }
+
+                    global.browser.bookmarks = g_slist_append (global.browser.bookmarks, bm);
+               }
+          }
+     }
+}
+
 gboolean cream_init (int *argc, char ***argv, GError **error)
 {
      GError *local_error = NULL;
@@ -353,6 +408,7 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
           return FALSE;
      }
 
+
      init_socket ();
 
      /* restore cookies */
@@ -372,7 +428,8 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
      if (global.cfg.global.bookmarks != NULL)
      {
-          /* restore bookmarks */;
+          global.cfg.global.bookmarks = str_replace ("~", g_get_home_dir (), global.cfg.global.bookmarks);
+          init_bookmarks ();
      }
 
      global.browser.mode = InsertMode;
@@ -397,7 +454,21 @@ void cream_release (int exit_code)
 
      if (global.cfg.global.bookmarks != NULL)
      {
-          /* save bookmarks */;
+          GString *tmp = g_string_new ("");
+          int i;
+
+          for (i = 0; i < g_slist_length (global.browser.bookmarks); ++i)
+          {
+               struct bookmark_t *bm = (struct bookmark_t *) g_slist_nth_data (global.browser.bookmarks, i);
+
+               if (bm->title)
+                    g_string_append_printf (tmp, "%s %s\n", bm->uri, bm->title);
+               else
+                    g_string_append_printf (tmp, "%s\n", bm->uri);
+          }
+
+          g_file_set_contents (global.cfg.global.bookmarks, tmp->str, tmp->len, NULL);
+          g_string_free (tmp, TRUE);
      }
 
      cream_config_free (&global.cfg);
@@ -576,4 +647,18 @@ void set_user_agent (WebKitWebSettings *settings, const gchar *uri)
      }
 
      g_object_set (settings, "user-agent", global_user_agent, NULL);
+}
+
+void add_to_bookmarks (const gchar *uri, const gchar *title)
+{
+     struct bookmark_t *bm = malloc (sizeof (struct bookmark_t));
+
+     if (bm)
+     {
+          bm->uri = g_strdup (uri);
+          if (title)
+               bm->title = g_strdup (title);
+
+          global.browser.bookmarks = g_slist_append (global.browser.bookmarks, bm);
+     }
 }

@@ -89,6 +89,7 @@ gboolean run_command (const gchar *cmd, GString **ret, CreamTabbed *obj);
 gboolean set (char *key, char *value);
 char *get (char *key);
 void set_user_agent (WebKitWebSettings *settings, const gchar *uri);
+void add_to_bookmarks (const gchar *uri, const gchar *title);
 
 /* errors */
 typedef enum

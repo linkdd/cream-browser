@@ -35,6 +35,8 @@ int cmd_get (int argc, char **argv, CreamTabbed *obj);
 int cmd_bind (int argc, char **argv, CreamTabbed *obj);
 int cmd_quit (int argc, char **argv, CreamTabbed *obj);
 int cmd_hardcopy (int argc, char **argv, CreamTabbed *obj);
+int cmd_bmark (int argc, char **argv, CreamTabbed *obj);
+int cmd_bmarks (int argc, char **argv, CreamTabbed *obj);
 
 struct cmd_t commands[] =
 {
@@ -45,7 +47,9 @@ struct cmd_t commands[] =
      { "get",       cmd_get },
      { "bind",      cmd_bind },
      { "quit",      cmd_quit },
-     { "hardcopy",	cmd_hardcopy },
+     { "hardcopy",  cmd_hardcopy },
+     { "bmark",     cmd_bmark },
+     { "bmarks",    cmd_bmarks },
      { NULL, NULL }
 };
 
@@ -224,5 +228,44 @@ int cmd_hardcopy (int argc, char **argv, CreamTabbed *obj)
      WebKitWebView *view = WEBKIT_WEB_VIEW (CREAM_VIEW (obj->creamview)->content);
      WebKitWebFrame *frame = webkit_web_view_get_main_frame (view);
      (void) webkit_web_frame_print (frame);
+     return 0;
+}
+
+int cmd_bmark (int argc, char **argv, CreamTabbed *obj)
+{
+     const gchar *uri   = cream_tabbed_get_uri (obj);
+     const gchar *title = cream_tabbed_get_title (obj);
+
+     if (argc == 1)
+     {
+          if (uri != NULL)
+          {
+               add_to_bookmarks (uri, title);
+               if (title)
+                    echo (obj, "Added bookmark: '%s' '%s'", uri, title);
+               else
+                    echo (obj, "Added bookmark: '%s'", uri);
+               return 0;
+         }
+     }
+     else if (argc == 2)
+     {
+          add_to_bookmarks (argv[1], NULL);
+          echo (obj, "Added bookmark: '%s'", argv[1]);
+          return 0;
+     }
+     else if (argc == 3)
+     {
+          add_to_bookmarks (argv[1], argv[2]);
+          echo (obj, "Added bookmark: '%s' '%s'", argv[1], argv[2]);
+          return 0;
+     }
+
+     return 1;
+}
+
+int cmd_bmarks (int argc, char **argv, CreamTabbed *obj)
+{
+     cream_tabbed_load_uri (obj, "about:bookmarks");
      return 0;
 }

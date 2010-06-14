@@ -38,6 +38,12 @@ struct variable_t
      void *data;
 };
 
+struct bookmark_t
+{
+     char *uri;
+     char *title;
+};
+
 struct global_t
 {
      struct
@@ -53,6 +59,7 @@ struct global_t
           GtkClipboard *clipboard;
           GSList *variables;
           gchar *main_user_agent;
+          GSList *bookmarks;
      } browser;
 
      struct
