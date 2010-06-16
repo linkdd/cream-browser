@@ -37,17 +37,30 @@
 #include <marshal.h>
 #include "local.h"
 
-#define MODULE_ABOUT_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE ((obj), module_about_get_type (), ModuleAboutPrivate))
-
-/*! \typedef struct _ModuleAboutPrivate ModuleAboutPrivate */
-typedef struct _ModuleAboutPrivate ModuleAboutPrivate;
-
-/*! \struct _ModuleAboutPrivate */
-struct _ModuleAboutPrivate
+/*! \struct about_t */
+struct about_t
 {
-     GtkWidget *win;     /*!< The window of the DOM inspector */
+     gchar *name;                       /*!< Name of the URL (for example: about:config, config is the name) */
+     void (*func) (ModuleAbout *obj);   /*!< Function to call when the URL is loaded */
 };
 
+static void module_about_blank_callback (ModuleAbout *obj);
+static void module_about_config_callback (ModuleAbout *obj);
+static void module_about_bookmarks_callback (ModuleAbout *obj);
+static void module_about_error_callback (ModuleAbout *obj);
+
+/*!
+  \var struct about_t module_about_callbacks[]
+  \brief Callbacks for every URL
+ */
+struct about_t module_about_callbacks[] =
+{
+     { "blank",     module_about_blank_callback },
+     { "config",    module_about_config_callback },
+     { "bookmarks", module_about_bookmarks_callback },
+     { "error",     module_about_error_callback },
+     { NULL,        NULL }
+};
 
 enum
 {
@@ -68,18 +81,6 @@ static guint module_about_signals[NB_SIGNALS];
 static void module_about_class_init (ModuleAboutClass *class);
 static void module_about_init (ModuleAbout *obj);
 
-static WebKitWebView *module_about_cb_create_inspector_win (WebKitWebInspector *inspector, WebKitWebView *view, ModuleAbout *obj);
-static gboolean module_about_cb_close_inspector_win (WebKitWebInspector *inspector, ModuleAbout *obj);
-static void module_about_cb_destroy_inspector_win (GtkWidget *win, ModuleAbout *obj);
-static void module_about_cb_title_changed (ModuleAbout *webview, WebKitWebFrame *frame, gchar *title, gpointer data);
-static void module_about_cb_load_progress_changed (ModuleAbout *webview, gint progress, gpointer data);
-static void module_about_cb_load_committed (ModuleAbout *webview, WebKitWebFrame *frame, gpointer data);
-static void module_about_cb_load_finished (ModuleAbout *webview, WebKitWebFrame *frame, gpointer data);
-static WebKitNavigationResponse module_about_cb_navigation (ModuleAbout *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, gpointer data);
-static gboolean module_about_cb_mimetype (ModuleAbout *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, gchar *mimetype, WebKitWebPolicyDecision *decision, gpointer data);
-static gboolean module_about_cb_download (ModuleAbout *webview, WebKitDownload *download, gpointer data);
-static void module_about_cb_hoverlink (ModuleAbout *webview, gchar *title, gchar *link, gpointer data);
-
 GtkType module_about_get_type (void)
 {
      static GtkType module_about_type = 0;
@@ -97,7 +98,7 @@ GtkType module_about_get_type (void)
                (GtkClassInitFunc) NULL
           };
 
-          module_about_type = gtk_type_unique (WEBKIT_TYPE_WEB_VIEW, &module_about_info);
+          module_about_type = gtk_type_unique (gtk_viewport_get_type (), &module_about_info);
      }
 
      return module_about_type;
@@ -105,8 +106,6 @@ GtkType module_about_get_type (void)
 
 static void module_about_class_init (ModuleAboutClass *class)
 {
-     g_type_class_add_private (class, sizeof (ModuleAboutPrivate));
-
      module_about_signals[URI_CHANGED_SIGNAL] = g_signal_new (
           "uri-changed",
           G_TYPE_FROM_CLASS (class),
@@ -147,6 +146,7 @@ static void module_about_class_init (ModuleAboutClass *class)
           G_TYPE_BOOLEAN,
           1, G_TYPE_OBJECT);
 
+
      module_about_signals[SWITCH_MODULE_SIGNAL] = g_signal_new (
           "switch-module",
           G_TYPE_FROM_CLASS (class),
@@ -160,9 +160,9 @@ static void module_about_class_init (ModuleAboutClass *class)
 
 static void module_about_init (ModuleAbout *obj)
 {
-     obj->uri = NULL;
-     obj->title = NULL;
-     obj->status = NULL;
+     obj->uri    = NULL;
+     obj->title  = NULL;
+     obj->child  = NULL;
 }
 
 /*!
@@ -175,215 +175,8 @@ GtkWidget *module_about_new (void)
 {
      ModuleAbout *obj = gtk_type_new (module_about_get_type ());
 
-     obj->settings = webkit_web_settings_new ();
-     g_object_set (G_OBJECT (obj->settings), "enable-developer-extras", TRUE, NULL);
-     webkit_web_view_set_settings (WEBKIT_WEB_VIEW (obj), obj->settings);
-
-     obj->inspector = webkit_web_view_get_inspector (WEBKIT_WEB_VIEW (obj));
-     g_object_set (G_OBJECT (obj->inspector), "javascript-profiling-enabled", TRUE, NULL);
-     g_object_connect (G_OBJECT (obj->inspector),
-          "signal::inspect-web-view", G_CALLBACK (module_about_cb_create_inspector_win), obj,
-          "signal::close-window",     G_CALLBACK (module_about_cb_close_inspector_win),  obj,
-          "signal::finished",         G_CALLBACK (module_about_cb_close_inspector_win),  obj,
-     NULL);
-
-     g_object_connect (G_OBJECT (obj),
-          "signal::title-changed",                          G_CALLBACK (module_about_cb_title_changed),         NULL,
-          "signal::load-progress-changed",                  G_CALLBACK (module_about_cb_load_progress_changed), NULL,
-          "signal::load-committed",                         G_CALLBACK (module_about_cb_load_committed),        NULL,
-          "signal::load-finished",                          G_CALLBACK (module_about_cb_load_finished),         NULL,
-          "signal::navigation-requested",                   G_CALLBACK (module_about_cb_navigation),            NULL,
-          "signal::mime-type-policy-decision-requested",    G_CALLBACK (module_about_cb_mimetype),              NULL,
-          "signal::download-requested",                     G_CALLBACK (module_about_cb_download),              NULL,
-          "signal::hovering-over-link",                     G_CALLBACK (module_about_cb_hoverlink),             NULL,
-     NULL);
-
      return GTK_WIDGET (obj);
 }
-
-/* WebKit signals */
-static WebKitWebView *module_about_cb_create_inspector_win (WebKitWebInspector *inspector, WebKitWebView *view, ModuleAbout *obj)
-{
-     ModuleAboutPrivate *priv = MODULE_ABOUT_GET_PRIVATE (obj);
-     GtkWidget *scroll;
-     GtkWidget *page;
-
-     priv->win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-     gtk_window_set_title (GTK_WINDOW (priv->win), g_strconcat (
-          "WebInspector - ", webkit_web_view_get_uri (view), NULL)
-     );
-
-     scroll = gtk_scrolled_window_new (NULL, NULL);
-     gtk_container_add (GTK_CONTAINER (priv->win), scroll);
-
-     page = webkit_web_view_new ();
-     gtk_container_add (GTK_CONTAINER (scroll), page);
-
-     gtk_widget_show_all (priv->win);
-
-     g_signal_connect (G_OBJECT (priv->win), "destroy", G_CALLBACK (module_about_cb_destroy_inspector_win), obj);
-
-     return WEBKIT_WEB_VIEW (page);
-}
-
-static gboolean module_about_cb_close_inspector_win (WebKitWebInspector *inspector, ModuleAbout *obj)
-{
-     ModuleAboutPrivate *priv = MODULE_ABOUT_GET_PRIVATE (obj);
-     if (priv->win != NULL)
-          gtk_widget_destroy (priv->win);
-     return TRUE;
-}
-
-static void module_about_cb_destroy_inspector_win (GtkWidget *win, ModuleAbout *obj)
-{
-     ModuleAboutPrivate *priv = MODULE_ABOUT_GET_PRIVATE (obj);
-     priv->win = NULL;
-
-#if WEBKIT_CHECK_VERSION (1, 1, 17)
-     webkit_web_inspector_close (obj->inspector);
-#endif
-}
-
-static void module_about_cb_title_changed (ModuleAbout *webview, WebKitWebFrame *frame, gchar *title, gpointer data)
-{
-     if (webview->title != NULL)
-          g_free (webview->title);
-     webview->title = g_strdup (title);
-
-     g_signal_emit (
-          G_OBJECT (webview),
-          module_about_signals[NEW_TITLE_SIGNAL],
-          0,
-          webview->title
-     );
-}
-
-static void module_about_cb_load_progress_changed (ModuleAbout *webview, gint progress, gpointer data)
-{
-     if (webview->status != NULL)
-          g_free (webview->status);
-     webview->status = g_strdup_printf ("Transfering data from %s (%d%%)", webview->uri, progress);
-
-     g_signal_emit (
-          G_OBJECT (webview),
-          module_about_signals[STATUS_CHANGED_SIGNAL],
-          0,
-          webview->status
-     );
-}
-
-static void module_about_cb_load_committed (ModuleAbout *webview, WebKitWebFrame *frame, gpointer data)
-{
-     /* update URL */
-     if (webview->uri != NULL)
-          g_free (webview->uri);
-     webview->uri = g_strdup (webkit_web_view_get_uri (WEBKIT_WEB_VIEW (webview)));
-
-     g_signal_emit (
-          G_OBJECT (webview),
-          module_about_signals[URI_CHANGED_SIGNAL],
-          0,
-          webview->uri
-     );
-
-     /* update status */
-     if (webview->status != NULL)
-          g_free (webview->status);
-     webview->status = g_strdup_printf ("Waiting reply from %s", webview->uri);
-
-     g_signal_emit (
-          G_OBJECT (webview),
-          module_about_signals[STATUS_CHANGED_SIGNAL],
-          0,
-          webview->status
-     );
-}
-
-static void module_about_cb_load_finished (ModuleAbout *webview, WebKitWebFrame *frame, gpointer data)
-{
-     if (webview->status != NULL)
-          g_free (webview->status);
-     webview->status = g_strdup (webview->uri);
-
-     g_signal_emit (
-          G_OBJECT (webview),
-          module_about_signals[STATUS_CHANGED_SIGNAL],
-          0,
-          webview->status
-     );
-}
-
-static WebKitNavigationResponse module_about_cb_navigation (ModuleAbout *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, gpointer data)
-{
-     const gchar *uri = webkit_network_request_get_uri (request);
-
-     if (!g_str_has_prefix (uri, "about:"))
-     {
-          gboolean ret = FALSE;
-
-          g_signal_emit (
-               G_OBJECT (webview),
-               module_about_signals[SWITCH_MODULE_SIGNAL],
-               0,
-               uri,
-               &ret
-          );
-
-          return (ret ? WEBKIT_NAVIGATION_RESPONSE_IGNORE : WEBKIT_NAVIGATION_RESPONSE_ACCEPT);
-     }
-     else if (g_str_has_prefix (uri, "javascript:"))
-     {
-          return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
-     }
-     else
-     {
-          return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
-     }
-}
-
-static gboolean module_about_cb_mimetype (ModuleAbout *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, gchar *mimetype, WebKitWebPolicyDecision *decision, gpointer data)
-{
-     if (webkit_web_view_can_show_mime_type (WEBKIT_WEB_VIEW (webview), mimetype))
-          webkit_web_policy_decision_use (decision);
-     else
-          webkit_web_policy_decision_download (decision);
-
-     return TRUE;
-}
-
-static gboolean module_about_cb_download (ModuleAbout *webview, WebKitDownload *download, gpointer data)
-{
-     gboolean ret = FALSE;
-
-     g_signal_emit (
-          G_OBJECT (webview),
-          module_about_signals[NEW_DOWNLOAD_SIGNAL],
-          0,
-          download,
-          &ret
-     );
-
-     return ret;
-}
-
-static void module_about_cb_hoverlink (ModuleAbout *webview, gchar *title, gchar *link, gpointer data)
-{
-     if (webview->status != NULL)
-          g_free (webview->status);
-
-     if (link == NULL)
-          webview->status = g_strdup (webview->uri);
-     else
-          webview->status = g_strdup_printf ("Link: %s", link);
-
-     g_signal_emit (
-          G_OBJECT (webview),
-          module_about_signals[STATUS_CHANGED_SIGNAL],
-          0,
-          webview->status
-     );
-}
-
 
 /*!
   \fn void module_about_load_uri (ModuleAbout *view, const gchar *uri)
@@ -395,50 +188,127 @@ static void module_about_cb_hoverlink (ModuleAbout *webview, gchar *title, gchar
 void module_about_load_uri (ModuleAbout *view, const gchar *uri)
 {
      const gchar *cmd = &uri[6];
+     gboolean success = FALSE;
+     int i;
 
-     if (g_str_equal (cmd, "blank"))              /* about:blank */
-     {
-          webkit_web_view_load_uri (WEBKIT_WEB_VIEW (view), "about:blank");
-     }
-     else if (g_str_equal (cmd, "config"))        /* about:config */
-     {
-          webkit_web_view_load_string (WEBKIT_WEB_VIEW (view),
-                    "<h1>Config: Not yet implemented</h1>",
-                    "text/html",
-                    global.cfg.global.encoding,
-                    "about:config");
-     }
-     else if (g_str_equal (cmd, "bookmarks"))     /* about:bookmarks */
-     {
-          GString *str = g_string_new ("<h1>Your bookmarks</h1>\n<ul>\n");
-          int i;
+     g_return_if_fail (view != NULL);
 
-          for (i = 0; i < g_slist_length (global.browser.bookmarks); ++i)
+     if (view->child)
+     {
+          gtk_container_remove (GTK_CONTAINER (view), view->child);
+          gtk_widget_destroy (view->child);
+          view->child = NULL;
+     }
+
+     for (i = 0; module_about_callbacks[i].name != NULL; ++i)
+     {
+          if (g_str_equal (cmd, module_about_callbacks[i].name))
           {
-               struct bookmark_t *bm = (struct bookmark_t *) g_slist_nth_data (global.browser.bookmarks, i);
+               if (module_about_callbacks[i].func)
+               {
+                    module_about_callbacks[i].func (view);
+                    success = TRUE;
 
-               if (bm->title)
-                    g_string_append_printf (str, "<li><a href=\"%s\">%s</a></li>\n", bm->uri, bm->title);
-               else
-                    g_string_append_printf (str, "<li><a href=\"%s\">%s</a></li>\n", bm->uri, bm->uri);
+                    if (view->uri)
+                         g_free (view->uri);
+                    view->uri = g_strdup_printf ("about:%s", cmd);
+
+                    if (view->title)
+                         g_free (view->title);
+                    view->title = g_strdup (cmd);
+               }
+               break;
           }
-          g_string_append (str, "</ul>\n");
+     }
 
-          webkit_web_view_load_string (WEBKIT_WEB_VIEW (view),
-                    str->str,
-                    "text/html",
-                    global.cfg.global.encoding,
-                    "about:bookmarks");
-          g_string_free (str, TRUE);
-     }
-     else
+     if (!success)
      {
-          webkit_web_view_load_string (WEBKIT_WEB_VIEW (view),
-                    "<h1>Error: Unknow command</h1>",
-                    "text/html",
-                    global.cfg.global.encoding,
-                    "about:error");
+          module_about_error_callback (view);
+          if (view->uri)
+               g_free (view->uri);
+          view->uri = g_strdup ("about:error");
+
+          if (view->title)
+               g_free (view->title);
+          view->title = g_strdup (cmd);
      }
+
+     if (view->child)
+          gtk_container_add (GTK_CONTAINER (view), view->child);
+
+     gtk_widget_show_all (GTK_WIDGET (view));
+
+     g_signal_emit (
+          G_OBJECT (view),
+          module_about_signals[URI_CHANGED_SIGNAL],
+          0, view->uri
+     );
+
+     g_signal_emit (
+          G_OBJECT (view),
+          module_about_signals[NEW_TITLE_SIGNAL],
+          0, view->title
+     );
+}
+
+static void module_about_blank_callback (ModuleAbout *obj)
+{
+     obj->child = webkit_web_view_new ();
+     webkit_web_view_load_uri (WEBKIT_WEB_VIEW (obj->child), "about:blank");
+}
+
+static void module_about_config_callback (ModuleAbout *obj)
+{
+     obj->child = webkit_web_view_new ();
+     webkit_web_view_load_uri (WEBKIT_WEB_VIEW (obj->child), "about:blank");
+}
+
+static void module_about_bookmarks_callback (ModuleAbout *obj)
+{
+     GtkTreeStore *store;
+     GtkTreeViewColumn *col;
+     GtkCellRenderer *render;
+     int i;
+
+     store = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+
+     for (i = 0; i < g_slist_length (global.browser.bookmarks); ++i)
+     {
+          struct bookmark_t *bm = (struct bookmark_t *) g_slist_nth_data (global.browser.bookmarks, i);
+          GtkTreeIter iter;
+
+          gtk_tree_store_append (store, &iter, NULL);
+
+          if (bm->title)
+          {
+               gtk_tree_store_set (store, &iter,
+                         0, bm->uri,
+                         1, bm->title,
+                         -1);
+          }
+          else
+          {
+               gtk_tree_store_set (store, &iter,
+                         0, bm->uri,
+                         1, bm->uri,
+                         -1);
+          }
+     }
+
+     obj->child = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
+
+     render = gtk_cell_renderer_text_new ();
+     col = gtk_tree_view_column_new_with_attributes ("URL", render, "text", 0, NULL);
+     gtk_tree_view_append_column (GTK_TREE_VIEW (obj->child), col);
+
+     col = gtk_tree_view_column_new_with_attributes ("Title", render, "text", 1, NULL);
+     gtk_tree_view_append_column (GTK_TREE_VIEW (obj->child), col);
+}
+
+static void module_about_error_callback (ModuleAbout *obj)
+{
+     obj->child = webkit_web_view_new ();
+     webkit_web_view_load_uri (WEBKIT_WEB_VIEW (obj->child), "about:error");
 }
 
 /*! @} */

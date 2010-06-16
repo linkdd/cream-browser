@@ -35,7 +35,6 @@
 
 #include <gtk/gtk.h>
 #include <gtk/gtkwidget.h>
-#include <webkit/webkit.h>
 
 G_BEGIN_DECLS
 
@@ -52,31 +51,26 @@ G_BEGIN_DECLS
 typedef struct _ModuleAbout ModuleAbout;
 typedef struct _ModuleAboutClass ModuleAboutClass;
 
-/*!
-  \struct _ModuleAbout
-  \implements WebKit
- */
+/*! \struct _ModuleAbout */
 struct _ModuleAbout
 {
-     WebKitWebView parent;    /*!< Parent instance */
+     GtkViewport parent;           /*!< Parent instance */
 
-     gchar *uri;
-     gchar *title;
-     gchar *status;
+     gchar *uri;              /*!< URL loaded by the module */
+     gchar *title;            /*!< Title of the page */
 
-     WebKitWebInspector *inspector;
-     WebKitWebSettings *settings;
+     GtkWidget *child;        /*!< Object contained in the module (GtkTreeView or WebKitWebView) */
 };
 
 /*! \struct _ModuleAboutClass */
 struct _ModuleAboutClass
 {
-     WebKitWebViewClass parent_class; /*!< Parent class */
+     GtkViewportClass parent_class; /*!< Parent class */
 
      void (*uri_changed) (ModuleAbout *obj, gchar *url);
      void (*new_title) (ModuleAbout *obj, gchar *title);
-     void (*status_changed) (ModuleAbout *obj, gchar *status);
-     gboolean (*new_download) (ModuleAbout *obj, WebKitDownload *download);
+     void (*status_changed) (ModuleAbout *obj, gchar *status);        /*!< unused */
+     gboolean (*new_download) (ModuleAbout *obj, GObject *download);  /*!< unused */
      gboolean (*switch_module) (ModuleAbout *obj, gchar *new_uri);
 };
 

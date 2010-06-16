@@ -73,7 +73,7 @@ static void module_web_view_cb_title_changed (ModuleWebView *webview, WebKitWebF
 static void module_web_view_cb_load_progress_changed (ModuleWebView *webview, gint progress, gpointer data);
 static void module_web_view_cb_load_committed (ModuleWebView *webview, WebKitWebFrame *frame, gpointer data);
 static void module_web_view_cb_load_finished (ModuleWebView *webview, WebKitWebFrame *frame, gpointer data);
-static WebKitNavigationResponse module_web_view_cb_navigation (ModuleWebView *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, gpointer data);
+static gboolean module_web_view_cb_navigation (ModuleWebView *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, WebKitWebNavigationAction *action, WebKitWebPolicyDecision *decision, gpointer data);
 static gboolean module_web_view_cb_mimetype (ModuleWebView *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, gchar *mimetype, WebKitWebPolicyDecision *decision, gpointer data);
 static gboolean module_web_view_cb_download (ModuleWebView *webview, WebKitDownload *download, gpointer data);
 static void module_web_view_cb_hoverlink (ModuleWebView *webview, gchar *title, gchar *link, gpointer data);
@@ -194,7 +194,7 @@ GtkWidget *module_web_view_new (void)
           "signal::load-progress-changed",                  G_CALLBACK (module_web_view_cb_load_progress_changed), NULL,
           "signal::load-committed",                         G_CALLBACK (module_web_view_cb_load_committed),        NULL,
           "signal::load-finished",                          G_CALLBACK (module_web_view_cb_load_finished),         NULL,
-          "signal::navigation-requested",                   G_CALLBACK (module_web_view_cb_navigation),            NULL,
+          "signal::navigation-policy-decision-requested",   G_CALLBACK (module_web_view_cb_navigation),            NULL,
           "signal::mime-type-policy-decision-requested",    G_CALLBACK (module_web_view_cb_mimetype),              NULL,
           "signal::download-requested",                     G_CALLBACK (module_web_view_cb_download),              NULL,
           "signal::hovering-over-link",                     G_CALLBACK (module_web_view_cb_hoverlink),             NULL,
@@ -316,7 +316,7 @@ static void module_web_view_cb_load_finished (ModuleWebView *webview, WebKitWebF
      );
 }
 
-static WebKitNavigationResponse module_web_view_cb_navigation (ModuleWebView *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, gpointer data)
+static gboolean module_web_view_cb_navigation (ModuleWebView *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, WebKitWebNavigationAction *action, WebKitWebPolicyDecision *decision, gpointer data)
 {
      const gchar *uri = webkit_network_request_get_uri (request);
 
@@ -332,17 +332,22 @@ static WebKitNavigationResponse module_web_view_cb_navigation (ModuleWebView *we
                &ret
           );
 
-          return (ret ? WEBKIT_NAVIGATION_RESPONSE_IGNORE : WEBKIT_NAVIGATION_RESPONSE_ACCEPT);
+          if (ret)
+               webkit_web_policy_decision_ignore (decision);
+          else
+               webkit_web_policy_decision_use (decision);
      }
      else if (g_str_has_prefix (uri, "javascript:"))
      {
           module_web_view_js_script_execute (webview, &uri[11]);
-          return WEBKIT_NAVIGATION_RESPONSE_IGNORE;
+          webkit_web_policy_decision_ignore (decision);
      }
      else
      {
-          return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
+          webkit_web_policy_decision_use (decision);
      }
+
+     return TRUE;
 }
 
 static gboolean module_web_view_cb_mimetype (ModuleWebView *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, gchar *mimetype, WebKitWebPolicyDecision *decision, gpointer data)
