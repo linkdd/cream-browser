@@ -340,9 +340,20 @@ static gboolean cream_tabbed_new_window_cb (CreamView *view, const gchar *uri, g
 
 static void cream_tabbed_scroll_cb (GtkAdjustment *vadjust, CreamTabbed *obj)
 {
+     gchar *str;
+
+#if GTK_CHECK_VERSION(2, 14, 0)
      gint max = gtk_adjustment_get_upper (vadjust) - gtk_adjustment_get_page_size (vadjust);
      gint val = (gint) (gtk_adjustment_get_value (vadjust) / max * 100);
-     gchar *str;
+#else
+     gint max, val;
+     gdouble upper, page_size;
+
+     g_object_get (G_OBJECT (vadjust), "page-size", &page_size, "value", &val, "upper", &upper, NULL);
+
+     max = (gint) (upper - page_size);
+     val = (gint) (val / max * 100);
+#endif
 
      if (max == 0) /* If we see all the page */
           str = g_strdup ("All");

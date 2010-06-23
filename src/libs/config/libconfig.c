@@ -92,6 +92,7 @@ static cfg_opt_t config_global_opts[] =
      CFG_STR  ("bookmarks", "", CFGF_NONE),
      CFG_STR  ("history",   "", CFGF_NONE),
      CFG_STR  ("cookie",    "", CFGF_NONE),
+     CFG_STR  ("proxy",     "", CFGF_NONE),
      CFG_END  ()
 };
 
@@ -258,6 +259,7 @@ gboolean cream_config_load (gchar *path, struct cream_config_t *cfg, GError **er
      /* parse /global/ */
      cfg->global.homepage   = g_strdup (cfg_getstr (cream_cfg.global, "homepage"));
      cfg->global.encoding   = g_strdup (cfg_getstr (cream_cfg.global, "encodage"));
+     cfg->global.proxy      = g_strdup (cfg_getstr (cream_cfg.global, "proxy"));
      cfg->global.javascript = cfg_getbool (cream_cfg.global, "javascript");
 
      cfg->global.bookmarks = g_strdup (cfg_getstr (cream_cfg.global, "bookmarks"));

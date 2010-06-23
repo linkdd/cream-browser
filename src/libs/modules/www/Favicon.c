@@ -42,7 +42,9 @@ static GdkPixbuf *g_load_pixbuf_from_stock (const gchar *icon_name, GtkIconSize 
      GdkPixbuf *icon;
 
      theme = gtk_icon_theme_get_default ();
+#if GTK_CHECK_VERSION (2, 14, 0)
      if (NULL == (info = gtk_icon_theme_lookup_icon (theme, icon_name, size, GTK_ICON_LOOKUP_FORCE_SIZE)))
+#endif
           return NULL;
 
      icon = gtk_icon_info_load_icon (info, &local_error);

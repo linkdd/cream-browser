@@ -208,6 +208,7 @@ void init_variables (void)
           { "homepage",       NULL,          TRUE,     String,   &global.cfg.global.homepage },
           { "encodage",       NULL,          TRUE,     String,   &global.cfg.global.encoding },
           { "javascript",     NULL,          TRUE,     Boolean,  &global.cfg.global.javascript },
+          { "proxy",          NULL,          TRUE,     String,   &global.cfg.global.proxy },
           { "mode",           NULL,          TRUE,     Integer,  &global.browser.mode },
           { "config",         NULL,          FALSE,    String,   &global.cmdline.config },
           { "bookmarks",      NULL,          FALSE,    String,   &global.cfg.global.bookmarks },
@@ -356,6 +357,23 @@ void init_bookmarks (void)
           }
      }
 }
+static void cream_set_http_proxy (gchar *http_proxy)
+{
+     SoupURI *proxy = NULL;
+
+     if (g_str_has_prefix (http_proxy, "http://"))
+     {
+          proxy = soup_uri_new (http_proxy);
+     }
+     else
+     {
+          gchar *correct_http_proxy = g_strconcat ("http://", http_proxy, NULL);
+          proxy = soup_uri_new (correct_http_proxy);
+     }
+
+     if (proxy)
+          g_object_set (G_OBJECT (webkit_get_default_session ()), "proxy-uri", proxy, NULL);
+}
 
 gboolean cream_init (int *argc, char ***argv, GError **error)
 {
@@ -420,6 +438,11 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
      global.browser.cookies = soup_cookie_jar_text_new (cookie, FALSE);
      soup_session_add_feature (webkit_get_default_session (), SOUP_SESSION_FEATURE (global.browser.cookies));
+
+     if (global.cfg.global.proxy != NULL)
+     {
+          cream_set_http_proxy (global.cfg.global.proxy);
+     }
 
      if (global.cfg.global.history != NULL)
      {

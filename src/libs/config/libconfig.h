@@ -78,6 +78,7 @@ struct cream_config_t
           char *bookmarks;                   /*!< Bookmarks file */
           char *history;                     /*!< History file */
           char *cookie;                      /*!< Cookie file */
+          char *proxy;                       /*!< proxy server */
      } global;                               /*!< Global browser options */
 
      struct handler_t *handlers;             /*!< List of handlers */

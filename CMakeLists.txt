@@ -24,7 +24,13 @@ ADD_CUSTOM_TARGET(uninstall
 
 ####
 # GTK2
-pkg_check_modules(GTK2 REQUIRED gtk+-2.0)
+
+if (NOT DEFINED GTK_USES_DFB)
+    pkg_check_modules(GTK2 REQUIRED gtk+-2.0)
+else(NOT DEFINED GTK_USES_DFB)
+    pkg_check_modules(GTK2 REQUIRED gtk+-directfb-2.0)
+endif(NOT DEFINED GTK_USES_DFB)
+
 if(GTK2_FOUND)
 else(GTK2_FOUND)
     message(FATAL_ERROR "Could not find GTK2")
