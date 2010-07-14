@@ -139,7 +139,6 @@ gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *
                     cmd_history_id--;
                     if (cmd_history_id < 0)
                          cmd_history_id = g_slist_length (global.browser.cmd_history) - 1;
-                    printf ("%d\n", cmd_history_id);
 
                     cmd_history = g_slist_nth_data (global.browser.cmd_history, cmd_history_id);
                     echo (obj, cmd_history->str);

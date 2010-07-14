@@ -90,7 +90,44 @@ gboolean run_command (const gchar *cmd, GString **ret, CreamTabbed *obj)
 
 gboolean handle_spawn (int argc, char **argv, GString **ret, CreamTabbed *obj)
 {
-     return FALSE;
+     /* command <pid> <config path> <socket path> [args...] */
+     gchar **child_argv;
+     GError *error = NULL;
+     GPid child;
+     int i, j;
+
+     if (argc < 2)
+     {
+          if (ret != NULL)
+               *ret = g_string_new ("spawn: need an argument\n");
+          return FALSE;
+     }
+
+     child_argv = calloc (3 + argc, sizeof (char *));
+
+     child_argv[0] = g_strdup (argv[1]);
+     child_argv[1] = g_strdup_printf ("%d", getpid ());
+     child_argv[2] = global.cmdline.config;
+     child_argv[3] = global.unix_sock.path;
+
+     for (i = 4, j = 1; i < argc; ++i, ++j)
+     {
+          child_argv[i] = g_strdup (argv[j]);
+     }
+     child_argv[i] = NULL;
+
+     if (!g_spawn_async (NULL, child_argv, NULL, G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL, NULL, NULL, &child, &error))
+     {
+          if (ret != NULL)
+               *ret = g_string_new (error->message);
+          g_error_free (error);
+          return FALSE;
+     }
+
+     if (ret != NULL)
+          *ret = g_string_new (g_strdup_printf ("spawn: child process <%d>\n", child));
+
+     return TRUE;
 }
 
 gboolean handle_download (int argc, char **argv, GString **ret, CreamTabbed *obj)
