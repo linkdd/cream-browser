@@ -200,6 +200,39 @@ void init_socket (void)
      g_io_add_watch (global.unix_sock.channel, G_IO_IN | G_IO_HUP, (GIOFunc) control_socket, NULL);
 }
 
+void init_cmd_history (void)
+{
+     GString *tmp;
+     gchar *path;
+
+     global.browser.cmd_history = NULL;
+
+     path = g_build_filename (get_xdg_var_by_name ("XDG_CONFIG_HOME"), "cream-browser", "commands", NULL);
+     if (g_file_test (path, G_FILE_TEST_EXISTS))
+     {
+          gchar **lines;
+          gchar *buffer;
+          int i;
+
+          if (g_file_get_contents (path, &buffer, NULL, NULL))
+          {
+               lines = g_strsplit (buffer, "\n", -1);
+
+               for (i = 0; i < g_strv_length (lines); ++i)
+               {
+                    if (strlen (lines[i]) > 0)
+                    {
+                         tmp = g_string_new (lines[i]);
+                         global.browser.cmd_history = g_slist_append (global.browser.cmd_history, tmp);
+                    }
+               }
+          }
+
+          free (buffer);
+     }
+     free (path);
+}
+
 void init_variables (void)
 {
      struct variable_t internal_variables[] =
@@ -354,9 +387,12 @@ void init_bookmarks (void)
 
                     global.browser.bookmarks = g_slist_append (global.browser.bookmarks, bm);
                }
+
+               free (buffer);
           }
      }
 }
+
 static void cream_set_http_proxy (gchar *http_proxy)
 {
      SoupURI *proxy = NULL;
@@ -420,6 +456,7 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
      }
 
      /* load configuration */
+     printf ("Cream-Browser: Reading %s\n", global.cmdline.config);
      if (!cream_config_load (global.cmdline.config, &global.cfg, &local_error) && local_error != NULL)
      {
           g_propagate_error (error, local_error);
@@ -460,6 +497,7 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
      uname (&global.uname);
 
+     init_cmd_history ();
      init_variables ();
      init_user_agent ();
 
@@ -475,6 +513,7 @@ void cream_release (int exit_code)
           /* save history */;
      }
 
+     /* save bookmarks */
      if (global.cfg.global.bookmarks != NULL)
      {
           GString *tmp = g_string_new ("");
@@ -491,6 +530,27 @@ void cream_release (int exit_code)
           }
 
           g_file_set_contents (global.cfg.global.bookmarks, tmp->str, tmp->len, NULL);
+          g_string_free (tmp, TRUE);
+     }
+
+     /* save command history */
+     if (global.browser.cmd_history != NULL)
+     {
+          GString *tmp = g_string_new ("");
+          gchar *path;
+          int i;
+
+          path = g_build_filename (get_xdg_var_by_name ("XDG_CONFIG_HOME"), "cream-browser", "commands", NULL);
+
+          for (i = 0; i < g_slist_length (global.browser.cmd_history); ++i)
+          {
+               GString *el = g_slist_nth_data (global.browser.cmd_history, i);
+               tmp = g_string_append (tmp, el->str);
+               tmp = g_string_append (tmp, "\n");
+               g_string_free (el, TRUE);
+          }
+
+          g_file_set_contents (path, tmp->str, tmp->len, NULL);
           g_string_free (tmp, TRUE);
      }
 

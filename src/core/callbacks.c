@@ -111,6 +111,9 @@ gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *
      gboolean ret = FALSE;
      const gchar *text = gtk_entry_get_text (inputbox);
 
+     static int cmd_history_id = -1;
+     GString *cmd_history;
+
      if (strlen (text) == 0)
      {
           if (bind_buffer != NULL)
@@ -130,11 +133,33 @@ gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *
           switch (event->keyval)
           {
                case GDK_Up:
-                    /*! \todo Go up in the commands' history */
+                    if (global.browser.cmd_history == NULL)
+                         break;
+
+                    cmd_history_id--;
+                    if (cmd_history_id < 0)
+                         cmd_history_id = g_slist_length (global.browser.cmd_history) - 1;
+                    printf ("%d\n", cmd_history_id);
+
+                    cmd_history = g_slist_nth_data (global.browser.cmd_history, cmd_history_id);
+                    echo (obj, cmd_history->str);
                     break;
 
                case GDK_Down:
-                    /*! \todo Go down in the commands' history */
+                    if (global.browser.cmd_history == NULL)
+                         break;
+
+                    cmd_history_id++;
+                    if (cmd_history_id >= g_slist_length (global.browser.cmd_history))
+                    {
+                         cmd_history_id = g_slist_length (global.browser.cmd_history) - 1;
+                         echo (obj, "");
+                    }
+                    else
+                    {
+                         cmd_history = g_slist_nth_data (global.browser.cmd_history, cmd_history_id);
+                         echo (obj, cmd_history->str);
+                    }
                     break;
 
                case GDK_Tab:
@@ -156,6 +181,9 @@ gboolean cb_inputbox_keys (GtkEntry *inputbox, GdkEventKey *event, CreamTabbed *
                          bind_buffer = NULL;
                     }
                     break;
+
+               case GDK_Return:
+                    cmd_history_id = -1;
 
                default: ret = FALSE; break;
           }
@@ -184,14 +212,14 @@ void cb_tray_activated (GObject *trayIcon, gpointer window)
       */
      if (gtk_window_is_active (GTK_WINDOW (window)))
      {
-	     gtk_widget_hide (GTK_WIDGET (window));
-	     gtk_window_iconify (GTK_WINDOW (window));
+          gtk_widget_hide (GTK_WIDGET (window));
+          gtk_window_iconify (GTK_WINDOW (window));
      }
      else
      {
-	     gtk_widget_show (GTK_WIDGET (window));
-     	gtk_window_deiconify (GTK_WINDOW (window));
-     	gtk_window_present (GTK_WINDOW (window));
+          gtk_widget_show (GTK_WIDGET (window));
+          gtk_window_deiconify (GTK_WINDOW (window));
+          gtk_window_present (GTK_WINDOW (window));
      }
 }
 

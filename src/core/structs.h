@@ -59,7 +59,9 @@ struct global_t
           GtkClipboard *clipboard;
           GSList *variables;
           gchar *main_user_agent;
+
           GSList *bookmarks;
+          GSList *cmd_history;
      } browser;
 
      struct

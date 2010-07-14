@@ -56,6 +56,7 @@ struct cmd_t commands[] =
 int getcmd (GtkEntry *inputbox, const gchar *text, CreamTabbed *obj)
 {
      int ret = 0;
+     GString *tmp = g_string_new (text);
 
      if (text[0] == '/' && strlen (text) > 1)
      {
@@ -66,6 +67,8 @@ int getcmd (GtkEntry *inputbox, const gchar *text, CreamTabbed *obj)
                webkit_web_view_mark_text_matches (view, text + 1, TRUE, 0);
                webkit_web_view_set_highlight_text_matches (view, TRUE);
           }
+
+          global.browser.cmd_history = g_slist_append (global.browser.cmd_history, tmp);
      }
      else if (text[0] == ':' && strlen (text) > 1)
      {
@@ -88,6 +91,8 @@ int getcmd (GtkEntry *inputbox, const gchar *text, CreamTabbed *obj)
                     }
                }
           }
+
+          global.browser.cmd_history = g_slist_append (global.browser.cmd_history, tmp);
      }
      else
      {
