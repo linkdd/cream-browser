@@ -67,7 +67,7 @@ static struct handler_cmd_t cmd_handlers[] =
 gboolean run_command (const gchar *cmd, GString **ret, CreamTabbed *obj)
 {
      GError *error = NULL;
-     gboolean retval = TRUE;
+     gboolean retval = FALSE;
      gchar **commands;
      int i;
 
@@ -102,7 +102,10 @@ gboolean run_command (const gchar *cmd, GString **ret, CreamTabbed *obj)
 
 
           if (!retval && ret != NULL)
+          {
                *ret = g_string_new (g_strdup_printf ("Error: The command '%s' isn't a browser's command.\n", argv[0]));
+               break;
+          }
      }
 
      g_strfreev (commands);
