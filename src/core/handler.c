@@ -67,27 +67,46 @@ static struct handler_cmd_t cmd_handlers[] =
 gboolean run_command (const gchar *cmd, GString **ret, CreamTabbed *obj)
 {
      GError *error = NULL;
-     gint argc;
-     gchar **argv;
+     gboolean retval = TRUE;
+     gchar **commands;
      int i;
 
-     if (!g_shell_parse_argv (cmd, &argc, &argv, &error) || error != NULL)
+     commands = g_strsplit (cmd, ";", -1);
+
+     for (i = 0; i < g_strv_length (commands); ++i)
      {
-          if (ret != NULL)
-               *ret = g_string_new (error->message);
-          g_error_free (error);
-          return FALSE;
+          gint argc;
+          gchar **argv;
+          int j;
+
+          if (!g_shell_parse_argv (commands[i], &argc, &argv, &error) || error != NULL)
+          {
+               if (ret != NULL)
+                    *ret = g_string_new (error->message);
+               g_error_free (error);
+               retval = FALSE;
+               break;
+          }
+
+          for (j = 0; cmd_handlers[j].argv0 != NULL; ++j)
+          {
+               if (g_str_equal (cmd_handlers[j].argv0, argv[0]))
+               {
+                    if (cmd_handlers[j].func != NULL)
+                    {
+                         retval = cmd_handlers[j].func (argc, argv, ret, obj);
+                         break;
+                    }
+               }
+          }
+
+
+          if (!retval && ret != NULL)
+               *ret = g_string_new (g_strdup_printf ("Error: The command '%s' isn't a browser's command.\n", argv[0]));
      }
 
-     for (i = 0; cmd_handlers[i].argv0 != NULL; ++i)
-          if (g_str_equal (cmd_handlers[i].argv0, argv[0]))
-               if (cmd_handlers[i].func != NULL)
-                    return cmd_handlers[i].func (argc, argv, ret, obj);
-
-     if (ret != NULL)
-          *ret = g_string_new (g_strdup_printf ("Error: The command '%s' isn't a browser's command.\n", argv[0]));
-
-     return FALSE;
+     g_strfreev (commands);
+     return retval;
 }
 
 gboolean handle_spawn (int argc, char **argv, GString **ret, CreamTabbed *obj)
