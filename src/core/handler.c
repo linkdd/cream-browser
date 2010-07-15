@@ -40,6 +40,7 @@ gboolean handle_tabopen (int argc, char **argv, GString **ret, CreamTabbed *obj)
 gboolean handle_close (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_yank (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_paste (int argc, char **argv, GString **ret, CreamTabbed *obj);
+gboolean handle_buffers (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_set (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_get (int argc, char **argv, GString **ret, CreamTabbed *obj);
 gboolean handle_bind (int argc, char **argv, GString **ret, CreamTabbed *obj);
@@ -54,6 +55,7 @@ static struct handler_cmd_t cmd_handlers[] =
      { "close",    handle_close },
      { "yank",     handle_yank },
      { "paste",    handle_paste },
+     { "buffers",  handle_buffers },
      { "set",      handle_set },
      { "get",      handle_get },
      { "bind",     handle_bind },
@@ -110,13 +112,13 @@ gboolean handle_spawn (int argc, char **argv, GString **ret, CreamTabbed *obj)
      child_argv[2] = global.cmdline.config;
      child_argv[3] = global.unix_sock.path;
 
-     for (i = 4, j = 1; i < argc; ++i, ++j)
+     for (i = 4, j = 2; j < argc; ++i, ++j)
      {
           child_argv[i] = g_strdup (argv[j]);
      }
      child_argv[i] = NULL;
 
-     if (!g_spawn_async (NULL, child_argv, NULL, G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL, NULL, NULL, &child, &error))
+     if (!g_spawn_async (NULL, child_argv, NULL, 0, NULL, NULL, &child, &error))
      {
           if (ret != NULL)
                *ret = g_string_new (error->message);
@@ -253,6 +255,25 @@ gboolean handle_paste (int argc, char **argv, GString **ret, CreamTabbed *obj)
           notebook_append_page (uri);
      else
           cream_tabbed_load_uri (obj, uri);
+
+     return TRUE;
+}
+
+gboolean handle_buffers (int argc, char **argv, GString **ret, CreamTabbed *obj)
+{
+     GString *tmp = g_string_new ("");
+     int i;
+
+     for (i = 0; i < gtk_notebook_get_n_pages (global.notebook); ++i)
+     {
+          CreamTabbed *tab = CREAM_TABBED (gtk_notebook_get_nth_page (global.notebook, i));
+          tmp = g_string_append (tmp, cream_tabbed_get_uri (tab));
+          tmp = g_string_append (tmp, " ");
+     }
+     tmp = g_string_append (tmp, "\n");
+
+     if (ret != NULL)
+          *ret = tmp;
 
      return TRUE;
 }

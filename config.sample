@@ -38,6 +38,9 @@ keys
 
      bind "c" { cmd = "close" }
      bind "zZ" { cmd = "quit" }
+
+     bind "sS" { cmd = "spawn /home/<user>/.config/cream-browser/scripts/session.sh save" }
+     bind "lS" { cmd = "spawn /home/<user>/.config/cream-browser/scripts/session.sh load" }
 }
 
 gui
