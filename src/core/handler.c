@@ -95,7 +95,7 @@
 #define STATE2_NOERR      0
 #define STATE2_UNKNOWERR  1
 
-/*! /struct handler_cmd_t */
+/*! \struct handler_cmd_t */
 struct handler_cmd_t
 {
      char *argv0; /*!< Command's name */
