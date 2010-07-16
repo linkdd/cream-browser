@@ -5,7 +5,7 @@ save_session()
      rm -rf ~/.config/cream-browser/session
 
      buffers=$(creamctl -s $1 -c "buffers")
-     for i in $buffers
+     for i in ${buffers#*: }
      do
           echo $i >> ~/.config/cream-browser/session
      done
