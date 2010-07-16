@@ -84,7 +84,7 @@ extern struct global_t global;
 gboolean cream_init (int *argc, char ***argv, GError **error);
 void cream_release (int exit_code);
 CreamTabbed *get_current_creamtabbed (void);
-gboolean run_command (const gchar *cmd, GString **ret, CreamTabbed *obj);
+void run_command (const gchar *cmd, GString **ret, CreamTabbed *obj);
 
 gboolean set (char *key, char *value);
 char *get (char *key);

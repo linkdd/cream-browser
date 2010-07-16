@@ -71,6 +71,7 @@ gboolean control_client_socket (GIOChannel *channel)
      if (line)
      {
           run_command (line, &result, get_current_creamtabbed ());
+          result = g_string_append (result, "\r\n");
 
           ret = g_io_channel_write_chars (channel, result->str, result->len, &len, &error);
           if (ret == G_IO_STATUS_ERROR)

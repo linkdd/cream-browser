@@ -31,6 +31,7 @@ GString *bind_buffer = NULL;
 
 gboolean bind_parse_buffer (CreamTabbed *obj)
 {
+     GString *msg = NULL;
      struct key_t *tmp = global.cfg.keys;
 
      for (; tmp != NULL; tmp = tmp->next)
@@ -39,7 +40,12 @@ gboolean bind_parse_buffer (CreamTabbed *obj)
           {
                g_string_free (bind_buffer, TRUE);
                bind_buffer = NULL;
-               return run_command (tmp->cmd, NULL, obj);
+               run_command (tmp->cmd, &msg, obj);
+
+               if (msg->str[0] == 0 && msg->str[1] == 0 && msg->str[2] == 0)
+                    return TRUE;
+               else
+                    return FALSE;
           }
      }
 

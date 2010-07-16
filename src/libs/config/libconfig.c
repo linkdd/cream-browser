@@ -63,7 +63,7 @@ GQuark cream_config_error_quark (void)
  */
 static cfg_opt_t config_user_agent_set_opts[] =
 {
-     CFG_STR ("name", "", CFGF_NONE),
+     CFG_STR ("name", NULL, CFGF_NONE),
      CFG_END ()
 };
 
@@ -89,10 +89,10 @@ static cfg_opt_t config_global_opts[] =
 
      CFG_SEC  ("user-agent", config_user_agent_opts, CFGF_NONE),
 
-     CFG_STR  ("bookmarks", "", CFGF_NONE),
-     CFG_STR  ("history",   "", CFGF_NONE),
-     CFG_STR  ("cookie",    "", CFGF_NONE),
-     CFG_STR  ("proxy",     "", CFGF_NONE),
+     CFG_STR  ("bookmarks", NULL, CFGF_NONE),
+     CFG_STR  ("history",   NULL, CFGF_NONE),
+     CFG_STR  ("cookie",    NULL, CFGF_NONE),
+     CFG_STR  ("proxy",     NULL, CFGF_NONE),
      CFG_END  ()
 };
 
@@ -102,7 +102,7 @@ static cfg_opt_t config_global_opts[] =
  */
 static cfg_opt_t config_handlers_set_opts[] =
 {
-     CFG_STR ("handler", "", CFGF_NONE),
+     CFG_STR ("handler", NULL, CFGF_NONE),
      CFG_END ()
 };
 
@@ -122,7 +122,7 @@ static cfg_opt_t config_handlers_opts[] =
  */
 static cfg_opt_t config_keys_bind_opts[] =
 {
-     CFG_STR ("cmd", "", CFGF_NONE),
+     CFG_STR ("cmd", NULL, CFGF_NONE),
      CFG_END ()
 };
 
