@@ -81,6 +81,7 @@
 
 extern struct global_t global;
 
+char *str_replace (const char *search, const char *replace, const char *string);
 gboolean cream_init (int *argc, char ***argv, GError **error);
 void cream_release (int exit_code);
 CreamTabbed *get_current_creamtabbed (void);
