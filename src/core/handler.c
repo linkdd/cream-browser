@@ -31,10 +31,10 @@
 
   \section errcode Error code
 
-  Every handlers return an error code. This errorcode contains 3 numbers.
-  The first number represent the error code of the parser.
-  The second number represent the error code common to all handler.
-  The third number represent the specific error code of one handler.
+  Every handlers return an error code. This error code contains 3 numbers.
+  -# The error code of the parser.
+  -# The error code common to all handler.
+  -# The specific error code of one handler.
 
   For example: "310"
   - 3 : The error comes from the handler
