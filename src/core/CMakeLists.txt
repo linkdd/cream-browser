@@ -15,6 +15,7 @@ set(cream_bin_SRCS
     main.c
     marshal.c
     CreamTabbed.c
+    Completion.c
     interface.c
     callbacks.c
     command.c

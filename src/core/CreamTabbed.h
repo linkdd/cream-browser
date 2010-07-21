@@ -37,6 +37,7 @@
 #include <gtk/gtkwidget.h>
 
 #include <CreamView.h>
+#include "Completion.h"
 
 G_BEGIN_DECLS
 
@@ -45,7 +46,7 @@ G_BEGIN_DECLS
 #define CREAM_TABBED_CLASS(klass)  \
      GTK_CHECK_CLASS_CAST(klass, cream_tabbed_get_type (), CreamTabbedClass)
 #define IS_CREAM_TABBED(obj)       \
-     GTK_CHECK_TYPE(obj, cream_tabbed_get_type ());
+     GTK_CHECK_TYPE(obj, cream_tabbed_get_type ())
 
 /*! \typedef struct _CreamTabbed CreamTabbed */
 /*! \typedef struct _CreamTabbedClass CreamTabbedClass */
@@ -56,6 +57,7 @@ typedef struct _CreamTabbedClass CreamTabbedClass;
 /*!
   \struct _CreamTabbed
   \implements CreamView
+  \implements Completion
   \todo Split the view when opening the WebInspector (instead of opening in a new window)
  */
 struct _CreamTabbed
@@ -71,6 +73,7 @@ struct _CreamTabbed
           GtkWidget *state;
      } statusbar;                  /*!< Statusbar of the CreamView object */
 
+     GtkWidget *comp;              /*!< Completion for the inputbox */
      GtkWidget *inputbox;          /*!< Inputbox of the CreamView object */
 
      GtkAdjustment *adjust_v;

@@ -18,8 +18,8 @@ global
 
 handlers
 {
-     set "download" { handler = "spawn ~/.local/share/cream-browser/scripts/download.sh" }
-     set "signal::load-committed" { handler = "spawn ~/.local/share/cream-browser/scripts/my_history.sh" }
+     set "cream::init" { handler = "spawn ~/.config/cream-browser/scripts/session.sh load" }
+     set "cream::quit" { handler = "spawn ~/.config/cream-browser/scripts/session.sh save" }
 }
 
 keys
@@ -38,9 +38,6 @@ keys
 
      bind "c" { cmd = "close" }
      bind "zZ" { cmd = "quit" }
-
-     bind "sS" { cmd = "spawn /home/<user>/.config/cream-browser/scripts/session.sh save" }
-     bind "lS" { cmd = "spawn /home/<user>/.config/cream-browser/scripts/session.sh load" }
 }
 
 gui

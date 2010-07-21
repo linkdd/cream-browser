@@ -27,7 +27,7 @@
 
 /*!
   @defgroup CreamTabbed Tabbed CreamView
-  @brief Object which implement a #CreamView, a statusbar and an inputbox
+  @brief Object which implement a #CreamView, a statusbar, a #Completion and an inputbox
 
   @{
  */
@@ -102,14 +102,15 @@ static void cream_tabbed_init (CreamTabbed *obj)
      obj->statusbar.url      = NULL;
      obj->statusbar.state    = NULL;
 
+     obj->comp     = NULL;
      obj->inputbox = NULL;
      obj->adjust_v = NULL;
 }
 
 /*!
   \fn GtkWidget *cream_tabbed_new (void)
-  \brief Create a new CreamTabbed object which can be added to the notebook
-  \return A new CreamTabbed object
+  \brief Create a new #CreamTabbed object which can be added to the notebook
+  \return A new #CreamTabbed object
  */
 GtkWidget *cream_tabbed_new (void)
 {
