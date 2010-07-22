@@ -260,17 +260,20 @@ char handle_spawn (int argc, char **argv, char *ret, GString **msg, CreamTabbed 
      GPid child;
      int i, j;
 
-     if (argc < 2)
+     if (argc < 3)
+     {
+          set_msg (msg, "Usage: %s <waitpid (0:no/1:yes)> /path/to/program [arguments...]", argv[0]);
           return STATE1_ARGERR;
+     }
 
      child_argv = calloc (3 + argc, sizeof (char *));
 
-     child_argv[0] = g_strdup (argv[1]);
+     child_argv[0] = str_replace ("~", g_get_home_dir (), argv[2]);
      child_argv[1] = g_strdup_printf ("%d", getpid ());
      child_argv[2] = global.cmdline.config;
      child_argv[3] = global.unix_sock.path;
 
-     for (i = 4, j = 2; j < argc; ++i, ++j)
+     for (i = 4, j = 3; j < argc; ++i, ++j)
      {
           child_argv[i] = g_strdup (argv[j]);
      }
@@ -285,7 +288,16 @@ char handle_spawn (int argc, char **argv, char *ret, GString **msg, CreamTabbed 
           return STATE1_SPEC;
      }
 
-     set_msg (msg, "spawn: child process <%d>", getpid ());
+     set_msg (msg, "spawn: child process <%d>", child);
+
+     if (!strcmp (argv[1], "1"))
+     {
+          struct pid_list_t *tmp = malloc (sizeof (struct pid_list_t));
+
+          tmp->pid = child;
+          tmp->next = global.browser.pids;
+          global.browser.pids = tmp;
+     }
 
      return STATE1_NOERR;
 }
@@ -448,7 +460,8 @@ char handle_buffers (int argc, char **argv, char *ret, GString **msg, CreamTabbe
           tmp = g_string_append (tmp, cream_tabbed_get_uri (tab));
           tmp = g_string_append (tmp, " ");
      }
-     if (msg != NULL) *msg = tmp;
+     set_msg (msg, tmp->str);
+     g_string_free (tmp, TRUE);
 
      return STATE1_NOERR;
 }

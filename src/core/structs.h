@@ -28,6 +28,12 @@
 #ifndef __STRUCTS_H
 #define __STRUCTS_H
 
+struct pid_list_t
+{
+     GPid pid;
+     struct pid_list_t *next;
+};
+
 struct variable_t
 {
      char *key;
@@ -62,6 +68,7 @@ struct global_t
 
           GSList *bookmarks;
           GSList *cmd_history;
+          struct pid_list_t *pids;
      } browser;
 
      struct

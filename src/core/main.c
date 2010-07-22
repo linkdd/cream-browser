@@ -463,7 +463,6 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
           return FALSE;
      }
 
-
      init_socket ();
 
      /* restore cookies */
@@ -506,6 +505,21 @@ gboolean cream_init (int *argc, char ***argv, GError **error)
 
 void cream_release (int exit_code)
 {
+     struct handler_t *handler = NULL;
+     struct pid_list_t *pid = NULL;
+
+     for (handler = get_handlers ("cream::quit"); handler != NULL; handler = handler->next)
+     {
+          GString *ret = NULL;
+          run_command (handler->cmd, &ret, get_current_creamtabbed ());
+          printf ("%s\n", ret->str);
+          g_string_free (ret, TRUE);
+     }
+
+     for (pid = global.browser.pids; pid != NULL; pid = pid->next)
+          if (-1 != waitpid (pid->pid, NULL, 0))
+               printf ("Child process <%d> closed.\n", pid->pid);
+
      soup_cookie_jar_save (global.browser.cookies);
 
      if (global.cfg.global.history != NULL)
@@ -579,6 +593,7 @@ CreamTabbed *get_current_creamtabbed (void)
 
 int main (int argc, char **argv)
 {
+     struct handler_t *handler = NULL;
      GError *error = NULL;
      GtkWidget *win;
      GtkStatusIcon *creamicon;
@@ -597,6 +612,14 @@ int main (int argc, char **argv)
           notebook_append_page (global.cmdline.url);
      else
           notebook_append_page (global.cfg.global.homepage);
+
+     for (handler = get_handlers ("cream::init"); handler != NULL; handler = handler->next)
+     {
+          GString *ret = NULL;
+          run_command (handler->cmd, &ret, get_current_creamtabbed ());
+          printf ("%s\n", ret->str);
+          g_string_free (ret, TRUE);
+     }
 
      gtk_widget_show_all (win);
      gtk_main ();
@@ -744,4 +767,25 @@ void add_to_bookmarks (const gchar *uri, const gchar *title)
 
           global.browser.bookmarks = g_slist_append (global.browser.bookmarks, bm);
      }
+}
+
+struct handler_t *get_handlers (const gchar *prefix)
+{
+     struct handler_t *ret  = NULL;
+     struct handler_t *tmp0 = NULL;
+     struct handler_t *tmp1 = NULL;
+
+     for (tmp0 = global.cfg.handlers; tmp0 != NULL; tmp0 = tmp0->next)
+     {
+          if (g_str_has_prefix (tmp0->name, prefix))
+          {
+               tmp1 = malloc (sizeof (struct handler_t));
+               tmp1->name = tmp0->name;
+               tmp1->cmd  = tmp0->cmd;
+               tmp1->next = ret;
+               ret = tmp1;
+          }
+     }
+
+     return ret;
 }

@@ -92,6 +92,8 @@ char *get (char *key);
 void set_user_agent (WebKitWebSettings *settings, const gchar *uri);
 void add_to_bookmarks (const gchar *uri, const gchar *title);
 
+struct handler_t *get_handlers (const gchar *prefix);
+
 /* errors */
 typedef enum
 {

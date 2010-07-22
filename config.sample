@@ -18,8 +18,8 @@ global
 
 handlers
 {
-     set "cream::init" { handler = "spawn ~/.config/cream-browser/scripts/session.sh load" }
-     set "cream::quit" { handler = "spawn ~/.config/cream-browser/scripts/session.sh save" }
+     set "cream::init" { handler = "spawn 1 ~/.config/cream-browser/scripts/session.sh load" }
+     set "cream::quit" { handler = "spawn 1 ~/.config/cream-browser/scripts/session.sh save" }
 }
 
 keys
