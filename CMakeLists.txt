@@ -1,6 +1,7 @@
 project(cream-browser)
 set(VERSION 201007)
 set(PROJECT_NAME "cream-browser")
+set(CREAM_LOGO "logo.png")
 
 cmake_minimum_required(VERSION 2.6)
 include(FindPkgConfig)
@@ -153,3 +154,4 @@ set(CREAM_XDG_CONFIG "${TOP_SRCDIR}/config.sample")
 # Install things
 # Install targets are in src/core/CMakeLists.txt
 install(FILES ${CREAM_XDG_CONFIG} DESTINATION "${SYSCONFDIR}/xdg/cream-browser" RENAME config)
+install(FILES ${CREAM_LOGO} DESTINATION "${PREFIX}/share/cream-browser" RENAME cream.png)

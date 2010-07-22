@@ -116,7 +116,7 @@ GtkStatusIcon *cream_icon_init (GtkWidget *window)
 {
      GtkStatusIcon *CreamIcon;
      GtkWidget *menu, *menuItemView, *menuItemHide, *menuItemQuit;
-     gchar *path = g_strdup_printf ("%s/cream-browser/cream.png", get_xdg_var_by_name ("XDG_CONFIG_HOME"));
+     gchar *path = g_strdup_printf (find_xdg_file (XDG_TYPE_DATA, "/cream-browser/cream.png"));
 
      /* System Tray Icon */
      /* Tray icon file */
