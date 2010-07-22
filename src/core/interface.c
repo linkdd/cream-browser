@@ -101,6 +101,8 @@ GtkWidget *cream_interface_init (void)
      gtk_window_set_title (GTK_WINDOW (main_window), g_strdup_printf ("Cream-Browser <%d>", getpid ()));
      gtk_window_set_default_size (GTK_WINDOW (main_window), 800, 600);
      gtk_window_set_geometry_hints (GTK_WINDOW (main_window), NULL, &hints, GDK_HINT_MIN_SIZE);
+     gtk_window_set_wmclass (GTK_WINDOW (main_window), "Cream-Browser", "Browser");
+     gtk_window_set_icon_from_file (GTK_WINDOW (main_window), find_xdg_file (XDG_TYPE_DATA, "/cream-browser/cream.png"), NULL);
 
      global.notebook = GTK_NOTEBOOK (gtk_notebook_new ());
      gtk_container_add (GTK_CONTAINER (main_window), GTK_WIDGET (global.notebook));
