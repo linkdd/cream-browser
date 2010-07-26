@@ -31,7 +31,7 @@
 #include <CreamView.h>
 
 GtkWidget *cream_create_tab_label (CreamTabbed *obj);
-void notebook_append_page (const gchar *uri);
+GtkWidget *notebook_append_page (const gchar *uri);
 GtkWidget *cream_interface_init (void);
 GtkStatusIcon *cream_icon_init (GtkWidget *window);
 

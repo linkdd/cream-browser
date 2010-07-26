@@ -120,6 +120,7 @@ GtkWidget *cream_view_new (void);
 
 void cream_view_load_uri (CreamView *obj, const gchar *uri);
 GtkWidget *cream_view_get_content (CreamView *obj);
+void cream_view_set_content (CreamView *obj, GtkWidget *content);
 gboolean cream_view_get_view_source_mode (CreamView *obj);
 void cream_view_set_view_source_mode (CreamView *obj, gboolean mode);
 

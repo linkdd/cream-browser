@@ -80,7 +80,7 @@ GtkWidget *cream_create_tab_label (CreamTabbed *obj)
      return hbox;
 }
 
-void notebook_append_page (const gchar *uri)
+GtkWidget *notebook_append_page (const gchar *uri)
 {
      GtkWidget *creamtabbed = cream_tabbed_new ();
      cream_tabbed_load_uri (CREAM_TABBED (creamtabbed), uri);
@@ -90,6 +90,8 @@ void notebook_append_page (const gchar *uri)
 
      g_signal_connect (G_OBJECT (creamtabbed), "update-notebook-title", G_CALLBACK (cb_cream_update_notebook_title), NULL);
      gtk_widget_show_all (GTK_WIDGET (global.notebook));
+
+     return creamtabbed;
 }
 
 GtkWidget *cream_interface_init (void)

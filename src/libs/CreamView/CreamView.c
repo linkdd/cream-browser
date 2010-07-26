@@ -342,12 +342,37 @@ void cream_view_load_uri (CreamView *obj, const gchar *uri)
   \fn GtkWidget *cream_view_get_content (CreamView *obj)
   \brief Get the object which show the URI previously loaded
 
-  \param obj The CreamView object
-  \return The CreamView's content
+  \param obj The #CreamView object
+  \return The #CreamView's content
  */
 GtkWidget *cream_view_get_content (CreamView *obj)
 {
      return obj->content;
+}
+
+/*!
+  \fn void cream_view_set_content (CreamView *obj, GtkWidget *content)
+  \brief Set the object which show the URI to load
+
+  \param obj The #CreamView object
+  \param content New widget which will load URI
+ */
+void cream_view_set_content (CreamView *obj, GtkWidget *content)
+{
+     g_return_if_fail (content != NULL);
+
+     gtk_container_remove (GTK_CONTAINER (obj), obj->content);
+     obj->content = content;
+     gtk_container_add (GTK_CONTAINER (obj), obj->content);
+     gtk_widget_show_all (GTK_WIDGET (obj));
+
+     g_object_connect (G_OBJECT (obj->content),
+          "signal::uri-changed",    G_CALLBACK (cream_view_uri_changed_cb),    obj,
+          "signal::new-title",      G_CALLBACK (cream_view_new_title_cb),      obj,
+          "signal::status-changed", G_CALLBACK (cream_view_status_changed_cb), obj,
+          "signal::new-download",   G_CALLBACK (cream_view_new_download_cb),   obj,
+          "signal::switch-module",  G_CALLBACK (cream_view_switch_module_cb),  obj,
+     NULL);
 }
 
 /*!
@@ -485,7 +510,7 @@ static gboolean cream_view_webkit_cb_new_window (ModuleWebView *view,
           0, uri, &ret
      );
 
-     if (ret)
+     if (!ret)
           webkit_web_policy_decision_ignore (policy);
      return ret;
 }

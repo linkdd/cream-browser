@@ -35,6 +35,7 @@
 
 #include "WebViewModule.h"
 #include <marshal.h>
+#include <local.h>
 
 #define MODULE_WEB_VIEW_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE ((obj), module_web_view_get_type (), ModuleWebViewPrivate))
 
@@ -77,6 +78,8 @@ static gboolean module_web_view_cb_navigation (ModuleWebView *webview, WebKitWeb
 static gboolean module_web_view_cb_mimetype (ModuleWebView *webview, WebKitWebFrame *frame, WebKitNetworkRequest *request, gchar *mimetype, WebKitWebPolicyDecision *decision, gpointer data);
 static gboolean module_web_view_cb_download (ModuleWebView *webview, WebKitDownload *download, gpointer data);
 static void module_web_view_cb_hoverlink (ModuleWebView *webview, gchar *title, gchar *link, gpointer data);
+static WebKitWebView *module_web_view_cb_create_webview (ModuleWebView *webview, WebKitWebFrame *frame, gpointer data);
+static gboolean module_web_view_cb_ready (ModuleWebView *webview, gpointer data);
 
 GtkType module_web_view_get_type (void)
 {
@@ -198,6 +201,8 @@ GtkWidget *module_web_view_new (void)
           "signal::mime-type-policy-decision-requested",    G_CALLBACK (module_web_view_cb_mimetype),              NULL,
           "signal::download-requested",                     G_CALLBACK (module_web_view_cb_download),              NULL,
           "signal::hovering-over-link",                     G_CALLBACK (module_web_view_cb_hoverlink),             NULL,
+          "signal::create-web-view",                        G_CALLBACK (module_web_view_cb_create_webview),        NULL,
+          "signal::web-view-ready",                         G_CALLBACK (module_web_view_cb_ready),                 NULL,
      NULL);
 
      return GTK_WIDGET (obj);
@@ -391,6 +396,39 @@ static void module_web_view_cb_hoverlink (ModuleWebView *webview, gchar *title, 
           0,
           webview->status
      );
+}
+
+static WebKitWebView *module_web_view_cb_create_webview (ModuleWebView *webview, WebKitWebFrame *frame, gpointer data)
+{
+     GtkWidget *ret = module_web_view_new ();
+     CreamTabbed *creamtabbed = CREAM_TABBED (notebook_append_page ("about:blank"));
+
+     cream_view_set_content (CREAM_VIEW (creamtabbed->creamview), ret);
+
+     return WEBKIT_WEB_VIEW (ret);
+}
+
+static gboolean module_web_view_cb_ready (ModuleWebView *webview, gpointer data)
+{
+     gtk_widget_show_all (GTK_WIDGET (webview));
+
+     webview->uri   = g_strdup (webkit_web_view_get_uri (WEBKIT_WEB_VIEW (webview)));
+     webview->title = g_strdup (webkit_web_view_get_title (WEBKIT_WEB_VIEW (webview)));
+     webview->ico   = favicon_new (webview->uri);
+
+     g_signal_emit (
+          G_OBJECT (webview),
+          module_web_view_signals[URI_CHANGED_SIGNAL],
+          0, webview->uri
+     );
+
+     g_signal_emit (
+          G_OBJECT (webview),
+          module_web_view_signals[NEW_TITLE_SIGNAL],
+          0, webview->title
+     );
+
+     return TRUE;
 }
 
 /* ModuleWebView methods */
