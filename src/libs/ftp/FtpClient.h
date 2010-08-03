@@ -33,6 +33,7 @@
   @{
  */
 
+#include <netinet/in.h>
 #include <glib-object.h>
 
 #define FTP_CLIENT_TYPE            (ftp_client_get_type ())

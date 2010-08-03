@@ -25,6 +25,9 @@
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <sys/types.h>
+#include <sys/wait.h>
+
 #include "local.h"
 
 struct global_t global;
