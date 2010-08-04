@@ -97,6 +97,7 @@ GtkWidget *notebook_append_page (const gchar *uri)
 GtkWidget *cream_interface_init (void)
 {
      GdkGeometry hints = { 1, 1 }; /* GDK_HINT_MIN_SIZE for main_window */
+     gchar *path;
 
      /* create main window */
      GtkWidget *main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -104,7 +105,9 @@ GtkWidget *cream_interface_init (void)
      gtk_window_set_default_size (GTK_WINDOW (main_window), 800, 600);
      gtk_window_set_geometry_hints (GTK_WINDOW (main_window), NULL, &hints, GDK_HINT_MIN_SIZE);
      gtk_window_set_wmclass (GTK_WINDOW (main_window), "Cream-Browser", "Browser");
-     gtk_window_set_icon_from_file (GTK_WINDOW (main_window), find_xdg_file (XDG_TYPE_DATA, "/cream-browser/cream.png"), NULL);
+
+     if ((path = find_xdg_file (XDG_TYPE_DATA, "/cream-browser/cream.png")) != NULL)
+          gtk_window_set_icon_from_file (GTK_WINDOW (main_window), path, NULL);
 
      global.notebook = GTK_NOTEBOOK (gtk_notebook_new ());
      gtk_container_add (GTK_CONTAINER (main_window), GTK_WIDGET (global.notebook));
@@ -119,34 +122,39 @@ GtkWidget *cream_interface_init (void)
 GtkStatusIcon *cream_icon_init (GtkWidget *window)
 {
      GtkStatusIcon *CreamIcon;
-     GtkWidget *menu, *menuItemView, *menuItemHide, *menuItemQuit;
-     gchar *path = g_strdup_printf (find_xdg_file (XDG_TYPE_DATA, "/cream-browser/cream.png"));
+     GtkWidget *menu, *item;
+     gchar *path;
+
+     if ((path = find_xdg_file (XDG_TYPE_DATA, "/cream-browser/cream.png")) == NULL)
+          return NULL;
 
      /* System Tray Icon */
      /* Tray icon file */
-     CreamIcon = gtk_status_icon_new_from_file(path);
+     CreamIcon = gtk_status_icon_new_from_file (path);
+
+     gtk_status_icon_set_tooltip (GTK_STATUS_ICON (CreamIcon),
+          g_strdup_printf ("Cream-Browser <%d>", getpid ()));
+     gtk_status_icon_set_visible (GTK_STATUS_ICON (CreamIcon), TRUE);
 
      /* popup menu for tray icon */
-     menu = gtk_menu_new();
-     menuItemView = gtk_menu_item_new_with_label("View");
-     menuItemHide = gtk_menu_item_new_with_label("Hide");
-     menuItemQuit = gtk_menu_item_new_with_label("Quit");
-     gtk_menu_shell_append (GTK_MENU_SHELL(menu), menuItemView);
-     gtk_menu_shell_append (GTK_MENU_SHELL(menu), menuItemHide);
-     gtk_menu_shell_append (GTK_MENU_SHELL(menu), menuItemQuit);
+     menu = gtk_menu_new ();
 
-     gtk_status_icon_set_tooltip(GTK_STATUS_ICON(CreamIcon),
-          g_strdup_printf("Cream-Browser <%d>", getpid() ));
-     gtk_status_icon_set_visible(GTK_STATUS_ICON(CreamIcon), TRUE);
+     item = gtk_menu_item_new_with_label ("View");
+     g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (cb_tray_view), window);
+     gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
-     /* connect signals */
-     g_signal_connect (G_OBJECT (menuItemView), "activate", G_CALLBACK(cb_tray_view), window);
-     g_signal_connect (G_OBJECT (menuItemHide), "activate", G_CALLBACK(cb_tray_hide), window);
-     g_signal_connect (G_OBJECT (menuItemQuit), "activate", G_CALLBACK(cb_cream_destroy), window);
-     g_signal_connect (G_OBJECT (CreamIcon),    "activate", GTK_SIGNAL_FUNC(cb_tray_activated), window);
-     g_signal_connect (G_OBJECT (CreamIcon),    "popup-menu", GTK_SIGNAL_FUNC(cb_tray_popup), menu);
+     item = gtk_menu_item_new_with_label ("Hide");
+     g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (cb_tray_hide), window);
+     gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
-     gtk_widget_show_all(menu);
+     item = gtk_menu_item_new_with_label ("Quit");
+     g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (cb_cream_destroy), window);
+     gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+     g_signal_connect (G_OBJECT (CreamIcon), "activate",   G_CALLBACK (cb_tray_activated), window);
+     g_signal_connect (G_OBJECT (CreamIcon), "popup-menu", G_CALLBACK (cb_tray_popup),     menu);
+
+     gtk_widget_show_all (menu);
 
      return GTK_STATUS_ICON (CreamIcon);
 }
