@@ -9,4 +9,13 @@ If you want install Cream-Browser :
      $ cd __build__ # Created by build.sh script
      $ sudo make install
 
+Platforms specific:
+
+  - MacOSX
+    - Tested on 10.5.x and 10.6.x
+    - Cream-Browser will run into X11 since C-B doesn't have a Cocoa Frontend
+    - You need the XCode stuff and macport
+    - Required packages:
+      $ sudo port install webkit-gtk hicolor-icon-theme
+
 http://cream-browser.net
