@@ -1,11 +1,6 @@
-config.h
-*.swp
-*~
 *.o
-cream
-creamctl
 *.a
-doc/html
-_build
-__build__
-autom4te.cache
+*.lo
+*.la
+.libs
+common.mk

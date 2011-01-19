@@ -1,0 +1,20 @@
+export CC = @cc@
+export LIBTOOL = @libtool@
+export CFLAGS = -c -O2 -Wall
+export LDFLAGS = 
+
+export LIBCONFIG_CFLAGS  =
+export LIBCONFIG_LDFLAGS = -llua -llualib
+
+export GTK_CFLAGS  = `pkg-config --cflags gtk+-2.0`
+export GTK_LDFLAGS = `pkg-config --libs gtk+-2.0`
+
+export WEBKIT_CFLAGS  = `pkg-config --cflags webkit-1.0`
+export WEBKIT_LDFLAGS = `pkg-config --libs webkit-1.0`
+
+export EXEC = cream-browser
+
+export TOPDIR = @topdir@
+export SRCDIR = $(TOPDIR)/src
+export PREFIX = @prefix@
+export SYSCONFDIR = @sysconfdir@

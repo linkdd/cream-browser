@@ -1,0 +1,110 @@
+#!/bin/sh
+
+PREFIX="/usr/local"
+TOPDIR=`pwd`
+
+PKGCONFIG_LIBS="gtk+-2.0 webkit-1.0"
+
+while true
+do
+     case $1 in
+          --prefix=*)
+               PREFIX="${1#--prefix=}"
+               shift
+               ;;
+
+          --prefix)
+               PREFIX=$2
+               shift 2
+               ;;
+
+          --sysconfdir=*)
+               SYSCONFDIR="${1#--sysconfdir=}"
+               shift
+               ;;
+
+          --sysconfdir)
+               SYSCONFDIR=$2
+               shift 2
+               ;;
+
+          *)
+               break
+               ;;
+     esac
+done
+
+if [ "x$SYSCONFDIR" = "x" ]; then
+     SYSCONFDIR="$PREFIX/etc"
+fi
+
+# List informations
+echo "!! Using prefix: - $PREFIX"
+echo "!!               - $SYSCONFDIR"
+echo
+
+if [ "x$CC" = "x" ]; then
+     CC="gcc"
+fi
+
+# Checking for basic programs
+echo -n "-- Checking for compiler ($CC) ... "
+compiler=`which $CC`
+if [ "$?" = "1" ]; then
+     echo "no" && exit 1
+else
+     echo "yes"
+fi
+
+echo -n "-- Checking for libtool ... "
+libtool=`which libtool`
+if [ "$?" = "1" ]; then
+     echo "no" && exit 1
+else
+     echo "yes"
+     libtool="$libtool --tag=CC"
+fi
+
+echo -n "-- Checking for pkg-config ... "
+which pkg-config > /dev/null 2>&1
+if [ "?" = "1" ]; then
+     echo "no" && exit 1
+else
+     echo "yes"
+fi
+
+echo -n "-- Checking for sed ... "
+SED=`which sed`
+if [ "$?" = "1" ]; then
+     echo "no" && exit 1
+else
+     echo "yes"
+fi
+
+# Checking for libraries
+for lib in $PKGCONFIG_LIBS
+do
+     echo -n "-- Checking for $lib ... "
+     ver=`pkg-config --modversion $lib`
+     if [ "$?" = "1" ]; then
+          echo "no" && exit 1
+     else
+          echo $ver
+     fi
+done
+echo
+
+# Creating configuration file
+echo -n "Creating: common.mk"
+
+$SED -e "s:@cc@:$compiler:
+         s:@libtool@:$libtool:
+         s:@topdir@:$TOPDIR:
+         s:@prefix@:$PREFIX:
+         s:@sysconfdir@:$SYSCONFDIR:" common.mk.in > common.mk
+
+if [ "$?" = "1" ]; then
+     echo " [ failed ]" && exit 1
+else
+     echo " [ ok ]"
+fi
