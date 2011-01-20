@@ -2,9 +2,11 @@
 #define __ERRORS_H
 
 #include <sys/queue.h>
-#include <glib.h>
 #include <string.h>
 #include <stdarg.h>
+
+#include <glib.h>
+#include <glib/gprintf.h>
 
 typedef unsigned long id_t;
 
