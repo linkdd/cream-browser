@@ -2,5 +2,7 @@
 *.a
 *.lo
 *.la
+*.so
 .libs
+cream-browser
 common.mk

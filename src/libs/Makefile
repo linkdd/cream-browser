@@ -1,14 +1,13 @@
-.PHONY: all clean
+SOURCES=errors.c config.c
+OBJECTS=$(SOURCES:.c=.lo)
 
-all:
-	@make -C config all
-	@make -C creamview all
-	@make -C modules all
+.PHONY: all
 
-clean:
-	@find -name "*.o" -delete
-	@find -name "*.a" -delete
-	@find -name "*.lo" -delete
-	@find -name "*.la" -delete
-	@find -name ".libs" -exec rm -rf {} \;
+all: libcream.la
+
+libcream.la: $(OBJECTS)
+	@$(LIBTOOL) --mode=link $(CC) -shared -rpath $(DESTDIR)$(PREFIX)/lib/ $(LDFLAGS) $(LIBCREAM_LDFLAGS) $^ -o $@
+
+%.lo: %.c
+	@$(LIBTOOL) --mode=compile $(CC) -shared $(CFLAGS) $(LIBCREAM_CFLAGS) $^
 

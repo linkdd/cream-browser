@@ -3,7 +3,8 @@
 PREFIX="/usr/local"
 TOPDIR=`pwd`
 
-PKGCONFIG_LIBS="gtk+-2.0 webkit-1.0"
+PKGCONFIG_LIBS="glib-2.0 gtk+-2.0 webkit-1.0 lua"
+MODULES="www ftp about"
 
 while true
 do
@@ -28,6 +29,18 @@ do
                shift 2
                ;;
 
+          --enable-*)
+               mod="${1#--enable-}"
+               MODULES="$MODULES $mod"
+               shift
+               ;;
+
+          --disable-*)
+               mod="${1#--disable-}"
+               MODULES="${MODULES/$mod/}"
+               shift
+               ;;
+
           *)
                break
                ;;
@@ -41,6 +54,16 @@ fi
 # List informations
 echo "!! Using prefix: - $PREFIX"
 echo "!!               - $SYSCONFDIR"
+echo "!!"
+echo -n "!! Bulding modules: "
+
+for mod in $MODULES
+do
+     echo -n "<$mod> "
+done
+
+echo
+echo "!!"
 echo
 
 if [ "x$CC" = "x" ]; then
@@ -101,7 +124,8 @@ $SED -e "s:@cc@:$compiler:
          s:@libtool@:$libtool:
          s:@topdir@:$TOPDIR:
          s:@prefix@:$PREFIX:
-         s:@sysconfdir@:$SYSCONFDIR:" common.mk.in > common.mk
+         s:@sysconfdir@:$SYSCONFDIR:
+         s:@modules@:$MODULES:" common.mk.in > common.mk
 
 if [ "$?" = "1" ]; then
      echo " [ failed ]" && exit 1

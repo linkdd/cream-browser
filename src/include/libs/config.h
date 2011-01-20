@@ -5,4 +5,6 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+void libconfig_init (void);
+
 #endif /* __CONFIG_H */
