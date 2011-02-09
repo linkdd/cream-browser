@@ -1895,20 +1895,63 @@ echo "* " >> config.log
 echo "configure failed!"
 exit 1
 fi;
-PKGCONFIG_LIBS="gtk+-2.0 webkit-1.0 lua"
-for lib in $PKGCONFIG_LIBS
-do
-    /bin/echo -n "Checking for $lib..."
-    ver=`pkg-config --modversion $lib`
-    if [ "$?" = "1" ]
+/bin/echo -n "checking for gtk+-2.0..."
+ver="`pkg-config --modversion gtk+-2.0`"
+if [ "$?" = "1" ]
  then
-        echo "no"
-        echo "$lib is required."
-        exit 1
-    else
-        echo $ver
-    fi
-done
+    echo "no"
+    echo "GTK+ 2.0 is required."
+    exit 1
+else
+    have_gtk_version=$ver
+    gtk_cflags="`pkg-config --cflags gtk+-2.0`"
+    gtk_libs="`pkg-config --libs gtk+-2.0`"
+GTK_CFLAGS="$gtk_cflags"
+echo "GTK_CFLAGS=$GTK_CFLAGS" >>Makefile.config
+echo "mdefs[\"GTK_CFLAGS\"] = \"$GTK_CFLAGS\"" >>configure.lua
+GTK_LIBS="$gtk_libs"
+echo "GTK_LIBS=$GTK_LIBS" >>Makefile.config
+echo "mdefs[\"GTK_LIBS\"] = \"$GTK_LIBS\"" >>configure.lua
+    echo $ver
+fi
+/bin/echo -n "checking for webkit-1.0..."
+ver="`pkg-config --modversion webkit-1.0`"
+if [ "$?" = "1" ]
+ then
+    echo "no"
+    echo "Webkit-gtk 1.0 is required."
+    exit 1
+else
+    have_webkit_version=$ver
+    webkit_cflags="`pkg-config --cflags webkit-1.0`"
+    webkit_libs="`pkg-config --libs webkit-1.0`"
+WEBKIT_CFLAGS="$webkit_cflags"
+echo "WEBKIT_CFLAGS=$WEBKIT_CFLAGS" >>Makefile.config
+echo "mdefs[\"WEBKIT_CFLAGS\"] = \"$WEBKIT_CFLAGS\"" >>configure.lua
+WEBKIT_LIBS="$webkit_libs"
+echo "WEBKIT_LIBS=$WEBKIT_LIBS" >>Makefile.config
+echo "mdefs[\"WEBKIT_LIBS\"] = \"$WEBKIT_LIBS\"" >>configure.lua
+    echo $ver
+fi
+/bin/echo -n "checking for lua..."
+ver="`pkg-config --modversion lua`"
+if [ "$?" = "1" ]
+ then
+    echo "no"
+    echo "LUA is required."
+    exit 1
+else
+    have_lua_version=$ver
+    lua_cflags="`pkg-config --cflags lua`"
+    lua_libs="`pkg-config --libs lua`"
+LUA_CFLAGS="$lua_cflags"
+echo "LUA_CFLAGS=$LUA_CFLAGS" >>Makefile.config
+echo "mdefs[\"LUA_CFLAGS\"] = \"$LUA_CFLAGS\"" >>configure.lua
+LUA_LIBS="$lua_libs"
+echo "LUA_LIBS=$LUA_LIBS" >>Makefile.config
+echo "mdefs[\"LUA_LIBS\"] = \"$LUA_LIBS\"" >>configure.lua
+    echo $ver
+fi
 if [ "${enable_module_www}" != "no" ]
  then
 MODULE_WWW="1"
@@ -1983,6 +2026,9 @@ echo "          CC: ${CC}"
 echo
 echo "Build with:"
 echo "      Debug:        ${want_debug}"
+echo "       GTK:         ${have_gtk_version}"
+echo "    Webkit:         ${have_webkit_version}"
+echo "       LUA:         ${have_lua_version}"
 echo "Modules:"
 echo "        FTP:        ${want_module_ftp}"
 echo "        WWW:        ${want_module_www}"

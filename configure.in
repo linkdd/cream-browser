@@ -18,20 +18,51 @@ VERSION("0.1")
 CHECK(cc)
 REQUIRE(glib2)
 
-PKGCONFIG_LIBS="gtk+-2.0 webkit-1.0 lua"
+# Tests for gtk+-2.0 webkit-1.0 lua
+/bin/echo -n "checking for gtk+-2.0..."
+ver="`pkg-config --modversion gtk+-2.0`"
+if [ "$?" = "1" ]; then
+    echo "no"
+    echo "GTK+ 2.0 is required."
+    exit 1
+else
+    have_gtk_version=$ver
+    gtk_cflags="`pkg-config --cflags gtk+-2.0`"
+    gtk_libs="`pkg-config --libs gtk+-2.0`"
+    MDEFINE(GTK_CFLAGS, $gtk_cflags)
+    MDEFINE(GTK_LIBS, $gtk_libs)
+    echo $ver
+fi
 
-for lib in $PKGCONFIG_LIBS
-do
-    /bin/echo -n "Checking for $lib..."
-    ver=`pkg-config --modversion $lib`
-    if [ "$?" = "1" ]; then
-        echo "no"
-        echo "$lib is required."
-        exit 1
-    else
-        echo $ver
-    fi
-done
+/bin/echo -n "checking for webkit-1.0..."
+ver="`pkg-config --modversion webkit-1.0`"
+if [ "$?" = "1" ]; then
+    echo "no"
+    echo "Webkit-gtk 1.0 is required."
+    exit 1
+else
+    have_webkit_version=$ver
+    webkit_cflags="`pkg-config --cflags webkit-1.0`"
+    webkit_libs="`pkg-config --libs webkit-1.0`"
+    MDEFINE(WEBKIT_CFLAGS, $webkit_cflags)
+    MDEFINE(WEBKIT_LIBS, $webkit_libs)
+    echo $ver
+fi
+
+/bin/echo -n "checking for lua..."
+ver="`pkg-config --modversion lua`"
+if [ "$?" = "1" ]; then
+    echo "no"
+    echo "LUA is required."
+    exit 1
+else
+    have_lua_version=$ver
+    lua_cflags="`pkg-config --cflags lua`"
+    lua_libs="`pkg-config --libs lua`"
+    MDEFINE(LUA_CFLAGS, $lua_cflags)
+    MDEFINE(LUA_LIBS, $lua_libs)
+    echo $ver
+fi
 
 C_INCLUDE_CONFIG(config_build.h)
 
@@ -67,6 +98,9 @@ echo "          CC: ${CC}"
 echo
 echo "Build with:"
 echo "      Debug:        ${want_debug}"
+echo "       GTK:         ${have_gtk_version}"
+echo "    Webkit:         ${have_webkit_version}"
+echo "       LUA:         ${have_lua_version}"
 echo "Modules:"
 echo "        FTP:        ${want_module_ftp}"
 echo "        WWW:        ${want_module_www}"
