@@ -1,59 +1,52 @@
 #include <libs/errors.h>
 
-static SIMPLEQ_HEAD (, ErrorDomain)  domains   = SIMPLEQ_HEAD_INITIALIZER (domains);
-static SIMPLEQ_HEAD (, CallbackList) callbacks = SIMPLEQ_HEAD_INITIALIZER (callbacks);
+GList *domains   = NULL;
+GList *callbacks = NULL;
 
-static id_t make_id (const char *data)
+guint error_domain_register (const char *domainname)
 {
-     id_t hash = 5381;
+     guint id = g_str_hash (domainname);
+     ErrorDomain *el;
+     GList *tmp;
 
-     while (*data != 0)
+     for (tmp = domains; tmp != NULL; tmp = tmp->next)
      {
-          int c = *data;
-          hash = ((hash << 5) + hash) + c;
-          data++;
-     };
+          el = tmp->data;
 
-     return hash;
-}
-
-int register_domain (const char *domainname)
-{
-     id_t id = make_id (domainname);
-     ErrorDomain *tmp;
-
-     SIMPLEQ_FOREACH (tmp, &domains, next)
-          if (tmp->id == id)
+          if (el->id == id)
                return id;
+     }
 
-     tmp = malloc (sizeof (ErrorDomain));
-     SIMPLEQ_INIT (&(tmp->errors));
-     tmp->id = id;
+     el = malloc (sizeof (ErrorDomain));
+     el->domainname = g_strdup (domainname);
+     el->errors = g_queue_new ();
+     el->id = id;
 
-     tmp->domainname = malloc (strlen (domainname));
-     memset (tmp->domainname, 0, strlen (domainname));
-     tmp->domainname = strcpy (tmp->domainname, domainname);
-
-     SIMPLEQ_INSERT_TAIL (&domains, tmp, next);
+     domains = g_list_append (domains, el);
 
      return id;
 }
 
-const char *get_domain (id_t id)
+const char *error_domain_get (guint id)
 {
-     ErrorDomain *tmp;
+     GList *tmp;
 
-     SIMPLEQ_FOREACH (tmp, &domains, next)
-          if (id == tmp->id)
-               return tmp->domainname;
+     for (tmp = domains; tmp != NULL; tmp = tmp->next)
+     {
+          ErrorDomain *el = tmp->data;
+          if (id == el->id)
+               return el->domainname;
+     }
 
      return NULL;
 }
 
-void set_error (id_t id, ErrorLevel level, const char *fmt, ...)
+void error_send (guint id, ErrorLevel level, const char *fmt, ...)
 {
-     ErrorDomain *tmp;
-     CallbackList *cb;
+     ErrorDomain *el;
+     ErrorList *err;
+     GList *tmp;
+
      va_list args;
      char *msg = NULL;
 
@@ -61,31 +54,32 @@ void set_error (id_t id, ErrorLevel level, const char *fmt, ...)
      g_vasprintf (&msg, fmt, args);
      va_end (args);
 
-     ErrorList *err = malloc (sizeof (ErrorList));
+     err = malloc (sizeof (ErrorList));
+     err->message = g_strdup (msg);
      err->level = level;
 
-     err->message = malloc (strlen (msg));
-     memset (err->message, 0, strlen (msg));
-     err->message = strcpy (err->message, msg);
-
-     SIMPLEQ_FOREACH (tmp, &domains, next)
+     for (tmp = domains; tmp != NULL; tmp = tmp->next)
      {
-          if (id == tmp->id)
+          el = tmp->data;
+          if (id == el->id)
           {
-               SIMPLEQ_INSERT_TAIL (&(tmp->errors), err, next);
+               g_queue_push_tail (el->errors, err);
                break;
           }
      }
 
-     SIMPLEQ_FOREACH (cb, &callbacks, next)
+     for (tmp = callbacks; tmp != NULL; tmp = tmp->next)
+     {
+          CallbackList *cb = tmp->data;
           cb->callback (id, level, msg, cb->data);
+     }
 }
 
-void add_callback (ReceiveError new_callback, gpointer data)
+void error_add_callback (ReceiveError new_callback, gpointer data)
 {
      CallbackList *cb = malloc (sizeof (CallbackList));
      cb->callback = new_callback;
      cb->data = data;
 
-     SIMPLEQ_INSERT_TAIL (&callbacks, cb, next);
+     callbacks = g_list_append (callbacks, cb);
 }

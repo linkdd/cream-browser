@@ -1,4 +1,4 @@
-SOURCES=errors.c config.c
+SOURCES=errors.c config.c modules.c
 OBJECTS=$(SOURCES:.c=.lo)
 
 .PHONY: all
