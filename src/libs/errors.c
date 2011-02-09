@@ -17,7 +17,7 @@ guint error_domain_register (const char *domainname)
                return id;
      }
 
-     el = malloc (sizeof (ErrorDomain));
+     el = g_malloc (sizeof (ErrorDomain));
      el->domainname = g_strdup (domainname);
      el->errors = g_queue_new ();
      el->id = id;
@@ -54,7 +54,7 @@ void error_send (guint id, ErrorLevel level, const char *fmt, ...)
      g_vasprintf (&msg, fmt, args);
      va_end (args);
 
-     err = malloc (sizeof (ErrorList));
+     err = g_malloc (sizeof (ErrorList));
      err->message = g_strdup (msg);
      err->level = level;
 
@@ -77,7 +77,7 @@ void error_send (guint id, ErrorLevel level, const char *fmt, ...)
 
 void error_add_callback (ReceiveError new_callback, gpointer data)
 {
-     CallbackList *cb = malloc (sizeof (CallbackList));
+     CallbackList *cb = g_malloc (sizeof (CallbackList));
      cb->callback = new_callback;
      cb->data = data;
 

@@ -27,12 +27,12 @@ guint modules_load (const char *filename)
      }
 
      /* open module */
-     m = malloc (sizeof (ModulesCallbacksList));
+     m = g_malloc (sizeof (ModulesCallbacksList));
      m->module = g_module_open (filename, G_MODULE_BIND_LAZY);
      if (!m->module)
      {
           error_send (domain, ERROR_CRITICAL, "%s: Couldn't open module: %s", filename, g_module_error ());
-          free (m);
+          g_free (m);
           return -1;
      }
 
@@ -47,7 +47,7 @@ guint modules_load (const char *filename)
           error_send (domain, ERROR_CRITICAL, "%s: Couldn't load symbols: %s", filename, g_module_error ());
           if (!g_module_close (m->module))
                error_send (domain, ERROR_WARNING, "%s: %s", filename, g_module_error ());
-          free (m);
+          g_free (m);
           return -1;
      }
 
@@ -74,8 +74,8 @@ void modules_unload (guint id)
 
                modules = g_list_remove_link (modules, tmp);
 
-               free (m->modulename);
-               free (m);
+               g_free (m->modulename);
+               g_free (m);
 
                break;
           }
