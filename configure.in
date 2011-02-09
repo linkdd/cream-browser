@@ -18,6 +18,15 @@ VERSION("0.1")
 CHECK(cc)
 REQUIRE(glib2)
 
+if [ "${enable_debug}" = "yes" ]; then
+	HDEFINE_UNQUOTED(CB_DEBUG, 1)
+	C_OPTION(-g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith -Wno-sign-compare)
+	want_debug=yes
+else
+	HUNDEF(CB_DEBUG)
+	want_debug=no
+fi
+
 # Tests for gtk+-2.0 webkit-1.0 lua
 /bin/echo -n "checking for gtk+-2.0..."
 ver="`pkg-config --modversion gtk+-2.0`"

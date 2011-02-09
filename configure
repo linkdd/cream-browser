@@ -1895,6 +1895,29 @@ echo "* " >> config.log
 echo "configure failed!"
 exit 1
 fi;
+if [ "${enable_debug}" = "yes" ]
+ then
+CB_DEBUG="1"
+echo "#ifndef CB_DEBUG" >> config_build.h
+echo "#define CB_DEBUG $CB_DEBUG" >> config_build.h
+echo "#endif" >> config_build.h
+echo "#ifndef CB_DEBUG" > config/cb_debug.h
+echo "#define CB_DEBUG $CB_DEBUG" >> config/cb_debug.h
+echo "#endif" >> config/cb_debug.h
+echo "hdefs[\"CB_DEBUG\"] = $CB_DEBUG" >>configure.lua
+CFLAGS="$CFLAGS -g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith -Wno-sign-compare"
+CXXFLAGS="$CXXFLAGS -g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith -Wno-sign-compare"
+echo "CFLAGS=$CFLAGS" >>Makefile.config
+echo "mdefs[\"CFLAGS\"] = \"$CFLAGS\"" >>configure.lua
+echo "CXXFLAGS=$CXXFLAGS" >>Makefile.config
+echo "mdefs[\"CXXFLAGS\"] = \"$CXXFLAGS\"" >>configure.lua
+	want_debug=yes
+else
+echo "#undef CB_DEBUG" >>config_build.h
+echo "#undef CB_DEBUG" >config/cb_debug.h
+echo "hdefs[\"CB_DEBUG\"] = nil" >>configure.lua
+	want_debug=no
+fi
 /bin/echo -n "checking for gtk+-2.0..."
 ver="`pkg-config --modversion gtk+-2.0`"
 if [ "$?" = "1" ]
