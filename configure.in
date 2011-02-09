@@ -1,0 +1,76 @@
+# This is a BSDBuild configure script source. The ./configure script is
+# generated from this file via mkconfigure(1). For more information, see:
+# http://bsdbuild.hypertriton.com/.
+
+REGISTER_SECTION("CreamBrowser options:")
+REGISTER("--enable-debug",                              "General debugging. Deactivated by default")
+REGISTER_SECTION("CreamBrowser Modules:")
+REGISTER("--enable-module-www",                         "Module WWW [auto]")
+REGISTER("--enable-module-ftp",                         "Module FTP [auto]")
+REGISTER("--enable-module-about",                       "Module About [auto]")
+
+# Name and version
+PACKAGE("CreamBrowser")
+VERSION("0.1")
+#RELEASE("release name here")
+
+# Check for a C compiler. If one exists, ${HAVE_CC} will be set
+CHECK(cc)
+REQUIRE(glib2)
+
+PKGCONFIG_LIBS="gtk+-2.0 webkit-1.0 lua"
+
+for lib in $PKGCONFIG_LIBS
+do
+    /bin/echo -n "Checking for $lib..."
+    ver=`pkg-config --modversion $lib`
+    if [ "$?" = "1" ]; then
+        echo "no"
+        echo "$lib is required."
+        exit 1
+    else
+        echo $ver
+    fi
+done
+
+C_INCLUDE_CONFIG(config_build.h)
+
+if [ "${enable_module_www}" != "no" ]; then
+    HDEFINE(MODULE_WWW, 1)
+    want_module_www=yes
+else
+    HDEFINE(MODULE_WWW, 0)
+    want_module_www=no
+fi
+
+if [ "${enable_module_ftp}" != "no" ]; then
+    HDEFINE(MODULE_FTP, 1)
+    want_module_ftp=yes
+else
+    HDEFINE(MODULE_FTP, 0)
+    want_module_ftp=no
+fi
+
+if [ "${enable_module_about}" != "no" ]; then
+    HDEFINE(MODULE_ABOUT, 1)
+    want_module_about=yes
+else
+    HDEFINE(MODULE_ABOUT, 0)
+    want_module_about=no
+fi
+
+ARCH=`uname -s`
+echo
+echo "Building ${PACKAGE}-${VERSION} on ${ARCH}"
+echo "      Prefix: ${PREFIX}"
+echo "          CC: ${CC}"
+echo
+echo "Build with:"
+echo "      Debug:        ${want_debug}"
+echo "Modules:"
+echo "        FTP:        ${want_module_ftp}"
+echo "        WWW:        ${want_module_www}"
+echo "      About:        ${want_module_about}"
+echo
+echo "* Configuration successful."
+echo "* Use \"make\" and \"make install\" to build and install ${PACKAGE}"
