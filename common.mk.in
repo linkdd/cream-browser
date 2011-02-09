@@ -21,5 +21,5 @@ export WEBKIT_LDFLAGS = `pkg-config --libs webkit-1.0`
 export LIBCONFIG_CFLAGS  = `pkg-config --cflags lua`
 export LIBCONFIG_LDFLAGS = `pkg-config --libs lua`
 
-export LIBCREAM_CFLAGS = $(LIBCONFIG_CFLAGS)
-export LIBCREAM_LDFLAGS = $(LIBCONFIG_LDFLAGS)
+export LIBCREAM_CFLAGS = $(LIBCONFIG_CFLAGS) $(GTK_CFLAGS)
+export LIBCREAM_LDFLAGS = $(LIBCONFIG_LDFLAGS) $(GTK_LDFLAGS)
