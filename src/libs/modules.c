@@ -1,8 +1,8 @@
 #include <libs/modules.h>
 #include <libs/errors.h>
 
-guint domain = 0;
-GList *modules = NULL;
+static guint domain = 0;
+static GList *modules = NULL;
 
 gboolean modules_init (void)
 {
@@ -31,7 +31,7 @@ guint modules_load (const char *filename)
      m->module = g_module_open (filename, G_MODULE_BIND_LAZY);
      if (!m->module)
      {
-          error_send (id, ERROR_CRITICAL, "%s: Couldn't open module: %s", filename, g_module_error ());
+          error_send (domain, ERROR_CRITICAL, "%s: Couldn't open module: %s", filename, g_module_error ());
           free (m);
           return -1;
      }
@@ -44,9 +44,9 @@ guint modules_load (const char *filename)
           || !(m->init != NULL && m->unload != NULL && m->webview_new != NULL && m->call != NULL)
         )
      {
-          error_send (id, ERROR_CRITICAL, "%s: Couldn't load symbols: %s", filename, g_module_error ());
+          error_send (domain, ERROR_CRITICAL, "%s: Couldn't load symbols: %s", filename, g_module_error ());
           if (!g_module_close (m->module))
-               error_send (id, ERROR_WARNING, "%s: %s", filename, g_module_error ());
+               error_send (domain, ERROR_WARNING, "%s: %s", filename, g_module_error ());
           free (m);
           return -1;
      }
@@ -54,5 +54,45 @@ guint modules_load (const char *filename)
      m->modulename = g_strdup (filename);
      m->module_id = id;
 
+     modules = g_list_append (modules, m);
+
      return id;
+}
+
+void modules_unload (guint id)
+{
+     GList *tmp;
+
+     for (tmp = modules; tmp != NULL; tmp = tmp->next)
+     {
+          ModulesCallbacksList *m = tmp->data;
+
+          if (m->module_id == id)
+          {
+               if (!g_module_close (m->module))
+                    error_send (domain, ERROR_WARNING, "%s: %s", m->modulename, g_module_error ());
+
+               modules = g_list_remove_link (modules, tmp);
+
+               free (m->modulename);
+               free (m);
+
+               break;
+          }
+     }
+}
+
+ModulesCallbacksList *modules_get (guint id)
+{
+     GList *tmp;
+
+     for (tmp = modules; tmp != NULL; tmp = tmp->next)
+     {
+          ModulesCallbacksList *m = tmp->data;
+
+          if (m->module_id == id)
+               return m;
+     }
+
+     return NULL;
 }

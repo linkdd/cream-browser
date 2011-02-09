@@ -20,5 +20,7 @@ typedef struct ModulesCallbacksList
 
 gboolean modules_init (void);
 guint modules_load (const char *filename);
+void modules_unload (guint id);
+ModulesCallbacksList *modules_get (guint id);
 
 #endif /* __MODULES_H */

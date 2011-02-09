@@ -1,7 +1,7 @@
 #include <libs/errors.h>
 
-GList *domains   = NULL;
-GList *callbacks = NULL;
+static GList *domains   = NULL;
+static GList *callbacks = NULL;
 
 guint error_domain_register (const char *domainname)
 {
