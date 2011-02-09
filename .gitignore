@@ -19,3 +19,4 @@ mk/libtool.ok
 mk/libtool/libtool
 *.lo
 *.la
+src/core/cream

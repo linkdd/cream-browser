@@ -1903,15 +1903,15 @@ if [ "$?" = "1" ]
     echo "GTK+ 2.0 is required."
     exit 1
 else
-    have_gtk_version=$ver
-    gtk_cflags="`pkg-config --cflags gtk+-2.0`"
-    gtk_libs="`pkg-config --libs gtk+-2.0`"
-GTK_CFLAGS="$gtk_cflags"
-echo "GTK_CFLAGS=$GTK_CFLAGS" >>Makefile.config
-echo "mdefs[\"GTK_CFLAGS\"] = \"$GTK_CFLAGS\"" >>configure.lua
-GTK_LIBS="$gtk_libs"
-echo "GTK_LIBS=$GTK_LIBS" >>Makefile.config
-echo "mdefs[\"GTK_LIBS\"] = \"$GTK_LIBS\"" >>configure.lua
+    have_gtk2_version=$ver
+    gtk2_cflags="`pkg-config --cflags gtk+-2.0`"
+    gtk2_libs="`pkg-config --libs gtk+-2.0`"
+GTK2_CFLAGS="$gtk2_cflags"
+echo "GTK2_CFLAGS=$GTK2_CFLAGS" >>Makefile.config
+echo "mdefs[\"GTK2_CFLAGS\"] = \"$GTK2_CFLAGS\"" >>configure.lua
+GTK2_LIBS="$gtk2_libs"
+echo "GTK2_LIBS=$GTK2_LIBS" >>Makefile.config
+echo "mdefs[\"GTK2_LIBS\"] = \"$GTK2_LIBS\"" >>configure.lua
     echo $ver
 fi
 /bin/echo -n "checking for webkit-1.0..."
@@ -2026,7 +2026,7 @@ echo "          CC: ${CC}"
 echo
 echo "Build with:"
 echo "      Debug:        ${want_debug}"
-echo "       GTK:         ${have_gtk_version}"
+echo "       GTK2:        ${have_gtk2_version}"
 echo "    Webkit:         ${have_webkit_version}"
 echo "       LUA:         ${have_lua_version}"
 echo "Modules:"

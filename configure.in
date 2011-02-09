@@ -26,11 +26,11 @@ if [ "$?" = "1" ]; then
     echo "GTK+ 2.0 is required."
     exit 1
 else
-    have_gtk_version=$ver
-    gtk_cflags="`pkg-config --cflags gtk+-2.0`"
-    gtk_libs="`pkg-config --libs gtk+-2.0`"
-    MDEFINE(GTK_CFLAGS, $gtk_cflags)
-    MDEFINE(GTK_LIBS, $gtk_libs)
+    have_gtk2_version=$ver
+    gtk2_cflags="`pkg-config --cflags gtk+-2.0`"
+    gtk2_libs="`pkg-config --libs gtk+-2.0`"
+    MDEFINE(GTK2_CFLAGS, $gtk2_cflags)
+    MDEFINE(GTK2_LIBS, $gtk2_libs)
     echo $ver
 fi
 
@@ -98,7 +98,7 @@ echo "          CC: ${CC}"
 echo
 echo "Build with:"
 echo "      Debug:        ${want_debug}"
-echo "       GTK:         ${have_gtk_version}"
+echo "       GTK2:        ${have_gtk2_version}"
 echo "    Webkit:         ${have_webkit_version}"
 echo "       LUA:         ${have_lua_version}"
 echo "Modules:"
