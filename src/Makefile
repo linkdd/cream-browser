@@ -13,8 +13,6 @@ clean: clean-subdir
 
 cleandir: cleandir-subdir
 
-proj-clean: proj-clean-subdir
-
 depend: depend-subdir
 
 include ${TOP}/mk/build.subdir.mk
