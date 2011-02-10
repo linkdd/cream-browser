@@ -1,17 +1,13 @@
-TOP=	../..
-include	${TOP}/Makefile.config
+TOP=../..
+include ${TOP}/Makefile.config
 
-PROG=		cream
-PROG_TYPE=	GUI
+PROG=cream-browser
+PROG_TYPE=GUI
 
-SRCS=		main.c
+SRCS=main.c
 
-LIBS=		${TOP}/src/libs/.libs/libcream.a
+LIBS=${TOP}/src/libs/.libs/libcream.a
 
-CFLAGS+=	${GLIB2_CFLAGS}		\
-		${GTK2_CFLAGS}		\
-		${WEBKIT_CFLAGS}	\
-		${LUA_CFLAGS}		\
-		-I${TOP}/src/include
+CFLAGS+=${GLIB2_CFLAGS} ${GTK2_CFLAGS} ${WEBKIT_CFLAGS} ${LUA_CFLAGS} -I${TOP} -I${TOP}/src/include
 
-include	${TOP}/mk/build.prog.mk
+include ${TOP}/mk/build.prog.mk

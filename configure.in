@@ -19,84 +19,84 @@ CHECK(cc)
 REQUIRE(glib2)
 
 if [ "${enable_debug}" = "yes" ]; then
-	HDEFINE_UNQUOTED(CB_DEBUG, 1)
-	C_OPTION(-g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith -Wno-sign-compare)
-	want_debug=yes
+     HDEFINE_UNQUOTED(CB_DEBUG, 1)
+     C_OPTION(-g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith -Wno-sign-compare)
+     want_debug=yes
 else
-	HUNDEF(CB_DEBUG)
-	want_debug=no
+     HUNDEF(CB_DEBUG)
+     want_debug=no
 fi
 
 # Tests for gtk+-2.0 webkit-1.0 lua
 /bin/echo -n "checking for gtk+-2.0..."
 ver="`pkg-config --modversion gtk+-2.0`"
 if [ "$?" = "1" ]; then
-    echo "no"
-    echo "GTK+ 2.0 is required."
-    exit 1
+     echo "no"
+     echo "GTK+ 2.0 is required."
+     exit 1
 else
-    have_gtk2_version=$ver
-    gtk2_cflags="`pkg-config --cflags gtk+-2.0`"
-    gtk2_libs="`pkg-config --libs gtk+-2.0`"
-    MDEFINE(GTK2_CFLAGS, $gtk2_cflags)
-    MDEFINE(GTK2_LIBS, $gtk2_libs)
-    echo $ver
+     have_gtk2_version=$ver
+     gtk2_cflags="`pkg-config --cflags gtk+-2.0`"
+     gtk2_libs="`pkg-config --libs gtk+-2.0`"
+     MDEFINE(GTK2_CFLAGS, $gtk2_cflags)
+     MDEFINE(GTK2_LIBS, $gtk2_libs)
+     echo $ver
 fi
 
 /bin/echo -n "checking for webkit-1.0..."
 ver="`pkg-config --modversion webkit-1.0`"
 if [ "$?" = "1" ]; then
-    echo "no"
-    echo "Webkit-gtk 1.0 is required."
-    exit 1
+     echo "no"
+     echo "Webkit-gtk 1.0 is required."
+     exit 1
 else
-    have_webkit_version=$ver
-    webkit_cflags="`pkg-config --cflags webkit-1.0`"
-    webkit_libs="`pkg-config --libs webkit-1.0`"
-    MDEFINE(WEBKIT_CFLAGS, $webkit_cflags)
-    MDEFINE(WEBKIT_LIBS, $webkit_libs)
-    echo $ver
+     have_webkit_version=$ver
+     webkit_cflags="`pkg-config --cflags webkit-1.0`"
+     webkit_libs="`pkg-config --libs webkit-1.0`"
+     MDEFINE(WEBKIT_CFLAGS, $webkit_cflags)
+     MDEFINE(WEBKIT_LIBS, $webkit_libs)
+     echo $ver
 fi
 
 /bin/echo -n "checking for lua..."
 ver="`pkg-config --modversion lua`"
 if [ "$?" = "1" ]; then
-    echo "no"
-    echo "LUA is required."
-    exit 1
+     echo "no"
+     echo "LUA is required."
+     exit 1
 else
-    have_lua_version=$ver
-    lua_cflags="`pkg-config --cflags lua`"
-    lua_libs="`pkg-config --libs lua`"
-    MDEFINE(LUA_CFLAGS, $lua_cflags)
-    MDEFINE(LUA_LIBS, $lua_libs)
-    echo $ver
+     have_lua_version=$ver
+     lua_cflags="`pkg-config --cflags lua`"
+     lua_libs="`pkg-config --libs lua`"
+     MDEFINE(LUA_CFLAGS, $lua_cflags)
+     MDEFINE(LUA_LIBS, $lua_libs)
+     echo $ver
 fi
 
 C_INCLUDE_CONFIG(config_build.h)
 
 if [ "${enable_module_www}" != "no" ]; then
-    HDEFINE(MODULE_WWW, 1)
-    want_module_www=yes
+     HDEFINE(HAVE_MODULE_WWW, 1)
+     want_module_www=yes
 else
-    HDEFINE(MODULE_WWW, 0)
-    want_module_www=no
+     HDEFINE(HAVE_MODULE_WWW, 0)
+     want_module_www=no
 fi
 
 if [ "${enable_module_ftp}" != "no" ]; then
-    HDEFINE(MODULE_FTP, 1)
-    want_module_ftp=yes
+     HDEFINE(HAVE_MODULE_FTP, 1)
+     want_module_ftp=yes
 else
-    HDEFINE(MODULE_FTP, 0)
-    want_module_ftp=no
+     HDEFINE(HAVE_MODULE_FTP, 0)
+     want_module_ftp=no
 fi
 
 if [ "${enable_module_about}" != "no" ]; then
-    HDEFINE(MODULE_ABOUT, 1)
-    want_module_about=yes
+     HDEFINE(HAVE_MODULE_ABOUT, 1)
+     want_module_about=yes
 else
-    HDEFINE(MODULE_ABOUT, 0)
-    want_module_about=no
+     HDEFINE(HAVE_MODULE_ABOUT, 0)
+     want_module_about=no
 fi
 
 ARCH=`uname -s`

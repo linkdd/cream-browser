@@ -1911,135 +1911,135 @@ echo "CFLAGS=$CFLAGS" >>Makefile.config
 echo "mdefs[\"CFLAGS\"] = \"$CFLAGS\"" >>configure.lua
 echo "CXXFLAGS=$CXXFLAGS" >>Makefile.config
 echo "mdefs[\"CXXFLAGS\"] = \"$CXXFLAGS\"" >>configure.lua
-	want_debug=yes
+     want_debug=yes
 else
 echo "#undef CB_DEBUG" >>config_build.h
 echo "#undef CB_DEBUG" >config/cb_debug.h
 echo "hdefs[\"CB_DEBUG\"] = nil" >>configure.lua
-	want_debug=no
+     want_debug=no
 fi
 /bin/echo -n "checking for gtk+-2.0..."
 ver="`pkg-config --modversion gtk+-2.0`"
 if [ "$?" = "1" ]
  then
-    echo "no"
-    echo "GTK+ 2.0 is required."
-    exit 1
+     echo "no"
+     echo "GTK+ 2.0 is required."
+     exit 1
 else
-    have_gtk2_version=$ver
-    gtk2_cflags="`pkg-config --cflags gtk+-2.0`"
-    gtk2_libs="`pkg-config --libs gtk+-2.0`"
+     have_gtk2_version=$ver
+     gtk2_cflags="`pkg-config --cflags gtk+-2.0`"
+     gtk2_libs="`pkg-config --libs gtk+-2.0`"
 GTK2_CFLAGS="$gtk2_cflags"
 echo "GTK2_CFLAGS=$GTK2_CFLAGS" >>Makefile.config
 echo "mdefs[\"GTK2_CFLAGS\"] = \"$GTK2_CFLAGS\"" >>configure.lua
 GTK2_LIBS="$gtk2_libs"
 echo "GTK2_LIBS=$GTK2_LIBS" >>Makefile.config
 echo "mdefs[\"GTK2_LIBS\"] = \"$GTK2_LIBS\"" >>configure.lua
-    echo $ver
+     echo $ver
 fi
 /bin/echo -n "checking for webkit-1.0..."
 ver="`pkg-config --modversion webkit-1.0`"
 if [ "$?" = "1" ]
  then
-    echo "no"
-    echo "Webkit-gtk 1.0 is required."
-    exit 1
+     echo "no"
+     echo "Webkit-gtk 1.0 is required."
+     exit 1
 else
-    have_webkit_version=$ver
-    webkit_cflags="`pkg-config --cflags webkit-1.0`"
-    webkit_libs="`pkg-config --libs webkit-1.0`"
+     have_webkit_version=$ver
+     webkit_cflags="`pkg-config --cflags webkit-1.0`"
+     webkit_libs="`pkg-config --libs webkit-1.0`"
 WEBKIT_CFLAGS="$webkit_cflags"
 echo "WEBKIT_CFLAGS=$WEBKIT_CFLAGS" >>Makefile.config
 echo "mdefs[\"WEBKIT_CFLAGS\"] = \"$WEBKIT_CFLAGS\"" >>configure.lua
 WEBKIT_LIBS="$webkit_libs"
 echo "WEBKIT_LIBS=$WEBKIT_LIBS" >>Makefile.config
 echo "mdefs[\"WEBKIT_LIBS\"] = \"$WEBKIT_LIBS\"" >>configure.lua
-    echo $ver
+     echo $ver
 fi
 /bin/echo -n "checking for lua..."
 ver="`pkg-config --modversion lua`"
 if [ "$?" = "1" ]
  then
-    echo "no"
-    echo "LUA is required."
-    exit 1
+     echo "no"
+     echo "LUA is required."
+     exit 1
 else
-    have_lua_version=$ver
-    lua_cflags="`pkg-config --cflags lua`"
-    lua_libs="`pkg-config --libs lua`"
+     have_lua_version=$ver
+     lua_cflags="`pkg-config --cflags lua`"
+     lua_libs="`pkg-config --libs lua`"
 LUA_CFLAGS="$lua_cflags"
 echo "LUA_CFLAGS=$LUA_CFLAGS" >>Makefile.config
 echo "mdefs[\"LUA_CFLAGS\"] = \"$LUA_CFLAGS\"" >>configure.lua
 LUA_LIBS="$lua_libs"
 echo "LUA_LIBS=$LUA_LIBS" >>Makefile.config
 echo "mdefs[\"LUA_LIBS\"] = \"$LUA_LIBS\"" >>configure.lua
-    echo $ver
+     echo $ver
 fi
 if [ "${enable_module_www}" != "no" ]
  then
-MODULE_WWW="1"
-echo "#ifndef MODULE_WWW" >> config_build.h
-echo "#define MODULE_WWW \"$MODULE_WWW\"" >> config_build.h
+HAVE_MODULE_WWW="1"
+echo "#ifndef HAVE_MODULE_WWW" >> config_build.h
+echo "#define HAVE_MODULE_WWW \"$HAVE_MODULE_WWW\"" >> config_build.h
 echo "#endif" >> config_build.h
-echo "#ifndef MODULE_WWW" > config/module_www.h
-echo "#define MODULE_WWW \"$MODULE_WWW\"" >> config/module_www.h
-echo "#endif" >> config/module_www.h
-echo "hdefs[\"MODULE_WWW\"] = \"$MODULE_WWW\"" >>configure.lua
-    want_module_www=yes
+echo "#ifndef HAVE_MODULE_WWW" > config/have_module_www.h
+echo "#define HAVE_MODULE_WWW \"$HAVE_MODULE_WWW\"" >> config/have_module_www.h
+echo "#endif" >> config/have_module_www.h
+echo "hdefs[\"HAVE_MODULE_WWW\"] = \"$HAVE_MODULE_WWW\"" >>configure.lua
+     want_module_www=yes
 else
-MODULE_WWW="0"
-echo "#ifndef MODULE_WWW" >> config_build.h
-echo "#define MODULE_WWW \"$MODULE_WWW\"" >> config_build.h
+HAVE_MODULE_WWW="0"
+echo "#ifndef HAVE_MODULE_WWW" >> config_build.h
+echo "#define HAVE_MODULE_WWW \"$HAVE_MODULE_WWW\"" >> config_build.h
 echo "#endif" >> config_build.h
-echo "#ifndef MODULE_WWW" > config/module_www.h
-echo "#define MODULE_WWW \"$MODULE_WWW\"" >> config/module_www.h
-echo "#endif" >> config/module_www.h
-echo "hdefs[\"MODULE_WWW\"] = \"$MODULE_WWW\"" >>configure.lua
-    want_module_www=no
+echo "#ifndef HAVE_MODULE_WWW" > config/have_module_www.h
+echo "#define HAVE_MODULE_WWW \"$HAVE_MODULE_WWW\"" >> config/have_module_www.h
+echo "#endif" >> config/have_module_www.h
+echo "hdefs[\"HAVE_MODULE_WWW\"] = \"$HAVE_MODULE_WWW\"" >>configure.lua
+     want_module_www=no
 fi
 if [ "${enable_module_ftp}" != "no" ]
  then
-MODULE_FTP="1"
-echo "#ifndef MODULE_FTP" >> config_build.h
-echo "#define MODULE_FTP \"$MODULE_FTP\"" >> config_build.h
+HAVE_MODULE_FTP="1"
+echo "#ifndef HAVE_MODULE_FTP" >> config_build.h
+echo "#define HAVE_MODULE_FTP \"$HAVE_MODULE_FTP\"" >> config_build.h
 echo "#endif" >> config_build.h
-echo "#ifndef MODULE_FTP" > config/module_ftp.h
-echo "#define MODULE_FTP \"$MODULE_FTP\"" >> config/module_ftp.h
-echo "#endif" >> config/module_ftp.h
-echo "hdefs[\"MODULE_FTP\"] = \"$MODULE_FTP\"" >>configure.lua
-    want_module_ftp=yes
+echo "#ifndef HAVE_MODULE_FTP" > config/have_module_ftp.h
+echo "#define HAVE_MODULE_FTP \"$HAVE_MODULE_FTP\"" >> config/have_module_ftp.h
+echo "#endif" >> config/have_module_ftp.h
+echo "hdefs[\"HAVE_MODULE_FTP\"] = \"$HAVE_MODULE_FTP\"" >>configure.lua
+     want_module_ftp=yes
 else
-MODULE_FTP="0"
-echo "#ifndef MODULE_FTP" >> config_build.h
-echo "#define MODULE_FTP \"$MODULE_FTP\"" >> config_build.h
+HAVE_MODULE_FTP="0"
+echo "#ifndef HAVE_MODULE_FTP" >> config_build.h
+echo "#define HAVE_MODULE_FTP \"$HAVE_MODULE_FTP\"" >> config_build.h
 echo "#endif" >> config_build.h
-echo "#ifndef MODULE_FTP" > config/module_ftp.h
-echo "#define MODULE_FTP \"$MODULE_FTP\"" >> config/module_ftp.h
-echo "#endif" >> config/module_ftp.h
-echo "hdefs[\"MODULE_FTP\"] = \"$MODULE_FTP\"" >>configure.lua
-    want_module_ftp=no
+echo "#ifndef HAVE_MODULE_FTP" > config/have_module_ftp.h
+echo "#define HAVE_MODULE_FTP \"$HAVE_MODULE_FTP\"" >> config/have_module_ftp.h
+echo "#endif" >> config/have_module_ftp.h
+echo "hdefs[\"HAVE_MODULE_FTP\"] = \"$HAVE_MODULE_FTP\"" >>configure.lua
+     want_module_ftp=no
 fi
 if [ "${enable_module_about}" != "no" ]
  then
-MODULE_ABOUT="1"
-echo "#ifndef MODULE_ABOUT" >> config_build.h
-echo "#define MODULE_ABOUT \"$MODULE_ABOUT\"" >> config_build.h
+HAVE_MODULE_ABOUT="1"
+echo "#ifndef HAVE_MODULE_ABOUT" >> config_build.h
+echo "#define HAVE_MODULE_ABOUT \"$HAVE_MODULE_ABOUT\"" >> config_build.h
 echo "#endif" >> config_build.h
-echo "#ifndef MODULE_ABOUT" > config/module_about.h
-echo "#define MODULE_ABOUT \"$MODULE_ABOUT\"" >> config/module_about.h
-echo "#endif" >> config/module_about.h
-echo "hdefs[\"MODULE_ABOUT\"] = \"$MODULE_ABOUT\"" >>configure.lua
-    want_module_about=yes
+echo "#ifndef HAVE_MODULE_ABOUT" > config/have_module_about.h
+echo "#define HAVE_MODULE_ABOUT \"$HAVE_MODULE_ABOUT\"" >> config/have_module_about.h
+echo "#endif" >> config/have_module_about.h
+echo "hdefs[\"HAVE_MODULE_ABOUT\"] = \"$HAVE_MODULE_ABOUT\"" >>configure.lua
+     want_module_about=yes
 else
-MODULE_ABOUT="0"
-echo "#ifndef MODULE_ABOUT" >> config_build.h
-echo "#define MODULE_ABOUT \"$MODULE_ABOUT\"" >> config_build.h
+HAVE_MODULE_ABOUT="0"
+echo "#ifndef HAVE_MODULE_ABOUT" >> config_build.h
+echo "#define HAVE_MODULE_ABOUT \"$HAVE_MODULE_ABOUT\"" >> config_build.h
 echo "#endif" >> config_build.h
-echo "#ifndef MODULE_ABOUT" > config/module_about.h
-echo "#define MODULE_ABOUT \"$MODULE_ABOUT\"" >> config/module_about.h
-echo "#endif" >> config/module_about.h
-echo "hdefs[\"MODULE_ABOUT\"] = \"$MODULE_ABOUT\"" >>configure.lua
-    want_module_about=no
+echo "#ifndef HAVE_MODULE_ABOUT" > config/have_module_about.h
+echo "#define HAVE_MODULE_ABOUT \"$HAVE_MODULE_ABOUT\"" >> config/have_module_about.h
+echo "#endif" >> config/have_module_about.h
+echo "hdefs[\"HAVE_MODULE_ABOUT\"] = \"$HAVE_MODULE_ABOUT\"" >>configure.lua
+     want_module_about=no
 fi
 ARCH=`uname -s`
 echo
