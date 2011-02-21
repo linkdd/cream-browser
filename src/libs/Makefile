@@ -2,7 +2,7 @@ TOP=../..
 include ${TOP}/Makefile.config
 
 LIB=cream
-SRCS=errors.c config.c modules.c
+SRCS=errors.c lua.c config.c modules.c
 
 CFLAGS+=-I${TOP} -I${TOP}/src/include ${GLIB2_CFLAGS} ${GTK2_CFLAGS} ${LUA_CFLAGS}
 
