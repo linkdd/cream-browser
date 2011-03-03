@@ -14,13 +14,18 @@ clean: clean-subdir
 cleandir: cleandir-subdir
 
 distclean: clean cleandir
-	rm -rf mk/libtool*
+	rm -rf mk/libtool/configure
 	rm -rf config config.log config_build.h Makefile.config
 	rm -rf configure.lua
 	rm -rf src/core/.depend src/libs/.depend
 	rm -rf src/core/.libs src/libs/.libs
+	rm -rf doc/*
 
 depend: depend-subdir
+
+.PHONY: doc
+doc:
+	luadoc src/lua/*.lua -d doc --nofiles
 
 reconfigure:
 	rm -f configure

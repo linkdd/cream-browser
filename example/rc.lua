@@ -1,101 +1,101 @@
 -- Cream-Browser lua API
-require ("cbapi")
+require ("cream")
 
 useragents = {
      { "google\.(fr|com)", "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.1) Gecko/20100122 firefox/3.6.1" }
 }
 
 -- Load theme
-cbapi.theme.init ("~/.config/cream-browser/themes/default/theme.lua")
+cream.theme.init ("~/.config/cream-browser/themes/default/theme.lua")
 
 -- Load wanted modules
-cbapi.module.enable ("webkit")
-cbapi.module.enable ("about")
-cbapi.module.enable ("ftp")
+cream.module.enable ("webkit")
+cream.module.enable ("about")
+cream.module.enable ("ftp")
 
 -- Misc
-cbapi.proxy.url    = "192.168.1.172:8123"
-cbapi.proxy.enable = true
-cbapi.javascript.enable = true
-cbapi.cookies.enable = true
-cbapi.session.enable = true
+cream.config.proxy.url    = "192.168.1.172:8123"
+cream.config.proxy.enable = true
+cream.config.javascript.enable = true
+cream.config.cookies.enable = true
+cream.config.session.enable = true
 
-cbapi.encodage = "UTF-8"
-cbapi.homepage = "http://cream-browser.net"
+cream.config.encodage = "UTF-8"
+cream.config.homepage = "http://cream-browser.net"
 
 -- Build GUI
-cbapi.widgets.box ({
-     cbapi.widgets.notebook,
-     cbapi.widgets.webview,
-     cbapi.widgets.statusbar,
-     cbapi.widgets.promptbox
+cream.widgets.box ({
+     cream.widgets.notebook,
+     cream.widgets.webview,
+     cream.widgets.statusbar,
+     cream.widgets.promptbox
 })
 
 -- Mouse bindings
 
-cbapi.widgets.notebook.buttons (cbapi.util.table.join (
-     cbapi.button ({ },        1, function (t) cbapi.tab.focus = t; t:raise () end),
-     cbapi.button ({ "Mod1" }, 3, function (t) t:close () end),
-     cbapi.button ({ },        4, cbapi.tab.viewnext),
-     cbapi.button ({ },        5, cbapi.tab.viewprev)
+cream.widgets.notebook.buttons (cream.util.table.join (
+     cream.button ({ },        1, function (t) cream.tab.focus = t; t:raise () end),
+     cream.button ({ "Mod1" }, 3, function (t) t:close () end),
+     cream.button ({ },        4, cream.tab.viewnext),
+     cream.button ({ },        5, cream.tab.viewprev)
 ))
 
 -- Key bindings
-globalkeys = cbapi.util.table.join (
+globalkeys = cream.util.table.join (
      -- Misc
-     cbapi.key ({ "Mod1", "Control" },  "q",      cbapi.quit),
-     cbapi.key ({ "Control" },          "p",      function () cbapi.proxy.enable = not cbapi.proxy.enable end),
-     cbapi.key ({ "Control" },          "j",      function () cbapi.javascript.enable = not cbapi.javascript.enable end),
-     cbapi.key ({ "Control" },          "c",      function () cbapi.cookies.enable = not cbapi.cookies.enable end),
-     cbapi.key ({ "Control" },          "s",      function () cbapi.session.enable = not cbapi.session.enable end),
+     cream.key ({ "Mod1", "Control" },  "q",      cream.util.quit),
+     cream.key ({ "Control" },          "p",      function () cream.config.proxy.enable = not cream.config.proxy.enable end),
+     cream.key ({ "Control" },          "j",      function () cream.config.javascript.enable = not cream.config.javascript.enable end),
+     cream.key ({ "Control" },          "c",      function () cream.config.cookies.enable = not cream.config.cookies.enable end),
+     cream.key ({ "Control" },          "s",      function () cream.config.session.enable = not cream.session.enable end),
      -- Cream-Browser modes
-     cbapi.key ({ },                    "Insert", function () cbapi.mode.current = cbapi.mode.insert end),
-     cbapi.key ({ },                    "i",      function () cbapi.mode.current = cbapi.mode.insert end),
-     cbapi.key ({ },                    ":",      function () cbapi.mode.current = cbapi.mode.prompt end),
-     cbapi.key ({ },                    "Escape", function () cbapi.mode.current = cbapi.mode.command end),
-     cbapi.key ({ },                    "f",      function () cbapi.mode.current = cbapi.mode.hint end),
+     cream.key ({ },                    "Insert", function () cream.mode.current = cream.mode.insert end),
+     cream.key ({ },                    "i",      function () cream.mode.current = cream.mode.insert end),
+     cream.key ({ },                    ":",      function () cream.mode.current = cream.mode.prompt end),
+     cream.key ({ },                    "Escape", function () cream.mode.current = cream.mode.command end),
+     cream.key ({ },                    "f",      function () cream.mode.current = cream.mode.hint end),
      -- Notebook controls
-     cbapi.key ({ "Mod1" },             "Left",   cbapi.tab.viewprev),
-     cbapi.key ({ "Mod1" },             "Right",  cbapi.tab.viewnext),
-     cbapi.key ({ "Control" },          "w",      function () cbapi.tab.focus:close () end),
-     cbapi.key ({ "Control" },          "t",      cbapi.tab.new),
+     cream.key ({ "Mod1" },             "Left",   cream.tab.viewprev),
+     cream.key ({ "Mod1" },             "Right",  cream.tab.viewnext),
+     cream.key ({ "Control" },          "w",      function () cream.tab.focus:close () end),
+     cream.key ({ "Control" },          "t",      cream.tab.new),
      -- Basic commands
-     cbapi.key ({ },                    "o",      function () cbapi.mode.current = cbapi.mode.prompt; cb_promptbox.text = ":open " end),
-     cbapi.key ({ "Shift" },            "o",      function () cbapi.mode.current = cbapi.mode.prompt; cb_promptbox.text = ":open " .. cbapi.tab.focus:url () end),
-     cbapi.key ({ },                    "t",      function () cbapi.mode.current = cbapi.mode.prompt; cb_promptbox.text = ":tabopen " end),
-     cbapi.key ({ "Shift" },            "t",      function () cbapi.mode.current = cbapi.mode.prompt; cb_promptbox.text = ":tabopen " .. cbapi.tab.focus:url () end),
-     cbapi.key ({ },                    "y",      cbapi.url.yank),
-     cbapi.key ({ },                    "p",      cbapi.url.paste),
-     cbapi.key ({ "Shift" },            "p",      function () cbapi.tab.new (cbapi.url.yanked) end),
-     cbapi.key ({ },                    "h",      function () cbapi.tab.focus:url (cbapi.homepage) end),
-     cbapi.key ({ "Shift" },            "h",      function () cbapi.tab.new (cbapi.homepage) end),
+     cream.key ({ },                    "o",      function () cream.mode.current = cream.mode.prompt; cream.widgets.promptbox.text (":open ") end),
+     cream.key ({ "Shift" },            "o",      function () cream.mode.current = cream.mode.prompt; cream.widgets.promptbox.text (":open " .. cream.tab.focus:url ()) end),
+     cream.key ({ },                    "t",      function () cream.mode.current = cream.mode.prompt; cream.widgets.promptbox.text (":tabopen ") end),
+     cream.key ({ "Shift" },            "t",      function () cream.mode.current = cream.mode.prompt; cream.widgets.promptbox.text (":tabopen " .. cream.tab.focus:url ()) end),
+     cream.key ({ },                    "y",      cream.url.yank),
+     cream.key ({ },                    "p",      cream.url.paste),
+     cream.key ({ "Shift" },            "p",      function () cream.tab.new (cream.url.yanked) end),
+     cream.key ({ },                    "h",      function () cream.tab.focus:url (cream.config.homepage) end),
+     cream.key ({ "Shift" },            "h",      function () cream.tab.new (cream.config.homepage) end),
      -- History
-     cbapi.key ({ "Control" },          "Left",   cbapi.history.backward),
-     cbapi.key ({ "Control" },          "Right",  cbapi.history.forward)
+     cream.key ({ "Control" },          "Left",   cream.history.backward),
+     cream.key ({ "Control" },          "Right",  cream.history.forward)
 )
 
 -- Bind all key numbers to notebook
 for i = 0, 9 do
-     globalkeys = cbapi.util.table.join (globalkeys,
-          cbapi.key ({ "Mod1" },        i,        function () cbapi.tab.goto (i) end),
-          cbapi.key ({ "Control" },     i,        function () cbapi.tab.close (i) end)
+     globalkeys = cream.util.table.join (globalkeys,
+          cream.key ({ "Mod1" },        i,        function () cream.tab.goto (i) end),
+          cream.key ({ "Control" },     i,        function () cream.tab.close (i) end)
      )
 end
 
-cbapi.keys (globalkeys)
+cream.keys (globalkeys)
 
 -- Add signals handler to webview
-cbapi.widgets.webview.add_signal ("download-requested", function (w, d)
-          cbapi.util.spawn ("urxvt -e wget \"" .. d:url () .. "\" -O \"" .. d:filename () .. "\"")
+cream.widgets.webview.add_signal ("download-requested", function (w, d)
+          cream.util.spawn ("urxvt -e wget \"" .. d:url () .. "\" -O \"" .. d:filename () .. "\"")
      end)
 
-cbapi.widgets.webview.add_signal ("load-committed", function (w)
+cream.widgets.webview.add_signal ("load-committed", function (w)
           for i = 1, #useragents do
-               if cbapi.util.regex.match (useragents[i][1], w:url ()) then
+               if cream.util.regex.match (useragents[i][1], w:url ()) then
                     w:useragent (useragents[i][2])
                end
           end
 
-          cbapi.util.spawn ("echo \"" .. w:url () .. " " .. w:title () .. "\" >> ~/.cache/cream-browser/history")
+          cream.util.spawn ("echo \"" .. w:url () .. " " .. w:title () .. "\" >> ~/.cache/cream-browser/history")
      end)
 

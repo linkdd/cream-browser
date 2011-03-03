@@ -1,40 +1,24 @@
 #include <libs/lua.h>
 
+extern const struct luaL_reg cream_capi_libs[];
 static guint domain = 0;
+static GList *luactxs = NULL;
 
 static LuaContext *lua_ctx_init (void)
 {
      LuaContext *ret = g_malloc (sizeof (LuaContext));
 
+     if (domain == 0)
+          domain = error_domain_register ("lua");
+
      if (ret)
      {
-          ret->domain = error_domain_register ("lua");
+          ret->domain = domain;
           ret->L = lua_open ();
           ret->s = 0;
      }
 
      return ret;
-}
-
-static void lua_ctx_openlibs (LuaContext *ctx)
-{
-     if (ctx)
-     {
-          luaopen_io (ctx->L);
-          luaopen_base (ctx->L);
-          luaopen_table (ctx->L);
-          luaopen_string (ctx->L);
-          luaopen_math (ctx->L);
-          luaopen_loadlib (ctx->L);
-     }
-}
-
-void lua_ctx_set_func (LuaContext *ctx, const char *funcname, LuaCtxFunc func)
-{
-     if (ctx)
-     {
-          lua_register (ctx->L, funcname, func);
-     }
 }
 
 void lua_ctx_report_errors (LuaContext *ctx, ErrorLevel level)
@@ -65,12 +49,12 @@ int lua_ctx_parse (LuaContext *ctx, const char *filename)
 LuaContext *lua_ctx_new (void)
 {
      LuaContext *obj = lua_ctx_init ();
-     lua_ctx_openlibs (obj);
 
-     /* basic API
-      *
-      * lua_ctx_set_func (obj, "name", function_callback);
-      */
+     luaL_openlibs (obj->L);
+     luaL_register (obj->L, "capi", cream_capi_libs);
+     lua_pop (obj->L, 1);
+
+     luactxs = g_list_append (luactxs, obj);
 
      return obj;
 }
@@ -78,6 +62,6 @@ LuaContext *lua_ctx_new (void)
 void lua_ctx_destroy (LuaContext *ctx)
 {
      lua_close (ctx->L);
+     luactxs = g_list_remove_all (luactxs, ctx);
      g_free (ctx);
 }
-

@@ -19,6 +19,3 @@ config_build.h
 
 .depend
 .libs
-
-mk/libtool.ok
-mk/libtool/libtool
