@@ -553,9 +553,6 @@ if [ "${with_ctags}" = "yes" ]; then
 	fi
 fi
 echo "CTAGS=${CTAGS}" >> Makefile.config
-LIBTOOL_BUNDLED="yes"
-LIBTOOL=\${TOP}/mk/libtool/libtool
-echo "LIBTOOL=${LIBTOOL}" >> Makefile.config
 echo "PREFIX?=${PREFIX}" >> Makefile.config
 echo "#ifndef PREFIX" >> config_build.h
 echo "#define PREFIX \"$PREFIX\"" >> config_build.h
