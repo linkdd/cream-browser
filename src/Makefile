@@ -1,18 +1,12 @@
 TOP=..
 include ${TOP}/Makefile.config
 
-SUBDIR= libs core
+PROG=cream-browser
+PROG_TYPE=GUI
 
-all: all-subdir
+SRCS=errors.c modules.c lua-capi.c lua.c config.c main.c
 
-install: install-subdir
+LIBS+=${GLIB2_LIBS} ${GTK2_LIBS} ${WEBKIT_LIBS} ${LUA_LIBS}
+CFLAGS+=-I${TOP} ${GLIB2_CFLAGS} ${GTK2_CFLAGS} ${WEBKIT_CFLAGS} ${LUA_CFLAGS}
 
-deinstall: deinstall-subdir
-
-clean: clean-subdir
-
-cleandir: cleandir-subdir
-
-depend: depend-subdir
-
-include ${TOP}/mk/build.subdir.mk
+include ${TOP}/mk/build.prog.mk

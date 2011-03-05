@@ -6,7 +6,7 @@
 #include <lauxlib.h>
 #include <glib.h>
 
-#include <libs/errors.h>
+#include "errors.h"
 
 typedef struct _LuaContext LuaContext;
 struct _LuaContext

@@ -1,5 +1,5 @@
-#include <libs/config.h>
-#include <libs/errors.h>
+#include "config.h"
+#include "errors.h"
 
 static guint domain = 0;
 

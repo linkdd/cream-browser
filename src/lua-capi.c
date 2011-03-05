@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
-#include <libs/lua.h>
-#include <libs/modules.h>
+#include "lua.h"
+#include "modules.h"
 
 static int luaA_capi_go_back (lua_State *L) { return 0; }
 static int luaA_capi_go_forward (lua_State *L) { return 0; }
