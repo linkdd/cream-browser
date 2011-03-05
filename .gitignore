@@ -7,8 +7,8 @@
 *.lo
 *.la
 
-src/core/cream-browser
-src/core/creamctl
+src/cream-browser
+src/creamctl
 
 
 Makefile.config
