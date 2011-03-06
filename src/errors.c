@@ -1,4 +1,4 @@
-#include "errors.h"
+#include "local.h"
 
 static GList *domains   = NULL;
 static GList *callbacks = NULL;

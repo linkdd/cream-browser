@@ -1,5 +1,4 @@
-#include "modules.h"
-#include "errors.h"
+#include "local.h"
 
 static guint domain = 0;
 static GList *modules = NULL;

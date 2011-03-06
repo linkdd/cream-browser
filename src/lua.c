@@ -1,4 +1,4 @@
-#include "lua.h"
+#include "local.h"
 
 extern const struct luaL_reg cream_capi_libs[];
 static guint domain = 0;

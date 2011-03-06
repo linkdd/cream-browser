@@ -1,7 +1,4 @@
-#include <stdlib.h>
-
-#include "lua.h"
-#include "modules.h"
+#include "local.h"
 
 static int luaA_capi_go_back (lua_State *L) { return 0; }
 static int luaA_capi_go_forward (lua_State *L) { return 0; }
@@ -221,12 +218,68 @@ static int luaA_capi_regex_replace (lua_State *L)
      return 0;
 }
 
-static int luaA_capi_widget_notebook (lua_State *L) { return 0; }
+static int luaA_capi_widget_notebook (lua_State *L)
+{
+     int objptr = GPOINTER_TO_INT (global.gui.notebook);
+
+     lua_newtable (L);
+     lua_pushstring (L, "objptr");
+     lua_pushnumber (L, objptr);
+
+     return 1;
+}
+
 static int luaA_capi_widget_notebook_set_buttons (lua_State *L) { return 0; }
-static int luaA_capi_widget_webview (lua_State *L) { return 0; }
-static int luaA_capi_widget_statusbar (lua_State *L) { return 0; }
-static int luaA_capi_widget_promptbox (lua_State *L) { return 0; }
-static int luaA_capi_promptbox_set_text (lua_State *L) { return 0; }
+
+static int luaA_capi_widget_webview (lua_State *L)
+{
+     int objptr = GPOINTER_TO_INT (global.gui.webview);
+
+     lua_newtable (L);
+     lua_pushstring (L, "objptr");
+     lua_pushnumber (L, objptr);
+
+     return 1;
+}
+
+static int luaA_capi_widget_statusbar (lua_State *L)
+{
+     int objptr = GPOINTER_TO_INT (global.gui.statusbar);
+
+     lua_newtable (L);
+     lua_pushstring (L, "objptr");
+     lua_pushnumber (L, objptr);
+
+     return 1;
+}
+
+static int luaA_capi_widget_promptbox (lua_State *L)
+{
+     int objptr = GPOINTER_TO_INT (global.gui.promptbox);
+
+     lua_newtable (L);
+     lua_pushstring (L, "objptr");
+     lua_pushnumber (L, objptr);
+
+     return 1;
+}
+
+static int luaA_capi_promptbox_set_text (lua_State *L)
+{
+     const gchar *text;
+
+     if (lua_gettop (L) >= 1)
+     {
+          lua_argcheck_string (L, 1);
+          text = lua_tostring (L, 1);
+
+          gtk_entry_set_text (GTK_ENTRY (global.gui.promptbox), text);
+     }
+     else
+          lua_pusherror (L, "promptbox_set_text: Too few arguments");
+
+     return 0;
+}
 
 static int luaA_capi_widget_connect (lua_State *L)
 {
@@ -240,7 +293,11 @@ static int luaA_capi_widget_connect (lua_State *L)
           lua_argcheck_string (L, 2);
           lua_argcheck_function (L, 3);
 
-          /* obj = */
+          lua_pushstring (L, "objptr");
+          lua_gettable (L, -2);
+          obj = (GObject *) GINT_TO_POINTER (lua_tonumber (L, -1));
+          lua_pop (L, 1);
+
           signame = lua_tostring (L, 2);
           /* callback = */
 
