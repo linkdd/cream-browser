@@ -218,6 +218,67 @@ static int luaA_capi_regex_replace (lua_State *L)
      return 0;
 }
 
+static int luaA_capi_widget_box_pack (lua_State *L)
+{
+     if (lua_gettop (L) >= 1)
+     {
+          gboolean pack_start = TRUE, expand = FALSE, fill = FALSE;
+          guint padding = 0;
+          GtkWidget *w;
+
+          lua_argcheck_table (L, 1);
+
+          lua_pushstring (L, "objptr");
+          lua_gettable (L, -2);
+          w = (GtkWidget *) GINT_TO_POINTER (lua_tonumber (L, -1));
+          lua_pop (L, 1);
+
+          /* theme = {} */
+          lua_pushstring (L, "theme");
+          lua_gettable (L, -2);
+
+               /* theme.box */
+               lua_pushstring (L, "box");
+               lua_gettable (L, -2);
+
+                    /* theme.box.pack_start */
+                    lua_pushstring (L, "pack_start");
+                    lua_gettable (L, -2);
+                    pack_start = lua_toboolean (L, -1);
+                    lua_pop (L, 1);
+
+                    /* theme.box.expand */
+                    lua_pushstring (L, "expand");
+                    lua_gettable (L, -2);
+                    expand = lua_toboolean (L, -1);
+                    lua_pop (L, 1);
+
+                    /* theme.box.fill */
+                    lua_pushstring (L, "fill");
+                    lua_gettable (L, -2);
+                    fill = lua_toboolean (L, -1);
+                    lua_pop (L, 1);
+
+                    /* theme.box.padding */
+                    lua_pushstring (L, "padding");
+                    lua_gettable (L, -2);
+                    padding = lua_tonumber (L, -1);
+                    lua_pop (L, 1);
+
+               lua_pop (L, 1);
+          lua_pop (L, 1);
+
+          if (pack_start)
+               gtk_box_pack_start (global.gui.box, w, expand, fill, padding);
+          else
+               gtk_box_pack_end (global.gui.box, w, expand, fill, padding);
+     }
+     else
+          lua_pusherror (L, "widget_box_pack: Too few arguments");
+
+     return 0;
+}
+
 static int luaA_capi_widget_notebook (lua_State *L)
 {
      int objptr = GPOINTER_TO_INT (global.gui.notebook);
@@ -327,6 +388,7 @@ const struct luaL_reg cream_capi_libs[] =
      { "quit", luaA_capi_quit },
      { "regex_match", luaA_capi_regex_match },
      { "regex_replace", luaA_capi_regex_replace },
+     { "widget_box_pack", luaA_capi_widget_box_pack },
      { "widget_notebook", luaA_capi_widget_notebook },
      { "widget_notebook_set_buttons", luaA_capi_widget_notebook_set_buttons },
      { "widget_webview", luaA_capi_widget_webview },

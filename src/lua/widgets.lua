@@ -6,21 +6,25 @@
 
 module ("cream.widgets")
 
+local theme = require ("cream.theme")
+
 notebook  = capi.widget_notebook()
 webview   = capi.widget_webview()
 statusbar = capi.widget_statusbar()
 promptbox = capi.widget_promptbox()
+
+notebook.theme  = theme.tab
+webview.theme   = theme.webview
+statusbar.theme = theme.statusbar
+promptbox.theme = theme.prompt
 
 --- Pack widgets.
 -- This function packs every widgets into a GtkBox
 -- object.
 -- @param t A table containing all widgets wanted.
 function box (t)
-     for _, v in pairs (t.b_start) do
-          capi.widget_box_pack_start (v)
-     end
-     for _, v in pairs (t.b_end) do
-          capi.widget_box_pack_end (v)
+     for _, v in pairs (t) do
+          capi.widget_box_pack (v)
      end
 end
 

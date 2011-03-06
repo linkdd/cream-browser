@@ -8,6 +8,7 @@ struct GUI
      GtkWidget *webview;      /*!< Focused webview */
      GtkWidget *statusbar;    /*!< Statusbar widget */
      GtkWidget *promptbox;    /*!< Promptbox widget */
+     GtkWidget *box;          /*!< Box containing all widgets */
 };
 
 /*! \struct Socket */

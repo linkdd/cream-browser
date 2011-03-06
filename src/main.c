@@ -3,6 +3,24 @@
 struct global_t global;
 
 /*!
+ * \fn char *str_replace (const char *search, const char *replace, const char *string)
+ * \brief Replace text into a string
+ */
+char *str_replace (const char *search, const char *replace, const char *string)
+{
+     gchar **buf;
+     char *ret;
+
+     g_return_val_if_fail (string != NULL, NULL);
+
+     buf = g_strsplit (string, search, -1);
+     ret = g_strjoinv (replace, buf);
+     g_strfreev (buf);
+
+     return ret;
+}
+
+/*!
  * \fn static void error_callback (guint domain, ErrorLevel level, const char *msg, gpointer data)
  * \brief Callback function to receive all error from every modules.
  */
@@ -28,16 +46,16 @@ static void error_callback (guint domain, ErrorLevel level, const char *msg, gpo
      switch (level)
      {
           case ERROR_FATAL:
-               fprintf (log, "Error fatal: %s: %s\n", domainname, msg);
+               fprintf (log, "Error fatal (%s): %s\n", domainname, msg);
                exit (EXIT_FAILURE);
                break;
 
           case ERROR_CRITICAL:
-               fprintf (log, "Error: %s: %s\n", domainname, msg);
+               fprintf (log, "Error (%s): %s\n", domainname, msg);
                break;
 
           case ERROR_WARNING:
-               fprintf (log, "Warning: %s: %s\n", domainname, msg);
+               fprintf (log, "Warning (%s): %s\n", domainname, msg);
                break;
      }
 }
@@ -48,6 +66,7 @@ static void error_callback (guint domain, ErrorLevel level, const char *msg, gpo
  */
 static void quit (int code, void *data)
 {
+     printf ("exit");
      return;
 }
 

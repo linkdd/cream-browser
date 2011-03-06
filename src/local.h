@@ -18,6 +18,7 @@
 #include <sys/un.h>
 #include <fcntl.h>
 
+#include "xdg.h"
 #include "structs.h"
 
 #include "errors.h"
@@ -28,5 +29,7 @@
 extern struct global_t global;
 
 void socket_init (void);
+
+char *str_replace (const char *search, const char *replace, const char *string);
 
 #endif /* __LOCAL_H */
