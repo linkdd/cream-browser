@@ -2,7 +2,7 @@
 
 static guint domain = 0;
 
-void libconfig_init (void)
+void config_init (void)
 {
      domain = error_domain_register ("config");
 }

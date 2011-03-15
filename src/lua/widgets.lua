@@ -8,6 +8,8 @@ module ("cream.widgets")
 
 local theme = require ("cream.theme")
 
+capi.widget_box (theme.theme.global.box)
+
 notebook  = capi.widget_notebook()
 webview   = capi.widget_webview()
 statusbar = capi.widget_statusbar()

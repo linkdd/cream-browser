@@ -2,10 +2,7 @@
 
 static guint domain = 0;
 
-/*!
- * \fn static gboolean control_client_socket (GIOChannel *channel)
- * \brief Control the client socket.
- */
+/* Control the client socket. */
 static gboolean control_client_socket (GIOChannel *channel)
 {
      GString *result = g_string_new ("\n");
@@ -53,10 +50,7 @@ static gboolean control_client_socket (GIOChannel *channel)
      return TRUE;
 }
 
-/*!
- * \fn static gboolean control_socket (GIOChannel *channel)
- * \brief Control the server socket.
- */
+/* Control the server socket. */
 static gboolean control_socket (GIOChannel *channel)
 {
      struct sockaddr_un remote;
@@ -74,10 +68,7 @@ static gboolean control_socket (GIOChannel *channel)
      return TRUE;
 }
 
-/*!
- * \fn void socket_init (void)
- * \brief Initialize socket.
- */
+/* Initialize socket. */
 void socket_init (void)
 {
      struct sockaddr_un sa_un;

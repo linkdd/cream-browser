@@ -1,8 +1,23 @@
 #include "local.h"
 
+/*!
+ * \addtogroup errors
+ * @{
+ */
+
 static GList *domains   = NULL;
 static GList *callbacks = NULL;
 
+/*!
+ * \fn guint error_domain_register (const char *domainname)
+ * @param domainname The name of the error domain.
+ * @return An integer identifier for the domain.
+ *
+ * Register a new error domain. A \class{GQueue} is allocated and every
+ * errors pushed on this domain name are stored in this queue.
+ * If the domain already exists, just return its identifier.
+ *
+ */
 guint error_domain_register (const char *domainname)
 {
      guint id = g_str_hash (domainname);
@@ -27,6 +42,14 @@ guint error_domain_register (const char *domainname)
      return id;
 }
 
+/*!
+ * \fn const char *error_domain_get (guint id)
+ * @param id Error domain identifier.
+ * @return The domain name.
+ *
+ * Return the name of the error domain associated to the \a id.
+ *
+ */
 const char *error_domain_get (guint id)
 {
      GList *tmp;
@@ -41,6 +64,15 @@ const char *error_domain_get (guint id)
      return NULL;
 }
 
+/*!
+ * \fn void error_send (guint id, ErrorLevel level, const char *fmt, ...)
+ * @param id The error domain identifier
+ * @param level Type of error (see #ErrorLevel)
+ * @param fmt Error message (same syntax as printf)
+ * @param ... Data to put on the string.
+ *
+ * Send an error on the specified domain.
+ */
 void error_send (guint id, ErrorLevel level, const char *fmt, ...)
 {
      ErrorDomain *el;
@@ -75,6 +107,14 @@ void error_send (guint id, ErrorLevel level, const char *fmt, ...)
      }
 }
 
+/*!
+ * \fn void error_add_callback (ReceiveError new_callback, gpointer data)
+ * @param new_callback Callback function. (see #ReceiveError)
+ * @param data User data to pass to the callback function.
+ *
+ * Add a new function to call when an error is received.
+ * Functions are called in the exact order they were added.
+ */
 void error_add_callback (ReceiveError new_callback, gpointer data)
 {
      CallbackList *cb = g_malloc (sizeof (CallbackList));
@@ -83,3 +123,5 @@ void error_add_callback (ReceiveError new_callback, gpointer data)
 
      callbacks = g_list_append (callbacks, cb);
 }
+
+/*! @} */

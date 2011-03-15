@@ -1,10 +1,20 @@
 #include "local.h"
 
+/*!
+ * \addtogroup cream-browser
+ * @{
+ */
+
 struct global_t global;
 
 /*!
  * \fn char *str_replace (const char *search, const char *replace, const char *string)
- * \brief Replace text into a string
+ * @param search Text to search into the string
+ * @param replace Replace \a search by the specified text
+ * @param string String to modify
+ * @return A newly allocated string.
+ *
+ * Replace text into a string
  */
 char *str_replace (const char *search, const char *replace, const char *string)
 {
@@ -20,10 +30,7 @@ char *str_replace (const char *search, const char *replace, const char *string)
      return ret;
 }
 
-/*!
- * \fn static void error_callback (guint domain, ErrorLevel level, const char *msg, gpointer data)
- * \brief Callback function to receive all error from every modules.
- */
+/* Callback function to receive all error from every modules. */
 static void error_callback (guint domain, ErrorLevel level, const char *msg, gpointer data)
 {
      const char *domainname = error_domain_get (domain);
@@ -60,20 +67,14 @@ static void error_callback (guint domain, ErrorLevel level, const char *msg, gpo
      }
 }
 
-/*!
- * \fn static void quit (int code, void *data)
- * \brief Function called when exit() is called.
- */
+/* Function called when exit() is called. */
 static void quit (int code, void *data)
 {
      printf ("exit");
      return;
 }
 
-/*!
- * \fn static void init (void)
- * \brief Initialize every structures and modules.
- */
+/* Initialize every structures and modules. */
 static void init (void)
 {
      on_exit (quit, NULL);
@@ -84,14 +85,11 @@ static void init (void)
      if (!modules_init ())
           error_send (global.domain, ERROR_FATAL, "GModule isn't supported.");
 
-     libconfig_init ();
+     config_init ();
      socket_init ();
 }
 
-/*!
- * \fn static void creamctl (const char *cmd)
- * \brief Program used to send commands on the specified socket.
- */
+/* Program used to send commands on the specified socket. */
 static void creamctl (const char *cmd)
 {
      GError *error = NULL;
@@ -180,3 +178,5 @@ int main (int argc, char **argv)
 
      return EXIT_SUCCESS;
 }
+
+/*! @} */

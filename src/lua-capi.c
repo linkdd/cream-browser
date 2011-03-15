@@ -218,6 +218,41 @@ static int luaA_capi_regex_replace (lua_State *L)
      return 0;
 }
 
+static int luaA_capi_widget_box (lua_State *L)
+{
+     gboolean horizontal = FALSE, homogeneous = FALSE;
+     gint padding = 5;
+
+     if (lua_gettop (L) >= 1)
+     {
+          lua_argcheck_table (L, 1);
+
+          lua_pushstring (L, "horizontal");
+          lua_gettable (L, -2);
+          horizontal = lua_toboolean (L, -1);
+          lua_pop (L, 1);
+
+          lua_pushstring (L, "padding");
+          lua_gettable (L, -2);
+          padding = lua_tonumber (L, -1);
+          lua_pop (L, 1);
+
+          lua_pushstring (L, "homogeneous");
+          lua_gettable (L, -2);
+          homogeneous = lua_toboolean (L, -1);
+          lua_pop (L, 1);
+
+          if (horizontal)
+               global.gui.box = gtk_hbox_new (homogeneous, padding);
+          else
+               global.gui.box = gtk_vbox_new (homogeneous, padding);
+     }
+     else
+          lua_pusherror (L, "widget_box: Too few arguments");
+
+     return 0;
+}
+
 static int luaA_capi_widget_box_pack (lua_State *L)
 {
      if (lua_gettop (L) >= 1)
@@ -269,9 +304,9 @@ static int luaA_capi_widget_box_pack (lua_State *L)
           lua_pop (L, 1);
 
           if (pack_start)
-               gtk_box_pack_start (global.gui.box, w, expand, fill, padding);
+               gtk_box_pack_start (GTK_BOX (global.gui.box), w, expand, fill, padding);
           else
-               gtk_box_pack_end (global.gui.box, w, expand, fill, padding);
+               gtk_box_pack_end (GTK_BOX (global.gui.box), w, expand, fill, padding);
      }
      else
           lua_pusherror (L, "widget_box_pack: Too few arguments");
@@ -388,6 +423,7 @@ const struct luaL_reg cream_capi_libs[] =
      { "quit", luaA_capi_quit },
      { "regex_match", luaA_capi_regex_match },
      { "regex_replace", luaA_capi_regex_replace },
+     { "widget_box", luaA_capi_widget_box },
      { "widget_box_pack", luaA_capi_widget_box_pack },
      { "widget_notebook", luaA_capi_widget_notebook },
      { "widget_notebook_set_buttons", luaA_capi_widget_notebook_set_buttons },

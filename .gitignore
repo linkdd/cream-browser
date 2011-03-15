@@ -8,8 +8,7 @@
 *.la
 
 src/cream-browser
-src/creamctl
-
+docs/
 
 Makefile.config
 configure.lua

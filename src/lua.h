@@ -8,9 +8,21 @@
 
 #include "errors.h"
 
+/*!
+ * \defgroup lua Lua context.
+ * Functions to manipulate the Lua context.
+ *
+ * @{
+ */
+
+/*!
+ * \struct LuaContext
+ * Abstraction to the lua state object.
+ */
 typedef struct _LuaContext LuaContext;
 struct _LuaContext
 {
+     /*< private >*/
      guint domain;
      lua_State *L;
      int s;
@@ -63,5 +75,6 @@ int lua_ctx_parse (LuaContext *ctx, const char *filename);
                lua_pusherror (L, "Wrong type: argument must be a function");    \
      } while (0)
 
+/*! @} */
 
 #endif /* __LUA_H */

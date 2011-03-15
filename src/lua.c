@@ -1,8 +1,16 @@
 #include "local.h"
 
+/*!
+ * \addtogroup lua
+ *
+ * \todo Implements all C API.
+ * \todo Finish the Lua library using the C API.
+ *
+ * @{
+ */
+
 extern const struct luaL_reg cream_capi_libs[];
 static guint domain = 0;
-static GList *luactxs = NULL;
 
 static LuaContext *lua_ctx_init (void)
 {
@@ -21,6 +29,13 @@ static LuaContext *lua_ctx_init (void)
      return ret;
 }
 
+/*!
+ * \fn void lua_ctx_report_errors (LuaContext *ctx, ErrorLevel level)
+ * @param ctx A #LuaContext object.
+ * @param level Type of error (see #ErrorLevel).
+ *
+ * Send errors received at the lua execution.
+ */
 void lua_ctx_report_errors (LuaContext *ctx, ErrorLevel level)
 {
      if (ctx && ctx->s != 0)
@@ -30,6 +45,15 @@ void lua_ctx_report_errors (LuaContext *ctx, ErrorLevel level)
      }
 }
 
+/*!
+ * \fn int lua_ctx_parse (LuaContext *ctx, const char *filename)
+ * @param ctx A #LuaContext object.
+ * @param filename Lua file to parse.
+ * @return 0 on success, the error code otherwise.
+ *
+ * Parse a lua file.
+ *
+ */
 int lua_ctx_parse (LuaContext *ctx, const char *filename)
 {
      if (ctx)
@@ -46,6 +70,13 @@ int lua_ctx_parse (LuaContext *ctx, const char *filename)
      return -1;
 }
 
+/*!
+ * \fn LuaContext *lua_ctx_new (void)
+ * @return A #LuaContext object.
+ *
+ * Create a new #LuaContext object.
+ *
+ */
 LuaContext *lua_ctx_new (void)
 {
      LuaContext *obj = lua_ctx_init ();
@@ -54,14 +85,19 @@ LuaContext *lua_ctx_new (void)
      luaL_register (obj->L, "capi", cream_capi_libs);
      lua_pop (obj->L, 1);
 
-     luactxs = g_list_append (luactxs, obj);
-
      return obj;
 }
 
+/*!
+ * \fn void lua_ctx_destroy (LuaContext *ctx)
+ * @param ctx A #LuaContext object.
+ *
+ * Free memory used by \a ctx and delete it.
+ */
 void lua_ctx_destroy (LuaContext *ctx)
 {
      lua_close (ctx->L);
-     luactxs = g_list_remove_all (luactxs, ctx);
      g_free (ctx);
 }
+
+/*! @} */

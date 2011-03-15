@@ -4,23 +4,70 @@
 #include <gtk/gtk.h>
 #include <gmodule.h>
 
-typedef struct ModulesCallbacksList
+/*!
+ * \defgroup modules Modules
+ * Manage modules (and \class{GModule}).
+ *
+ * \todo Create modules using WebKit, FTP, and to manage <code>about:</code> pages.
+ *
+ * @{
+ */
+
+/*!
+ * \fn typedef void (*CreamModuleInitFunc) (void)
+ * Initialize the loaded module.
+ */
+typedef void (*CreamModuleInitFunc) (void);
+
+/*!
+ * \fn typedef void (*CreamModuleUnloadFunc) (void)
+ * Free memory use by the module and unload it.
+ */
+typedef void (*CreamModuleUnloadFunc) (void);
+
+/*!
+ * \fn typedef GtkWidget * (*CreamModuleWebviewNewFunc) (void)
+ * @return A newly allocated \class{GtkWidget}
+ *
+ * Create a new widget using the module.
+ */
+typedef GtkWidget * (*CreamModuleWebviewNewFunc) (void);
+
+/*!
+ * \fn typedef void (*CreamModuleCallFunc) (const char *, ...)
+ * @param id Function's name to call
+ * @param ... The list of arguments to pass to the function
+ *
+ * Call a specific function from the module.
+ */
+typedef void (*CreamModuleCallFunc) (const char *, ...);
+
+/*!
+ * \class CreamModule
+ *
+ * Object, based on \class{GModule}, which load external libraries to use
+ * a specific protocol (ie: HTTP/HTTPS - WebKit).
+ */
+typedef struct CreamModule
 {
-     GModule *module;
-     char *modulename;
-     guint module_id;
+     /*< private >*/
+     GModule *module;                   /*!< \private \class{GModule} object */
+     char *modulename;                  /*!< \private Module's name */
+     guint module_id;                   /*!< \private Module's identifier */
 
-     void (*init) (void);
-     void (*unload) (void);
+     /*< public >*/
 
-     GtkWidget * (*webview_new) (void);
-
-     void (*call) (const char *, ...);
-} ModulesCallbacksList;
+     CreamModuleInitFunc       init;         /*!< Init function */
+     CreamModuleUnloadFunc     unload;       /*!< Unload function */
+     CreamModuleWebviewNewFunc webview_new;  /*!< New webview function */
+     CreamModuleCallFunc       call;         /*!< Call function */
+} CreamModule;
 
 gboolean modules_init (void);
 guint modules_load (const char *filename);
 void modules_unload (guint id);
-ModulesCallbacksList *modules_get (guint id);
+CreamModule *modules_get (guint id);
+
+/*! @} */
 
 #endif /* __MODULES_H */

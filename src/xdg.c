@@ -1,5 +1,10 @@
 #include "local.h"
 
+/*!
+ * \addtogroup xdg
+ * @{
+ */
+
 static struct XDG_t XDG[] =
 {
      { "XDG_CONFIG_HOME",     "~/.config" },
@@ -10,6 +15,13 @@ static struct XDG_t XDG[] =
      { NULL, NULL }
 };
 
+/*!
+ * \fn char *get_xdg_var (struct XDG_t xdg)
+ * @param xdg A #XDG_t field.
+ * @return A newly allocated string.
+ *
+ * Get the value of a XDG variable. See get_xdg_var_by_name().
+ */
 char *get_xdg_var (struct XDG_t xdg)
 {
      const gchar *actual_val = getenv (xdg.env);
@@ -29,6 +41,13 @@ char *get_xdg_var (struct XDG_t xdg)
      return ret;
 }
 
+/*!
+ * \fn char *get_xdg_var_by_name (char *name)
+ * @param name Name of the variable to get the value of.
+ * @return A newly allocated string.
+ *
+ * Get the value of a XDG variable.
+ */
 char *get_xdg_var_by_name (char *name)
 {
      int i;
@@ -40,7 +59,15 @@ char *get_xdg_var_by_name (char *name)
      return NULL;
 }
 
-char *find_xdg_file (int xdg_type, const char *filename)
+/*!
+ * char *find_xdg_file (XDG_Type xdg_type, const char *filename)
+ * @param xdg_type Type of the XDG file to find. See #XDG_Type
+ * @param filename Basename of the wanted file.
+ * @return The absolute path of \a filename.
+ *
+ * Search a file in all XDG directories.
+ */
+char *find_xdg_file (XDG_Type xdg_type, const char *filename)
 {
      char *xdg_var = NULL;
      char **xdgv;
@@ -78,3 +105,5 @@ char *find_xdg_file (int xdg_type, const char *filename)
      g_strfreev (xdgv);
      return NULL;
 }
+
+/*! @} */

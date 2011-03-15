@@ -1,6 +1,9 @@
 TOP=.
 include ${TOP}/Makefile.config
 
+CFLAGS = $(GTK2_CFLAGS)
+LDLIBS = $(GTK2_LIBS)
+
 SUBDIR= src
 
 all: all-subdir
@@ -22,7 +25,9 @@ depend: depend-subdir
 
 .PHONY: doc
 doc:
-	luadoc src/lua/*.lua -d doc --nofiles
+	@mkdir -p docs/lua docs/cream-browser
+	luadoc src/lua/*.lua -d docs/lua --nofiles
+	doxygen Doxyfile
 
 reconfigure:
 	rm -f configure
