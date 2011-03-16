@@ -51,6 +51,8 @@
 #include "lua.h"
 #include "config.h"
 
+#include "WebViewClass.h"
+
 /*!
  * \defgroup cream-browser Cream-Browser Utilities.
  * Useful functions and declarations.
@@ -68,6 +70,8 @@ extern struct global_t global;
 void socket_init (void);
 
 char *str_replace (const char *search, const char *replace, const char *string);
+void add_protocol (guint id, CreamModule *mod);
+CreamModule *get_protocol (guint id);
 
 /*! @} */
 

@@ -29,6 +29,8 @@ struct global_t
 
      gboolean log;            /*!< if TRUE log every errors */
      guint domain;            /*!< Global error domain */
+
+     GList *protocols;        /*!< List of protocols and asscoiated modules */
 };
 
 /*! \struct Tab */

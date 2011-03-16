@@ -4,6 +4,8 @@
 #include <gtk/gtk.h>
 #include <gmodule.h>
 
+#include "modules/scheme.h"
+
 /*!
  * \defgroup modules Modules
  * Manage modules (and \class{GModule}).

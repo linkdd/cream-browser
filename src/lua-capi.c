@@ -1,7 +1,21 @@
 #include "local.h"
 
-static int luaA_capi_go_back (lua_State *L) { return 0; }
-static int luaA_capi_go_forward (lua_State *L) { return 0; }
+static int luaA_capi_go_back (lua_State *L)
+{
+     CreamModule *mod = webview_get_module (WEB_VIEW (global.gui.webview));
+     GtkWidget *child = webview_get_child (WEB_VIEW (global.gui.webview));
+
+     mod->call ("go-back", child);
+     return 0;
+}
+static int luaA_capi_go_forward (lua_State *L)
+{
+     CreamModule *mod = webview_get_module (WEB_VIEW (global.gui.webview));
+     GtkWidget *child = webview_get_child (WEB_VIEW (global.gui.webview));
+
+     mod->call ("go-forward", child);
+     return 0;
+}
 static int luaA_capi_history_get (lua_State *L) { return 0; }
 
 static int luaA_capi_module_enable (lua_State *L)

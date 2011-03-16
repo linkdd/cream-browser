@@ -5,6 +5,16 @@
  * @{
  */
 
+/*!
+ * \struct Protocol
+ * Used for add_callback() and get_callback().
+ */
+struct Protocol
+{
+     guint id;         /*!< Hashed scheme. (see #UriScheme) */
+     CreamModule *mod; /*!< Associated module (see #CreamModule) */
+};
+
 struct global_t global;
 
 /*!
@@ -28,6 +38,43 @@ char *str_replace (const char *search, const char *replace, const char *string)
      g_strfreev (buf);
 
      return ret;
+}
+
+/*!
+ * \fn void add_protocol (guint id, CreamModule *mod)
+ * @param id A hashed scheme. (see #UriScheme)
+ * @param mod A #CreamModule object.
+ *
+ * Associate a protocol to a module.
+ */
+void add_protocol (guint id, CreamModule *mod)
+{
+     struct Protocol *el = malloc (sizeof (struct Protocol));
+
+     el->id  = id;
+     el->mod = mod;
+
+     global.protocols = g_list_append (global.protocols, el);
+}
+
+/*!
+ * \fn CreamModule *get_protocol (guint id)
+ * @param id A hashed scheme. (see #UriScheme)
+ * @return The associated #CreamModule.
+ *
+ * Returns the associated #CreamModule object.
+ */
+CreamModule *get_protocol (guint id)
+{
+     GList *tmp;
+
+     for (tmp = global.protocols; tmp != NULL; tmp = tmp->next)
+     {
+          struct Protocol *el = tmp->data;
+          if (el->id == id) return el->mod;
+     }
+
+     return NULL;
 }
 
 /* Callback function to receive all error from every modules. */
