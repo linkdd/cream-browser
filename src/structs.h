@@ -5,7 +5,7 @@
 struct GUI
 {
      GtkWidget *notebook;     /*!< Notebook widget */
-     GtkWidget *webview;      /*!< Focused webview */
+     GtkWidget *viewarea;     /*!< WebView area */
      GtkWidget *statusbar;    /*!< Statusbar widget */
      GtkWidget *promptbox;    /*!< Promptbox widget */
      GtkWidget *box;          /*!< Box containing all widgets */

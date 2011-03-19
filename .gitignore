@@ -8,6 +8,8 @@
 *.la
 
 src/cream-browser
+src/marshal.c
+src/marshal.h
 docs/
 
 Makefile.config

@@ -53,6 +53,7 @@
 
 #include "marshal.h"
 #include "WebViewClass.h"
+#include "ViewAreaClass.h"
 
 /*!
  * \defgroup cream-browser Cream-Browser Utilities.

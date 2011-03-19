@@ -2,16 +2,16 @@
 
 static int luaA_capi_go_back (lua_State *L)
 {
-     CreamModule *mod = webview_get_module (WEB_VIEW (global.gui.webview));
-     GtkWidget *child = webview_get_child (WEB_VIEW (global.gui.webview));
+     CreamModule *mod = webview_get_module (viewarea_get_focus (VIEW_AREA (global.gui.viewarea)));
+     GtkWidget *child = webview_get_child (viewarea_get_focus (VIEW_AREA (global.gui.viewarea)));
 
      mod->call ("go-back", child);
      return 0;
 }
 static int luaA_capi_go_forward (lua_State *L)
 {
-     CreamModule *mod = webview_get_module (WEB_VIEW (global.gui.webview));
-     GtkWidget *child = webview_get_child (WEB_VIEW (global.gui.webview));
+     CreamModule *mod = webview_get_module (viewarea_get_focus (VIEW_AREA (global.gui.viewarea)));
+     GtkWidget *child = webview_get_child (viewarea_get_focus (VIEW_AREA (global.gui.viewarea)));
 
      mod->call ("go-forward", child);
      return 0;
@@ -343,7 +343,7 @@ static int luaA_capi_widget_notebook_set_buttons (lua_State *L) { return 0; }
 
 static int luaA_capi_widget_webview (lua_State *L)
 {
-     int objptr = GPOINTER_TO_INT (global.gui.webview);
+     int objptr = GPOINTER_TO_INT (global.gui.viewarea);
 
      lua_newtable (L);
      lua_pushstring (L, "objptr");
@@ -411,7 +411,10 @@ static int luaA_capi_widget_connect (lua_State *L)
           signame = lua_tostring (L, 2);
           /* callback = */
 
-          g_signal_connect (obj, signame, callback, L);
+          if (IS_VIEW_AREA (obj))
+               viewarea_signal_connect (VIEW_AREA (global.gui.viewarea), signame, callback, L);
+          else
+               g_signal_connect (obj, signame, callback, L);
      }
      else
           lua_pusherror (L, "widget_connect: Too few arguments");

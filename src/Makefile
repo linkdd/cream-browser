@@ -4,7 +4,11 @@ include ${TOP}/Makefile.config
 PROG=cream-browser
 PROG_TYPE=GUI
 
-SRCS=marshal.c errors.c modules.c modules/scheme.c WebViewClass.c lua-capi.c lua.c config.c socket.c xdg.c main.c
+SRCS=marshal.c \
+	errors.c modules.c modules/scheme.c \
+	WebViewClass.c ViewAreaClass.c \
+	lua-capi.c lua.c config.c \
+	socket.c xdg.c main.c
 
 LIBS+=${GLIB2_LIBS} ${GTK2_LIBS} ${WEBKIT_LIBS} ${LUA_LIBS}
 CFLAGS+=-I${TOP} ${GLIB2_CFLAGS} ${GTK2_CFLAGS} ${WEBKIT_CFLAGS} ${LUA_CFLAGS}

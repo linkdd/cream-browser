@@ -129,9 +129,7 @@ gboolean webview_has_focus (WebView *w)
 void webview_raise (WebView *w)
 {
      g_return_if_fail (w);
-
      w->has_focus = TRUE;
-
      g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_RAISE_SIGNAL], 0);
 }
 
@@ -294,9 +292,8 @@ GtkWidget *webview_new (CreamModule *mod)
 static void webview_class_init (WebViewClass *klass)
 {
      GtkObjectClass *object_class = (GtkObjectClass *) klass;
-     GParamSpec *pspec;
 
-     object_class->destroy      = webview_destroy;
+     object_class->destroy = webview_destroy;
 
      /* signals */
      webview_signals[WEBVIEW_LOAD_COMMIT_SIGNAL] = g_signal_new (
