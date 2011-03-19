@@ -51,6 +51,7 @@
 #include "lua.h"
 #include "config.h"
 
+#include "marshal.h"
 #include "WebViewClass.h"
 
 /*!

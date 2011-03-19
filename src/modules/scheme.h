@@ -23,8 +23,8 @@ typedef struct
      char *hostname;     /*!< Hostname, or IP adresse. */
      int port;           /*!< Port, or -1. */
      char *path;         /*!< Path of the website's page. */
-     char *query;        /*!< ie: <code>page.php?action=send</code> */
-     char *fragment;     /*!< Anchor link, ie: <code>page.html#section</code> */
+     char *query;        /*!< ie: \verbatim page.php?action=send \endverbatim  */
+     char *fragment;     /*!< Anchor link, ie: \verbatim page.html#section \endverbatim  */
 } UriScheme;
 
 gboolean uri_scheme_parse (UriScheme *u, const gchar *uri);

@@ -7,7 +7,7 @@
 
 /*!
  * \struct Protocol
- * Used for add_callback() and get_callback().
+ * Used for add_protocol() and get_protocol().
  */
 struct Protocol
 {

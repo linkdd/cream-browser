@@ -8,7 +8,9 @@
 static void webview_class_init (WebViewClass *klass);
 static void webview_init (WebView *obj);
 static void webview_destroy (GtkObject *obj);
+static void webview_child_signal_connect (WebView *w);
 
+/* signals */
 enum
 {
      WEBVIEW_LOAD_COMMIT_SIGNAL,
@@ -20,6 +22,7 @@ enum
      WEBVIEW_STATUS_CHANGED_SIGNAL,
 
      WEBVIEW_RAISE_SIGNAL,
+     WEBVIEW_DOWNLOAD_SIGNAL,
 
      WEBVIEW_NB_SIGNALS
 };
@@ -85,6 +88,7 @@ void webview_set_module (WebView *w, CreamModule *mod)
           gtk_widget_destroy (w->child);
           w->mod = mod;
           w->child = mod->webview_new ();
+          webview_child_signal_connect (w);
           gtk_container_add (GTK_CONTAINER (w), w->child);
      }
 }
@@ -124,16 +128,9 @@ gboolean webview_has_focus (WebView *w)
  */
 void webview_raise (WebView *w)
 {
-     WebView *ow = WEB_VIEW (global.gui.webview);
-
      g_return_if_fail (w);
 
-     ow->has_focus = FALSE;
      w->has_focus = TRUE;
-     global.gui.webview = GTK_WIDGET (w);
-
-     gtk_widget_hide (GTK_WIDGET (ow));
-     gtk_widget_show_all (GTK_WIDGET (w));
 
      g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_RAISE_SIGNAL], 0);
 }
@@ -163,8 +160,110 @@ void webview_load_uri (WebView *w, const gchar *uri)
           webview_set_module (w, get_protocol (u.proto));
           w->mod->call ("load-uri", w, &u);
      }
+}
 
-     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_LOAD_COMMIT_SIGNAL], 0);
+/*!
+ * \public \memberof WebView
+ * \fn const gchar *webview_get_uri (WebView *w)
+ * @param w A #WebView object.
+ * @return Loaded URI.
+ *
+ * Get the loaded URI.
+ */
+const gchar *webview_get_uri (WebView *w)
+{
+     return (w ? w->uri : NULL);
+}
+
+/*!
+ * \public \memberof WebView
+ * \fn const gchar *webview_get_title (WebView *w)
+ * @param w A #WebView object.
+ * @return Title of the loaded page.
+ *
+ * Get the title of the loaded page.
+ */
+const gchar *webview_get_title (WebView *w)
+{
+     return (w ? w->title : NULL);
+}
+
+/*!
+ * \public \memberof WebView
+ * \fn const gchar *webview_get_status (WebView *w)
+ * @param w A #WebView object.
+ * @return The current status.
+ *
+ * Get the current page's status.
+ */
+const gchar *webview_get_status (WebView *w)
+{
+     return (w ? w->status : NULL);
+}
+
+/* Signals */
+
+static void webview_child_signal_load_commit (GtkWidget *child, const char *uri, WebView *w)
+{
+     if (w->uri) g_free (w->uri);
+     w->uri = g_strdup (uri);
+
+     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_LOAD_COMMIT_SIGNAL], 0, uri);
+}
+
+static void webview_child_signal_load_changed (GtkWidget *child, gint progress, WebView *w)
+{
+     w->load_status = progress;
+     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_LOAD_CHANGED_SIGNAL], 0, progress);
+}
+
+static void webview_child_signal_load_finished (GtkWidget *child, WebView *w)
+{
+     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_LOAD_FINISHED_SIGNAL], 0);
+}
+
+static void webview_child_signal_uri_changed (GtkWidget *child, const char *uri, WebView *w)
+{
+     if (w->uri) g_free (w->uri);
+     w->uri = g_strdup (uri);
+
+     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_URI_CHANGED_SIGNAL], 0, uri);
+}
+
+static void webview_child_signal_title_changed (GtkWidget *child, const char *title, WebView *w)
+{
+     if (w->title) g_free (w->title);
+     w->title = g_strdup (title);
+
+     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_TITLE_CHANGED_SIGNAL], 0, title);
+}
+
+static void webview_child_signal_status_changed (GtkWidget *child, const char *status, WebView *w)
+{
+     if (w->status) g_free (w->status);
+     w->status = g_strdup (status);
+
+     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_STATUS_CHANGED_SIGNAL], 0, status);
+}
+
+static gboolean webview_child_signal_download_requested (GtkWidget *child, const char *file_uri, WebView *w)
+{
+     gboolean ret = FALSE;
+     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_DOWNLOAD_SIGNAL], 0, file_uri, &ret);
+     return ret;
+}
+
+static void webview_child_signal_connect (WebView *w)
+{
+     g_return_if_fail (w && w->child);
+
+     g_signal_connect (G_OBJECT (w->child), "load-commit",        G_CALLBACK (webview_child_signal_load_commit),        w);
+     g_signal_connect (G_OBJECT (w->child), "load-changed",       G_CALLBACK (webview_child_signal_load_changed),       w);
+     g_signal_connect (G_OBJECT (w->child), "load-finished",      G_CALLBACK (webview_child_signal_load_finished),      w);
+     g_signal_connect (G_OBJECT (w->child), "uri-changed",        G_CALLBACK (webview_child_signal_uri_changed),        w);
+     g_signal_connect (G_OBJECT (w->child), "title-changed",      G_CALLBACK (webview_child_signal_title_changed),      w);
+     g_signal_connect (G_OBJECT (w->child), "status-changed",     G_CALLBACK (webview_child_signal_status_changed),     w);
+     g_signal_connect (G_OBJECT (w->child), "download-requested", G_CALLBACK (webview_child_signal_download_requested), w);
 }
 
 /* Constructors */
@@ -181,11 +280,11 @@ GtkWidget *webview_new (CreamModule *mod)
 {
      WebView *w = gtk_type_new (webview_get_type ());
 
-     g_return_val_if_fail (w != NULL, NULL);
+     g_return_val_if_fail (w != NULL && mod != NULL, NULL);
 
      w->mod = mod;
-     if (mod)
-          w->child = w->mod->webview_new ();
+     w->child = w->mod->webview_new ();
+     webview_child_signal_connect (w);
 
      gtk_container_add (GTK_CONTAINER (w), w->child);
 
@@ -195,8 +294,9 @@ GtkWidget *webview_new (CreamModule *mod)
 static void webview_class_init (WebViewClass *klass)
 {
      GtkObjectClass *object_class = (GtkObjectClass *) klass;
+     GParamSpec *pspec;
 
-     object_class->destroy = webview_destroy;
+     object_class->destroy      = webview_destroy;
 
      /* signals */
      webview_signals[WEBVIEW_LOAD_COMMIT_SIGNAL] = g_signal_new (
@@ -269,6 +369,15 @@ static void webview_class_init (WebViewClass *klass)
                G_TYPE_NONE,
                0);
 
+     webview_signals[WEBVIEW_DOWNLOAD_SIGNAL] = g_signal_new (
+               "download-requested",
+               G_TYPE_FROM_CLASS (klass),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (WebViewClass, download),
+               NULL, NULL,
+               cream_marshal_BOOLEAN__STRING,
+               G_TYPE_BOOLEAN,
+               1, G_TYPE_STRING);
 }
 
 static void webview_init (WebView *obj)
@@ -276,6 +385,11 @@ static void webview_init (WebView *obj)
      obj->mod   = NULL;
      obj->child = NULL;
      obj->has_focus = FALSE;
+
+     obj->uri    = NULL;
+     obj->title  = NULL;
+     obj->status = NULL;
+     obj->load_status = 0;
 }
 
 /* Destructor */
@@ -291,6 +405,10 @@ static void webview_destroy (GtkObject *obj)
 
      gtk_container_remove (GTK_CONTAINER (w), w->child);
      gtk_widget_destroy (w->child);
+
+     if (w->uri) g_free (w->uri);
+     if (w->title) g_free (w->title);
+     if (w->status) g_free (w->status);
 
      object_class = GTK_OBJECT_CLASS (gtk_type_class (webview_get_type ()));
      if (object_class->destroy)

@@ -18,6 +18,14 @@
  * \code
  * UriScheme uri;
  * uri_scheme_parse (&uri, "http://user:password@google.com:847/sub/page.html?a=connect#anchor");
+ *
+ * printf ("Scheme:   %s (%d)\n", uri.scheme, uri.proto);
+ * printf ("Userinfo: %s\n", uri.userinfo);
+ * printf ("Hostname: %s\n", uri.hostname);
+ * printf ("Port:     %d\n", uri.port);
+ * printf ("Path:     %s\n", uri.path);
+ * printf ("Query:    %s\n", uri.query);
+ * printf ("Fragment: %s\n", uri.fragment);
  * \endcode
  */
 gboolean uri_scheme_parse (UriScheme *u, const gchar *uri)

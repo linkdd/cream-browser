@@ -20,6 +20,7 @@ distclean: clean cleandir
 	rm -rf config config.log config_build.h Makefile.config
 	rm -rf configure.lua
 	rm -rf doc/*
+	rm -rf src/marshal.h src/marshal.c
 
 depend: depend-subdir
 

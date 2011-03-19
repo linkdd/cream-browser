@@ -1,0 +1,3 @@
+# WebView::"signal-requested"
+BOOLEAN:STRING
+
