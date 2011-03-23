@@ -66,9 +66,8 @@ typedef struct CreamModule
 } CreamModule;
 
 gboolean modules_init (void);
-guint modules_load (const char *filename);
-void modules_unload (guint id);
-CreamModule *modules_get (guint id);
+CreamModule *modules_load (const char *filename);
+void modules_unload (CreamModule *mod);
 
 /*! @} */
 

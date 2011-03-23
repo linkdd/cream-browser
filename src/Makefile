@@ -1,24 +1,31 @@
-TOP=..
-include ${TOP}/Makefile.config
+SOURCES = marshal.c \
+		WebViewClass.c ViewAreaClass.c \
+		errors.c modules.c lua.c \
+		clipboard.c util.c \
+		modules/scheme.c xdg.c socket.c main.c
 
-PROG=cream-browser
-PROG_TYPE=GUI
+HEADERS = marshal.h $(TOPDIR)/cream-browser_build.h \
+		WebViewClass.h ViewAreaClass.h \
+		errors.h modules.h lua.h \
+		modules/scheme.h xdg.h structs.h local.h
 
-SRCS=marshal.c \
-	errors.c modules.c modules/scheme.c \
-	WebViewClass.c ViewAreaClass.c \
-	lua-capi.c lua.c config.c \
-	socket.c xdg.c main.c
+OBJECTS = $(SOURCES:.c=.o)
 
-LIBS+=${GLIB2_LIBS} ${GTK2_LIBS} ${WEBKIT_LIBS} ${LUA_LIBS}
-CFLAGS+=-I${TOP} ${GLIB2_CFLAGS} ${GTK2_CFLAGS} ${WEBKIT_CFLAGS} ${LUA_CFLAGS}
+.PHONY: all
+all: $(EXEC) marshal.txt
 
-include ${TOP}/mk/build.prog.mk
+$(EXEC): $(OBJECTS)
+	$(CC) $(LDFLAGS) $(GLIB_LDFLAGS) $(GTK_LDFLAGS) $(LUA_LDFLAGS) $^ -o $@
+
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) $(GLIB_CFLAGS) $(GTK_CFLAGS) $(LUA_CFLAGS) -c $< -o $@
+
+marshal.c: marshal.txt marshal.h
+	glib-genmarshal --prefix=cream_marshal --body $< > $@
 
 marshal.h: marshal.txt
-	glib-genmarshal --header --prefix=cream_marshal marshal.txt > $@
+	glib-genmarshal --prefix=cream_marshal --header $< > $@
 
-marshal.c: marshal.h marshal.txt
-	glib-genmarshal --body --prefix=cream_marshal marshal.txt > $@
-
-
+.PHONY: clean
+clean:
+	@rm -vrf $(OBJECTS) $(EXEC) marshal.c marshal.h

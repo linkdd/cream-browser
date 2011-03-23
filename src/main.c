@@ -41,32 +41,51 @@ char *str_replace (const char *search, const char *replace, const char *string)
 }
 
 /*!
- * \fn void add_protocol (guint id, CreamModule *mod)
- * @param id A hashed scheme. (see #UriScheme)
+ * \fn void add_protocol (const gchar *scheme, CreamModule *mod)
+ * @param scheme A scheme.
  * @param mod A #CreamModule object.
  *
  * Associate a protocol to a module.
  */
-void add_protocol (guint id, CreamModule *mod)
+void add_protocol (const gchar *scheme, CreamModule *mod)
 {
      struct Protocol *el = malloc (sizeof (struct Protocol));
 
-     el->id  = id;
+     el->id  = g_str_hash (scheme);
      el->mod = mod;
 
      global.protocols = g_list_append (global.protocols, el);
 }
 
 /*!
- * \fn CreamModule *get_protocol (guint id)
- * @param id A hashed scheme. (see #UriScheme)
+ * \fn void del_protocol (CreamModule *mod)
+ * @param mod A #CreamModule object.
+ *
+ * Delete a module from the list.
+ */
+void del_protocol (CreamModule *mod)
+{
+     GList *tmp;
+
+     for (tmp = global.protocols; tmp != NULL; tmp = tmp->next)
+     {
+          struct Protocol *el = tmp->data;
+          if (el->mod == mod)
+               global.protocols = g_list_remove (global.protocols, el);
+     }
+}
+
+/*!
+ * \fn CreamModule *get_protocol (const gchar *scheme)
+ * @param scheme A scheme.
  * @return The associated #CreamModule.
  *
  * Returns the associated #CreamModule object.
  */
-CreamModule *get_protocol (guint id)
+CreamModule *get_protocol (const gchar *scheme)
 {
      GList *tmp;
+     guint id = g_str_hash (scheme);
 
      for (tmp = global.protocols; tmp != NULL; tmp = tmp->next)
      {
@@ -117,13 +136,14 @@ static void error_callback (guint domain, ErrorLevel level, const char *msg, gpo
 /* Function called when exit() is called. */
 static void quit (int code, void *data)
 {
-     printf ("exit");
-     return;
+     lua_ctx_close ();
 }
 
 /* Initialize every structures and modules. */
-static void init (void)
+static void init (gchar *config)
 {
+     char *rc = config;
+
      on_exit (quit, NULL);
 
      global.domain = error_domain_register ("main");
@@ -132,15 +152,19 @@ static void init (void)
      if (!modules_init ())
           error_send (global.domain, ERROR_FATAL, "GModule isn't supported.");
 
-     config_init ();
+     if (!rc || !g_file_test (rc, G_FILE_TEST_EXISTS))
+          if ((rc = find_xdg_file (XDG_TYPE_CONFIG, "rc.lua")) == NULL)
+               error_send (global.domain, ERROR_FATAL, "Configuration not found.");
+
      socket_init ();
+
+     lua_ctx_init ();
+     lua_ctx_parse (rc);
 }
 
 /* Program used to send commands on the specified socket. */
 static void creamctl (const char *cmd)
 {
-     GError *error = NULL;
-
      if (global.sock.path && cmd)
      {
           int s, len;
@@ -189,14 +213,17 @@ static void creamctl (const char *cmd)
 
 int main (int argc, char **argv)
 {
-     gchar *url = NULL, *cmd = NULL;
+     gchar *url = NULL, *cmd = NULL, *config = NULL;
+     gboolean version = FALSE;
 
      GOptionEntry options[] =
      {
           { "log",     'l', 0, G_OPTION_ARG_NONE,    &global.log,       "Enable logging",     NULL },
           { "open",    'o', 0, G_OPTION_ARG_STRING,  &url,              "Open URL",           NULL },
+          { "config",  'c', 0, G_OPTION_ARG_STRING,  &config,           "Load an alternate config file.", NULL },
           { "socket",  's', 0, G_OPTION_ARG_STRING,  &global.sock.path, "Unix socket's path", NULL },
-          { "command", 'c', 0, G_OPTION_ARG_STRING,  &cmd,              "Send a command on the specified socket (see --socket,-s)", NULL },
+          { "command", 'e', 0, G_OPTION_ARG_STRING,  &cmd,              "Send a command on the specified socket (see --socket,-s)", NULL },
+          { "version", 'v', 0, G_OPTION_ARG_NONE,    &version,          "Show version informations", NULL },
           { NULL }
      };
 
@@ -215,11 +242,18 @@ int main (int argc, char **argv)
           exit (EXIT_FAILURE);
      }
 
+     if (version)
+     {
+          printf ("Cream-Browser , developped by David Delassus <linkdd@ydb.me>\n");
+          printf ("Released under MIT license.\n");
+          exit (EXIT_SUCCESS);
+     }
+
      /* if cmd isn't NULL, use creamctl() */
      if (cmd != NULL)
           creamctl (cmd);
 
-     init ();
+     init (config);
 
      gtk_main ();
 

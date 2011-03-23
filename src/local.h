@@ -26,9 +26,8 @@
  *
  */
 
-#include <config_build.h>
+#include <cream-browser_build.h>
 
-#include <webkit/webkit.h>
 #include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,17 +42,16 @@
 #include <sys/un.h>
 #include <fcntl.h>
 
-#include "xdg.h"
-#include "structs.h"
-
+#include "lua.h"
 #include "errors.h"
 #include "modules.h"
-#include "lua.h"
-#include "config.h"
 
 #include "marshal.h"
 #include "WebViewClass.h"
 #include "ViewAreaClass.h"
+
+#include "xdg.h"
+#include "structs.h"
 
 /*!
  * \defgroup cream-browser Cream-Browser Utilities.
@@ -72,8 +70,9 @@ extern struct global_t global;
 void socket_init (void);
 
 char *str_replace (const char *search, const char *replace, const char *string);
-void add_protocol (guint id, CreamModule *mod);
-CreamModule *get_protocol (guint id);
+void add_protocol (const gchar *scheme, CreamModule *mod);
+void del_protocol (CreamModule *mod);
+CreamModule *get_protocol (const gchar *scheme);
 
 /*! @} */
 

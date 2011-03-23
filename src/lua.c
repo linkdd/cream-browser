@@ -1,5 +1,9 @@
 #include "local.h"
 
+extern int luaL_module_register (lua_State *L);
+extern int luaL_clipboard_register (lua_State *L);
+extern int luaL_util_register (lua_State *L);
+
 /*!
  * \addtogroup lua
  *
@@ -9,95 +13,115 @@
  * @{
  */
 
-extern const struct luaL_reg cream_capi_libs[];
 static guint domain = 0;
 
-static LuaContext *lua_ctx_init (void)
-{
-     LuaContext *ret = g_malloc (sizeof (LuaContext));
-
-     if (domain == 0)
-          domain = error_domain_register ("lua");
-
-     if (ret)
-     {
-          ret->domain = domain;
-          ret->L = lua_open ();
-          ret->s = 0;
-     }
-
-     return ret;
-}
-
 /*!
- * \fn void lua_ctx_report_errors (LuaContext *ctx, ErrorLevel level)
- * @param ctx A #LuaContext object.
- * @param level Type of error (see #ErrorLevel).
+ * \fn void lua_ctx_init (void)
  *
- * Send errors received at the lua execution.
+ * Initialize the lua VM state.
  */
-void lua_ctx_report_errors (LuaContext *ctx, ErrorLevel level)
+void lua_ctx_init (void)
 {
-     if (ctx && ctx->s != 0)
+     gchar **xdgdirs = NULL;
+     int i;
+
+     domain = error_domain_register ("lua");
+
+     global.luavm = lua_open ();
+
+     /* open libraries */
+     luaL_openlibs (global.luavm);
+
+     luaL_module_register (global.luavm);
+     lua_pop (global.luavm, 1);
+
+     luaL_clipboard_register (global.luavm);
+     lua_pop (global.luavm, 1);
+
+     luaL_util_register (global.luavm);
+     lua_pop (global.luavm, 1);
+
+     /* get package.path */
+     lua_getglobal (global.luavm, "package");
+     if (!lua_istable (global.luavm, 1))
      {
-          error_send (domain, level, "%s", lua_tostring (ctx->L, -1));
-          lua_pop (ctx->L, 1);
+          error_send (domain, ERROR_FATAL, "'package' isn't a table.");
+          return;
      }
+
+     lua_getfield (global.luavm, 1, "path");
+     if (!lua_isstring (global.luavm, 2))
+     {
+          error_send (domain, ERROR_FATAL, "'package.path' isn't a table.");
+          return;
+     }
+
+     /* add XDG_CONFIG_DIRS in path */
+     gchar *tmp = g_strdup_printf ("%s:%s", get_xdg_var_by_name ("XDG_CONFIG_HOME"),
+                                            get_xdg_var_by_name ("XDG_CONFIG_DIRS"));
+     xdgdirs = g_strsplit (tmp, ":", -1);
+     g_free (tmp);
+
+     for (i = 0; i < g_strv_length (xdgdirs); ++i)
+     {
+          size_t len = strlen (xdgdirs[i]);
+
+          lua_pushliteral (global.luavm, ";");
+          lua_pushlstring (global.luavm, xdgdirs[i], len);
+          lua_pushliteral (global.luavm, "/cream-browser/?.lua");
+          lua_concat (global.luavm, 3);
+
+          lua_pushliteral (global.luavm, ";");
+          lua_pushlstring (global.luavm, xdgdirs[i], len);
+          lua_pushliteral (global.luavm, "/cream-browser/?/init.lua");
+          lua_concat (global.luavm, 3);
+
+          lua_concat (global.luavm, 3); /* concatenate with package.path */
+     }
+
+     /* add Lua lib path (PREFIX /share/cream-browser/lib) */
+     lua_pushliteral (global.luavm, ";" PREFIX "/share/cream-browser/lib/?.lua");
+     lua_pushliteral (global.luavm, ";" PREFIX "/share/cream-browser/lib/?/init.lua");
+     lua_concat (global.luavm, 3); /* concatenate with package.path */
+
+     lua_setfield (global.luavm, 1, "path"); /* package.path = "concatenated string" */
 }
 
 /*!
- * \fn int lua_ctx_parse (LuaContext *ctx, const char *filename)
- * @param ctx A #LuaContext object.
- * @param filename Lua file to parse.
- * @return 0 on success, the error code otherwise.
+ * \fn gboolean lua_ctx_parse (const char *file)
+ * @param file Path of the file to parse.
+ * @return <code>TRUE</code> on success, <code>FALSE</code> otherwise.
  *
  * Parse a lua file.
- *
  */
-int lua_ctx_parse (LuaContext *ctx, const char *filename)
+gboolean lua_ctx_parse (const char *file)
 {
-     if (ctx)
+     int s = 0;
+
+     g_return_val_if_fail (file, FALSE);
+
+     s = luaL_loadfile (global.luavm, file);
+     if (s == 0)
+          s = lua_pcall (global.luavm, 0, LUA_MULTRET, 0);
+
+     if (s != 0)
      {
-          ctx->s = luaL_loadfile (ctx->L, filename);
-          if (ctx->s == 0)
-               ctx->s = lua_pcall (ctx->L, 0, LUA_MULTRET, 0);
-
-          lua_ctx_report_errors (ctx, ERROR_FATAL);
-
-          return ctx->s;
+          error_send (domain, ERROR_FATAL, "%s", lua_tostring (global.luavm, -1));
+          lua_pop (global.luavm, 1);
+          return FALSE;
      }
 
-     return -1;
+     return TRUE;
 }
 
 /*!
- * \fn LuaContext *lua_ctx_new (void)
- * @return A #LuaContext object.
+ * \fn void lua_ctx_close (void)
  *
- * Create a new #LuaContext object.
- *
+ * Close the lua VM state.
  */
-LuaContext *lua_ctx_new (void)
+void lua_ctx_close (void)
 {
-     LuaContext *obj = lua_ctx_init ();
-
-     luaL_openlibs (obj->L);
-     luaL_register (obj->L, "capi", cream_capi_libs);
-     lua_pop (obj->L, 1);
-
-     return obj;
-}
-
-/*!
- * \fn void lua_ctx_destroy (LuaContext *ctx)
- * @param ctx A #LuaContext object.
- *
- * Free memory used by \a ctx and delete it.
- */
-void lua_ctx_destroy (LuaContext *ctx)
-{
-     lua_close (ctx->L);
-     g_free (ctx);
+     if (global.luavm) lua_close (global.luavm);
 }
 
 /*! @} */

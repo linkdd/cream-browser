@@ -31,6 +31,8 @@ struct global_t
      guint domain;            /*!< Global error domain */
 
      GList *protocols;        /*!< List of protocols and asscoiated modules */
+
+     lua_State *luavm;        /*!< Lua VM state */
 };
 
 /*! \struct Tab */

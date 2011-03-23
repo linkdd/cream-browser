@@ -149,13 +149,13 @@ void webview_load_uri (WebView *w, const gchar *uri)
 
      uri_scheme_parse (&u, uri);
 
-     g_return_if_fail (get_protocol (u.proto) != 0);
+     g_return_if_fail (get_protocol (u.scheme) != 0);
 
-     if (w->mod == get_protocol (u.proto))
+     if (w->mod == get_protocol (u.scheme))
           w->mod->call ("load-uri", w, &u);
      else
      {
-          webview_set_module (w, get_protocol (u.proto));
+          webview_set_module (w, get_protocol (u.scheme));
           w->mod->call ("load-uri", w, &u);
      }
 }

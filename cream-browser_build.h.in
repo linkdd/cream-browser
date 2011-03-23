@@ -1,0 +1,21 @@
+#ifndef __CREAM_BROWSER__BUILD_H
+#define __CREAM_BROWSER__BUILD_H
+
+#define HAVE_DEBUG       @HAVE_DEBUG@
+
+#define GLIB_VERSION     "@GLIB_VERSION@"
+#define GTK_VERSION      "@GTK_VERSION@"
+#define LUA_VERSION      "@LUA_VERSION@"
+
+#define CFLAGS           "@cflags@"
+#define LDFLAGS          "@ldflags@"
+#define ARCH             "@ARCH@"
+
+#define PACKAGE          "@PACKAGE@"
+#define VERSION          "@VERSION@"
+#define MODULES          "@modules@"
+
+#define PREFIX           "@prefix@"
+#define SYSCONFDIR       "@sysconfdir@"
+
+#endif /* __CREAM_BROWSER__BUILD_H */

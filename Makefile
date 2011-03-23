@@ -1,39 +1,22 @@
-TOP=.
-include ${TOP}/Makefile.config
+include common.mk
 
-CFLAGS = $(GTK2_CFLAGS)
-LDLIBS = $(GTK2_LIBS)
+all:
+	@make -C $(SRCDIR)/ all
 
-SUBDIR= src
+clean:
+	@make -C $(SRCDIR) clean
 
-all: all-subdir
+install:
+	@echo "Installing $(DESTDIR)$(PREFIX)/bin/cream-browser..."
+	@install -c $(SRCDIR)/$(EXEC) $(DESTDIR)$(PREFIX)/bin/cream-browser
 
-install: install-subdir install-other
+uninstall:
+	@echo "Uninstalling $(DESTDIR)$(PREFIX)/bin/cream-browser..."
+	@rm -rf $(DESTDIR)$(PREFIX)/bin/cream-browser
 
-deinstall: deinstall-subdir deinstall-other
-
-clean: clean-subdir
-
-cleandir: cleandir-subdir
-
-distclean: clean cleandir
-	rm -rf config config.log config_build.h Makefile.config
-	rm -rf configure.lua
-	rm -rf doc/*
-	rm -rf src/marshal.h src/marshal.c
-
-depend: depend-subdir
-
-.PHONY: doc
 doc:
 	@mkdir -p docs/lua docs/cream-browser
-	luadoc src/lua/*.lua -d docs/lua --nofiles
+#	luadoc src/lua/*.lua -d docs/lua --nofiles
 	doxygen Doxyfile
 
-reconfigure:
-	rm -f configure
-	cat configure.in | mkconfigure > configure
-	chmod 755 configure
-	./configure
-
-include ${TOP}/mk/build.subdir.mk
+.PHONY: all clean install uninstall

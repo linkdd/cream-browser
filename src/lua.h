@@ -9,71 +9,33 @@
 #include "errors.h"
 
 /*!
- * \defgroup lua Lua context.
+ * \defgroup lua Lua context
  * Functions to manipulate the Lua context.
  *
  * @{
  */
 
 /*!
- * \struct LuaContext
- * Abstraction to the lua state object.
+ * \def LUA_TMODULE
+ * Userdata type associated to #CreamModule.
  */
-typedef struct _LuaContext LuaContext;
-struct _LuaContext
-{
-     /*< private >*/
-     guint domain;
-     lua_State *L;
-     int s;
-};
+#define LUA_TMODULE    "CreamModule"
 
-LuaContext *lua_ctx_new (void);
-void lua_ctx_destroy (LuaContext *ctx);
+/*!
+ * \def LUA_TCLIPBOARD
+ * Userdata type associated to \class{GtkClipboard}.
+ */
+#define LUA_TCLIPBOARD "Clipboard"
 
-void lua_ctx_report_errors (LuaContext *ctx, ErrorLevel level);
-int lua_ctx_parse (LuaContext *ctx, const char *filename);
+/*!
+ * \def LUA_TREGEX
+ * Userdata type associated to \class{GRegex}.
+ */
+#define LUA_TREGEX     "Regex"
 
-#define lua_pusherror(L,...)                           \
-     do {                                              \
-          char *msg = g_strdup_printf (__VA_ARGS__);   \
-          lua_pushstring (L, msg);                     \
-          lua_error (L);                               \
-          g_free (msg);                                \
-     } while (0);
-
-#define lua_argcheck_string(L,n)                                                \
-     do {                                                                       \
-          if (!lua_isstring (L, n))                                             \
-               lua_pusherror (L, "Wrong type: argument must be a string");      \
-     } while (0)
-
-
-#define lua_argcheck_number(L,n)                                                \
-     do {                                                                       \
-          if (!lua_isnumber (L, n))                                             \
-               lua_pusherror (L, "Wrong type: argument must be a number");      \
-     } while (0)
-
-
-#define lua_argcheck_boolean(L,n)                                               \
-     do {                                                                       \
-          if (!lua_isboolean (L, n))                                            \
-               lua_pusherror (L, "Wrong type: argument must be a boolean");     \
-     } while (0)
-
-
-#define lua_argcheck_table(L,n)                                                 \
-     do {                                                                       \
-          if (!lua_istable (L, n))                                              \
-               lua_pusherror (L, "Wrong type: argument must be a table");       \
-     } while (0)
-
-#define lua_argcheck_function(L,n)                                              \
-     do {                                                                       \
-          if (!lua_isfunction (L, n))                                           \
-               lua_pusherror (L, "Wrong type: argument must be a function");    \
-     } while (0)
+void lua_ctx_init (void);
+gboolean lua_ctx_parse (const char *file);
+void lua_ctx_close (void);
 
 /*! @} */
 

@@ -94,7 +94,7 @@ char *find_xdg_file (XDG_Type xdg_type, const char *filename)
 
      for (i = 0; xdgv[i] != NULL; ++i)
      {
-          char *file = g_build_path (xdgv[i], filename, NULL);
+          char *file = g_build_path (xdgv[i], "cream-browser", filename, NULL);
           if (g_file_test (file, G_FILE_TEST_EXISTS))
           {
                g_strfreev (xdgv);

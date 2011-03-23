@@ -138,9 +138,6 @@ _path:
      u->query    = (query ? g_string_free (query, FALSE) : NULL);
      u->fragment = (fragment ? g_string_free (fragment, FALSE) : NULL);
 
-     if (u->scheme)
-          u->proto = g_str_hash (u->scheme);
-
      return TRUE;
 }
 

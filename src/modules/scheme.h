@@ -17,7 +17,6 @@
  */
 typedef struct
 {
-     guint proto;        /*!< Integer identifier of the protocol used. */
      char *scheme;       /*!< Protocol used. */
      char *userinfo;     /*!< User informations. */
      char *hostname;     /*!< Hostname, or IP adresse. */

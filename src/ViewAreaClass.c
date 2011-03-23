@@ -20,6 +20,7 @@ static ListWebView *listwebview_new (WebView *w)
      ListWebView *ret = g_malloc (sizeof (ListWebView));
      ret->w = w;
      ret->gcallbacks = NULL;
+     return ret;
 }
 
 /* used for g_list_find_custom() */
@@ -45,6 +46,7 @@ static ListGCallback *listgcallback_new (const gchar *name, GCallback cb, gpoint
      ret->name = g_strdup (name);
      ret->cb   = cb;
      ret->data = data;
+     return ret;
 }
 
 /* used for g_list_find_custom() */
@@ -138,7 +140,7 @@ WebView *viewarea_get_focus (ViewArea *v)
  * @param v A #ViewArea object.
  * @param w A #WebView object.
  *
- * Add the #WebView object to the #Viewarea.
+ * Add the #WebView object to the #ViewArea.
  * If the #WebView is already in the list, just give it the focus.
  */
 void viewarea_add_webview (ViewArea *v, WebView *w)

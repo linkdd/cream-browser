@@ -33,7 +33,7 @@ cream.widgets.box ({
 
 -- Mouse bindings
 
-cream.widgets.notebook.buttons (cream.util.table.join (
+cream.widgets.notebook:buttons (cream.util.table.join (
      cream.button ({ },        1, function (t) cream.tab.focus = t; t:raise () end),
      cream.button ({ "Mod1" }, 3, function (t) t:close () end),
      cream.button ({ },        4, cream.tab.viewnext),
@@ -85,11 +85,11 @@ end
 cream.keys (globalkeys)
 
 -- Add signals handler to webview
-cream.widgets.webview.add_signal ("download-requested", function (w, d)
+cream.widgets.webview:add_signal ("download-requested", function (w, d)
           cream.util.spawn ("urxvt -e wget \"" .. d:url () .. "\" -O \"" .. d:filename () .. "\"")
      end)
 
-cream.widgets.webview.add_signal ("load-committed", function (w)
+cream.widgets.webview:add_signal ("load-commit", function (w)
           for i = 1, #useragents do
                if cream.util.regex.match (useragents[i][1], w:url ()) then
                     w:useragent (useragents[i][2])
