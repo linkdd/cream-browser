@@ -60,10 +60,10 @@ ARCH=`uname -m`
 echo -n "-- Building on $ARCH "
 if [ "$DEBUG" = "1" ]; then
      echo "in debug mode"
-     CFLAGS="-g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith -Wno-sign-compare -O2"
+     CFLAGS="-g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith -Wno-sign-compare -O2 -I $TOPDIR/"
 else
      echo "in release mode"
-     CFLAGS="-Wall -O2"
+     CFLAGS="-Wall -O2 -I $TOPDIR/"
 fi
 LDFLAGS=""
 
@@ -104,6 +104,8 @@ GLIB_VERSION=`pkg-config --modversion glib-2.0`
 if [ "$?" = "1" ]; then
      echo "no" && exit 1
 else
+     GLIB_CFLAGS=`pkg-config --cflags glib-2.0`
+     GLIB_LDFLAGS=`pkg-config --libs glib-2.0`
      echo "$GLIB_VERSION"
 fi
 
@@ -113,6 +115,8 @@ GTK_VERSION=`pkg-config --modversion gtk+-2.0`
 if [ "$?" = "1" ]; then
      echo "no" && exit 1
 else
+     GTK_CFLAGS=`pkg-config --cflags gtk+-2.0`
+     GTK_LDFLAGS=`pkg-config --libs gtk+-2.0`
      echo "$GTK_VERSION"
 fi
 
@@ -122,18 +126,29 @@ LUA_VERSION=`pkg-config --modversion lua`
 if [ "$?" = "1" ]; then
      echo "no" && exit 1
 else
+     LUA_CFLAGS=`pkg-config --cflags lua`
+     LUA_LDFLAGS=`pkg-config --libs lua`
      echo "$LUA_VERSION"
 fi
 
+CFLAGS="$CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $LUA_CFLAGS"
+LDFLAGS="$LDFLAGS $GLIB_LDFLAGS $GTK_LDFLAGS $LUA_LDFLAGS"
+
 # -- common.mk
 echo -n "Creating: common.mk"
-$SED -e "s:@cc@:$compiler:
-         s:@cflags@:$CFLAGS:
-         s:@ldflags@:$LDFLAGS:
-         s:@modules@:$MODULES:
-         s:@topdir@:$TOPDIR:
-         s:@prefix@:$PREFIX:
-         s:@sysconfdir@:$SYSCONFDIR:
+$SED -e "s:@CC@:$compiler:
+         s:@CFLAGS@:$CFLAGS:
+         s:@LDFLAGS@:$LDFLAGS:
+         s:@GLIB_VERSION@:$GLIB_VERSION:
+         s:@GTK_VERSION@:$GTK_VERSION:
+         s:@LUA_VERSION@:$LUA_VERSION:
+         s:@MODULES@:$MODULES:
+         s:@TOPDIR@:$TOPDIR:
+         s:@PREFIX@:$PREFIX:
+         s:@SYSCONFDIR@:$SYSCONFDIR:
+         s:@HAVE_DEBUG@:$DEBUG:
+         s:@ARCH@:$ARCH:
+         s:@PACKAGE@:$PACKAGE:
          s:@VERSION@:$VERSION:" common.mk.in > common.mk
 
 if [ "$?" = "1" ]; then
@@ -142,27 +157,3 @@ else
      echo " [ ok ]"
 fi
 
-if [ "$DEBUG" = "1" ]; then
-     echo "export DEBUG = 1" >> common.mk
-fi
-
-# -- cream-browser_build.h
-echo -n "Creating: cream-browser_build.h"
-$SED -e "s:@HAVE_DEBUG@:$DEBUG:
-         s:@GLIB_VERSION@:$GLIB_VERSION:
-         s:@GTK_VERSION@:$GTK_VERSION:
-         s:@LUA_VERSION@:$LUA_VERSION:
-         s:@cflags@:$CFLAGS:
-         s:@ldflags@:$LDFLAGS:
-         s:@ARCH@:$ARCH:
-         s:@PACKAGE@:$PACKAGE:
-         s:@VERSION@:$VERSION:
-         s:@modules@:$MODULES:
-         s:@prefix@:$PREFIX:
-         s:@sysconfdir@:$SYSCONFDIR:" cream-browser_build.h.in > cream-browser_build.h
-
-if [ "$?" = "1" ]; then
-     echo " [ failed ]" && exit 1
-else
-     echo " [ ok ]"
-fi

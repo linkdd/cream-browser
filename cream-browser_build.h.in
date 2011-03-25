@@ -7,15 +7,15 @@
 #define GTK_VERSION      "@GTK_VERSION@"
 #define LUA_VERSION      "@LUA_VERSION@"
 
-#define CFLAGS           "@cflags@"
-#define LDFLAGS          "@ldflags@"
+#define CFLAGS           "@CFLAGS@"
+#define LDFLAGS          "@LDFLAGS@"
 #define ARCH             "@ARCH@"
 
 #define PACKAGE          "@PACKAGE@"
 #define VERSION          "@VERSION@"
-#define MODULES          "@modules@"
+#define MODULES          "@MODULES@"
 
-#define PREFIX           "@prefix@"
-#define SYSCONFDIR       "@sysconfdir@"
+#define PREFIX           "@PREFIX@"
+#define SYSCONFDIR       "@SYSCONFDIR@"
 
 #endif /* __CREAM_BROWSER__BUILD_H */

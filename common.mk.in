@@ -1,22 +1,21 @@
-export TOPDIR = @topdir@
+export TOPDIR = @TOPDIR@
 export SRCDIR = $(TOPDIR)/src
-export PREFIX = @prefix@
-export SYSCONFDIR = @sysconfdir@
+export PREFIX = @PREFIX@
+export SYSCONFDIR = @SYSCONFDIR@
 
 export EXEC = cream-browser
+export PACKAGE    = @PACKAGE@
 export VERSION = @VERSION@
 
-export MODULES = @modules@
+export MODULES = @MODULES@
 
-export CC = @cc@
-export CFLAGS  = @cflags@ -I $(TOPDIR)/
-export LDFLAGS = @ldflags@
+export ARCH = @ARCH@
+export CC = @CC@
+export CFLAGS  = @CFLAGS@
+export LDFLAGS = @LDFLAGS@
 
-export GLIB_CFLAGS  = `pkg-config --cflags glib-2.0`
-export GLIB_LDFLAGS = `pkg-config --libs glib-2.0`
+export HAVE_DEBUG = @HAVE_DEBUG@
 
-export GTK_CFLAGS  = `pkg-config --cflags gtk+-2.0`
-export GTK_LDFLAGS = `pkg-config --libs gtk+-2.0`
-
-export LUA_CFLAGS  = `pkg-config --cflags lua`
-export LUA_LDFLAGS = `pkg-config --libs lua`
+export GLIB_VERSION = @GLIB_VERSION@
+export GTK_VERSION  = @GTK_VERSION@
+export LUA_VERSION  = @LUA_VERSION@

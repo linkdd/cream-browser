@@ -15,10 +15,10 @@ OBJECTS = $(SOURCES:.c=.o)
 all: $(EXEC) marshal.txt
 
 $(EXEC): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(GLIB_LDFLAGS) $(GTK_LDFLAGS) $(LUA_LDFLAGS) $^ -o $@
+	$(CC) $(LDFLAGS) $^ -o $@
 
 %.o: %.c $(HEADERS)
-	$(CC) $(CFLAGS) $(GLIB_CFLAGS) $(GTK_CFLAGS) $(LUA_CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 marshal.c: marshal.txt marshal.h
 	glib-genmarshal --prefix=cream_marshal --body $< > $@
