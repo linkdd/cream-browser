@@ -27,7 +27,7 @@ void lua_ctx_init (void)
 
      domain = error_domain_register ("lua");
 
-     global.luavm = lua_open ();
+     global.luavm = luaL_newstate ();
 
      /* open libraries */
      luaL_openlibs (global.luavm);
@@ -85,6 +85,8 @@ void lua_ctx_init (void)
      lua_concat (global.luavm, 3); /* concatenate with package.path */
 
      lua_setfield (global.luavm, 1, "path"); /* package.path = "concatenated string" */
+
+     lua_pop (global.luavm, 1);
 }
 
 /*!

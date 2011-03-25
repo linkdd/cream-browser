@@ -77,34 +77,28 @@ static const luaL_reg cream_util_functions[] =
  * @{
  */
 
-typedef struct
+static GRegex **lua_cast_regex (lua_State *L, int index)
 {
-     GRegex *regex;
-     gchar *pattern;
-} luaL_Regex;
-
-static luaL_Regex *lua_cast_regex (lua_State *L, int index)
-{
-     luaL_Regex *ret = (luaL_Regex *) lua_touserdata (L, index);
+     GRegex **ret = (GRegex **) lua_touserdata (L, index);
      if (!ret) luaL_typerror (L, index, LUA_TREGEX);
      return ret;
 }
 
-static luaL_Regex *lua_check_regex (lua_State *L, int index)
+static GRegex **lua_check_regex (lua_State *L, int index)
 {
-     luaL_Regex *ret;
+     GRegex **ret;
      luaL_checktype (L, index, LUA_TUSERDATA);
-     ret = (luaL_Regex *) luaL_checkudata (L, index, LUA_TREGEX);
+     ret = (GRegex **) luaL_checkudata (L, index, LUA_TREGEX);
      if (!ret) luaL_typerror (L, index, LUA_TREGEX);
      return ret;
 }
 
-static luaL_Regex *lua_pushregex (lua_State *L)
+static void lua_pushregex (lua_State *L, GRegex *r)
 {
-     luaL_Regex *ret = (luaL_Regex *) lua_newuserdata (L, sizeof (luaL_Regex));
+     GRegex **ret = (GRegex **) lua_newuserdata (L, sizeof (GRegex *));
+     *ret = r;
      luaL_getmetatable (L, LUA_TREGEX);
      lua_setmetatable (L, -2);
-     return ret;
 }
 
 /* methods */
@@ -113,17 +107,19 @@ static luaL_Regex *lua_pushregex (lua_State *L)
  * \fn static int luaL_regex_new (lua_State *L)
  * @param L The lua VM state.
  * @return Number of return value in lua.
+ *
+ * Create a new lua \class{GRegex} object.
+ * \code function Regex.new (pattern) \endcode
  */
 static int luaL_regex_new (lua_State *L)
 {
      int argc = lua_gettop (L);
-     luaL_Regex *r;
+     GRegex *r;
 
      if (argc >= 1)
      {
-          r = lua_pushregex (L);
-          r->pattern = g_strdup (luaL_checkstring (L, 1));
-          r->regex   = g_regex_new (r->pattern, 0, 0, NULL);
+          r = g_regex_new (luaL_checkstring (L, 1), 0, 0, NULL);
+          lua_pushregex (L, r);
           return 1;
      }
 
@@ -134,6 +130,9 @@ static int luaL_regex_new (lua_State *L)
  * \fn static int luaL_regex_match (lua_State *L)
  * @param L The lua VM state.
  * @return Number of return value in lua.
+ *
+ * Scans for a match in string for pattern.
+ * \code function Regex:match (string) \endcode
  */
 static int luaL_regex_match (lua_State *L)
 {
@@ -141,10 +140,10 @@ static int luaL_regex_match (lua_State *L)
 
      if (lua_gettop (L) >= 2)
      {
-          luaL_Regex *r = lua_check_regex (L, 1);
+          GRegex **r = lua_check_regex (L, 1);
           const gchar *str = luaL_checkstring (L, 2);
 
-          ret = g_regex_match_simple (r->pattern, str, 0, 0);
+          ret = g_regex_match_simple (g_regex_get_pattern (*r), str, 0, 0);
      }
 
      lua_pushboolean (L, ret);
@@ -155,6 +154,9 @@ static int luaL_regex_match (lua_State *L)
  * \fn static int luaL_regex_replace (lua_State *L)
  * @param L The lua VM state.
  * @return Number of return value in lua.
+ *
+ * Replaces all occurrences of the pattern in regex with the replacement text.
+ * \code function Regex:replace (string, replace) \endcode
  */
 static int luaL_regex_replace (lua_State *L)
 {
@@ -162,11 +164,11 @@ static int luaL_regex_replace (lua_State *L)
 
      if (lua_gettop (L) >= 3)
      {
-          luaL_Regex *r = lua_check_regex (L, 1);
+          GRegex **r = lua_check_regex (L, 1);
           const gchar *str = luaL_checkstring (L, 2);
           const gchar *rep = luaL_checkstring (L, 3);
 
-          if ((ret = g_regex_replace (r->regex, str, -1, 0, rep, 0, NULL)) != NULL)
+          if ((ret = g_regex_replace (*r, str, -1, 0, rep, 0, NULL)) != NULL)
           {
                lua_pushstring (L, ret);
                return 1;
@@ -190,6 +192,8 @@ static const luaL_reg cream_regex_methods[] =
  * \fn static int luaL_regex_tostring (lua_State *L)
  * @param L The lua VM state.
  * @return Number of return value in lua.
+ *
+ * Lua metatable: <code>__tostring</code>.
  */
 static int luaL_regex_tostring (lua_State *L)
 {
@@ -198,8 +202,23 @@ static int luaL_regex_tostring (lua_State *L)
      return 1;
 }
 
+/*!
+ * \fn static int luaL_regex_gc (lua_State *L)
+ * @param L The lua VM state.
+ * @return Number of return value in lua.
+ *
+ * Lua metatable: <code>__gc</code>.
+ */
+static int luaL_regex_gc (lua_State *L)
+{
+     GRegex **r = lua_cast_regex (L, 1);
+     g_regex_unref (*r);
+     return 0;
+}
+
 static const luaL_reg cream_regex_meta[] =
 {
+     { "__gc",       luaL_regex_gc },
      { "__tostring", luaL_regex_tostring },
      { NULL, NULL }
 };

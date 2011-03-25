@@ -4,15 +4,15 @@ export PREFIX = @PREFIX@
 export SYSCONFDIR = @SYSCONFDIR@
 
 export EXEC = cream-browser
-export PACKAGE    = @PACKAGE@
+export PACKAGE = @PACKAGE@
 export VERSION = @VERSION@
 
 export MODULES = @MODULES@
 
 export ARCH = @ARCH@
 export CC = @CC@
-export CFLAGS  = @CFLAGS@
-export LDFLAGS = @LDFLAGS@
+export CFLAGS  += @CFLAGS@
+export LDFLAGS += @LDFLAGS@
 
 export HAVE_DEBUG = @HAVE_DEBUG@
 
