@@ -50,7 +50,6 @@
 #include "WebViewClass.h"
 #include "ViewAreaClass.h"
 
-#include "xdg.h"
 #include "structs.h"
 
 /*!
@@ -66,6 +65,12 @@
  */
 
 extern struct global_t global;
+
+#define FILE_TYPE_CONFIG           (1 << 0)       /*!< \def FILE_TYPE_CONFIG \brief Configuration file */
+#define FILE_TYPE_DATA             (1 << 1)       /*!< \def FILE_TYPE_DATA \brief Data file */
+#define FILE_TYPE_CACHE            (1 << 2)       /*!< \def FILE_TYPE_CACHE \brief Cache file */
+
+gchar *find_file (guint type, const gchar *filename);
 
 void socket_init (void);
 

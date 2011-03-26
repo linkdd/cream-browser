@@ -18,6 +18,76 @@ struct Protocol
 struct global_t global;
 
 /*!
+ * \fn gchar *find_file (guint type, const gchar *filename)
+ * @param type Type of file to find (#FILE_TYPE_CONFIG, #FILE_TYPE_DATA or #FILE_TYPE_CACHE).
+ * @param filename Name of the file to find.
+ * @return Path to the file, or <code>NULL</code> if not found.
+ *
+ * Find a file into the user/system directories.
+ */
+gchar *find_file (guint type, const gchar *filename)
+{
+     gchar *ret = NULL;
+     int i;
+
+     switch (type)
+     {
+          case FILE_TYPE_CONFIG:
+               ret = g_build_filename (g_get_user_config_dir (), global.prgname, filename, NULL);
+
+               if (!g_file_test (ret, G_FILE_TEST_EXISTS))
+               {
+                    const gchar * const *dirs = g_get_system_config_dirs ();
+
+                    g_free (ret), ret = NULL;
+                    for (i = 0; dirs[i] != NULL; ++i)
+                    {
+                         ret = g_build_filename (dirs[i], global.prgname, filename, NULL);
+
+                         if (g_file_test (ret, G_FILE_TEST_EXISTS))
+                              return ret;
+
+                         g_free (ret), ret = NULL;
+                    }
+               }
+
+               break;
+
+          case FILE_TYPE_DATA:
+               ret = g_build_filename (g_get_user_data_dir (), global.prgname, filename, NULL);
+
+               if (!g_file_test (ret, G_FILE_TEST_EXISTS))
+               {
+                    const gchar * const *dirs = g_get_system_data_dirs ();
+
+                    g_free (ret), ret = NULL;
+                    for (i = 0; dirs[i] != NULL; ++i)
+                    {
+                         ret = g_build_filename (dirs[i], global.prgname, filename, NULL);
+
+                         if (g_file_test (ret, G_FILE_TEST_EXISTS))
+                              return ret;
+
+                         g_free (ret), ret = NULL;
+                    }
+               }
+
+               break;
+
+          case FILE_TYPE_CACHE:
+               ret = g_build_filename (g_get_user_cache_dir (), global.prgname, filename, NULL);
+
+               if (g_file_test (ret, G_FILE_TEST_EXISTS))
+                    return ret;
+
+               g_free (ret), ret = NULL;
+               break;
+     }
+
+     return ret;
+}
+
+/*!
  * \fn char *str_replace (const char *search, const char *replace, const char *string)
  * @param search Text to search into the string
  * @param replace Replace \a search by the specified text
@@ -136,6 +206,12 @@ static void error_callback (guint domain, ErrorLevel level, const char *msg, gpo
 /* Function called when exit() is called. */
 static void quit (int code, void *data)
 {
+     if (global.sock.channel)
+     {
+          g_io_channel_shutdown (global.sock.channel, TRUE, NULL);
+          close (global.sock.fd);
+     }
+
      lua_ctx_close ();
 }
 
@@ -146,6 +222,9 @@ static void init (gchar *config)
 
      on_exit (quit, NULL);
 
+     g_set_prgname ("cream-browser");
+     global.prgname = g_get_prgname ();
+
      global.domain = error_domain_register ("main");
      error_add_callback (error_callback, NULL);
 
@@ -153,13 +232,14 @@ static void init (gchar *config)
           error_send (global.domain, ERROR_FATAL, "GModule isn't supported.");
 
      if (!rc || !g_file_test (rc, G_FILE_TEST_EXISTS))
-          if ((rc = find_xdg_file (XDG_TYPE_CONFIG, "rc.lua")) == NULL)
+          if ((rc = find_file (FILE_TYPE_CONFIG, "rc.lua")) == NULL)
                error_send (global.domain, ERROR_FATAL, "Configuration not found.");
 
      socket_init ();
 
      lua_ctx_init ();
      lua_ctx_parse (rc);
+
 }
 
 /* Program used to send commands on the specified socket. */
@@ -244,14 +324,33 @@ int main (int argc, char **argv)
 
      if (version)
      {
-          printf ("Cream-Browser , developped by David Delassus <linkdd@ydb.me>\n");
+          printf ("%s %s, developped by David Delassus <linkdd@ydb.me>\n", PACKAGE, VERSION);
           printf ("Released under MIT license.\n");
+
+          printf ("Builded with:\n");
+          printf (" - GLib %s\n", LIB_GLIB_VERSION);
+          printf (" - GTK+ %s\n", LIB_GTK_VERSION);
+          printf (" - Lua  %s\n\n", LIB_LUA_VERSION);
+
+          printf ("Builded on %s with:\n", ARCH);
+          printf (" - CFLAGS:     %s\n", CFLAGS);
+          printf (" - LDFLAGS:    %s\n", LDFLAGS);
+          printf (" - PREFIX:     %s\n", PREFIX);
+          printf (" - SYSCONFDIR: %s\n\n", SYSCONFDIR);
+
+          if (HAVE_DEBUG)
+               printf ("Builded in debug mode.\n");
+          else
+               printf ("Builded in release mode.\n");
+
           exit (EXIT_SUCCESS);
      }
 
      /* if cmd isn't NULL, use creamctl() */
      if (cmd != NULL)
           creamctl (cmd);
+
+     gtk_init (&argc, &argv);
 
      init (config);
 

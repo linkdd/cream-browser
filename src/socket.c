@@ -127,5 +127,6 @@ void socket_init (void)
 
      /* create channel */
      global.sock.channel = g_io_channel_unix_new (sock_fd);
+     global.sock.fd = sock_fd;
      g_io_add_watch (global.sock.channel, G_IO_IN | G_IO_HUP, (GIOFunc) control_socket, NULL);
 }

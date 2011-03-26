@@ -33,6 +33,12 @@
  */
 #define LUA_TREGEX     "Regex"
 
+/*!
+ * \def LUA_TWEBVIEW
+ * Userdata type associated to #WebView.
+ */
+#define LUA_TWEBVIEW   "WebView"
+
 void lua_ctx_init (void);
 gboolean lua_ctx_parse (const char *file);
 void lua_ctx_close (void);

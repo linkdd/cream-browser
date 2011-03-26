@@ -17,11 +17,11 @@ uninstall:
 
 doc:
 	@mkdir -p docs/lua docs/cream-browser
-	luadoc src/lua/*.lua -d docs/lua --nofiles
+	luadoc src/lua/**/*.lua -d docs/lua --nofiles
 	doxygen Doxyfile
 
 cream-browser_build.h: cream-browser_build.h.in
-	@echo "Creating cream-browser_build.h ..."
+	@echo "-- Generating cream-browser_build.h ..."
 	@sed -e "s:@HAVE_DEBUG@:$(HAVE_DEBUG):"      \
 	     -e "s:@GLIB_VERSION@:$(GLIB_VERSION):"  \
 	     -e "s:@GTK_VERSION@:$(GTK_VERSION):"    \
@@ -36,4 +36,4 @@ cream-browser_build.h: cream-browser_build.h.in
 	     -e "s:@SYSCONFDIR@:$(SYSCONFDIR):" $^ > $@
 
 
-.PHONY: all clean install uninstall
+.PHONY: all clean install uninstall cream-browser_build.h

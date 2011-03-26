@@ -2,12 +2,12 @@ SOURCES = marshal.c \
 		WebViewClass.c ViewAreaClass.c \
 		errors.c modules.c lua.c \
 		clipboard.c util.c \
-		modules/scheme.c xdg.c socket.c main.c
+		modules/scheme.c socket.c main.c
 
-HEADERS = marshal.h $(TOPDIR)/cream-browser_build.h \
+HEADERS = marshal.h \
 		WebViewClass.h ViewAreaClass.h \
 		errors.h modules.h lua.h \
-		modules/scheme.h xdg.h structs.h local.h
+		modules/scheme.h structs.h local.h
 
 OBJECTS = $(SOURCES:.c=.o)
 

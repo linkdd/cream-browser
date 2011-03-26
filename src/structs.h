@@ -15,6 +15,7 @@ struct GUI
 struct Socket
 {
      gchar *path;             /*!< Path to the Unix socket */
+     int fd;                  /*!< Socket file descriptor */
      GIOChannel *channel;     /*!< #GIOChannel to use the socket */
 };
 
@@ -29,6 +30,7 @@ struct global_t
 
      gboolean log;            /*!< if TRUE log every errors */
      guint domain;            /*!< Global error domain */
+     gchar *prgname;          /*!< Program's name */
 
      GList *protocols;        /*!< List of protocols and asscoiated modules */
 

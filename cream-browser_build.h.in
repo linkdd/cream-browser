@@ -3,9 +3,9 @@
 
 #define HAVE_DEBUG       @HAVE_DEBUG@
 
-#define GLIB_VERSION     "@GLIB_VERSION@"
-#define GTK_VERSION      "@GTK_VERSION@"
-#define LUA_VERSION      "@LUA_VERSION@"
+#define LIB_GLIB_VERSION     "@GLIB_VERSION@"
+#define LIB_GTK_VERSION      "@GTK_VERSION@"
+#define LIB_LUA_VERSION      "@LUA_VERSION@"
 
 #define CFLAGS           "@CFLAGS@"
 #define LDFLAGS          "@LDFLAGS@"

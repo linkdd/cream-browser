@@ -22,7 +22,11 @@ static guint domain = 0;
  */
 void lua_ctx_init (void)
 {
-     gchar **xdgdirs = NULL;
+     const gchar * const *sysconfdirs = g_get_system_config_dirs ();
+     const gchar * const *sysdatadirs = g_get_system_data_dirs ();
+     const gchar *usrconfdir = g_get_user_config_dir ();
+     const gchar *usrdatadir = g_get_user_data_dir ();
+     gchar *tmp;
      int i;
 
      domain = error_domain_register ("lua");
@@ -56,33 +60,37 @@ void lua_ctx_init (void)
           return;
      }
 
-     /* add XDG_CONFIG_DIRS in path */
-     gchar *tmp = g_strdup_printf ("%s:%s", get_xdg_var_by_name ("XDG_CONFIG_HOME"),
-                                            get_xdg_var_by_name ("XDG_CONFIG_DIRS"));
-     xdgdirs = g_strsplit (tmp, ":", -1);
-     g_free (tmp);
+     /* add user and system config dirs in path */
+     tmp = g_strdup_printf (";%s", g_build_filename (usrconfdir, global.prgname, "?.lua", NULL));
+     lua_pushlstring (global.luavm, tmp, strlen (tmp));
+     tmp = g_strdup_printf (";%s", g_build_filename (usrconfdir, global.prgname, "?", "init.lua", NULL));
+     lua_pushlstring (global.luavm, tmp, strlen (tmp));
+     lua_concat (global.luavm, 3); /* concatenate with package.path */
 
-     for (i = 0; i < g_strv_length (xdgdirs); ++i)
+     for (i = 0; sysconfdirs[i] != NULL; ++i)
      {
-          size_t len = strlen (xdgdirs[i]);
-
-          lua_pushliteral (global.luavm, ";");
-          lua_pushlstring (global.luavm, xdgdirs[i], len);
-          lua_pushliteral (global.luavm, "/cream-browser/?.lua");
-          lua_concat (global.luavm, 3);
-
-          lua_pushliteral (global.luavm, ";");
-          lua_pushlstring (global.luavm, xdgdirs[i], len);
-          lua_pushliteral (global.luavm, "/cream-browser/?/init.lua");
-          lua_concat (global.luavm, 3);
-
+          tmp = g_strdup_printf (";%s", g_build_filename (sysconfdirs[i], global.prgname, "?.lua", NULL));
+          lua_pushlstring (global.luavm, tmp, strlen (tmp));
+          tmp = g_strdup_printf (";%s", g_build_filename (sysconfdirs[i], global.prgname, "?", "init.lua", NULL));
+          lua_pushlstring (global.luavm, tmp, strlen (tmp));
           lua_concat (global.luavm, 3); /* concatenate with package.path */
      }
 
-     /* add Lua lib path (PREFIX /share/cream-browser/lib) */
-     lua_pushliteral (global.luavm, ";" PREFIX "/share/cream-browser/lib/?.lua");
-     lua_pushliteral (global.luavm, ";" PREFIX "/share/cream-browser/lib/?/init.lua");
+     /* add Lua lib path (located in user/system data dirs) */
+     tmp = g_strdup_printf (";%s", g_build_filename (usrdatadir, global.prgname, "lib", "?.lua", NULL));
+     lua_pushlstring (global.luavm, tmp, strlen (tmp));
+     tmp = g_strdup_printf (";%s", g_build_filename (usrdatadir, global.prgname, "lib", "?", "init.lua", NULL));
+     lua_pushlstring (global.luavm, tmp, strlen (tmp));
      lua_concat (global.luavm, 3); /* concatenate with package.path */
+
+     for (i = 0; sysdatadirs[i] != NULL; ++i)
+     {
+          tmp = g_strdup_printf (";%s", g_build_filename (sysdatadirs[i], global.prgname, "lib", "?.lua", NULL));
+          lua_pushlstring (global.luavm, tmp, strlen (tmp));
+          tmp = g_strdup_printf (";%s", g_build_filename (sysdatadirs[i], global.prgname, "lib", "?", "init.lua", NULL));
+          lua_pushlstring (global.luavm, tmp, strlen (tmp));
+          lua_concat (global.luavm, 3); /* concatenate with package.path */
+     }
 
      lua_setfield (global.luavm, 1, "path"); /* package.path = "concatenated string" */
 
