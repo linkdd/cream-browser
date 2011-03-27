@@ -174,7 +174,7 @@ static void error_callback (guint domain, ErrorLevel level, const char *msg, gpo
 
      if (global.log)
      {
-          gchar *path = g_build_path (g_get_home_dir (), ".cache", "cream-browser", "errors.log", NULL);
+          gchar *path = g_build_path (g_get_user_cache_dir (), global.prgname, "errors.log", NULL);
 
           log = fopen (path, "w");
           if (log == NULL)
@@ -210,6 +210,7 @@ static void quit (int code, void *data)
      {
           g_io_channel_shutdown (global.sock.channel, TRUE, NULL);
           close (global.sock.fd);
+          unlink (global.sock.path);
      }
 
      lua_ctx_close ();

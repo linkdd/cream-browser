@@ -43,6 +43,8 @@ void lua_ctx_init (void);
 gboolean lua_ctx_parse (const char *file);
 void lua_ctx_close (void);
 
+extern void lua_pushwebview (lua_State *L, WebView *w);
+
 /*! @} */
 
 #endif /* __LUA_H */

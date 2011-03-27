@@ -8,30 +8,6 @@
 static guint domain = 0;
 static GList *modules = NULL;
 
-static CreamModule *lua_cast_module (lua_State *L, int index);
-static CreamModule *lua_check_module (lua_State *L, int index);
-static CreamModule *lua_pushmodule (lua_State *L);
-
-static int luaL_module_new (lua_State *L);
-static int luaL_module_init (lua_State *L);
-static int luaL_module_unload (lua_State *L);
-
-static const luaL_reg cream_module_methods[] =
-{
-     { "new",    luaL_module_new },
-     { "init",   luaL_module_init },
-     { "unload", luaL_module_unload },
-     { NULL, NULL }
-};
-
-static int luaL_module_tostring (lua_State *L);
-
-static const luaL_reg cream_module_meta[] =
-{
-     { "__tostring", luaL_module_tostring },
-     { NULL, NULL }
-};
-
 /*!
  * \fn gboolean modules_init (void)
  * @return <code>TRUE</code> if \class{GModule} is supported, <code>FALSE</code> otherwise.
@@ -71,7 +47,7 @@ CreamModule *modules_load (const char *filename)
      }
 
      /* open module */
-     m = (CreamModule *) lua_pushmodule (global.luavm);
+     m = g_malloc (sizeof (CreamModule));
 
      m->module = g_module_open (filename, G_MODULE_BIND_LAZY);
      if (!m->module)
@@ -145,28 +121,40 @@ void modules_unload (CreamModule *mod)
  * @{
  */
 
-static CreamModule *lua_cast_module (lua_State *L, int index)
+typedef struct
 {
-     CreamModule *ret = (CreamModule *) lua_touserdata (L, index);
+     CreamModule *mod;
+     int self;
+} luaL_Module;
+
+static luaL_Module *lua_cast_module (lua_State *L, int index)
+{
+     luaL_Module *ret = (luaL_Module *) lua_touserdata (L, index);
      if (!ret) luaL_typerror (L, index, LUA_TMODULE);
      return ret;
 }
 
-static CreamModule *lua_check_module (lua_State *L, int index)
+static luaL_Module *lua_check_module (lua_State *L, int index)
 {
-     CreamModule *ret;
+     luaL_Module *ret;
      luaL_checktype (L, index, LUA_TUSERDATA);
-     ret = (CreamModule *) luaL_checkudata (L, index, LUA_TMODULE);
+     ret = (luaL_Module *) luaL_checkudata (L, index, LUA_TMODULE);
      if (!ret) luaL_typerror (L, index, LUA_TMODULE);
+     if (!ret->self) luaL_error (L, LUA_TMODULE " not referenced.");
      return ret;
 }
 
-static CreamModule *lua_pushmodule (lua_State *L)
+static void lua_pushmodule (lua_State *L, CreamModule *mod)
 {
-     CreamModule *ret = (CreamModule *) lua_newuserdata (L, sizeof (CreamModule));
+     luaL_Module *ret = (luaL_Module *) lua_newuserdata (L, sizeof (luaL_Module));
+     ret->mod = mod;
+
+     /* create a self reference */
+     ret->self = luaL_ref (L, LUA_REGISTRYINDEX);
+     lua_rawgeti (L, LUA_REGISTRYINDEX, ret->self);
+
      luaL_getmetatable (L, LUA_TMODULE);
      lua_setmetatable (L, -2);
-     return ret;
 }
 
 /* methods */
@@ -175,6 +163,9 @@ static CreamModule *lua_pushmodule (lua_State *L)
  * \fn static int luaL_module_new (lua_State *L)
  * @param L The lua VM state.
  * @return Number of return value in lua.
+ *
+ * Load a module. Possibily associate protocols to it.
+ * \code function luaL_Module.new (filename, ...) \endcode
  */
 static int luaL_module_new (lua_State *L)
 {
@@ -188,13 +179,14 @@ static int luaL_module_new (lua_State *L)
                return luaL_error (L, "Can't load module.");
 
           for (i = 2; i <= argc; ++i)
-          {
-               luaL_checkstring (L, i);
-               add_protocol (lua_tostring (L, i), mod);
-          }
+               add_protocol (luaL_checkstring (L, i), mod);
+
+          lua_pushmodule (L, mod);
 
           return 1;
      }
+     else
+          return luaL_error (L, "Too few arguments");
 
      return 0;
 }
@@ -203,11 +195,14 @@ static int luaL_module_new (lua_State *L)
  * \fn static int luaL_module_init (lua_State *L)
  * @param L The lua VM state.
  * @return Number of return value in lua.
+ *
+ * Initialise the module.
+ * \code function luaL_Module:init () \endcode
  */
 static int luaL_module_init (lua_State *L)
 {
-     CreamModule *mod = lua_check_module (L, 1);
-     mod->init ();
+     luaL_Module *obj = lua_check_module (L, 1);
+     obj->mod->init ();
      return 0;
 }
 
@@ -215,13 +210,29 @@ static int luaL_module_init (lua_State *L)
  * \fn static int luaL_module_unload (lua_State *L)
  * @param L The lua VM state.
  * @return Number of return value in lua.
+ *
+ * Unload the module.
+ * \code function luaL_Module:unload () \endcode
  */
 static int luaL_module_unload (lua_State *L)
 {
-     CreamModule *mod = lua_check_module (L, 1);
-     modules_unload (mod);
+     luaL_Module *obj = lua_check_module (L, 1);
+
+     /* delete self reference */
+     luaL_unref (L, LUA_REGISTRYINDEX, obj->self);
+     obj->self = 0;
+
+     modules_unload (obj->mod);
      return 0;
 }
+
+static const luaL_reg cream_module_methods[] =
+{
+     { "new",    luaL_module_new },
+     { "init",   luaL_module_init },
+     { "unload", luaL_module_unload },
+     { NULL, NULL }
+};
 
 /* metatable */
 
@@ -229,13 +240,41 @@ static int luaL_module_unload (lua_State *L)
  * \fn static int luaL_module_tostring (lua_State *L)
  * @param L The lua VM state.
  * @return Number of return value in lua.
+ *
+ * Lua metatable: <code>__tostring</code>
  */
 static int luaL_module_tostring (lua_State *L)
 {
-     char *ret = g_strdup_printf ("%p", lua_cast_module (L, 1));
-     lua_pushfstring (L, LUA_TMODULE " (%s)", ret);
+     lua_pushfstring (L, LUA_TMODULE ": %p", lua_cast_module (L, 1));
      return 1;
 }
+
+/*!
+ * \fn static int luaL_module_gc (lua_State *L)
+ * @param L The lua VM state.
+ * @return Number of return value in lua.
+ *
+ * Lua metatable: <code>__gc</code>
+ */
+static int luaL_module_gc (lua_State *L)
+{
+     luaL_Module *obj = lua_cast_module (L, 1);
+
+     /* delete self reference */
+     luaL_unref (L, LUA_REGISTRYINDEX, obj->self);
+     obj->self = 0;
+
+     modules_unload (obj->mod);
+     return 0;
+}
+
+
+static const luaL_reg cream_module_meta[] =
+{
+     { "__gc",       luaL_module_gc },
+     { "__tostring", luaL_module_tostring },
+     { NULL, NULL }
+};
 
 /*!
  * \fn int luaL_module_register (lua_State *L)

@@ -90,6 +90,11 @@ static void viewarea_webview_signal_raise (WebView *w, ViewArea *v)
      viewarea_set_focus (v, w);
 }
 
+static void viewarea_webview_signal_destroy (WebView *w, ViewArea *v)
+{
+     viewarea_del_webview (v, w);
+}
+
 /* Methods */
 
 /*!
@@ -153,19 +158,22 @@ void viewarea_add_webview (ViewArea *v, WebView *w)
      if (!found)
      {
           ListWebView *el = listwebview_new (w);
+          gulong handler;
 
-          el->gcallbacks = g_list_append (el->gcallbacks, G_CALLBACK (viewarea_webview_signal_raise));
-          el->gcallbacks = g_list_concat (el->gcallbacks, v->gcallbacks);
+          handler = g_signal_connect (G_OBJECT (w), "raise", G_CALLBACK (viewarea_webview_signal_raise), v);
+          el->gcallbacks = g_list_append (el->gcallbacks, (gpointer) handler);
 
-          v->webviews = g_list_append (v->webviews, el);
-
-          g_signal_connect (G_OBJECT (w), "raise", G_CALLBACK (viewarea_webview_signal_raise), v);
+          handler = g_signal_connect (G_OBJECT (w), "destroy", G_CALLBACK (viewarea_webview_signal_destroy), v);
+          el->gcallbacks = g_list_append (el->gcallbacks, (gpointer) handler);
 
           for (found = v->gcallbacks; found != NULL; found = found->next)
           {
-               ListGCallback *el = (ListGCallback *) found->data;
-               g_signal_connect (G_OBJECT (w), el->name, el->cb, el->data);
+               ListGCallback *cb = (ListGCallback *) found->data;
+               handler = g_signal_connect (G_OBJECT (w), cb->name, cb->cb, cb->data);
+               el->gcallbacks = g_list_append (el->gcallbacks, (gpointer) handler);
           }
+
+          v->webviews = g_list_append (v->webviews, el);
      }
 
      viewarea_set_focus (v, w);
@@ -173,14 +181,13 @@ void viewarea_add_webview (ViewArea *v, WebView *w)
 
 /*!
  * \public \memberof ViewArea
- * \fn void viewarea_del_webview (ViewArea *v, WebView *w, gboolean freemem)
+ * \fn void viewarea_del_webview (ViewArea *v, WebView *w)
  * @param v A #ViewArea object.
  * @param w A #WebView object.
- * @param freemem If <code>TRUE</code>, free the memory used by \a w.
  *
  * Delete the #WebView object from the #ViewArea.
  */
-void viewarea_del_webview (ViewArea *v, WebView *w, gboolean freemem)
+void viewarea_del_webview (ViewArea *v, WebView *w)
 {
      GList *found = NULL;
 
@@ -188,12 +195,20 @@ void viewarea_del_webview (ViewArea *v, WebView *w, gboolean freemem)
 
      for (found = g_list_find_custom (v->webviews, w, (GCompareFunc) webviewlist_find); found != NULL; found = found->next)
      {
-          v->webviews = g_list_remove (v->webviews, w);
+          ListWebView *el = (ListWebView *) found->data;
+          GList *tmp;
+
+          v->webviews = g_list_remove (v->webviews, el);
 
           if (v->focus == w)
                viewarea_set_focus (v, (WebView *) v->webviews->data);
 
-          if (freemem) gtk_widget_destroy (GTK_WIDGET (w));
+          for (tmp = el->gcallbacks; tmp != NULL; tmp = tmp->next)
+          {
+               gulong handler = (gulong) tmp->data;
+               if (g_signal_handler_is_connected (G_OBJECT (w), handler))
+                    g_signal_handler_disconnect (G_OBJECT (w), handler);
+          }
      }
 }
 
@@ -214,26 +229,19 @@ void viewarea_signal_connect (ViewArea *v, const gchar *signal_name, GCallback c
 
      g_return_if_fail (v && cb);
 
-     for (tmp = v->webviews; tmp != NULL; tmp = tmp->next)
-     {
-          ListWebView *el = (ListWebView *) tmp->data;
-          GList *found = NULL;
-
-          found = g_list_find (el->gcallbacks, cb);
-          if (!found)
-          {
-               el->gcallbacks = g_list_append (el->gcallbacks, cb);
-               g_signal_connect (G_OBJECT (el->w), signal_name, cb, data);
-          }
-     }
-
      tmp = g_list_find_custom (v->gcallbacks, cb, (GCompareFunc) callbacklist_find);
      if (!tmp)
      {
           ListGCallback *el = listgcallback_new (signal_name, cb, data);
           v->gcallbacks = g_list_append (v->gcallbacks, el);
-     }
 
+          for (tmp = v->webviews; tmp != NULL; tmp = tmp->next)
+          {
+               ListWebView *el = (ListWebView *) tmp->data;
+               gulong handler = g_signal_connect (G_OBJECT (el->w), signal_name, cb, data);
+               el->gcallbacks = g_list_append (el->gcallbacks, (gpointer) handler);
+          }
+     }
 }
 
 /* Constructors */

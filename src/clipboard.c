@@ -97,22 +97,11 @@ static int luaL_clipboard_new (lua_State *L)
  */
 static int luaL_clipboard_set (lua_State *L)
 {
-     int argc = lua_gettop (L);
+     GtkClipboard **c = lua_check_clipboard (L, 1);
+     const gchar *txt = luaL_checkstring (L, 2);
 
-     if (argc >= 2)
-     {
-          GtkClipboard **c = lua_check_clipboard (L, 1);
-
-          if (lua_isstring (L, 2))
-          {
-               const gchar *txt = lua_tostring (L, 2);
-
-               if (txt && strlen (txt))
-                    gtk_clipboard_set_text (*c, txt, -1);
-          }
-          else
-               luaL_typerror (L, 2, "string");
-     }
+     if (txt && strlen (txt))
+          gtk_clipboard_set_text (*c, txt, -1);
 
      return 0;
 }
@@ -165,8 +154,7 @@ static int luaL_clipboard_clear (lua_State *L)
  */
 static int luaL_clipboard_tostring (lua_State *L)
 {
-     char *ret = g_strdup_printf ("%p", lua_cast_clipboard (L, 1));
-     lua_pushfstring (L, LUA_TCLIPBOARD " (%s)", ret);
+     lua_pushfstring (L, LUA_TCLIPBOARD ": %p", lua_cast_clipboard (L, 1));
      return 1;
 }
 

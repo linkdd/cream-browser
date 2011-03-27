@@ -14,36 +14,31 @@
  */
 static int luaL_util_spawn (lua_State *L)
 {
-     gint argc;
-     gchar **argv;
+     GError *error = NULL;
+     GPid pid = 0;
+
      const gchar *cmd;
+     gchar **argv;
+     gint argc;
 
-     if (lua_gettop (L) >= 1)
+     cmd = luaL_checkstring (L, 1);
+
+     if (!g_shell_parse_argv (cmd, &argc, &argv, &error) && error != NULL)
      {
-          GError *error = NULL;
-          GPid pid = 0;
-
-          cmd = luaL_checkstring (L, 1);
-
-          if (!g_shell_parse_argv (cmd, &argc, &argv, &error) && error != NULL)
-          {
-               luaL_error (L, "spawn: %s", error->message);
-               g_error_free (error);
-               return 0;
-          }
-
-          if (!g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, &pid, &error) && error != NULL)
-          {
-               luaL_error (L, "spawn: %s", error->message);
-               g_error_free (error);
-               return 0;
-          }
-
-          lua_pushnumber (L, pid);
-          return 1;
+          luaL_error (L, "spawn: %s", error->message);
+          g_error_free (error);
+          return 0;
      }
 
-     return 0;
+     if (!g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, &pid, &error) && error != NULL)
+     {
+          luaL_error (L, "spawn: %s", error->message);
+          g_error_free (error);
+          return 0;
+     }
+
+     lua_pushnumber (L, pid);
+     return 1;
 }
 
 /*!
@@ -113,17 +108,10 @@ static void lua_pushregex (lua_State *L, GRegex *r)
  */
 static int luaL_regex_new (lua_State *L)
 {
-     int argc = lua_gettop (L);
-     GRegex *r;
-
-     if (argc >= 1)
-     {
-          r = g_regex_new (luaL_checkstring (L, 1), 0, 0, NULL);
-          lua_pushregex (L, r);
-          return 1;
-     }
-
-     return 0;
+     const gchar *pattern = luaL_checkstring (L, 1);
+     GRegex *r = g_regex_new (pattern, 0, 0, NULL);
+     lua_pushregex (L, r);
+     return 1;
 }
 
 /*!
@@ -136,16 +124,9 @@ static int luaL_regex_new (lua_State *L)
  */
 static int luaL_regex_match (lua_State *L)
 {
-     gboolean ret = FALSE;
-
-     if (lua_gettop (L) >= 2)
-     {
-          GRegex **r = lua_check_regex (L, 1);
-          const gchar *str = luaL_checkstring (L, 2);
-
-          ret = g_regex_match_simple (g_regex_get_pattern (*r), str, 0, 0);
-     }
-
+     GRegex **r = lua_check_regex (L, 1);
+     const gchar *str = luaL_checkstring (L, 2);
+     gboolean ret = g_regex_match_simple (g_regex_get_pattern (*r), str, 0, 0);
      lua_pushboolean (L, ret);
      return 1;
 }
@@ -160,19 +141,15 @@ static int luaL_regex_match (lua_State *L)
  */
 static int luaL_regex_replace (lua_State *L)
 {
+     GRegex **r = lua_check_regex (L, 1);
+     const gchar *str = luaL_checkstring (L, 2);
+     const gchar *rep = luaL_checkstring (L, 3);
      gchar *ret = NULL;
 
-     if (lua_gettop (L) >= 3)
+     if ((ret = g_regex_replace (*r, str, -1, 0, rep, 0, NULL)) != NULL)
      {
-          GRegex **r = lua_check_regex (L, 1);
-          const gchar *str = luaL_checkstring (L, 2);
-          const gchar *rep = luaL_checkstring (L, 3);
-
-          if ((ret = g_regex_replace (*r, str, -1, 0, rep, 0, NULL)) != NULL)
-          {
-               lua_pushstring (L, ret);
-               return 1;
-          }
+          lua_pushstring (L, ret);
+          return 1;
      }
 
      return 0;
@@ -197,8 +174,7 @@ static const luaL_reg cream_regex_methods[] =
  */
 static int luaL_regex_tostring (lua_State *L)
 {
-     char *ret = g_strdup_printf ("%p", lua_cast_regex (L, 1));
-     lua_pushfstring (L, LUA_TREGEX " (%s)", ret);
+     lua_pushfstring (L, LUA_TREGEX ": %p", lua_cast_regex (L, 1));
      return 1;
 }
 

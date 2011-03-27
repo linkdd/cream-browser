@@ -3,6 +3,7 @@
 extern int luaL_module_register (lua_State *L);
 extern int luaL_clipboard_register (lua_State *L);
 extern int luaL_util_register (lua_State *L);
+extern int luaL_webview_register (lua_State *L);
 
 /*!
  * \addtogroup lua
@@ -45,6 +46,9 @@ void lua_ctx_init (void)
      luaL_util_register (global.luavm);
      lua_pop (global.luavm, 1);
 
+     luaL_webview_register (global.luavm);
+     lua_pop (global.luavm, 1);
+
      /* get package.path */
      lua_getglobal (global.luavm, "package");
      if (!lua_istable (global.luavm, 1))
@@ -61,17 +65,17 @@ void lua_ctx_init (void)
      }
 
      /* add user and system config dirs in path */
-     tmp = g_strdup_printf (";%s", g_build_filename (usrconfdir, global.prgname, "?.lua", NULL));
+     tmp = g_strdup_printf (";%s", g_build_filename (usrconfdir, global.prgname, "lib", "?.lua", NULL));
      lua_pushlstring (global.luavm, tmp, strlen (tmp));
-     tmp = g_strdup_printf (";%s", g_build_filename (usrconfdir, global.prgname, "?", "init.lua", NULL));
+     tmp = g_strdup_printf (";%s", g_build_filename (usrconfdir, global.prgname, "lib", "?", "init.lua", NULL));
      lua_pushlstring (global.luavm, tmp, strlen (tmp));
      lua_concat (global.luavm, 3); /* concatenate with package.path */
 
      for (i = 0; sysconfdirs[i] != NULL; ++i)
      {
-          tmp = g_strdup_printf (";%s", g_build_filename (sysconfdirs[i], global.prgname, "?.lua", NULL));
+          tmp = g_strdup_printf (";%s", g_build_filename (sysconfdirs[i], global.prgname, "lib", "?.lua", NULL));
           lua_pushlstring (global.luavm, tmp, strlen (tmp));
-          tmp = g_strdup_printf (";%s", g_build_filename (sysconfdirs[i], global.prgname, "?", "init.lua", NULL));
+          tmp = g_strdup_printf (";%s", g_build_filename (sysconfdirs[i], global.prgname, "lib", "?", "init.lua", NULL));
           lua_pushlstring (global.luavm, tmp, strlen (tmp));
           lua_concat (global.luavm, 3); /* concatenate with package.path */
      }

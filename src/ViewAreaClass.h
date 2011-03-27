@@ -49,7 +49,7 @@ GtkWidget *viewarea_new (void);
 gboolean viewarea_set_focus (ViewArea *v, WebView *w);
 WebView *viewarea_get_focus (ViewArea *v);
 void viewarea_add_webview (ViewArea *v, WebView *w);
-void viewarea_del_webview (ViewArea *v, WebView *w, gboolean freemem);
+void viewarea_del_webview (ViewArea *v, WebView *w);
 void viewarea_signal_connect (ViewArea *v, const gchar *signal_name, GCallback cb, gpointer data);
 
 /*! @} */
