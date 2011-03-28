@@ -13,9 +13,9 @@
 
 G_BEGIN_DECLS
 
-#define VIEW_AREA(obj)        GTK_CHECK_CAST(obj, viewarea_get_type (), ViewArea)
-#define VIEW_AREA_CLASS(obj)  GTK_CHECK_CLASS_CAST(obj, viewarea_get_type (), ViewAreaClass)
-#define IS_VIEW_AREA(obj)     GTK_CHECK_TYPE(obj, viewarea_get_type ())
+#define VIEW_AREA(obj)        G_TYPE_CHECK_INSTANCE_CAST(obj, viewarea_get_type (), ViewArea)
+#define VIEW_AREA_CLASS(obj)  G_TYPE_CHECK_CLASS_CAST(obj, viewarea_get_type (), ViewAreaClass)
+#define IS_VIEW_AREA(obj)     G_TYPE_CHECK_INSTANCE_TYPE(obj, viewarea_get_type ())
 
 typedef struct _ViewArea ViewArea;
 typedef struct _ViewAreaClass ViewAreaClass;
@@ -43,7 +43,7 @@ struct _ViewAreaClass
      GtkBinClass parent;
 };
 
-GtkType viewarea_get_type (void);
+GType viewarea_get_type (void);
 GtkWidget *viewarea_new (void);
 
 gboolean viewarea_set_focus (ViewArea *v, WebView *w);

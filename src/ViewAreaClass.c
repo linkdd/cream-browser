@@ -5,9 +5,6 @@
  * @{
  */
 
-static void viewarea_class_init (ViewAreaClass *klass);
-static void viewarea_init (ViewArea *obj);
-
 /* {{{ WebView list */
 typedef struct
 {
@@ -57,33 +54,7 @@ static gint callbacklist_find (ListGCallback *a, GCallback b)
 
 /* }}} */
 
-/*!
- * \public \memberof ViewArea
- * \fn GtkType viewarea_get_type (void)
- * @return A \class{GtkType} object.
- *
- * Return informations about the object's type #ViewArea.
- */
-GtkType viewarea_get_type (void)
-{
-     static GtkType viewarea_type = 0;
-
-     if (!viewarea_type)
-     {
-          static const GtkTypeInfo viewarea_type_info = {
-               "ViewArea",
-               sizeof (ViewArea),
-               sizeof (ViewAreaClass),
-               (GtkClassInitFunc)  viewarea_class_init,
-               (GtkObjectInitFunc) viewarea_init,
-               NULL, NULL,
-               (GtkClassInitFunc) NULL
-          };
-          viewarea_type = gtk_type_unique (GTK_TYPE_BIN, &viewarea_type_info);
-     }
-
-     return viewarea_type;
-}
+G_DEFINE_TYPE (ViewArea, viewarea, GTK_TYPE_BIN)
 
 static void viewarea_webview_signal_raise (WebView *w, ViewArea *v)
 {
@@ -255,7 +226,7 @@ void viewarea_signal_connect (ViewArea *v, const gchar *signal_name, GCallback c
  */
 GtkWidget *viewarea_new (void)
 {
-     return GTK_WIDGET (gtk_type_new (viewarea_get_type ()));
+     return GTK_WIDGET (g_object_new (viewarea_get_type (), NULL));
 }
 
 static void viewarea_class_init (ViewAreaClass *klass)

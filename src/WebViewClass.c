@@ -5,9 +5,7 @@
  * @{
  */
 
-static void webview_class_init (WebViewClass *klass);
-static void webview_init (WebView *obj);
-static void webview_destroy (GtkObject *obj);
+static void webview_destroy (GtkWidget *obj);
 static void webview_child_signal_connect (WebView *w);
 
 /* signals */
@@ -29,33 +27,7 @@ enum
 
 static guint webview_signals[WEBVIEW_NB_SIGNALS] = { 0 };
 
-/*!
- * \public \memberof WebView
- * \fn GtkType webview_get_type (void)
- * @return A \class{GtkType} object.
- *
- * Return informations about the object's type #WebView.
- */
-GtkType webview_get_type (void)
-{
-     static GtkType webview_type = 0;
-
-     if (!webview_type)
-     {
-          static const GtkTypeInfo webview_type_info = {
-               "WebView",
-               sizeof (WebView),
-               sizeof (WebViewClass),
-               (GtkClassInitFunc)  webview_class_init,
-               (GtkObjectInitFunc) webview_init,
-               NULL, NULL,
-               (GtkClassInitFunc) NULL
-          };
-          webview_type = gtk_type_unique (GTK_TYPE_SCROLLED_WINDOW, &webview_type_info);
-     }
-
-     return webview_type;
-}
+G_DEFINE_TYPE (WebView, webview, GTK_TYPE_SCROLLED_WINDOW)
 
 /* Methods */
 
@@ -276,7 +248,7 @@ static void webview_child_signal_connect (WebView *w)
  */
 GtkWidget *webview_new (CreamModule *mod)
 {
-     WebView *w = gtk_type_new (webview_get_type ());
+     WebView *w = g_object_new (webview_get_type (), NULL);
 
      g_return_val_if_fail (w != NULL && mod != NULL, NULL);
 
@@ -291,10 +263,13 @@ GtkWidget *webview_new (CreamModule *mod)
 
 static void webview_class_init (WebViewClass *klass)
 {
+#if GTK_CHECK_VERSION (3, 0, 0)
+     GtkWidgetClass *object_class = (GtkWidgetClass *) klass;
+#else
      GtkObjectClass *object_class = (GtkObjectClass *) klass;
+#endif
 
      object_class->destroy = webview_destroy;
-
      /* signals */
      webview_signals[WEBVIEW_LOAD_COMMIT_SIGNAL] = g_signal_new (
                "load-commit",
@@ -391,9 +366,8 @@ static void webview_init (WebView *obj)
 
 /* Destructor */
 
-static void webview_destroy (GtkObject *obj)
+static void webview_destroy (GtkWidget *obj)
 {
-     GtkObjectClass *object_class;
      WebView *w;
 
      g_return_if_fail (obj);
@@ -407,9 +381,11 @@ static void webview_destroy (GtkObject *obj)
      if (w->title) g_free (w->title);
      if (w->status) g_free (w->status);
 
-     object_class = GTK_OBJECT_CLASS (gtk_type_class (webview_get_type ()));
-     if (object_class->destroy)
-          object_class->destroy (obj);
+#if !GTK_CHECK_VERSION (3, 0, 0)
+     GtkObjectClass *obj_class = GTK_OBJECT_CLASS (gtk_type_class (webview_get_type ()));
+     if (obj_class->destroy)
+          obj_class->destroy (GTK_OBJECT (obj));
+#endif
 }
 
 /*! @} */

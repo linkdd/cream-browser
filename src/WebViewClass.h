@@ -13,9 +13,9 @@
 
 G_BEGIN_DECLS
 
-#define WEB_VIEW(obj)         GTK_CHECK_CAST(obj, webview_get_type (), WebView)
-#define WEB_VIEW_CLASS(obj)   GTK_CHECK_CLASS_CAST(klass, webview_get_type (), WebViewClass)
-#define IS_WEB_VIEW(obj)      GTK_CHECK_TYPE(obj, webview_get_type ())
+#define WEB_VIEW(obj)         G_TYPE_CHECK_INSTANCE_CAST(obj, webview_get_type (), WebView)
+#define WEB_VIEW_CLASS(obj)   G_TYPE_CHECK_CLASS_CAST(klass, webview_get_type (), WebViewClass)
+#define IS_WEB_VIEW(obj)      G_TYPE_CHECK_INSTANCE_TYPE(obj, webview_get_type ())
 
 typedef struct _WebView WebView;
 typedef struct _WebViewClass WebViewClass;
@@ -146,7 +146,7 @@ struct _WebViewClass
 
 };
 
-GtkType webview_get_type (void);
+GType webview_get_type (void);
 GtkWidget *webview_new (CreamModule *mod);
 
 CreamModule *webview_get_module (WebView *w);
