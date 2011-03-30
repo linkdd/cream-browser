@@ -5,7 +5,7 @@
  * @{
  */
 
-static void webview_destroy (GtkWidget *obj);
+static void webview_destroy (GObject *obj);
 static void webview_child_signal_connect (WebView *w);
 
 /* signals */
@@ -366,7 +366,7 @@ static void webview_init (WebView *obj)
 
 /* Destructor */
 
-static void webview_destroy (GtkWidget *obj)
+static void webview_destroy (GObject *obj)
 {
      WebView *w;
 

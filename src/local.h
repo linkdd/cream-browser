@@ -45,6 +45,7 @@
 #include "marshal.h"
 #include "WebViewClass.h"
 #include "ViewAreaClass.h"
+#include "CreamTabClass.h"
 
 #include "lua.h"
 #include "errors.h"

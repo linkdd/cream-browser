@@ -1,11 +1,11 @@
 SOURCES = marshal.c \
-		WebViewClass.c ViewAreaClass.c \
+		WebViewClass.c ViewAreaClass.c CreamTabClass.c \
 		errors.c modules.c lua.c \
 		clipboard.c util.c \
 		modules/scheme.c socket.c main.c
 
 HEADERS = marshal.h \
-		WebViewClass.h ViewAreaClass.h \
+		WebViewClass.h ViewAreaClass.h CreamTabClass.h \
 		errors.h modules.h lua.h \
 		modules/scheme.h structs.h local.h
 

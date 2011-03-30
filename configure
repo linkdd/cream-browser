@@ -10,6 +10,8 @@ DEBUG=0
 
 MODULES="www ftp about"
 
+WANT_GTK="2.0"
+
 while true
 do
      case $1 in
@@ -47,6 +49,11 @@ do
 
           --debug)
                DEBUG=1
+               shift
+               ;;
+
+          --with-gtk=*)
+               WANT_GTK="${1#--with-gtk=}"
                shift
                ;;
 
@@ -110,13 +117,13 @@ else
 fi
 
 # Check for gtk
-echo -n "-- Checking for library gtk+-2.0 ... "
-GTK_VERSION=`pkg-config --modversion gtk+-2.0`
+echo -n "-- Checking for library gtk+-$WANT_GTK ... "
+GTK_VERSION=`pkg-config --modversion gtk+-$WANT_GTK`
 if [ "$?" = "1" ]; then
      echo "no" && exit 1
 else
-     GTK_CFLAGS=`pkg-config --cflags gtk+-2.0`
-     GTK_LDFLAGS=`pkg-config --libs gtk+-2.0`
+     GTK_CFLAGS=`pkg-config --cflags gtk+-$WANT_GTK`
+     GTK_LDFLAGS=`pkg-config --libs gtk+-$WANT_GTK`
      echo "$GTK_VERSION"
 fi
 

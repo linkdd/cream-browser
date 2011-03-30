@@ -52,6 +52,8 @@ void viewarea_add_webview (ViewArea *v, WebView *w);
 void viewarea_del_webview (ViewArea *v, WebView *w);
 void viewarea_signal_connect (ViewArea *v, const gchar *signal_name, GCallback cb, gpointer data);
 
+G_END_DECLS
+
 /*! @} */
 
 #endif /* __CLASS_VIEWAREA_H */

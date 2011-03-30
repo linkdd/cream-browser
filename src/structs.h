@@ -4,8 +4,8 @@
 /*! \struct GUI */
 struct GUI
 {
-     GtkWidget *notebook;     /*!< Notebook widget */
-     GtkWidget *viewarea;     /*!< WebView area */
+     GtkWidget *notebook;     /*!< Notebook widget (#CreamTab object) */
+     GtkWidget *viewarea;     /*!< WebView area (#ViewArea object) */
      GtkWidget *statusbar;    /*!< Statusbar widget */
      GtkWidget *promptbox;    /*!< Promptbox widget */
      GtkWidget *box;          /*!< Box containing all widgets */
@@ -16,7 +16,7 @@ struct Socket
 {
      gchar *path;             /*!< Path to the Unix socket */
      int fd;                  /*!< Socket file descriptor */
-     GIOChannel *channel;     /*!< #GIOChannel to use the socket */
+     GIOChannel *channel;     /*!< \class{GIOChannel} to use the socket */
 };
 
 /*!
@@ -28,21 +28,13 @@ struct global_t
      struct GUI gui;          /*!< GUI */
      struct Socket sock;      /*!< Unix socket */
 
-     gboolean log;            /*!< if TRUE log every errors */
+     gboolean log;            /*!< if <code>TRUE</code> log every errors */
      guint domain;            /*!< Global error domain */
      gchar *prgname;          /*!< Program's name */
 
      GList *protocols;        /*!< List of protocols and asscoiated modules */
 
      lua_State *luavm;        /*!< Lua VM state */
-};
-
-/*! \struct Tab */
-struct Tab
-{
-     gchar *title;            /*!< Title of the page loaded in the tab */
-     gchar *uri;              /*!< URI of the page loaded in the tab */
-     GtkWidget *webview;      /*!< Webview associated to the tab */
 };
 
 #endif /* __STRUCTS_H */

@@ -161,6 +161,8 @@ const gchar *webview_get_uri (WebView *w);
 const gchar *webview_get_title (WebView *w);
 const gchar *webview_get_status (WebView *w);
 
+G_END_DECLS
+
 /*! @} */
 
 #endif /* __WEBVIEW_CLASS_H */

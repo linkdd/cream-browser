@@ -56,6 +56,8 @@ static gint callbacklist_find (ListGCallback *a, GCallback b)
 
 G_DEFINE_TYPE (ViewArea, viewarea, GTK_TYPE_BIN)
 
+/* signals */
+
 static void viewarea_webview_signal_raise (WebView *w, ViewArea *v)
 {
      viewarea_set_focus (v, w);
@@ -146,8 +148,6 @@ void viewarea_add_webview (ViewArea *v, WebView *w)
 
           v->webviews = g_list_append (v->webviews, el);
      }
-
-     viewarea_set_focus (v, w);
 }
 
 /*!
