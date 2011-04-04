@@ -35,5 +35,7 @@ cream-browser_build.h: cream-browser_build.h.in
 	     -e "s:@PREFIX@:$(PREFIX):"              \
 	     -e "s:@SYSCONFDIR@:$(SYSCONFDIR):" $^ > $@
 
+modules:
+	@$(SRCDIR)/modules/build-modules.sh $(MODULES)
 
 .PHONY: all clean install uninstall cream-browser_build.h

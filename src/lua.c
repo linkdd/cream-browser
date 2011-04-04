@@ -14,14 +14,32 @@ extern int luaL_webview_register (lua_State *L);
  * @{
  */
 
-static guint domain = 0;
+#define CREAM_LUA_ERROR       cream_lua_error_quark()
+
+typedef enum
+{
+     CREAM_LUA_ERROR_PACKAGE,
+     CREAM_LUA_ERROR_PARSE,
+     CREAM_LUA_ERROR_FAILED
+} CreamLuaError;
+
+static GQuark cream_lua_error_quark (void)
+{
+     static GQuark domain = 0;
+
+     if (!domain)
+          domain = g_quark_from_string ("CREAM_LUA_ERROR");
+
+     return domain;
+}
 
 /*!
- * \fn void lua_ctx_init (void)
+ * \fn gboolean lua_ctx_init (GError **err)
+ * @return <code>TRUE</code> on success, <code>FALSE</code> otherwise.
  *
  * Initialize the lua VM state.
  */
-void lua_ctx_init (void)
+gboolean lua_ctx_init (GError **err)
 {
      const gchar * const *sysconfdirs = g_get_system_config_dirs ();
      const gchar * const *sysdatadirs = g_get_system_data_dirs ();
@@ -29,8 +47,6 @@ void lua_ctx_init (void)
      const gchar *usrdatadir = g_get_user_data_dir ();
      gchar *tmp;
      int i;
-
-     domain = error_domain_register ("lua");
 
      global.luavm = luaL_newstate ();
 
@@ -53,15 +69,23 @@ void lua_ctx_init (void)
      lua_getglobal (global.luavm, "package");
      if (!lua_istable (global.luavm, 1))
      {
-          error_send (domain, ERROR_FATAL, "'package' isn't a table.");
-          return;
+          g_set_error (err,
+                       CREAM_LUA_ERROR,
+                       CREAM_LUA_ERROR_PACKAGE,
+                       "'package' isn't a table"
+          );
+          return FALSE;
      }
 
      lua_getfield (global.luavm, 1, "path");
      if (!lua_isstring (global.luavm, 2))
      {
-          error_send (domain, ERROR_FATAL, "'package.path' isn't a table.");
-          return;
+          g_set_error (err,
+                       CREAM_LUA_ERROR,
+                       CREAM_LUA_ERROR_PACKAGE,
+                       "'package.path' isn't a table."
+          );
+          return FALSE;
      }
 
      /* add user and system config dirs in path */
@@ -99,16 +123,18 @@ void lua_ctx_init (void)
      lua_setfield (global.luavm, 1, "path"); /* package.path = "concatenated string" */
 
      lua_pop (global.luavm, 1);
+
+     return TRUE;
 }
 
 /*!
- * \fn gboolean lua_ctx_parse (const char *file)
+ * \fn gboolean lua_ctx_parse (const char *file, GError **err)
  * @param file Path of the file to parse.
  * @return <code>TRUE</code> on success, <code>FALSE</code> otherwise.
  *
  * Parse a lua file.
  */
-gboolean lua_ctx_parse (const char *file)
+gboolean lua_ctx_parse (const char *file, GError **err)
 {
      int s = 0;
 
@@ -120,7 +146,11 @@ gboolean lua_ctx_parse (const char *file)
 
      if (s != 0)
      {
-          error_send (domain, ERROR_FATAL, "%s", lua_tostring (global.luavm, -1));
+          g_set_error (err,
+                       CREAM_LUA_ERROR,
+                       CREAM_LUA_ERROR_PARSE,
+                       "%s", lua_tostring (global.luavm, -1)
+          );
           lua_pop (global.luavm, 1);
           return FALSE;
      }

@@ -48,7 +48,6 @@
 #include "CreamTabClass.h"
 
 #include "lua.h"
-#include "errors.h"
 #include "modules.h"
 
 #include "structs.h"
@@ -76,12 +75,14 @@ extern struct global_t global;
 
 gchar *find_file (guint type, const gchar *filename);
 
-void socket_init (void);
+gboolean socket_init (GError **err);
 
 char *str_replace (const char *search, const char *replace, const char *string);
 void add_protocol (const gchar *scheme, CreamModule *mod);
 void del_protocol (CreamModule *mod);
 CreamModule *get_protocol (const gchar *scheme);
+
+void print_error (GError *error, gboolean abort, const gchar *fmt, ...);
 
 /*! @} */
 

@@ -65,8 +65,8 @@ typedef struct CreamModule
      CreamModuleCallFunc       call;         /*!< Call function */
 } CreamModule;
 
-gboolean modules_init (void);
-CreamModule *modules_load (const char *filename);
+gboolean modules_init (GError **err);
+CreamModule *modules_load (const char *filename, GError **err);
 void modules_unload (CreamModule *mod);
 
 /*! @} */

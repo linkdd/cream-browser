@@ -5,34 +5,60 @@
  * @{
  */
 
-static guint domain = 0;
+#define CREAM_MODULE_ERROR         cream_module_error_quark()
+
+typedef enum
+{
+     CREAM_MODULE_ERROR_SUPPORTED,
+     CREAM_MODULE_ERROR_OPEN,
+     CREAM_MODULE_ERROR_SYMBOLS,
+     CREAM_MODULE_ERROR_CLOSE,
+     CREAM_MODULE_ERROR_FAILED
+} CreamModuleError;
+
+static GQuark cream_module_error_quark (void)
+{
+     static GQuark domain = 0;
+
+     if (!domain)
+          domain = g_quark_from_string ("CREAM_MODULE_ERROR");
+
+     return domain;
+}
+
 static GList *modules = NULL;
 
 /*!
- * \fn gboolean modules_init (void)
+ * \fn gboolean modules_init (GError **err)
  * @return <code>TRUE</code> if \class{GModule} is supported, <code>FALSE</code> otherwise.
  *
- * Check if \class{GModule} is supported and register the error domain.
+ * Check if \class{GModule} is supported.
  */
-gboolean modules_init (void)
+gboolean modules_init (GError **err)
 {
      if (!g_module_supported ())
-          return FALSE;
+     {
+          g_set_error (err,
+                       CREAM_MODULE_ERROR,
+                       CREAM_MODULE_ERROR_SUPPORTED,
+                       "GModule isn't supported."
+          );
 
-     domain = error_domain_register ("modules");
+          return FALSE;
+     }
 
      return TRUE;
 }
 
 /*!
- * \fn CreamModule *modules_load (const char *filename)
+ * \fn CreamModule *modules_load (const char *filename, GError **err)
  * @param filename Filename of the library to load.
  * @return A #CreamModule object.
  *
  * Open a \class{GModule} object and check if it contains the correct API (see #CreamModule).
  * If the module is alreay loaded, just returns it.
  */
-CreamModule *modules_load (const char *filename)
+CreamModule *modules_load (const char *filename, GError **err)
 {
      CreamModule *m;
      GList *tmp;
@@ -52,8 +78,12 @@ CreamModule *modules_load (const char *filename)
      m->module = g_module_open (filename, G_MODULE_BIND_LAZY);
      if (!m->module)
      {
-          error_send (domain, ERROR_CRITICAL, "%s: Couldn't open module: %s", filename, g_module_error ());
-          lua_pop (global.luavm, 1);
+          g_set_error (err,
+                       CREAM_MODULE_ERROR,
+                       CREAM_MODULE_ERROR_OPEN,
+                       "%s: Couldn't open module: %s",
+                       filename, g_module_error ()
+          );
           return NULL;
      }
 
@@ -65,12 +95,20 @@ CreamModule *modules_load (const char *filename)
           || !(m->init != NULL && m->unload != NULL && m->webview_new != NULL && m->call != NULL)
         )
      {
-          error_send (domain, ERROR_CRITICAL, "%s: Couldn't load symbols: %s", filename, g_module_error ());
+          g_set_error (err,
+                       CREAM_MODULE_ERROR,
+                       CREAM_MODULE_ERROR_SYMBOLS,
+                       "%s: Couldn't load symbols: %s",
+                       filename, g_module_error ()
+          );
+
           if (!g_module_close (m->module))
-               error_send (domain, ERROR_WARNING, "%s: %s", filename, g_module_error ());
-          lua_pop (global.luavm, 1);
+               g_warning ("%s: %s", filename, g_module_error ());
+
           return NULL;
      }
+
+     m->init ();
 
      m->modulename = g_strdup (filename);
      m->module_id = id;
@@ -101,7 +139,7 @@ void modules_unload (CreamModule *mod)
                m->unload ();
 
                if (!g_module_close (m->module))
-                    error_send (domain, ERROR_WARNING, "%s: %s", m->modulename, g_module_error ());
+                    g_warning ("%s: %s", m->modulename, g_module_error ());
 
                modules = g_list_remove_link (modules, tmp);
 
@@ -174,9 +212,15 @@ static int luaL_module_new (lua_State *L)
 
      if (argc >= 2)
      {
-          mod = modules_load (luaL_checkstring (L, 1));
+          GError *err = NULL;
+
+          mod = modules_load (luaL_checkstring (L, 1), &err);
           if (mod == NULL)
-               return luaL_error (L, "Can't load module.");
+          {
+               char *msg = g_strdup (err->message);
+               g_error_free (err);
+               return luaL_error (L, msg);
+          }
 
           for (i = 2; i <= argc; ++i)
                add_protocol (luaL_checkstring (L, i), mod);

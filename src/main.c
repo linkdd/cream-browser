@@ -5,6 +5,24 @@
  * @{
  */
 
+#define CREAM_GLOBAL_ERROR         cream_global_error_quark()
+
+typedef enum
+{
+     CREAM_GLOBAL_ERROR_CONFIG,
+     CREAM_GLOBAL_ERROR_FAILED
+} CreamGlobalError;
+
+static GQuark cream_global_error_quark (void)
+{
+     static GQuark domain = 0;
+
+     if (!domain)
+          domain = g_quark_from_string ("CREAM_GLOBAL_ERROR");
+
+     return domain;
+}
+
 /*!
  * \struct Protocol
  * Used for add_protocol() and get_protocol().
@@ -119,12 +137,7 @@ char *str_replace (const char *search, const char *replace, const char *string)
  */
 void add_protocol (const gchar *scheme, CreamModule *mod)
 {
-     struct Protocol *el = malloc (sizeof (struct Protocol));
-
-     el->id  = g_str_hash (scheme);
-     el->mod = mod;
-
-     global.protocols = g_list_append (global.protocols, el);
+     g_hash_table_insert (global.protocols, g_strdup (scheme), mod);
 }
 
 /*!
@@ -135,14 +148,12 @@ void add_protocol (const gchar *scheme, CreamModule *mod)
  */
 void del_protocol (CreamModule *mod)
 {
-     GList *tmp;
-
-     for (tmp = global.protocols; tmp != NULL; tmp = tmp->next)
+     gboolean remove_data (gpointer key, gpointer value, gpointer data)
      {
-          struct Protocol *el = tmp->data;
-          if (el->mod == mod)
-               global.protocols = g_list_remove (global.protocols, el);
+          return (value == data);
      }
+
+     g_hash_table_foreach_remove (global.protocols, remove_data, mod);
 }
 
 /*!
@@ -154,53 +165,33 @@ void del_protocol (CreamModule *mod)
  */
 CreamModule *get_protocol (const gchar *scheme)
 {
-     GList *tmp;
-     guint id = g_str_hash (scheme);
-
-     for (tmp = global.protocols; tmp != NULL; tmp = tmp->next)
-     {
-          struct Protocol *el = tmp->data;
-          if (el->id == id) return el->mod;
-     }
-
-     return NULL;
+     return (CreamModule *) g_hash_table_lookup (global.protocols, scheme);
 }
 
-/* Callback function to receive all error from every modules. */
-static void error_callback (guint domain, ErrorLevel level, const char *msg, gpointer data)
+/* Print a GError */
+void print_error (GError *error, gboolean abort, const gchar *fmt, ...)
 {
-     const char *domainname = error_domain_get (domain);
-     FILE *log = stderr;
-
-     if (global.log)
+     if (fmt != NULL)
      {
-          gchar *path = g_build_path (g_get_user_cache_dir (), global.prgname, "errors.log", NULL);
+          va_list args;
+          gchar *str;
 
-          log = fopen (path, "w");
-          if (log == NULL)
-          {
-               log = stderr;
-               fprintf (log, "Warning: Can't open '%s'\n", path);
-          }
+          va_start (args, fmt);
+          str = g_strdup_vprintf (fmt, args);
 
-          g_free (path);
+          fprintf (stderr, "Error (%s): %s: %s\n",
+                   g_quark_to_string (error->domain),
+                   str, error->message);
+
+          g_free (str);
      }
+     else
+          fprintf (stderr, "Error (%s): %s\n", g_quark_to_string (error->domain), error->message);
 
-     switch (level)
-     {
-          case ERROR_FATAL:
-               fprintf (log, "Error fatal (%s): %s\n", domainname, msg);
-               exit (EXIT_FAILURE);
-               break;
+     g_error_free (error);
 
-          case ERROR_CRITICAL:
-               fprintf (log, "Error (%s): %s\n", domainname, msg);
-               break;
-
-          case ERROR_WARNING:
-               fprintf (log, "Warning (%s): %s\n", domainname, msg);
-               break;
-     }
+     if (abort)
+          exit (EXIT_FAILURE);
 }
 
 /* Function called when exit() is called. */
@@ -219,6 +210,7 @@ static void quit (int code, void *data)
 /* Initialize every structures and modules. */
 static void init (gchar *config)
 {
+     GError *error = NULL;
      char *rc = config;
 
      on_exit (quit, NULL);
@@ -226,21 +218,28 @@ static void init (gchar *config)
      g_set_prgname ("cream-browser");
      global.prgname = g_get_prgname ();
 
-     global.domain = error_domain_register ("main");
-     error_add_callback (error_callback, NULL);
+     global.protocols = g_hash_table_new (g_str_hash, g_str_equal);
 
-     if (!modules_init ())
-          error_send (global.domain, ERROR_FATAL, "GModule isn't supported.");
+     if (!modules_init (&error))
+          print_error (error, TRUE, NULL);
 
      if (!rc || !g_file_test (rc, G_FILE_TEST_EXISTS))
+     {
           if ((rc = find_file (FILE_TYPE_CONFIG, "rc.lua")) == NULL)
-               error_send (global.domain, ERROR_FATAL, "Configuration not found.");
+          {
+               error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_CONFIG, "Configuration not found.");
+               print_error (error, TRUE, NULL);
+          }
+     }
 
-     socket_init ();
+     if (!socket_init (&error))
+          print_error (error, TRUE, NULL);
 
-     lua_ctx_init ();
-     lua_ctx_parse (rc);
+     if (!lua_ctx_init (&error))
+          print_error (error, TRUE, NULL);
 
+     if (!lua_ctx_parse (rc, &error))
+          print_error (error, TRUE, NULL);
 }
 
 /* Program used to send commands on the specified socket. */
@@ -317,11 +316,7 @@ int main (int argc, char **argv)
      g_option_context_add_group (optctx, gtk_get_option_group (TRUE));
 
      if (!g_option_context_parse (optctx, &argc, &argv, &error) && error != NULL)
-     {
-          fprintf (stderr, "Option parsing failed: %s\n", error->message);
-          g_error_free (error);
-          exit (EXIT_FAILURE);
-     }
+          print_error (error, TRUE, "Option parsing failed");
 
      if (version)
      {

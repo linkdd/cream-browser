@@ -29,10 +29,9 @@ struct global_t
      struct Socket sock;      /*!< Unix socket */
 
      gboolean log;            /*!< if <code>TRUE</code> log every errors */
-     guint domain;            /*!< Global error domain */
      gchar *prgname;          /*!< Program's name */
 
-     GList *protocols;        /*!< List of protocols and asscoiated modules */
+     GHashTable *protocols;   /*!< List of protocols and asscoiated modules */
 
      lua_State *luavm;        /*!< Lua VM state */
 };

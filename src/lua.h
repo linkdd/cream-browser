@@ -6,8 +6,6 @@
 #include <lauxlib.h>
 #include <glib.h>
 
-#include "errors.h"
-
 /*!
  * \defgroup lua Lua context
  * Functions to manipulate the Lua context.
@@ -39,8 +37,8 @@
  */
 #define LUA_TWEBVIEW   "WebView"
 
-void lua_ctx_init (void);
-gboolean lua_ctx_parse (const char *file);
+gboolean lua_ctx_init (GError **err);
+gboolean lua_ctx_parse (const char *file, GError **err);
 void lua_ctx_close (void);
 
 extern void lua_pushwebview (lua_State *L, WebView *w);
