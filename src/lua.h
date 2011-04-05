@@ -13,6 +13,10 @@
  * @{
  */
 
+#define luaL_checktable(L,n)            \
+     if(!lua_istable (L, n))            \
+          luaL_typerror (L, n, "table");
+
 /*!
  * \def LUA_TMODULE
  * Userdata type associated to #CreamModule.

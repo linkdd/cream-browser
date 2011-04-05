@@ -124,11 +124,11 @@ void webview_load_uri (WebView *w, const gchar *uri)
      g_return_if_fail (get_protocol (u.scheme) != 0);
 
      if (w->mod == get_protocol (u.scheme))
-          w->mod->call ("load-uri", w, &u);
+          w->mod->call ("load-uri", NULL, w, &u, NULL);
      else
      {
           webview_set_module (w, get_protocol (u.scheme));
-          w->mod->call ("load-uri", w, &u);
+          w->mod->call ("load-uri", NULL, w, &u, NULL);
      }
 }
 
@@ -500,7 +500,7 @@ static int luaL_webview_useragent (lua_State *L)
 {
      luaL_WebView *obj = lua_check_webview (L, 1);
      const gchar *ua = luaL_checkstring (L, 2);
-     obj->w->mod->call ("useragent", obj->w, ua);
+     obj->w->mod->call ("useragent", NULL, obj->w, ua, NULL);
      return 0;
 }
 

@@ -21,7 +21,7 @@ static GQuark cream_module_error_quark (void)
      static GQuark domain = 0;
 
      if (!domain)
-          domain = g_quark_from_string ("CREAM_MODULE_ERROR");
+          domain = g_quark_from_string ("cream.modules");
 
      return domain;
 }
@@ -75,7 +75,7 @@ CreamModule *modules_load (const char *filename, GError **err)
      /* open module */
      m = g_malloc (sizeof (CreamModule));
 
-     m->module = g_module_open (filename, G_MODULE_BIND_LAZY);
+     m->module = g_module_open (g_strdup_printf ("libcreammod-%s.so", filename), G_MODULE_BIND_LAZY);
      if (!m->module)
      {
           g_set_error (err,
@@ -222,8 +222,14 @@ static int luaL_module_new (lua_State *L)
                return luaL_error (L, msg);
           }
 
-          for (i = 2; i <= argc; ++i)
-               add_protocol (luaL_checkstring (L, i), mod);
+          luaL_checktable (L, 2);
+
+          lua_pushnil (L);
+          while (lua_next (L, 2))
+          {
+               add_protocol (luaL_checkstring (L, -1), mod);
+               lua_pop (L, 1);
+          }
 
           lua_pushmodule (L, mod);
 

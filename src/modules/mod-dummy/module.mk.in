@@ -1,0 +1,11 @@
+export LIBNAME    = @LIBNAME@
+export LIBVERSION = @LIBVERSION@
+
+export TOPDIR = @TOPDIR@
+
+export CFLAGS  += @CFLAGS@ -I $(TOPDIR)/../.. -fPIC -Wall -c
+export LDFLAGS += @LDFLAGS@ -shared -Wl,-soname,$(LIBNAME).$(LIBVERSION)
+export CC = @CC@
+
+SOURCES = ../api.c ../scheme.c
+HEADERS = ../api.h ../scheme.h

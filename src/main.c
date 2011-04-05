@@ -10,6 +10,9 @@
 typedef enum
 {
      CREAM_GLOBAL_ERROR_CONFIG,
+     CREAM_GLOBAL_ERROR_SOCKET,
+     CREAM_GLOBAL_ERROR_CONNECT,
+     CREAM_GLOBAL_ERROR_SEND,
      CREAM_GLOBAL_ERROR_FAILED
 } CreamGlobalError;
 
@@ -18,20 +21,10 @@ static GQuark cream_global_error_quark (void)
      static GQuark domain = 0;
 
      if (!domain)
-          domain = g_quark_from_string ("CREAM_GLOBAL_ERROR");
+          domain = g_quark_from_string ("cream");
 
      return domain;
 }
-
-/*!
- * \struct Protocol
- * Used for add_protocol() and get_protocol().
- */
-struct Protocol
-{
-     guint id;         /*!< Hashed scheme. (see #UriScheme) */
-     CreamModule *mod; /*!< Associated module (see #CreamModule) */
-};
 
 struct global_t global;
 
@@ -171,24 +164,26 @@ CreamModule *get_protocol (const gchar *scheme)
 /* Print a GError */
 void print_error (GError *error, gboolean abort, const gchar *fmt, ...)
 {
+     gchar *str;
+
+     g_return_if_fail (error != NULL);
+
      if (fmt != NULL)
      {
           va_list args;
-          gchar *str;
 
           va_start (args, fmt);
           str = g_strdup_vprintf (fmt, args);
-
-          fprintf (stderr, "Error (%s): %s: %s\n",
-                   g_quark_to_string (error->domain),
-                   str, error->message);
-
-          g_free (str);
+          str = g_strdup_printf ("Error (%s:%d): %s: %s\n", g_quark_to_string (error->domain), error->code, str, error->message);
+          va_end (args);
      }
      else
-          fprintf (stderr, "Error (%s): %s\n", g_quark_to_string (error->domain), error->message);
+          str = g_strdup_printf ("Error (%s:%d): %s\n", g_quark_to_string (error->domain), error->code, error->message);
 
      g_error_free (error);
+
+     if (global.flog) fprintf (global.flog, "%s", str);
+     fprintf (stderr, "%s", str);
 
      if (abort)
           exit (EXIT_FAILURE);
@@ -204,7 +199,15 @@ static void quit (int code, void *data)
           unlink (global.sock.path);
      }
 
+     g_hash_table_remove_all (global.protocols);
+
      lua_ctx_close ();
+
+     if (global.flog)
+          fclose (global.flog);
+
+     if (HAVE_DEBUG)
+          g_on_error_query (global.prgname);
 }
 
 /* Initialize every structures and modules. */
@@ -218,11 +221,20 @@ static void init (gchar *config)
      g_set_prgname ("cream-browser");
      global.prgname = g_get_prgname ();
 
+     /* open log */
+     if (global.log || HAVE_DEBUG)
+     {
+          gchar *path = g_build_filename ("var", "log", "cream-browser.log", NULL);
+          global.flog = fopen (path, "a");
+     }
+
      global.protocols = g_hash_table_new (g_str_hash, g_str_equal);
 
+     /* init modules */
      if (!modules_init (&error))
           print_error (error, TRUE, NULL);
 
+     /* find lua config */
      if (!rc || !g_file_test (rc, G_FILE_TEST_EXISTS))
      {
           if ((rc = find_file (FILE_TYPE_CONFIG, "rc.lua")) == NULL)
@@ -232,9 +244,11 @@ static void init (gchar *config)
           }
      }
 
+     /* init socket */
      if (!socket_init (&error))
           print_error (error, TRUE, NULL);
 
+     /* init and parse lua */
      if (!lua_ctx_init (&error))
           print_error (error, TRUE, NULL);
 
@@ -245,6 +259,8 @@ static void init (gchar *config)
 /* Program used to send commands on the specified socket. */
 static void creamctl (const char *cmd)
 {
+     GError *error = NULL;
+
      if (global.sock.path && cmd)
      {
           int s, len;
@@ -253,8 +269,8 @@ static void creamctl (const char *cmd)
 
           if ((s = socket (AF_UNIX, SOCK_STREAM, 0)) == -1)
           {
-               perror ("socket");
-               exit (EXIT_FAILURE);
+               error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_SOCKET, "%s", g_strerror (errno));
+               print_error (error, TRUE, "socket");
           }
 
           remote.sun_family = AF_UNIX;
@@ -263,14 +279,14 @@ static void creamctl (const char *cmd)
 
           if (connect (s, (struct sockaddr *) &remote, len) == -1)
           {
-               perror ("connect");
-               exit (EXIT_FAILURE);
+               error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_CONNECT, "%s", g_strerror (errno));
+               print_error (error, TRUE, "connect");
           }
 
           if ((send (s, cmd, strlen (cmd), 0) == -1) || (send (s, "\n", 1, 0) == -1))
           {
-               perror ("send");
-               exit (EXIT_FAILURE);
+               error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_SEND, "%s", g_strerror (errno));
+               print_error (error, TRUE, "send");
           }
 
           while ((len = recv (s, &tmp, 1, 0)))
@@ -316,7 +332,7 @@ int main (int argc, char **argv)
      g_option_context_add_group (optctx, gtk_get_option_group (TRUE));
 
      if (!g_option_context_parse (optctx, &argc, &argv, &error) && error != NULL)
-          print_error (error, TRUE, "Option parsing failed");
+          print_error (error, TRUE, NULL);
 
      if (version)
      {

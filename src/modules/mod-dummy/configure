@@ -1,0 +1,111 @@
+#!/bin/sh
+
+LIBNAME="libcreammod-dummy.so"
+LIBVERSION="0.1"
+
+TOPDIR=`pwd`
+DEBUG=0
+
+WANT_GTK="2.0"
+
+while true
+do
+     case $1 in
+          --debug)
+               DEBUG=1
+               shift
+               ;;
+
+          --with-gtk=*)
+               WANT_GTK="${1#--with-gtk=}"
+               shift
+               ;;
+
+          *)
+               break
+               ;;
+     esac
+done
+
+ARCH=`uname -m`
+echo -n "-- Building on $ARCH "
+if [ "$DEBUG" = "1" ]; then
+     echo "in debug mode"
+     CFLAGS="-g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wpointer-arith -Wno-sign-compare -O2 -I $TOPDIR/src/"
+else
+     echo "in release mode"
+     CFLAGS="-Wall -O2 -I $TOPDIR/src/"
+fi
+LDFLAGS=""
+
+# Check CC
+if [ "x$CC" = "x" ]; then
+     CC="gcc"
+fi
+
+echo -n "-- Checking for compiler ($CC) ... "
+compiler=`which $CC`
+if [ "$?" = "1" ]; then
+     echo "no" && exit 1
+else
+     echo "yes"
+fi
+
+# Check pkg-config
+echo -n "-- Checking for pkg-config ... "
+which pkg-config > /dev/null 2>&1
+if [ "$?" = "1" ]; then
+     echo "no" && exit 1
+else
+     echo "yes"
+fi
+
+# Check sed
+echo -n "-- Checking for sed ... "
+SED=`which sed`
+if [ "$?" = "1" ]; then
+     echo "no" && exit 1
+else
+     echo "yes"
+fi
+
+# Check for glib
+echo -n "-- Checking for library glib-2.0 ... "
+GLIB_VERSION=`pkg-config --modversion glib-2.0`
+if [ "$?" = "1" ]; then
+     echo "no" && exit 1
+else
+     GLIB_CFLAGS=`pkg-config --cflags glib-2.0`
+     GLIB_LDFLAGS=`pkg-config --libs glib-2.0`
+     echo "$GLIB_VERSION"
+fi
+
+# Check for gtk
+echo -n "-- Checking for library gtk+-$WANT_GTK ... "
+GTK_VERSION=`pkg-config --modversion gtk+-$WANT_GTK`
+if [ "$?" = "1" ]; then
+     echo "no" && exit 1
+else
+     GTK_CFLAGS=`pkg-config --cflags gtk+-$WANT_GTK`
+     GTK_LDFLAGS=`pkg-config --libs gtk+-$WANT_GTK`
+     echo "$GTK_VERSION"
+fi
+
+CFLAGS="$CFLAGS $GLIB_CFLAGS $GTK_CFLAGS"
+LDFLAGS="$LDFLAGS $GLIB_LDFLAGS $GTK_LDFLAGS"
+
+# -- module.mk
+echo -n "Creating: module.mk"
+$SED -e "s:@CC@:$compiler:
+         s:@CFLAGS@:$CFLAGS:
+         s:@LDFLAGS@:$LDFLAGS:
+         s:@TOPDIR@:$TOPDIR:
+         s:@LIBNAME@:$LIBNAME:
+         s:@LIBVERSION@:$LIBVERSION:" module.mk.in > module.mk
+
+if [ "$?" = "1" ]; then
+     echo " [ failed ]" && exit 1
+else
+     echo " [ ok ]"
+fi
+

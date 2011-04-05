@@ -11,6 +11,7 @@ module ("cream.modules")
 
 available =
 {
+     dummy  = { "dummy" },
      webkit = { "http", "https" },
      ftp    = { "ftp", "ftps" },
      about  = { "about" }
@@ -21,7 +22,6 @@ loaded = { }
 function enable (name)
      if available[name] and not loaded[name] then
           loaded[name] = capi.mod.new (name, available[name])
-          loaded[name]:init ()
      end
 end
 

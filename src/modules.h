@@ -36,13 +36,14 @@ typedef void (*CreamModuleUnloadFunc) (void);
 typedef GtkWidget * (*CreamModuleWebviewNewFunc) (void);
 
 /*!
- * \fn typedef void (*CreamModuleCallFunc) (const char *, ...)
- * @param id Function's name to call
- * @param ... The list of arguments to pass to the function
+ * \fn typedef void (*CreamModuleCallFunc) (const char *, gpointer, ...)
+ * @param id Function's name to call.
+ * @param ret The return value.
+ * @param ... A NULL ended list of arguments to pass to the function.
  *
  * Call a specific function from the module.
  */
-typedef void (*CreamModuleCallFunc) (const char *, ...);
+typedef void (*CreamModuleCallFunc) (const char *, gpointer, ...);
 
 /*!
  * \class CreamModule

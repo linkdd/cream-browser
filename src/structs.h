@@ -29,6 +29,7 @@ struct global_t
      struct Socket sock;      /*!< Unix socket */
 
      gboolean log;            /*!< if <code>TRUE</code> log every errors */
+     FILE *flog;              /*!< Log's file descriptor */
      gchar *prgname;          /*!< Program's name */
 
      GHashTable *protocols;   /*!< List of protocols and asscoiated modules */

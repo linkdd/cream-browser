@@ -28,7 +28,7 @@ static GQuark cream_lua_error_quark (void)
      static GQuark domain = 0;
 
      if (!domain)
-          domain = g_quark_from_string ("CREAM_LUA_ERROR");
+          domain = g_quark_from_string ("cream.lua");
 
      return domain;
 }

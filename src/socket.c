@@ -17,7 +17,7 @@ static GQuark cream_socket_error_quark (void)
      static GQuark domain = 0;
 
      if (!domain)
-          domain = g_quark_from_string ("CREAM_SOCKET_ERROR");
+          domain = g_quark_from_string ("cream.socket");
 
      return domain;
 }
