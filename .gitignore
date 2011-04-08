@@ -1,7 +1,7 @@
 *.swp
 *~
 
-common.mk
+*.mk
 cream-browser_build.h
 
 docs/
@@ -10,3 +10,6 @@ src/marshal.h
 
 *.o
 cream-browser
+
+*.so
+

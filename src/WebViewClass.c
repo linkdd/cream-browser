@@ -124,11 +124,11 @@ void webview_load_uri (WebView *w, const gchar *uri)
      g_return_if_fail (get_protocol (u.scheme) != 0);
 
      if (w->mod == get_protocol (u.scheme))
-          w->mod->call ("load-uri", NULL, w, &u, NULL);
+          w->mod->call ("load-uri", NULL, w->child, &u, NULL);
      else
      {
           webview_set_module (w, get_protocol (u.scheme));
-          w->mod->call ("load-uri", NULL, w, &u, NULL);
+          w->mod->call ("load-uri", NULL, w->child, &u, NULL);
      }
 }
 
@@ -264,12 +264,15 @@ GtkWidget *webview_new (CreamModule *mod)
 static void webview_class_init (WebViewClass *klass)
 {
 #if GTK_CHECK_VERSION (3, 0, 0)
+     typedef void (*DestroyCallback) (GtkWidget *);
      GtkWidgetClass *object_class = (GtkWidgetClass *) klass;
 #else
+     typedef void (*DestroyCallback) (GtkObject *);
      GtkObjectClass *object_class = (GtkObjectClass *) klass;
 #endif
 
-     object_class->destroy = webview_destroy;
+     object_class->destroy = (DestroyCallback) webview_destroy;
+
      /* signals */
      webview_signals[WEBVIEW_LOAD_COMMIT_SIGNAL] = g_signal_new (
                "load-commit",
@@ -429,7 +432,7 @@ static luaL_WebView *lua_check_webview (lua_State *L, int index)
  */
 void lua_pushwebview (lua_State *L, WebView *w)
 {
-     luaL_WebView *ret = (luaL_WebView *) lua_newuserdata (L, sizeof (WebView *));
+     luaL_WebView *ret = (luaL_WebView *) lua_newuserdata (L, sizeof (luaL_WebView));
      ret->w = w;
 
      /* create a self reference */
@@ -500,7 +503,7 @@ static int luaL_webview_useragent (lua_State *L)
 {
      luaL_WebView *obj = lua_check_webview (L, 1);
      const gchar *ua = luaL_checkstring (L, 2);
-     obj->w->mod->call ("useragent", NULL, obj->w, ua, NULL);
+     obj->w->mod->call ("useragent", NULL, obj->w->child, ua, NULL);
      return 0;
 }
 

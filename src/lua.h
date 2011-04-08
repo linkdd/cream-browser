@@ -13,9 +13,19 @@
  * @{
  */
 
-#define luaL_checktable(L,n)            \
-     if(!lua_istable (L, n))            \
-          luaL_typerror (L, n, "table");
+static inline void luaL_checktable (lua_State *L, int idx)
+{
+     if(!lua_istable (L, idx))
+          luaL_typerror (L, idx, "table");
+}
+
+static inline gboolean luaL_checkboolean (lua_State *L, int idx)
+{
+     if (!lua_isboolean (L, idx))
+          luaL_typerror (L, idx, "boolean");
+
+     return lua_toboolean (L, idx);
+}
 
 /*!
  * \def LUA_TMODULE

@@ -19,7 +19,7 @@
  * UriScheme uri;
  * uri_scheme_parse (&uri, "http://user:password@google.com:847/sub/page.html?a=connect#anchor");
  *
- * printf ("Scheme:   %s (%d)\n", uri.scheme, uri.proto);
+ * printf ("Scheme:   %s\n", uri.scheme);
  * printf ("Userinfo: %s\n", uri.userinfo);
  * printf ("Hostname: %s\n", uri.hostname);
  * printf ("Port:     %d\n", uri.port);

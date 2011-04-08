@@ -141,12 +141,7 @@ void add_protocol (const gchar *scheme, CreamModule *mod)
  */
 void del_protocol (CreamModule *mod)
 {
-     gboolean remove_data (gpointer key, gpointer value, gpointer data)
-     {
-          return (value == data);
-     }
-
-     g_hash_table_foreach_remove (global.protocols, remove_data, mod);
+     g_hash_table_foreach_remove (global.protocols, (GHRFunc) g_direct_equal, mod);
 }
 
 /*!

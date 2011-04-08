@@ -207,7 +207,7 @@ static void lua_pushmodule (lua_State *L, CreamModule *mod)
  */
 static int luaL_module_new (lua_State *L)
 {
-     int argc = lua_gettop (L), i;
+     int argc = lua_gettop (L);
      CreamModule *mod;
 
      if (argc >= 2)

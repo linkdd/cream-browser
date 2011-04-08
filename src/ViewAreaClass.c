@@ -49,7 +49,7 @@ static ListGCallback *listgcallback_new (const gchar *name, GCallback cb, gpoint
 /* used for g_list_find_custom() */
 static gint callbacklist_find (ListGCallback *a, GCallback b)
 {
-     return (a->cb == b ? 0 : (a->cb < b ? -1 : 1));
+     return (a->cb == b ? 0 : 1);
 }
 
 /* }}} */
