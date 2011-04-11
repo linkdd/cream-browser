@@ -4,6 +4,7 @@ extern int luaL_module_register (lua_State *L);
 extern int luaL_clipboard_register (lua_State *L);
 extern int luaL_util_register (lua_State *L);
 extern int luaL_webview_register (lua_State *L);
+extern int luaL_theme_register (lua_State *L);
 
 /*!
  * \addtogroup lua
@@ -63,6 +64,9 @@ gboolean lua_ctx_init (GError **err)
      lua_pop (global.luavm, 1);
 
      luaL_webview_register (global.luavm);
+     lua_pop (global.luavm, 1);
+
+     luaL_theme_register (global.luavm);
      lua_pop (global.luavm, 1);
 
      /* get package.path */
@@ -166,6 +170,163 @@ gboolean lua_ctx_parse (const char *file, GError **err)
 void lua_ctx_close (void)
 {
      if (global.luavm) lua_close (global.luavm);
+}
+
+/* Used for __index and __newindex */
+
+/*!
+ * \fn void luaI_add (lua_State *L, luaI_reg l)
+ * @param L The lua VM state.
+ * @param l Table of functions to add.
+ *
+ * Register member's setters or getters.
+ */
+void luaI_add (lua_State *L, luaI_reg l)
+{
+     for (; l->name; ++l)
+     {
+          lua_pushstring (L, l->name);
+          lua_pushlightuserdata (L, (void*) l);
+          lua_settable (L, -3);
+     }
+}
+
+static int luaI_call (lua_State *L)
+{
+     /* for get: stack has userdara, index, lightuserdata
+      * for set: stack has userdata, index, value, lightuserdata
+      */
+     luaI_reg m = (luaI_reg) lua_touserdata (L, -1);   /* member info */
+     lua_pop (L, 1);                                   /* drop lightuserdata */
+     luaL_checktype (L, 1, LUA_TUSERDATA);
+     return m->func (L, (void *)((char *) lua_touserdata (L, 1) + m->offset));
+}
+
+/*!
+ * \fn int luaI_index (lua_State *L)
+ * @param L The lua VM state.
+ * @return Number of return value in lua.
+ *
+ * __index handler.
+ */
+int luaI_index (lua_State *L)
+{
+     /* stack has userdata, index */
+     lua_pushvalue (L, 2);                   /* dup index */
+     lua_rawget (L, lua_upvalueindex (1));   /* lookup member by name */
+     if (!lua_islightuserdata (L, -1))
+     {
+          lua_pop (L, 1);                         /* drop value */
+          lua_pushvalue (L, 2);                   /* dup index */
+          lua_gettable (L, lua_upvalueindex (2)); /* else try methods */
+          if (lua_isnil (L, -1))                  /* invalid member */
+               luaL_error (L, "cannot get member '%s'", lua_tostring (L, 2));
+          return 1;
+     }
+
+     return luaI_call (L);
+}
+
+/*!
+ * \fn int luaI_newindex (lua_State *L)
+ * @param L The lua VM state.
+ * @return Number of return value in lua.
+ *
+ * __newindex handler.
+ */
+int luaI_newindex (lua_State *L)
+{
+     /* stack has userdata, index, value */
+     lua_pushvalue (L, 2);                   /* dup index */
+     lua_rawget (L, lua_upvalueindex (1));   /* lookup member by name */
+     if (!lua_islightuserdata (L, -1))       /* invalid member */
+          luaL_error (L, "cannot set member '%s'", lua_tostring (L, 2));
+     return luaI_call (L);
+}
+
+/*!
+ * \fn int luaI_getint (lua_State *L, gpointer v)
+ * @param L The lua VM state.
+ * @param v C data.
+ * @return Number of return value in lua.
+ *
+ * Int getter.
+ */
+int luaI_getint (lua_State *L, gpointer v)
+{
+     lua_pushnumber (L, *(int *) v);
+     return 1;
+}
+
+/*!
+ * \fn int luaI_getbool (lua_State *L, gpointer v)
+ * @param L The lua VM state.
+ * @param v C data.
+ * @return Number of return value in lua.
+ *
+ * Boolean getter.
+ */
+int luaI_getbool (lua_State *L, gpointer v)
+{
+     lua_pushboolean (L, *(gboolean *) v);
+     return 1;
+}
+
+/*!
+ * \fn int luaI_getstring (lua_State *L, gpointer v)
+ * @param L The lua VM state.
+ * @param v C data.
+ * @return Number of return value in lua.
+ *
+ * Int getter.
+ */
+int luaI_getstring (lua_State *L, gpointer v)
+{
+     lua_pushstring (L, (char *) v);
+     return 1;
+}
+
+/*!
+ * \fn int luaI_setint (lua_State *L, gpointer v)
+ * @param L The lua VM state.
+ * @param v C data.
+ * @return Number of return value in lua.
+ *
+ * Int setter.
+ */
+int luaI_setint (lua_State *L, gpointer v)
+{
+     *(int *) v = luaL_checkint (L, 3);
+     return 0;
+}
+
+/*!
+ * \fn int luaI_setbool (lua_State *L, gpointer v)
+ * @param L The lua VM state.
+ * @param v C data.
+ * @return Number of return value in lua.
+ *
+ * Boolean setter.
+ */
+int luaI_setbool (lua_State *L, gpointer v)
+{
+     *(gboolean *) v = luaL_checkboolean (L, 3);
+     return 0;
+}
+
+/*!
+ * \fn int luaI_setstring (lua_State *L, gpointer v)
+ * @param L The lua VM state.
+ * @param v C data.
+ * @return Number of return value in lua.
+ *
+ * Int setter.
+ */
+int luaI_setstring (lua_State *L, gpointer v)
+{
+     char *str = (char *) v;
+     str = g_strdup (luaL_checkstring (L, 3));
+     return 0;
 }
 
 /*! @} */

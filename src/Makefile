@@ -2,11 +2,13 @@ SOURCES = marshal.c \
 		WebViewClass.c ViewAreaClass.c CreamTabClass.c \
 		modules.c lua.c \
 		clipboard.c util.c \
+		theme.c interface.c \
 		modules/scheme.c socket.c main.c
 
 HEADERS = marshal.h \
 		WebViewClass.h ViewAreaClass.h CreamTabClass.h \
 		modules.h lua.h \
+		theme.h interface.h \
 		modules/scheme.h structs.h local.h
 
 OBJECTS = $(SOURCES:.c=.o)

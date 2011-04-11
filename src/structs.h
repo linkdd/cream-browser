@@ -35,6 +35,7 @@ struct global_t
      GHashTable *protocols;   /*!< List of protocols and asscoiated modules */
 
      lua_State *luavm;        /*!< Lua VM state */
+     struct theme_t *theme;   /*!< Cream-Browser's theme */
 };
 
 #endif /* __STRUCTS_H */

@@ -3,7 +3,7 @@
 
 /*!
  * \defgroup creamtab CreamTab
- * CreamTan widget definition. Notebook's tabs part.
+ * CreamTab widget definition. Notebook's tabs part.
  * @{
  */
 

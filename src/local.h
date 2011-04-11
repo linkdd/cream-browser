@@ -50,8 +50,8 @@
 #include "lua.h"
 #include "modules.h"
 
-#include "structs.h"
 #include "theme.h"
+#include "structs.h"
 
 /*!
  * \defgroup cream-browser Cream-Browser Utilities.
@@ -66,7 +66,6 @@
  */
 
 extern struct global_t global;
-extern struct theme_t theme;
 
 /*! \def FILE_TYPE_CONFIG */
 #define FILE_TYPE_CONFIG           (1 << 0)
