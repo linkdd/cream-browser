@@ -57,6 +57,29 @@ do
                shift
                ;;
 
+          --help)
+               echo "Usage: ./configure [options]"
+               echo
+               echo "Options:"
+               echo "    --help                   Print this help"
+               echo
+               echo "Installation directories:"
+               echo "    --prefix=PREFIX"
+               echo "    --prefix PREFIX          Install files in PREFIX [/usr/local]"
+               echo "    --sysconfdir=DIR"
+               echo "    --sysconfdir DIR         Read-only single-machine data [PREFIX/etc]"
+               echo
+               echo "Modules:"
+               echo "    --enable-MODULE          Build MODULE"
+               echo "    --disable-MODULE         Don't build MODULE"
+               echo
+               echo "Build options:"
+               echo "    --debug                  Build in debug mode (with more strict build options and some debugging features in the code)"
+               echo "    --with-gtk=(2.0,3.0)     Build with GTK+-2.0 or GTK+-3.0 [2.0]"
+
+               exit
+               ;;
+
           *)
                break
                ;;
