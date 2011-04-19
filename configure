@@ -103,36 +103,36 @@ if [ "x$CC" = "x" ]; then
 fi
 
 echo -n "-- Checking for compiler ($CC) ... "
-compiler=`which $CC`
+compiler=`which $CC 2>&1`
 if [ "$?" = "1" ]; then
-     echo "no" && exit 1
+     echo "no" && echo "$compiler" && exit 1
 else
      echo "yes"
 fi
 
 # Check pkg-config
 echo -n "-- Checking for pkg-config ... "
-which pkg-config > /dev/null 2>&1
+PKGCONFIG=`which pkg-config 2>&1`
 if [ "$?" = "1" ]; then
-     echo "no" && exit 1
+     echo "no" && echo "$PKGCONFIG" && exit 1
 else
      echo "yes"
 fi
 
 # Check sed
 echo -n "-- Checking for sed ... "
-SED=`which sed`
+SED=`which sed 2>&1`
 if [ "$?" = "1" ]; then
-     echo "no" && exit 1
+     echo "no" && echo "$SED" && exit 1
 else
      echo "yes"
 fi
 
 # Check for glib
 echo -n "-- Checking for library glib-2.0 ... "
-GLIB_VERSION=`pkg-config --modversion glib-2.0`
+GLIB_VERSION=`pkg-config --modversion glib-2.0 2>&1`
 if [ "$?" = "1" ]; then
-     echo "no" && exit 1
+     echo "no" && echo "$GLIB_VERSION" && exit 1
 else
      GLIB_CFLAGS=`pkg-config --cflags glib-2.0`
      GLIB_LDFLAGS=`pkg-config --libs glib-2.0`
@@ -141,9 +141,9 @@ fi
 
 # Check for gtk
 echo -n "-- Checking for library gtk+-$WANT_GTK ... "
-GTK_VERSION=`pkg-config --modversion gtk+-$WANT_GTK`
+GTK_VERSION=`pkg-config --modversion gtk+-$WANT_GTK 2>&1`
 if [ "$?" = "1" ]; then
-     echo "no" && exit 1
+     echo "no" && echo "$GTK_VERSION" && exit 1
 else
      GTK_CFLAGS=`pkg-config --cflags gtk+-$WANT_GTK`
      GTK_LDFLAGS=`pkg-config --libs gtk+-$WANT_GTK`
@@ -152,9 +152,9 @@ fi
 
 # Check for lua
 echo -n "-- Checking for library lua ... "
-LUA_VERSION=`pkg-config --modversion lua`
+LUA_VERSION=`pkg-config --modversion lua 2>&1`
 if [ "$?" = "1" ]; then
-     echo "no" && exit 1
+     echo "no" && echo "$LUA_VERSION" && exit 1
 else
      LUA_CFLAGS=`pkg-config --cflags lua`
      LUA_LDFLAGS=`pkg-config --libs lua`
