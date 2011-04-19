@@ -326,6 +326,34 @@ static const luaL_reg cream_module_meta[] =
      { NULL, NULL }
 };
 
+/* Getters / Setters */
+
+int luaI_mod_get_name (lua_State *L, gpointer v)
+{
+     CreamModule *mod = (CreamModule *) v;
+     lua_pushstring (L, mod->modulename);
+     return 1;
+}
+
+int luaI_mod_get_id (lua_State *L, gpointer v)
+{
+     CreamModule *mod = (CreamModule *) v;
+     lua_pushnumber (L, mod->module_id);
+     return 1;
+}
+
+static const luaI_reg cream_module_getters[] =
+{
+     { "name",      luaI_mod_get_name,     offsetof (luaL_Module, mod) },
+     { "id",        luaI_mod_get_id,       offsetof (luaL_Module, mod) },
+     { NULL, NULL, 0 }
+};
+
+static const luaI_reg cream_module_setters[] =
+{
+     { NULL, NULL, 0 }
+};
+
 /*!
  * \fn int luaL_module_register (lua_State *L)
  * @param L The lua VM state.
@@ -333,24 +361,6 @@ static const luaL_reg cream_module_meta[] =
  *
  * Register package in the lua VM state.
  */
-int luaL_module_register (lua_State *L)
-{
-     luaL_openlib (L, LUA_TMODULE, cream_module_methods, 0);
-
-     luaL_newmetatable (L, LUA_TMODULE);
-
-     luaL_openlib (L, 0, cream_module_meta, 0);
-
-     lua_pushliteral (L, "__index");
-     lua_pushvalue (L, -3);
-     lua_rawset (L, -3);
-
-     lua_pushliteral (L, "__metatable");
-     lua_pushvalue (L, -3);
-     lua_rawset (L, -3);
-
-     lua_pop (L, 1);
-     return 1;
-}
+LUAL_REGISTER_DECL (module, LUA_TMODULE)
 
 /*! @} */

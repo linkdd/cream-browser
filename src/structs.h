@@ -4,6 +4,7 @@
 /*! \struct GUI */
 struct GUI
 {
+     GtkWidget *window;       /*!< Main Window */
      GtkWidget *notebook;     /*!< Notebook widget (#CreamTab object) */
      GtkWidget *viewarea;     /*!< WebView area (#ViewArea object) */
      GtkWidget *statusbar;    /*!< Statusbar widget */

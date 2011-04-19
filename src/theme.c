@@ -109,7 +109,9 @@ static const luaL_reg cream_theme_meta[] =
      { NULL, NULL }
 };
 
-static const luaI_reg_pre cream_theme_setters[] =
+/* Setters / Getters */
+
+static const luaI_reg cream_theme_setters[] =
 {
      /* section global */
      { "global.font",            luaI_setstring, offsetof (struct theme_t, global.font) },
@@ -161,7 +163,7 @@ static const luaI_reg_pre cream_theme_setters[] =
      { NULL, NULL, 0 }
 };
 
-static const luaI_reg_pre cream_theme_getters[] =
+static const luaI_reg cream_theme_getters[] =
 {
      /* section global */
      { "global.font",            luaI_getstring, offsetof (struct theme_t, global.font) },
@@ -221,36 +223,6 @@ static const luaI_reg_pre cream_theme_getters[] =
  *
  * Register package in the lua VM state.
  */
-int luaL_theme_register (lua_State *L)
-{
-     int metatable, methods;
-
-     luaL_openlib (L, LUA_TTHEME, cream_theme_methods, 0);
-     methods = lua_gettop (L);
-
-     luaL_newmetatable (L, LUA_TTHEME);
-     luaL_openlib (L, 0, cream_theme_meta, 0);
-     metatable = lua_gettop (L);
-
-     lua_pushliteral (L, "__metatable");
-     lua_pushvalue (L, methods);
-     lua_rawset (L, metatable);
-
-     lua_pushliteral (L, "__index");
-     lua_pushvalue (L, metatable);
-     luaI_add (L, cream_theme_getters);
-     lua_pushvalue (L, methods);
-     lua_pushcclosure (L, luaI_index, 2);
-     lua_rawset (L, metatable);
-
-     lua_pushliteral (L, "__newindex");
-     lua_newtable (L);
-     luaI_add (L, cream_theme_setters);
-     lua_pushcclosure (L, luaI_newindex, 1);
-     lua_rawset (L, metatable);
-
-     lua_pop (L, 1);
-     return 1;
-}
+LUAL_REGISTER_DECL (theme, LUA_TTHEME)
 
 /*! @} */

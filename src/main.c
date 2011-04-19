@@ -10,6 +10,7 @@
 typedef enum
 {
      CREAM_GLOBAL_ERROR_CONFIG,
+     CREAM_GLOBAL_ERROR_THEME,
      CREAM_GLOBAL_ERROR_SOCKET,
      CREAM_GLOBAL_ERROR_CONNECT,
      CREAM_GLOBAL_ERROR_SEND,
@@ -187,6 +188,11 @@ void print_error (GError *error, gboolean abort, const gchar *fmt, ...)
 /* Function called when exit() is called. */
 static void quit (int code, void *data)
 {
+     if (HAVE_DEBUG)
+          g_on_error_query (global.prgname);
+
+     gtk_main_quit ();
+
      if (global.sock.channel)
      {
           g_io_channel_shutdown (global.sock.channel, TRUE, NULL);
@@ -200,9 +206,6 @@ static void quit (int code, void *data)
 
      if (global.flog)
           fclose (global.flog);
-
-     if (HAVE_DEBUG)
-          g_on_error_query (global.prgname);
 }
 
 /* Initialize every structures and modules. */
@@ -219,7 +222,7 @@ static void init (gchar *config)
      /* open log */
      if (global.log || HAVE_DEBUG)
      {
-          gchar *path = g_build_filename ("var", "log", "cream-browser.log", NULL);
+          gchar *path = g_build_filename (g_get_user_config_dir (), global.prgname, PACKAGE ".log", NULL);
           global.flog = fopen (path, "a");
      }
 
@@ -243,12 +246,23 @@ static void init (gchar *config)
      if (!socket_init (&error))
           print_error (error, TRUE, NULL);
 
+     /* init gui */
+     ui_init ();
+
      /* init and parse lua */
      if (!lua_ctx_init (&error))
           print_error (error, TRUE, NULL);
 
      if (!lua_ctx_parse (rc, &error))
           print_error (error, TRUE, NULL);
+
+     if (!global.theme)
+     {
+          error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_THEME, "Theme wasn't initialized.");
+          print_error (error, TRUE, NULL);
+     }
+
+     ui_show ();
 }
 
 /* Program used to send commands on the specified socket. */

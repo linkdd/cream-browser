@@ -175,13 +175,13 @@ void lua_ctx_close (void)
 /* Used for __index and __newindex */
 
 /*!
- * \fn void luaI_add (lua_State *L, luaI_reg l)
+ * \fn void luaI_add (lua_State *L, const luaI_reg *l)
  * @param L The lua VM state.
  * @param l Table of functions to add.
  *
  * Register member's setters or getters.
  */
-void luaI_add (lua_State *L, luaI_reg l)
+void luaI_add (lua_State *L, const luaI_reg *l)
 {
      for (; l->name; ++l)
      {
@@ -196,7 +196,7 @@ static int luaI_call (lua_State *L)
      /* for get: stack has userdara, index, lightuserdata
       * for set: stack has userdata, index, value, lightuserdata
       */
-     luaI_reg m = (luaI_reg) lua_touserdata (L, -1);   /* member info */
+     luaI_reg *m = (luaI_reg*) lua_touserdata (L, -1);   /* member info */
      lua_pop (L, 1);                                   /* drop lightuserdata */
      luaL_checktype (L, 1, LUA_TUSERDATA);
      return m->func (L, (void *)((char *) lua_touserdata (L, 1) + m->offset));

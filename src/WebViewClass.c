@@ -555,6 +555,8 @@ static const luaL_reg cream_webview_methods[] =
      { NULL, NULL }
 };
 
+/* metatable */
+
 /*!
  * \fn static int luaL_webview_tostring (lua_State *L)
  * @param L The lua VM state.
@@ -568,10 +570,25 @@ static int luaL_webview_tostring (lua_State *L)
      return 1;
 }
 
-static luaL_reg cream_webview_meta[] =
+static const luaL_reg cream_webview_meta[] =
 {
      { "__tostring", luaL_webview_tostring },
      { NULL, NULL }
+};
+
+/* Setters / Getters */
+
+static const luaI_reg cream_webview_getters[] =
+{
+     { "uri",       luaI_getstring,     offsetof (WebView, uri) },
+     { "title",     luaI_getstring,     offsetof (WebView, title) },
+     { "focus",     luaI_getbool,       offsetof (WebView, has_focus) },
+     { NULL, NULL, 0 }
+};
+
+static const luaI_reg cream_webview_setters[] =
+{
+     { NULL, NULL, 0 }
 };
 
 /*!
@@ -581,24 +598,6 @@ static luaL_reg cream_webview_meta[] =
  *
  * Register package in the lua VM state.
  */
-int luaL_webview_register (lua_State *L)
-{
-     luaL_openlib (L, LUA_TWEBVIEW, cream_webview_methods, 0);
-
-     luaL_newmetatable (L, LUA_TWEBVIEW);
-
-     luaL_openlib (L, 0, cream_webview_meta, 0);
-
-     lua_pushliteral (L, "__index");
-     lua_pushvalue (L, -3);
-     lua_rawset (L, -3);
-
-     lua_pushliteral (L, "__metatable");
-     lua_pushvalue (L, -3);
-     lua_rawset (L, -3);
-
-     lua_pop (L, 1);
-     return 1;
-}
+LUAL_REGISTER_DECL (webview, LUA_TWEBVIEW)
 
 /*! @} */
