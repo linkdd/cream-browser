@@ -7,5 +7,13 @@ export CFLAGS  += @CFLAGS@ -I $(TOPDIR)/../.. -fPIC -Wall -c
 export LDFLAGS += @LDFLAGS@ -shared -Wl,-soname,$(LIBNAME).$(LIBVERSION)
 export CC = @CC@
 
-SOURCES = ../api.c ../scheme.c
+SOURCES = api.c scheme.c
 HEADERS = ../api.h ../scheme.h
+
+all: module-all
+
+api.o: ../api.c
+	$(CC) $(CFLAGS) $^ -o $@
+
+scheme.o: ../scheme.c
+	$(CC) $(CFLAGS) $^ -o $@

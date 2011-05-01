@@ -16,6 +16,13 @@ static struct ModuleCallback *mod_webview_new = NULL;
 
 static GList *webviews = NULL;
 
+static void list_destroy_data (gpointer data)
+{
+     struct ModuleCallback *el = (struct ModuleCallback *) data;
+     g_free (el->name);
+     g_free (el);
+}
+
 /* Standard API for Cream-Browser */
 
 CREAM_MODULE_API void module_init (void)
@@ -27,13 +34,6 @@ CREAM_MODULE_API void module_init (void)
 
 CREAM_MODULE_API void module_unload (void)
 {
-     void list_destroy_data (gpointer data)
-     {
-          struct ModuleCallback *el = (struct ModuleCallback *) data;
-          g_free (el->name);
-          g_free (el);
-     }
-
      if (mod_unload) ((ModuleUnloadFunc) mod_unload->func) (mod_unload->data);
 
      /* free all webviews previously created */

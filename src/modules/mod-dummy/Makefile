@@ -4,7 +4,7 @@ SOURCES += mod-dummy.c
 HEADERS += mod-dummy.h
 OBJECTS = $(SOURCES:.c=.o)
 
-all: $(LIBNAME)
+module-all: $(LIBNAME)
 
 $(LIBNAME): $(OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $^
