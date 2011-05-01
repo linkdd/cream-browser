@@ -21,6 +21,19 @@ do
                shift
                ;;
 
+          --help)
+               echo "Usage: ./configure [options]"
+               echo
+               echo "Options:"
+               echo "    --help                   Print this help"
+               echo
+               echo "Build options:"
+               echo "    --debug                  Build in debug mode (with more strict build options and some debugging features in the code)"
+               echo "    --with-gtk=(2.0,3.0)     Build with GTK+-2.0 or GTK+-3.0 [2.0]"
+
+               exit
+               ;;
+
           *)
                break
                ;;
