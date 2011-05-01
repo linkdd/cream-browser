@@ -1,5 +1,5 @@
 -- Utility functions
--- @author David Delassus &lt;linkdd@ydb.me&gt;
+-- @author David Delassus &lt;david.jose.delassus@gmail.com&gt;
 
 local os = os
 local assert = assert

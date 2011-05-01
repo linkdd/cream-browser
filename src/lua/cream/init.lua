@@ -1,5 +1,5 @@
 -- Cream-Browser API
--- @author David Delassus &lt;linkdd@ydb.me&gt;
+-- @author David Delassus &lt;david.jose.delassus@gmail.com&gt;
 
 require ("cream.regex")
 require ("cream.clipboard")

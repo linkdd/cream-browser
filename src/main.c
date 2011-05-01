@@ -188,10 +188,8 @@ void print_error (GError *error, gboolean abort, const gchar *fmt, ...)
 /* Function called when exit() is called. */
 static void quit (int code, void *data)
 {
-     if (HAVE_DEBUG)
-          g_on_error_query (global.prgname);
-
-     gtk_main_quit ();
+     if (gtk_main_level () > 0)
+          gtk_main_quit ();
 
      if (global.sock.channel)
      {
@@ -206,6 +204,9 @@ static void quit (int code, void *data)
 
      if (global.flog)
           fclose (global.flog);
+
+     if (HAVE_DEBUG)
+          g_on_error_query (global.prgname);
 }
 
 /* Initialize every structures and modules. */
@@ -345,7 +346,7 @@ int main (int argc, char **argv)
 
      if (version)
      {
-          printf ("%s %s, developped by David Delassus <linkdd@ydb.me>\n", PACKAGE, VERSION);
+          printf ("%s %s, developped by David Delassus <david.jose.delassus@gmail.com>\n", PACKAGE, VERSION);
           printf ("Released under MIT license.\n");
 
           printf ("Builded with:\n");

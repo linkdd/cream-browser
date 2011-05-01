@@ -1,5 +1,5 @@
 -- Functions about tabs managment
--- @author David Delassus &lt;linkdd@ydb.me&gt;
+-- @author David Delassus &lt;david.jose.delassus@gmail.com&gt;
 
 local capi =
 {

@@ -20,7 +20,7 @@
  *
  * Or via mail :
  * <ul>
- *   <li>David Delassus &lt; <a href="#">linkdd <strong>(at)</strong> ydb <strong>(dot)</strong> me</a> &gt;</li>
+ *   <li>David Delassus &lt; <a href="#">david <strong>(dot)</strong> jose <strong>(dot)</strong> delassus <strong>(at)</strong> gmail <strong>(dot)</strong> com</a> &gt;</li>
  *   <li>Mailing list &lt; <a href="#">cream-browser-devel@lists.sourceforge.net</a> &gt; (subscribe on : http://mail.cream-browser.net)</li>
  * </ul>
  *
@@ -49,6 +49,7 @@
 
 #include "lua.h"
 #include "modules.h"
+#include "interface.h"
 
 #include "theme.h"
 #include "structs.h"
