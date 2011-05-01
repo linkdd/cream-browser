@@ -5,28 +5,29 @@
  * @{
  */
 
-/*!
- * \fn GtkWidget *interface_init (void)
- * @return The newly created window.
- *
- * Create a new window instance.
- */
-GtkWidget *interface_init (void)
+static void window_destroy (GtkWidget *window, gpointer data)
 {
-     GtkWidget *window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-     gtk_window_set_title (GTK_WINDOW (window), PACKAGE);
-     g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (gtk_main_quit), NULL);
-     return window;
+     exit (EXIT_SUCCESS);
 }
 
 /*!
- * \fn void interface_show (GtkWidget *window)
- * @param window A window (see interface_init()).
- * Show/Redraw a window.
+ * \fn void ui_init (void)
+ * Create the main window.
  */
-void interface_show (GtkWidget *window)
+void ui_init (void)
 {
-     gtk_widget_show_all (window);
+     global.gui.window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+     gtk_window_set_title (GTK_WINDOW (global.gui.window), PACKAGE);
+     g_signal_connect (G_OBJECT (global.gui.window), "destroy", G_CALLBACK (window_destroy), NULL);
+}
+
+/*!
+ * \fn void ui_show (void)
+ * Show/Redraw the main window.
+ */
+void ui_show (void)
+{
+     gtk_widget_show_all (global.gui.window);
 }
 
 /*! @} */
@@ -39,6 +40,19 @@ void interface_show (GtkWidget *window)
  * @{
  */
 
+static int luaL_signal_connect (lua_State *L)
+{
+     const gchar *signal;
+     gpointer obj;
+     int ref;
+
+     luaL_checktype (L, 1, LUA_TUSERDATA);
+     signal = luaL_checkstring (L, 2);
+     ref    = luaL_checkfunction (L, 3);
+
+     return 0;
+}
+
 static int luaL_gui_box_new (lua_State *L)
 {
      g_return_val_if_fail (global.theme, 0);
@@ -48,6 +62,7 @@ static int luaL_gui_box_new (lua_State *L)
      else
           global.gui.box = gtk_vbox_new (global.theme->global.box.homogeneous, global.theme->global.box.padding);
 
+     gtk_container_add (GTK_CONTAINER (global.gui.window), global.gui.box);
      return 0;
 }
 
@@ -131,5 +146,7 @@ static int luaL_gui_box_pack (lua_State *L)
 
      return 0;
 }
+
+
 
 /*! @} */

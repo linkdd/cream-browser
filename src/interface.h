@@ -11,8 +11,8 @@
  * @{
  */
 
-GtkWidget *interface_init (void);
-void interface_show (GtkWidget *window);
+void ui_init (void);
+void ui_show (void);
 
 /*! @} */
 
