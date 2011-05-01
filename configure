@@ -90,7 +90,7 @@ ARCH=`uname -m`
 echo -n "-- Building on $ARCH "
 if [ "$DEBUG" = "1" ]; then
      echo "in debug mode"
-     CFLAGS="-g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith -Wno-sign-compare -O2 -I $TOPDIR/"
+     CFLAGS="-g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wpointer-arith -Wno-sign-compare -O2 -I $TOPDIR/"
 else
      echo "in release mode"
      CFLAGS="-Wall -O2 -I $TOPDIR/"
