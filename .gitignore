@@ -2,6 +2,7 @@
 *~
 
 *.mk
+*.mk.sed
 cream-browser_build.h
 
 docs/

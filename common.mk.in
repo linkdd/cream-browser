@@ -1,13 +1,18 @@
 export TOPDIR = @TOPDIR@
 export SRCDIR = $(TOPDIR)/src
 export PREFIX = @PREFIX@
+export EXEC_PREFIX = @EXEC_PREFIX@
 export SYSCONFDIR = @SYSCONFDIR@
+export BINDIR = @BINDIR@
+export DATADIR = @DATADIR@
+export LOCALEDIR = @LOCALEDIR@
+export MANDIR = @MANDIR@
+export INFODIR = @INFODIR@
 
 export EXEC = cream-browser
 export PACKAGE = @PACKAGE@
 export VERSION = @VERSION@
-
-export MODULES = @MODULES@
+export LICENSE = @LICENSE@
 
 export ARCH = @ARCH@
 export CC = @CC@
@@ -16,6 +21,6 @@ export LDFLAGS += @LDFLAGS@
 
 export HAVE_DEBUG = @HAVE_DEBUG@
 
-export GLIB_VERSION = @GLIB_VERSION@
-export GTK_VERSION  = @GTK_VERSION@
-export LUA_VERSION  = @LUA_VERSION@
+export GLIB_VERSION = @glib-2.0_version@
+export GTK_VERSION  = @gtk+-2.0_version@ @gtk+-3.0_version@
+export LUA_VERSION  = @lua_version@

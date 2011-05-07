@@ -1,105 +1,113 @@
 #!/bin/sh
 
-PACKAGE="Cream-Browser"
-VERSION="unstable"
-
+TOPDIR="`pwd`"
 PREFIX="/usr/local"
+EXEC_PREFIX="$PREFIX"
 SYSCONFDIR="$PREFIX/etc"
-TOPDIR=`pwd`
-DEBUG=0
+BINDIR="$PREFIX/bin"
+LIBDIR="$PREFIX/lib"
+DATADIR="$PREFIX/share"
+LOCALEDIR="$DATADIR/locale"
+MANDIR="$PREFIX/man"
+INFODIR="$DATADIR/info"
 
-MODULES="www ftp about"
+rm -f common.mk.sed
 
-WANT_GTK="2.0"
-
-while true
+for arg
 do
-     case $1 in
-          --prefix=*)
-               PREFIX="${1#--prefix=}"
-               shift
-               ;;
+     case $arg in
+          *=*) optarg=${arg#*=} ;;
+          *)   optarg=        ;;
+     esac
 
-          --prefix)
-               PREFIX=$2
-               shift 2
-               ;;
-
-          --sysconfdir=*)
-               SYSCONFDIR="${1#--sysconfdir=}"
-               shift
-               ;;
-
-          --sysconfdir)
-               SYSCONFDIR=$2
-               shift 2
-               ;;
+     case $arg in
+          --prefix=*)      PREFIX=$optarg      ;;
+          --exec-prefix=*) EXEC_PREFIX=$optarg ;;
+          --sysconfdir=*)  SYSCONFDIR=$optarg  ;;
+          --bindir=*)      BINDIR=$optarg      ;;
+          --libdir=*)      LIBDIR=$optarg      ;;
+          --datadir=*)     DATADIR=$optarg     ;;
+          --localedir=*)   LOCALEDIR=$optarg   ;;
+          --mandir=*)      MANDIR=$optarg      ;;
+          --infodir=*)     INFODIR=$optarg     ;;
 
           --enable-*)
-               mod="${1#--enable-}"
-               MODULES="$MODULES $mod"
-               shift
+               option=`echo $arg | sed -e 's/--enable-//' -e 's/=.*//'`
+               option=`echo $option | sed 's/-/_/g'`
+
+               case "$arg" in
+                    *=*) eval "enable_${option}='$optarg'" ;;
+                    *)   eval "enable_${option}=yes"       ;;
+               esac
                ;;
 
           --disable-*)
-               mod="${1#--disable-}"
-               MODULES="${MODULES/$mod/}"
-               shift
+               option=`echo $arg | sed -e 's/--disable-//' -e 's/=.*//'`
+               option=`echo $option | sed 's/-/_/g'`
+               eval "enable_${option}=no"
                ;;
 
-          --debug)
-               DEBUG=1
-               shift
+          --with-*)
+               option=`echo $arg | sed -e 's/--with-//' -e 's/=.*//'`
+               option=`echo $option | sed 's/-/_/g'`
+
+               case "$arg" in
+                    *=*) eval "with_${option}='$optarg'" ;;
+                    *)   eval "with_${option}=yes"       ;;
+               esac
                ;;
 
-          --with-gtk=*)
-               WANT_GTK="${1#--with-gtk=}"
-               shift
+          --without-*)
+               option=`echo $arg | sed -e 's/--without-//' -e 's/=.*//'`
+               option=`echo $option | sed 's/-/_/g'`
+               eval "with_${option}=no"
                ;;
 
-          --help)
+          --help | *)
                echo "Usage: ./configure [options]"
                echo
-               echo "Options:"
-               echo "    --help                   Print this help"
+               echo "Standard build options:"
+               echo "    --prefix=DIR              Installation base (MI files) [/usr/local]"
+               echo "    --exec-prefix=DIR         Installation base (MD files) [PREFIX]"
+               echo "    --sysconfdir=DIR          System configuration files [PREFIX/etc]"
+               echo "    --bindir=DIR              Executables (for common users) [PREFIX/bin]"
+               echo "    --libdir=DIR              System libraries [PREFIX/lib]"
+               echo "    --datadir=DIR             Data files (for programs) [PREFIX/share]"
+               echo "    --localedir=DIR           Multi-language support locales [DATADIR/locale]"
+               echo "    --mandir=DIR              Manual page documentation [PREFIX/man]"
+               echo "    --infodir=DIR             Texinfo documentation [DATADIR/info]"
                echo
-               echo "Installation directories:"
-               echo "    --prefix=PREFIX"
-               echo "    --prefix PREFIX          Install files in PREFIX [/usr/local]"
-               echo "    --sysconfdir=DIR"
-               echo "    --sysconfdir DIR         Read-only single-machine data [PREFIX/etc]"
-               echo
-               echo "Modules:"
-               echo "    --enable-MODULE          Build MODULE"
-               echo "    --disable-MODULE         Don't build MODULE"
-               echo
-               echo "Build options:"
-               echo "    --debug                  Build in debug mode (with more strict build options and some debugging features in the code)"
-               echo "    --with-gtk=(2.0,3.0)     Build with GTK+-2.0 or GTK+-3.0 [2.0]"
+               echo "    --enable-debug            Compile in debug mode [no]"
+               echo "    --enable-PACKAGE          Enable PACKAGE suport."
+               echo "    --disbale-PACKAGE         Disable PACKAGE support."
+               echo "    --with-OPTION             Build with OPTION enabled."
+               echo "    --without-OPTION          Build with OPTION disabled."
 
                exit
-               ;;
-
-          *)
-               break
                ;;
      esac
 done
 
+. ./project.conf
+
+echo "$PACKAGE $VERSION, released under $LICENSE license."
+
 ARCH=`uname -m`
 echo -n "-- Building on $ARCH "
-if [ "$DEBUG" = "1" ]; then
+if [ "${enable_debug}" = "yes" ]; then
      echo "in debug mode"
-     CFLAGS="-g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wpointer-arith -Wno-sign-compare -O2 -I $TOPDIR/"
+     CFLAGS="-g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wpointer-arith -Wno-sign-compare -O2 -I $TOPDIR/ "
+     HAVE_DEBUG="1"
 else
      echo "in release mode"
-     CFLAGS="-Wall -O2 -I $TOPDIR/"
+     CFLAGS="-Wall -O2 -I $TOPDIR/ "
+     HAVE_DEBUG="0"
 fi
 LDFLAGS=""
 
 # Check CC
 if [ "x$CC" = "x" ]; then
-     CC="gcc"
+     CC="cc"
 fi
 
 echo -n "-- Checking for compiler ($CC) ... "
@@ -128,62 +136,48 @@ else
      echo "yes"
 fi
 
-# Check for glib
-echo -n "-- Checking for library glib-2.0 ... "
-GLIB_VERSION=`pkg-config --modversion glib-2.0 2>&1`
-if [ "$?" = "1" ]; then
-     echo "no" && echo "$GLIB_VERSION" && exit 1
-else
-     GLIB_CFLAGS=`pkg-config --cflags glib-2.0`
-     GLIB_LDFLAGS=`pkg-config --libs glib-2.0`
-     echo "$GLIB_VERSION"
-fi
-
-# Check for gtk
-echo -n "-- Checking for library gtk+-$WANT_GTK ... "
-GTK_VERSION=`pkg-config --modversion gtk+-$WANT_GTK 2>&1`
-if [ "$?" = "1" ]; then
-     echo "no" && echo "$GTK_VERSION" && exit 1
-else
-     GTK_CFLAGS=`pkg-config --cflags gtk+-$WANT_GTK`
-     GTK_LDFLAGS=`pkg-config --libs gtk+-$WANT_GTK`
-     echo "$GTK_VERSION"
-fi
-
-# Check for lua
-echo -n "-- Checking for library lua ... "
-LUA_VERSION=`pkg-config --modversion lua 2>&1`
-if [ "$?" = "1" ]; then
-     echo "no" && echo "$LUA_VERSION" && exit 1
-else
-     LUA_CFLAGS=`pkg-config --cflags lua`
-     LUA_LDFLAGS=`pkg-config --libs lua`
-     echo "$LUA_VERSION"
-fi
-
-CFLAGS="$CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $LUA_CFLAGS"
-LDFLAGS="$LDFLAGS $GLIB_LDFLAGS $GTK_LDFLAGS $LUA_LDFLAGS"
+# Check libraries
+for lib in $LIBRARIES
+do
+     echo -n "-- Checking for library $lib ... "
+     LIB_VERSION=`$PKGCONFIG --modversion $lib 2>&1`
+     if [ "$?" = "1" ]; then
+          echo "no" && echo "$LIB_VERSION" && exit 1
+     else
+          CFLAGS+=`$PKGCONFIG --cflags $lib`
+          LDFLAGS+=`$PKGCONFIG --libs $lib`
+          echo "$LIB_VERSION"
+          echo "s:@${lib}_version@:$LIB_VERSION:" >> common.mk.sed
+     fi
+done
 
 # -- common.mk
-echo -n "Creating: common.mk"
-$SED -e "s:@CC@:$compiler:
-         s:@CFLAGS@:$CFLAGS:
-         s:@LDFLAGS@:$LDFLAGS:
-         s:@GLIB_VERSION@:$GLIB_VERSION:
-         s:@GTK_VERSION@:$GTK_VERSION:
-         s:@LUA_VERSION@:$LUA_VERSION:
-         s:@MODULES@:$MODULES:
-         s:@TOPDIR@:$TOPDIR:
-         s:@PREFIX@:$PREFIX:
-         s:@SYSCONFDIR@:$SYSCONFDIR:
-         s:@HAVE_DEBUG@:$DEBUG:
-         s:@ARCH@:$ARCH:
-         s:@PACKAGE@:$PACKAGE:
-         s:@VERSION@:$VERSION:" common.mk.in > common.mk
+echo "
+s:@PACKAGE@:$PACKAGE:
+s:@VERSION@:$VERSION:
+s:@LICENSE@:$LICENSE:
+s:@TOPDIR@:$TOPDIR:
+s:@PREFIX@:$PREFIX:
+s:@EXEC_PREFIX@:$EXEC_PREFIX:
+s:@SYSCONFDIR@:$SYSCONFDIR:
+s:@BINDIR@:$BINDIR:
+s:@LIBDIR@:$LIBDIR:
+s:@DATADIR@:$DATADIR:
+s:@LOCALEDIR@:$LOCALEDIR:
+s:@MANDIR@:$MANDIR:
+s:@INFODIR@:$INFODIR:
+s:@CC@:$compiler:
+s:@CFLAGS@:$CFLAGS:
+s:@LDFLAGS@:$LDFLAGS:
+s:@ARCH@:$ARCH:
+s:@HAVE_DEBUG@:$HAVE_DEBUG:
+s:@.*@::" >> common.mk.sed
+
+$SED -f common.mk.sed common.mk.in > common.mk
 
 if [ "$?" = "1" ]; then
-     echo " [ failed ]" && exit 1
+     echo " * Failed to generate common.mk" && exit 1
 else
-     echo " [ ok ]"
+     echo "Generated common.mk"
 fi
 

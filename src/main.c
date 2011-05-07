@@ -372,7 +372,7 @@ int main (int argc, char **argv)
      if (version)
      {
           printf ("%s %s, developped by David Delassus <david.jose.delassus@gmail.com>\n", PACKAGE, VERSION);
-          printf ("Released under MIT license.\n");
+          printf ("Released under %s license.\n", LICENSE);
 
           printf ("Builded with:\n");
           printf (" - GLib %s\n", LIB_GLIB_VERSION);
@@ -380,10 +380,9 @@ int main (int argc, char **argv)
           printf (" - Lua  %s\n\n", LIB_LUA_VERSION);
 
           printf ("Builded on %s with:\n", ARCH);
+          printf (" - C Compiler: %s\n", COMPILER);
           printf (" - CFLAGS:     %s\n", CFLAGS);
           printf (" - LDFLAGS:    %s\n", LDFLAGS);
-          printf (" - PREFIX:     %s\n", PREFIX);
-          printf (" - SYSCONFDIR: %s\n\n", SYSCONFDIR);
 
           if (HAVE_DEBUG)
                printf ("Builded in debug mode.\n");

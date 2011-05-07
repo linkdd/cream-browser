@@ -31,8 +31,8 @@
  *
  * \section intro What is Cream-Browser ?
  *
- * Cream-Browser is a light web browser based on the layout engine <a href="http://www.webkit.org">WebKit</a>
- * and using the library <a href="http://www.gtk.org/">GTK+</a>. Its interface is the same as <a href="http://vimperator.org">Vimperator</a>
+ * Cream-Browser is a light web browser using <a href="http://www.gtk.org/">GTK+</a>.
+ * Its interface is the same as <a href="http://vimperator.org">Vimperator</a>
  * (a famous Firefox plugin to use it like the text editor : Vim).
  *
  * \section contact Contact
@@ -46,7 +46,7 @@
  * Or via mail :
  * <ul>
  *   <li>David Delassus &lt; <a href="#">david <strong>(dot)</strong> jose <strong>(dot)</strong> delassus <strong>(at)</strong> gmail <strong>(dot)</strong> com</a> &gt;</li>
- *   <li>Mailing list &lt; <a href="#">cream-browser-devel@lists.sourceforge.net</a> &gt; (subscribe on : http://mail.cream-browser.net)</li>
+ *   <li>Mailing list &lt; <a href="#">cream-browser-devel@lists.sourceforge.net</a> &gt; (subscribe on : http://mails.cream-browser.net)</li>
  * </ul>
  *
  */
