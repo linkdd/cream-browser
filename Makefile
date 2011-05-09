@@ -1,32 +1,36 @@
 include common.mk
 
-all: cream-browser_build.h
+project-all: cream-browser_build.h
 	@make -C $(SRCDIR)/ all
 
-clean:
+project-clean:
 	@make -C $(SRCDIR) clean
+
+project-install:
+	@echo "Installing $(DESTDIR)$(BINDIR)/$(EXEC)..."
+	@install -d $(DESTDIR)$(BINDIR)
+	@install -c $(SRCDIR)/$(EXEC) $(DESTDIR)$(BINDIR)/$(EXEC) -m 755
+	
+	@echo "Installing $(DESTDIR)$(DATADIR)/$(EXEC)..."
+	@install -d $(DESTDIR)$(DATADIR)/$(EXEC)/cream/
+	@install -c $(SRCDIR)/lua/cream/* $(DESTDIR)$(DATADIR)/$(EXEC)/cream/ -m 644
+
+project-uninstall:
+	@echo "Uninstalling $(DESTDIR)$(BINDIR)/$(EXEC)..."
+	@rm -rf $(DESTDIR)$(BINDIR)/$(EXEC)
+	@echo "Uninstalling $(DESTDIR)$(DATADIR)/$(EXEC)..."
+	@rm -rf $(DESTDIR)$(DATADIR)/$(EXEC)
+
+project-maintainer-clean:
 	@rm -vrf cream-browser_build.h
 
-install:
-	@echo "Installing $(DESTDIR)$(BINDIR)/cream-browser..."
-	@install -d $(DESTDIR)$(BINDIR)
-	@install -c $(SRCDIR)/$(EXEC) $(DESTDIR)$(BINDIR)/cream-browser -m 755
-	
-	@echo "Installing $(DESTDIR)$(DATADIR)/cream-browser..."
-	@install -d $(DESTDIR)$(DATADIR)/cream-browser/cream/
-	@install -c $(SRCDIR)/lua/cream/* $(DESTDIR)$(DATADIR)/cream-browser/cream/ -m 644
-
-uninstall:
-	@echo "Uninstalling $(DESTDIR)$(BINDIR)/cream-browser..."
-	@rm -rf $(DESTDIR)$(BINDIR)/cream-browser
-	@echo "Uninstalling $(DESTDIR)$(DATADIR)/cream-browser..."
-	@rm -rf $(DESTDIR)$(DATADIR)/cream-browser
-
+.PHONY: doc
 doc:
 	@mkdir -p docs/lua docs/cream-browser
 	luadoc $(SRCDIR)/lua/**/*.lua -d docs/lua --nofiles
 	doxygen Doxyfile
 
+.PHONY: cream-browser_build.h
 cream-browser_build.h: cream-browser_build.h.in
 	@echo "-- Generating cream-browser_build.h ..."
 	@sed -e "s:@HAVE_DEBUG@:$(HAVE_DEBUG):"      \
@@ -50,4 +54,4 @@ cream-browser_build.h: cream-browser_build.h.in
 		-e "s:@MANDIR@:$(MANDIR):"              \
 		-e "s:@INFODIR@:$(INFODIR):" $^ > $@
 
-.PHONY: all clean install uninstall cream-browser_build.h
+

@@ -1,124 +1,240 @@
 #!/bin/sh
 
-LIBNAME="libcreammod-dummy.so"
-LIBVERSION="0.1"
+TOPDIR="`pwd`"
+SRCDIR="$TOPDIR/src"
+PREFIX="/usr/local"
+EXEC_PREFIX="$PREFIX"
+SYSCONFDIR="$PREFIX/etc"
+BINDIR="$PREFIX/bin"
+LIBDIR="$PREFIX/lib"
+DATADIR="$PREFIX/share"
+LOCALEDIR="$DATADIR/locale"
+MANDIR="$PREFIX/man"
+INFODIR="$DATADIR/info"
 
-TOPDIR=`pwd`
-DEBUG=0
+rm -f common.mk.sed
 
-WANT_GTK="2.0"
-
-while true
+for arg
 do
-     case $1 in
-          --debug)
-               DEBUG=1
-               shift
+     case $arg in
+          *=*) optarg=${arg#*=} ;;
+          *)   optarg=          ;;
+     esac
+
+     case $arg in
+          --build=*)  BUILD=$optarg  ;;
+          --host=*)   HOST=$optarg   ;;
+          --target=*) TARGET=$optarg ;;
+
+          --prefix=*)      PREFIX=$optarg      ;;
+          --exec-prefix=*) EXEC_PREFIX=$optarg ;;
+          --sysconfdir=*)  SYSCONFDIR=$optarg  ;;
+          --bindir=*)      BINDIR=$optarg      ;;
+          --libdir=*)      LIBDIR=$optarg      ;;
+          --datadir=*)     DATADIR=$optarg     ;;
+          --localedir=*)   LOCALEDIR=$optarg   ;;
+          --mandir=*)      MANDIR=$optarg      ;;
+          --infodir=*)     INFODIR=$optarg     ;;
+
+          --enable-*)
+               option=`echo $arg | sed -e 's/--enable-//' -e 's/=.*//'`
+               option=`echo $option | sed 's/-/_/g'`
+
+               case "$arg" in
+                    *=*) eval "enable_${option}='$optarg'" ;;
+                    *)   eval "enable_${option}=yes"       ;;
+               esac
                ;;
 
-          --with-gtk=*)
-               WANT_GTK="${1#--with-gtk=}"
-               shift
+          --disable-*)
+               option=`echo $arg | sed -e 's/--disable-//' -e 's/=.*//'`
+               option=`echo $option | sed 's/-/_/g'`
+               eval "enable_${option}=no"
                ;;
 
-          --help)
+          --with-*)
+               option=`echo $arg | sed -e 's/--with-//' -e 's/=.*//'`
+               option=`echo $option | sed 's/-/_/g'`
+
+               case "$arg" in
+                    *=*) eval "with_${option}='$optarg'" ;;
+                    *)   eval "with_${option}=yes"       ;;
+               esac
+               ;;
+
+          --without-*)
+               option=`echo $arg | sed -e 's/--without-//' -e 's/=.*//'`
+               option=`echo $option | sed 's/-/_/g'`
+               eval "with_${option}=no"
+               ;;
+
+          --help | *)
                echo "Usage: ./configure [options]"
                echo
-               echo "Options:"
-               echo "    --help                   Print this help"
+               echo "Standard build options:"
+               echo "    --build=STRING            Host environment for build [auto-detect]"
+               echo "    --host=STRING             Cross-compile for target environment [BUILD]"
                echo
-               echo "Build options:"
-               echo "    --debug                  Build in debug mode (with more strict build options and some debugging features in the code)"
-               echo "    --with-gtk=(2.0,3.0)     Build with GTK+-2.0 or GTK+-3.0 [2.0]"
+               echo "    --prefix=DIR              Installation base (MI files) [/usr/local]"
+               echo "    --exec-prefix=DIR         Installation base (MD files) [PREFIX]"
+               echo "    --sysconfdir=DIR          System configuration files [PREFIX/etc]"
+               echo "    --bindir=DIR              Executables (for common users) [PREFIX/bin]"
+               echo "    --libdir=DIR              System libraries [PREFIX/lib]"
+               echo "    --datadir=DIR             Data files (for programs) [PREFIX/share]"
+               echo "    --localedir=DIR           Multi-language support locales [DATADIR/locale]"
+               echo "    --mandir=DIR              Manual page documentation [PREFIX/man]"
+               echo "    --infodir=DIR             Texinfo documentation [DATADIR/info]"
+               echo
+               echo "    --enable-debug            Compile in debug mode [no]"
+               echo "    --enable-PACKAGE          Enable PACKAGE suport."
+               echo "    --disbale-PACKAGE         Disable PACKAGE support."
+               echo "    --with-OPTION             Build with OPTION enabled."
+               echo "    --without-OPTION          Build with OPTION disabled."
 
                exit
-               ;;
-
-          *)
-               break
                ;;
      esac
 done
 
-ARCH=`uname -m`
-echo -n "-- Building on $ARCH "
-if [ "$DEBUG" = "1" ]; then
+. ./project.conf
+
+if [ "${is_library}" = "yes" ]; then
+     echo "$LIBNAME.$LIBVERSION, released under $LICENSE license."
+     echo "s:@LIBNAME@:$LIBNAME:" >> common.mk.sed
+     echo "s:@LIBVERSION@:$LIBVERSION:" >> common.mk.sed
+     echo "s:@LICENSE@:$LICENSE:" >> common.mk.sed
+else
+     echo "$PACKAGE $VERSION, released under $LICENSE license."
+     echo "s:@PACKAGE@:$PACKAGE:" >> common.mk.sed
+     echo "s:@VERSION@:$VERSION:" >> common.mk.sed
+     echo "s:@LICENSE@:$LICENSE:" >> common.mk.sed
+fi
+
+echo -n "-- Building "
+if [ "${enable_debug}" = "yes" ]; then
      echo "in debug mode"
-     CFLAGS="-g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wpointer-arith -Wno-sign-compare -O2 -I $TOPDIR/src/"
+     CFLAGS+=" -g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wpointer-arith -Wno-sign-compare -O2 -I $TOPDIR/ "
+     HAVE_DEBUG="1"
 else
      echo "in release mode"
-     CFLAGS="-Wall -O2 -I $TOPDIR/src/"
+     CFLAGS+=" -Wall -O2 -I $TOPDIR/ "
+     HAVE_DEBUG="0"
 fi
-LDFLAGS=""
+
+if [ "${is_library}" = "yes" ]; then
+     CFLAGS+="-fPIC "
+     LDFLAGS+="-shared -Wl,-soname,$LIBNAME.$LIBVERSION "
+fi
 
 # Check CC
 if [ "x$CC" = "x" ]; then
-     CC="gcc"
+     CC="cc"
 fi
 
 echo -n "-- Checking for compiler ($CC) ... "
-compiler=`which $CC`
+compiler=`which $CC 2>&1`
 if [ "$?" = "1" ]; then
-     echo "no" && exit 1
+     echo "no" && echo "$compiler" && exit 1
 else
      echo "yes"
 fi
 
+# Check architecture
+if [ "x$BUILD" = "x" ]; then
+     BUILD="`$CC -dumpmachine`"
+fi
+
+if [ "x$HOST" = "x" ]; then
+     HOST="$BUILD"
+fi
+
+if [ "$BUILD" != "$HOST" ]; then
+     CROSS_COMPILE="yes"
+     echo "-- Building on $BUILD for $HOST"
+else
+     CROSS_COMPILE="no"
+     echo "-- Building on $BUILD"
+fi
+
+echo "s:@BUILD@:$BUILD:" >> common.mk.sed
+echo "s:@HOST@:$HOST:" >> common.mk.sed
+echo "s:@CROSS_COMPILE@:$CROSS_COMPILE:" >> common.mk.sed
+
 # Check pkg-config
 echo -n "-- Checking for pkg-config ... "
-which pkg-config > /dev/null 2>&1
+PKGCONFIG=`which pkg-config 2>&1`
 if [ "$?" = "1" ]; then
-     echo "no" && exit 1
+     echo "no" && echo "$PKGCONFIG" && exit 1
 else
      echo "yes"
 fi
 
 # Check sed
 echo -n "-- Checking for sed ... "
-SED=`which sed`
+SED=`which sed 2>&1`
 if [ "$?" = "1" ]; then
-     echo "no" && exit 1
+     echo "no" && echo "$SED" && exit 1
 else
      echo "yes"
 fi
 
-# Check for glib
-echo -n "-- Checking for library glib-2.0 ... "
-GLIB_VERSION=`pkg-config --modversion glib-2.0`
+# Check libraries
+for lib in $LIBRARIES
+do
+     echo -n "-- Checking for library $lib ... "
+     LIB_VERSION=`$PKGCONFIG --modversion $lib 2>&1`
+     if [ "$?" = "1" ]; then
+          echo "no" && echo "$LIB_VERSION" && exit 1
+     else
+          CFLAGS+=`$PKGCONFIG --cflags $lib`
+          LDFLAGS+=`$PKGCONFIG --libs $lib`
+          echo "$LIB_VERSION"
+          echo "s:@${lib}_version@:$LIB_VERSION:" >> common.mk.sed
+     fi
+done
+
+# -- common.mk
+echo "
+s:@TOPDIR@:$TOPDIR:
+s:@PREFIX@:$PREFIX:
+s:@EXEC_PREFIX@:$EXEC_PREFIX:
+s:@SYSCONFDIR@:$SYSCONFDIR:
+s:@BINDIR@:$BINDIR:
+s:@LIBDIR@:$LIBDIR:
+s:@DATADIR@:$DATADIR:
+s:@LOCALEDIR@:$LOCALEDIR:
+s:@MANDIR@:$MANDIR:
+s:@INFODIR@:$INFODIR:
+s:@CC@:$compiler:
+s:@CFLAGS@:$CFLAGS:
+s:@LDFLAGS@:$LDFLAGS:
+s:@ARCH@:$ARCH:
+s:@HAVE_DEBUG@:$HAVE_DEBUG:
+s:@SUBDIRS@:$SUBDIRS:
+s:@.*@::" >> common.mk.sed
+
+$SED -f common.mk.sed common.mk.in > common.mk
+
 if [ "$?" = "1" ]; then
-     echo "no" && exit 1
+     echo " * Failed to generate common.mk" && exit 1
 else
-     GLIB_CFLAGS=`pkg-config --cflags glib-2.0`
-     GLIB_LDFLAGS=`pkg-config --libs glib-2.0`
-     echo "$GLIB_VERSION"
+     echo "Generated common.mk"
 fi
 
-# Check for gtk
-echo -n "-- Checking for library gtk+-$WANT_GTK ... "
-GTK_VERSION=`pkg-config --modversion gtk+-$WANT_GTK`
-if [ "$?" = "1" ]; then
-     echo "no" && exit 1
-else
-     GTK_CFLAGS=`pkg-config --cflags gtk+-$WANT_GTK`
-     GTK_LDFLAGS=`pkg-config --libs gtk+-$WANT_GTK`
-     echo "$GTK_VERSION"
-fi
-
-CFLAGS="$CFLAGS $GLIB_CFLAGS $GTK_CFLAGS"
-LDFLAGS="$LDFLAGS $GLIB_LDFLAGS $GTK_LDFLAGS"
-
-# -- module.mk
-echo -n "Creating: module.mk"
-$SED -e "s:@CC@:$compiler:
-         s:@CFLAGS@:$CFLAGS:
-         s:@LDFLAGS@:$LDFLAGS:
-         s:@TOPDIR@:$TOPDIR:
-         s:@LIBNAME@:$LIBNAME:
-         s:@LIBVERSION@:$LIBVERSION:" module.mk.in > module.mk
-
-if [ "$?" = "1" ]; then
-     echo " [ failed ]" && exit 1
-else
-     echo " [ ok ]"
-fi
-
+for subdir in $SUBDIRS
+do
+     echo
+     echo ":: Entering $subdir"
+     cd $subdir
+     CC=$CC ./configure --prefix=$PREFIX \
+                       --exec-prefix=$EXEC_PREFIX \
+                       --sysconfdir=$SYSCONFDIR \
+                       --bindir=$BINDIR \
+                       --libdir=$LIBDIR \
+                       --datadir=$DATADIR \
+                       --localedir=$LOCALEDIR \
+                       --mandir=$MANDIR \
+                       --infodir=$INFODIR \
+                       --enable-debug=${enable_debug} \
+                       $SUBDIR_OPTIONS
+done

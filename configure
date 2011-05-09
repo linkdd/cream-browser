@@ -1,6 +1,7 @@
 #!/bin/sh
 
 TOPDIR="`pwd`"
+SRCDIR="$TOPDIR/src"
 PREFIX="/usr/local"
 EXEC_PREFIX="$PREFIX"
 SYSCONFDIR="$PREFIX/etc"
@@ -17,10 +18,14 @@ for arg
 do
      case $arg in
           *=*) optarg=${arg#*=} ;;
-          *)   optarg=        ;;
+          *)   optarg=          ;;
      esac
 
      case $arg in
+          --build=*)  BUILD=$optarg  ;;
+          --host=*)   HOST=$optarg   ;;
+          --target=*) TARGET=$optarg ;;
+
           --prefix=*)      PREFIX=$optarg      ;;
           --exec-prefix=*) EXEC_PREFIX=$optarg ;;
           --sysconfdir=*)  SYSCONFDIR=$optarg  ;;
@@ -67,6 +72,9 @@ do
                echo "Usage: ./configure [options]"
                echo
                echo "Standard build options:"
+               echo "    --build=STRING            Host environment for build [auto-detect]"
+               echo "    --host=STRING             Cross-compile for target environment [BUILD]"
+               echo
                echo "    --prefix=DIR              Installation base (MI files) [/usr/local]"
                echo "    --exec-prefix=DIR         Installation base (MD files) [PREFIX]"
                echo "    --sysconfdir=DIR          System configuration files [PREFIX/etc]"
@@ -90,20 +98,33 @@ done
 
 . ./project.conf
 
-echo "$PACKAGE $VERSION, released under $LICENSE license."
+if [ "${is_library}" = "yes" ]; then
+     echo "$LIBNAME.$LIBVERSION, released under $LICENSE license."
+     echo "s:@LIBNAME@:$LIBNAME:" >> common.mk.sed
+     echo "s:@LIBVERSION@:$LIBVERSION:" >> common.mk.sed
+     echo "s:@LICENSE@:$LICENSE:" >> common.mk.sed
+else
+     echo "$PACKAGE $VERSION, released under $LICENSE license."
+     echo "s:@PACKAGE@:$PACKAGE:" >> common.mk.sed
+     echo "s:@VERSION@:$VERSION:" >> common.mk.sed
+     echo "s:@LICENSE@:$LICENSE:" >> common.mk.sed
+fi
 
-ARCH=`uname -m`
-echo -n "-- Building on $ARCH "
+echo -n "-- Building "
 if [ "${enable_debug}" = "yes" ]; then
      echo "in debug mode"
-     CFLAGS="-g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wpointer-arith -Wno-sign-compare -O2 -I $TOPDIR/ "
+     CFLAGS+=" -g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wpointer-arith -Wno-sign-compare -O2 -I $TOPDIR/ "
      HAVE_DEBUG="1"
 else
      echo "in release mode"
-     CFLAGS="-Wall -O2 -I $TOPDIR/ "
+     CFLAGS+=" -Wall -O2 -I $TOPDIR/ "
      HAVE_DEBUG="0"
 fi
-LDFLAGS=""
+
+if [ "${is_library}" = "yes" ]; then
+     CFLAGS+="-fPIC "
+     LDFLAGS+="-shared -Wl,-soname,$LIBNAME.$LIBVERSION "
+fi
 
 # Check CC
 if [ "x$CC" = "x" ]; then
@@ -117,6 +138,27 @@ if [ "$?" = "1" ]; then
 else
      echo "yes"
 fi
+
+# Check architecture
+if [ "x$BUILD" = "x" ]; then
+     BUILD="`$CC -dumpmachine`"
+fi
+
+if [ "x$HOST" = "x" ]; then
+     HOST="$BUILD"
+fi
+
+if [ "$BUILD" != "$HOST" ]; then
+     CROSS_COMPILE="yes"
+     echo "-- Building on $BUILD for $HOST"
+else
+     CROSS_COMPILE="no"
+     echo "-- Building on $BUILD"
+fi
+
+echo "s:@BUILD@:$BUILD:" >> common.mk.sed
+echo "s:@HOST@:$HOST:" >> common.mk.sed
+echo "s:@CROSS_COMPILE@:$CROSS_COMPILE:" >> common.mk.sed
 
 # Check pkg-config
 echo -n "-- Checking for pkg-config ... "
@@ -153,9 +195,6 @@ done
 
 # -- common.mk
 echo "
-s:@PACKAGE@:$PACKAGE:
-s:@VERSION@:$VERSION:
-s:@LICENSE@:$LICENSE:
 s:@TOPDIR@:$TOPDIR:
 s:@PREFIX@:$PREFIX:
 s:@EXEC_PREFIX@:$EXEC_PREFIX:
@@ -171,6 +210,7 @@ s:@CFLAGS@:$CFLAGS:
 s:@LDFLAGS@:$LDFLAGS:
 s:@ARCH@:$ARCH:
 s:@HAVE_DEBUG@:$HAVE_DEBUG:
+s:@SUBDIRS@:$SUBDIRS:
 s:@.*@::" >> common.mk.sed
 
 $SED -f common.mk.sed common.mk.in > common.mk
@@ -181,3 +221,20 @@ else
      echo "Generated common.mk"
 fi
 
+for subdir in $SUBDIRS
+do
+     echo
+     echo ":: Entering $subdir"
+     cd $subdir
+     CC=$CC ./configure --prefix=$PREFIX \
+                       --exec-prefix=$EXEC_PREFIX \
+                       --sysconfdir=$SYSCONFDIR \
+                       --bindir=$BINDIR \
+                       --libdir=$LIBDIR \
+                       --datadir=$DATADIR \
+                       --localedir=$LOCALEDIR \
+                       --mandir=$MANDIR \
+                       --infodir=$INFODIR \
+                       --enable-debug=${enable_debug} \
+                       $SUBDIR_OPTIONS
+done

@@ -14,7 +14,10 @@ export PACKAGE = @PACKAGE@
 export VERSION = @VERSION@
 export LICENSE = @LICENSE@
 
-export ARCH = @ARCH@
+export BUILD = @BUILD@
+export HOST  = @HOST@
+export CROSS_COMPILING = @CROSS_COMPILING@
+
 export CC = @CC@
 export CFLAGS  += @CFLAGS@
 export LDFLAGS += @LDFLAGS@
@@ -24,3 +27,45 @@ export HAVE_DEBUG = @HAVE_DEBUG@
 export GLIB_VERSION = @glib-2.0_version@
 export GTK_VERSION  = @gtk+-2.0_version@ @gtk+-3.0_version@
 export LUA_VERSION  = @lua_version@
+
+SUBDIRS = @SUBDIRS@
+
+.PHONY: all clean install uninstall maintainer-clean
+
+all: project-all subdirs-all
+clean: project-clean subdirs-clean
+install: project-install subdirs-install
+uninstall: project-uninstall subdirs-uninstall
+
+maintainer-clean: clean project-maintainer-clean subdirs-maintainer-clean
+	@rm -vrf common.mk
+	@rm -vrf common.mk.sed
+
+.PHONY: subdirs-all subdirs-clean subdirs-install subdirs-uninstall subdirs-maintainer-clean
+
+subdirs-all:
+	@for subdir in $(SUBDIRS); do \
+		make -C $$subdir all;    \
+	done
+
+subdirs-clean:
+	@for subdir in $(SUBDIRS); do \
+		make -C $$subdir clean;  \
+	done
+
+subdirs-install:
+	@for subdir in $(SUBDIRS); do  \
+		make -C $$subdir install; \
+	done
+
+subdirs-uninstall:
+	@for subdir in $(SUBDIRS); do    \
+		make -C $$subdir uninstall; \
+	done
+
+subdirs-maintainer-clean:
+	@for subdir in $(SUBDIRS); do           \
+		make -C $$subdir maintainer-clean; \
+	done
+
+.PHONY: project-all project-clean project-install project-uninstall project-maintainer-clean
