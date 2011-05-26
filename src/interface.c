@@ -44,6 +44,9 @@ void ui_init (void)
      global.gui.window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
      gtk_window_set_title (GTK_WINDOW (global.gui.window), PACKAGE);
      g_signal_connect (G_OBJECT (global.gui.window), "destroy", G_CALLBACK (window_destroy), NULL);
+
+     global.gui.notebook = creamtab_new ();
+     global.gui.viewarea = viewarea_new ();
 }
 
 /*!
@@ -65,19 +68,6 @@ void ui_show (void)
  * @{
  */
 
-static int luaL_signal_connect (lua_State *L)
-{
-     const gchar *signal;
-     gpointer obj;
-     int ref;
-
-     luaL_checktype (L, 1, LUA_TUSERDATA);
-     signal = luaL_checkstring (L, 2);
-     ref    = luaL_checkfunction (L, 3);
-
-     return 0;
-}
-
 static int luaL_gui_box_new (lua_State *L)
 {
      g_return_val_if_fail (global.theme, 0);
@@ -93,13 +83,13 @@ static int luaL_gui_box_new (lua_State *L)
 
 static int luaL_gui_box_pack (lua_State *L)
 {
-     gpointer obj;
+     const gchar *str;
 
      g_return_val_if_fail (global.theme, 0);
-     luaL_checktype (L, 1, LUA_TUSERDATA);
-     if ((obj = luaL_checkudata (L, 1, LUA_TNOTEBOOK)))
+     str = luaL_checkstring (L, 1);
+     if (g_str_equal (str, LUA_TNOTEBOOK))
      {
-          GtkWidget *w = *((GtkWidget **) obj);
+          GtkWidget *w = global.gui.notebook;
 
           if (global.theme->tab.box.pack_start)
           {
@@ -114,9 +104,9 @@ static int luaL_gui_box_pack (lua_State *L)
                                                               global.theme->tab.box.padding);
           }
      }
-     else if ((obj = luaL_checkudata (L, 1, LUA_TVIEWAREA)))
+     else if (g_str_equal (str, LUA_TVIEWAREA))
      {
-          GtkWidget *w = *((GtkWidget **) obj);
+          GtkWidget *w = global.gui.viewarea;
 
           if (global.theme->webview.box.pack_start)
           {
@@ -131,9 +121,9 @@ static int luaL_gui_box_pack (lua_State *L)
                                                               global.theme->webview.box.padding);
           }
      }
-     else if ((obj = luaL_checkudata (L, 1, LUA_TSTATUSBAR)))
+     else if (g_str_equal (str, LUA_TSTATUSBAR))
      {
-          GtkWidget *w = *((GtkWidget **) obj);
+          GtkWidget *w = global.gui.statusbar;
 
           if (global.theme->statusbar.box.pack_start)
           {
@@ -149,9 +139,9 @@ static int luaL_gui_box_pack (lua_State *L)
           }
 
      }
-     else if ((obj = luaL_checkudata (L, 1, LUA_TPROMPTBOX)))
+     else if (g_str_equal (str, LUA_TPROMPTBOX))
      {
-          GtkWidget *w = *((GtkWidget **) obj);
+          GtkWidget *w = global.gui.promptbox;
 
           if (global.theme->promptbox.box.pack_start)
           {
@@ -166,8 +156,6 @@ static int luaL_gui_box_pack (lua_State *L)
                                                               global.theme->promptbox.box.padding);
           }
      }
-     else
-          luaL_typerror (L, 1, "userdata");
 
      return 0;
 }

@@ -34,28 +34,6 @@
 
 static guint nclips = 0;
 
-static int luaL_clipboard_new (lua_State *L);
-static int luaL_clipboard_set (lua_State *L);
-static int luaL_clipboard_get (lua_State *L);
-static int luaL_clipboard_clear (lua_State *L);
-
-static const luaL_reg cream_clipboard_methods[] =
-{
-     { "new",   luaL_clipboard_new },
-     { "set",   luaL_clipboard_set },
-     { "get",   luaL_clipboard_get },
-     { "clear", luaL_clipboard_clear },
-     { NULL, NULL }
-};
-
-static int luaL_clipboard_tostring (lua_State *L);
-
-static const luaL_reg cream_clipboard_meta[] =
-{
-     { "__tostring", luaL_clipboard_tostring },
-     { NULL, NULL }
-};
-
 static GtkClipboard **lua_cast_clipboard (lua_State *L, int index)
 {
      GtkClipboard **ret = (GtkClipboard **) lua_touserdata (L, index);
@@ -168,6 +146,15 @@ static int luaL_clipboard_clear (lua_State *L)
      return 0;
 }
 
+static const luaL_reg cream_clipboard_methods[] =
+{
+     { "new",   luaL_clipboard_new },
+     { "set",   luaL_clipboard_set },
+     { "get",   luaL_clipboard_get },
+     { "clear", luaL_clipboard_clear },
+     { NULL, NULL }
+};
+
 /* metatable */
 
 /*!
@@ -182,6 +169,12 @@ static int luaL_clipboard_tostring (lua_State *L)
      lua_pushfstring (L, LUA_TCLIPBOARD ": %p", lua_cast_clipboard (L, 1));
      return 1;
 }
+
+static const luaL_reg cream_clipboard_meta[] =
+{
+     { "__tostring", luaL_clipboard_tostring },
+     { NULL, NULL }
+};
 
 /*!
  * \fn int luaL_clipboard_register (lua_State *L)

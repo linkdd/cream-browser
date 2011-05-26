@@ -175,5 +175,14 @@ static void creamtab_init (CreamTab *obj)
      gtk_box_set_spacing (GTK_BOX (obj), 1);
 }
 
+/*! @} */
+
+/*!
+ * \defgroup lua-notebook Lua Notebook
+ * \ingroup lua
+ * Lua bindings for the #CreamTabClass.
+ *
+ * @{
+ */
 
 /*! @} */
