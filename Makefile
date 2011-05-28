@@ -14,12 +14,21 @@ project-install:
 	@echo "Installing $(DESTDIR)$(DATADIR)/$(EXEC)..."
 	@install -d $(DESTDIR)$(DATADIR)/$(EXEC)/cream/
 	@install -c $(SRCDIR)/lua/cream/* $(DESTDIR)$(DATADIR)/$(EXEC)/cream/ -m 644
+	
+	@echo "Installing locale..."
+	@for mo in `find po/ -name "*.mo" -printf "%f "`; do \
+		install -d $(DESTDIR)$(LOCALEDIR)/$${mo%.mo}/LC_MESSAGES/; \
+		install -c po/$$mo $(DESTDIR)$(LOCALEDIR)/$${mo%.mo}/LC_MESSAGES/$(EXEC).mo -m 644; \
+	done
+
 
 project-uninstall:
 	@echo "Uninstalling $(DESTDIR)$(BINDIR)/$(EXEC)..."
 	@rm -rf $(DESTDIR)$(BINDIR)/$(EXEC)
 	@echo "Uninstalling $(DESTDIR)$(DATADIR)/$(EXEC)..."
 	@rm -rf $(DESTDIR)$(DATADIR)/$(EXEC)
+	@echo "Uninstalling locale..."
+	@find $(DESTDIR)$(LOCALEDIR) -name "$(EXEC).mo" -delete
 
 project-maintainer-clean:
 	@rm -vrf cream-browser_build.h

@@ -53,6 +53,11 @@
 
 #include <cream-browser_build.h>
 
+#include <libintl.h>
+
+#define _(str)                gettext(str)
+#define gettext_noop(str)     str
+
 #include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,8 +74,8 @@
 
 #include "marshal.h"
 #include "WebViewClass.h"
-#include "ViewAreaClass.h"
-#include "CreamTabClass.h"
+#include "NotebookClass.h"
+#include "SplittedWindow.h"
 
 #include "lua.h"
 #include "modules.h"

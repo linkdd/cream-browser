@@ -29,12 +29,13 @@
 /*! \struct GUI */
 struct GUI
 {
-     GtkWidget *window;       /*!< Main Window */
-     GtkWidget *notebook;     /*!< Notebook widget (#CreamTab object) */
-     GtkWidget *viewarea;     /*!< WebView area (#ViewArea object) */
-     GtkWidget *statusbar;    /*!< Statusbar widget */
-     GtkWidget *promptbox;    /*!< Promptbox widget */
-     GtkWidget *box;          /*!< Box containing all widgets */
+     GtkWidget *window;         /*!< Main Window */
+     GtkWidget *splittedwindow; /*!< Split area */
+     GtkWidget *statusbar;      /*!< Statusbar widget */
+     GtkWidget *promptbox;      /*!< Promptbox widget */
+     GtkWidget *box;            /*!< Box containing all widgets */
+
+     SplittedWindow *sw;
 };
 
 /*! \struct Socket */

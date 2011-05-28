@@ -39,7 +39,7 @@
 G_BEGIN_DECLS
 
 #define WEB_VIEW(obj)         G_TYPE_CHECK_INSTANCE_CAST(obj, webview_get_type (), WebView)
-#define WEB_VIEW_CLASS(obj)   G_TYPE_CHECK_CLASS_CAST(klass, webview_get_type (), WebViewClass)
+#define WEB_VIEW_CLASS(klass) G_TYPE_CHECK_CLASS_CAST(klass, webview_get_type (), WebViewClass)
 #define IS_WEB_VIEW(obj)      G_TYPE_CHECK_INSTANCE_TYPE(obj, webview_get_type ())
 
 typedef struct _WebView WebView;

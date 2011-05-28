@@ -66,7 +66,7 @@ gboolean modules_init (GError **err)
           g_set_error (err,
                        CREAM_MODULE_ERROR,
                        CREAM_MODULE_ERROR_SUPPORTED,
-                       "GModule isn't supported."
+                       _("GModule isn't supported.")
           );
 
           return FALSE;
@@ -106,7 +106,7 @@ CreamModule *modules_load (const char *filename, GError **err)
           g_set_error (err,
                        CREAM_MODULE_ERROR,
                        CREAM_MODULE_ERROR_OPEN,
-                       "%s: Couldn't open module: %s",
+                       _("%s: Couldn't open module: %s"),
                        filename, g_module_error ()
           );
           return NULL;
@@ -123,7 +123,7 @@ CreamModule *modules_load (const char *filename, GError **err)
           g_set_error (err,
                        CREAM_MODULE_ERROR,
                        CREAM_MODULE_ERROR_SYMBOLS,
-                       "%s: Couldn't load symbols: %s",
+                       _("%s: Couldn't load symbols: %s"),
                        filename, g_module_error ()
           );
 
@@ -261,7 +261,7 @@ static int luaL_module_new (lua_State *L)
           return 1;
      }
      else
-          return luaL_error (L, "Too few arguments");
+          return luaL_error (L, _("Too few arguments"));
 
      return 0;
 }

@@ -1,0 +1,161 @@
+# French translations for cream-browser package.
+# Copyright (C) 2011 David Delassus <david.jose.delassus@gmail.com>
+# This file is distributed under the same license as the cream-browser package.
+# David Delassus <david.jose.delassus@gmail.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cream-browser unstable\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-05-28 13:49+0200\n"
+"PO-Revision-Date: 2011-05-28 14:43+0200\n"
+"Last-Translator: David Delassus <david.jose.delassus@gmail.com>\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: lua.c:104
+msgid "'package' isn't a table"
+msgstr "'package' n'est pas une table"
+
+#: lua.c:115
+msgid "'package.path' isn't a table."
+msgstr "'package.path' n'est pas une table."
+
+#: lua.c:248
+#, c-format
+msgid "cannot get member '%s'"
+msgstr "Impossible de récupérer le membre '%s'"
+
+#: lua.c:268
+#, c-format
+msgid "cannot set member '%s'"
+msgstr "Impossible de définir le membre '%s'"
+
+#: main.c:198
+#, c-format
+msgid "Error (%s:%d): %s: %s\n"
+msgstr "Erreur (%s:%d): %s: %s\n"
+
+#: main.c:202
+#, c-format
+msgid "Error (%s:%d): %s\n"
+msgstr "Erreur (%s:%d): %s\n"
+
+#: main.c:266
+msgid "Configuration not found."
+msgstr "Aucune configuration trouvée."
+
+#: main.c:287
+msgid "Theme wasn't initialized."
+msgstr "Le thème n'a pas été initialisé."
+
+#: main.c:352
+msgid "Enable logging"
+msgstr "Active le log"
+
+#: main.c:353
+msgid "Open URL"
+msgstr "Ouvrir URL"
+
+#: main.c:354
+msgid "Load an alternate config file."
+msgstr "Charger une configuration alternative."
+
+#: main.c:355
+msgid "Unix socket's path"
+msgstr "Chemin vers le socket UNIX"
+
+#: main.c:356
+msgid "Send a command on the specified socket (see --socket,-s)"
+msgstr "Envoie une commande sur le socket spécifié (voir --socket,-s)"
+
+#: main.c:357
+msgid "Show version informations"
+msgstr "Affiche les informations sur la version actuelle"
+
+#: main.c:378
+#, c-format
+msgid "%s %s, developped by David Delassus <david.jose.delassus@gmail.com>\n"
+msgstr "%s %s, développé par David Delassus <david.jose.delassus@gmail.com>\n"
+
+#: main.c:379
+#, c-format
+msgid "Released under %s license.\n"
+msgstr "Distribué sous les termes de la licence %s.\n"
+
+#: main.c:381
+#, c-format
+msgid "Builded with:\n"
+msgstr "Compilé avec :\n"
+
+#: main.c:386
+#, c-format
+msgid "Builded on %s with:\n"
+msgstr "Compilé sur %s avec :\n"
+
+#: main.c:392
+#, c-format
+msgid "Builded in debug mode.\n"
+msgstr "Compilé en mode debug.\n"
+
+#: main.c:394
+#, c-format
+msgid "Builded in release mode.\n"
+msgstr "Compilé en mode release.\n"
+
+#: modules.c:69
+msgid "GModule isn't supported."
+msgstr "Pas de support GModule."
+
+#: modules.c:109
+#, c-format
+msgid "%s: Couldn't open module: %s"
+msgstr "%s: Impossible d'ouvrir le module: %s"
+
+#: modules.c:126
+#, c-format
+msgid "%s: Couldn't load symbols: %s"
+msgstr "%s: Impossible de lire les symboles: %s"
+
+#: modules.c:264
+msgid "Too few arguments"
+msgstr "Trop peu d'arguments"
+
+#: socket.c:63
+#, c-format
+msgid "Error reading UNIX socket '%s'"
+msgstr "Erreur lors de la lecture du socket UNIX '%s'"
+
+#: socket.c:82
+#, c-format
+msgid "Error writing UNIX socket '%s'"
+msgstr "Erreur lors de l'écriture du socket UNIX '%s'"
+
+#: socket.c:130
+#, c-format
+msgid "socket(%s) failed: %s"
+msgstr "socket(%s) échec: %s"
+
+#: socket.c:141 socket.c:154
+#, c-format
+msgid "fcntl(%s) failed: %s"
+msgstr "fcntl(%s) échec: %s"
+
+#: socket.c:166
+#, c-format
+msgid "bind(%s) failed: %s"
+msgstr "bind(%s) échec: %s"
+
+#: socket.c:179
+#, c-format
+msgid "getsockname(%s) failed: %s"
+msgstr "getsockname(%s) échec: %s"
+
+#: socket.c:191
+#, c-format
+msgid "listen(%s) failed: %s"
+msgstr "listen(%s) échec: %s"

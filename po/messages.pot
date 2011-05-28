@@ -1,0 +1,161 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-05-28 15:37+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: lua.c:104
+msgid "'package' isn't a table"
+msgstr ""
+
+#: lua.c:115
+msgid "'package.path' isn't a table."
+msgstr ""
+
+#: lua.c:248
+#, c-format
+msgid "cannot get member '%s'"
+msgstr ""
+
+#: lua.c:268
+#, c-format
+msgid "cannot set member '%s'"
+msgstr ""
+
+#: main.c:198
+#, c-format
+msgid "Error (%s:%d): %s: %s\n"
+msgstr ""
+
+#: main.c:202
+#, c-format
+msgid "Error (%s:%d): %s\n"
+msgstr ""
+
+#: main.c:266
+msgid "Configuration not found."
+msgstr ""
+
+#: main.c:287
+msgid "Theme wasn't initialized."
+msgstr ""
+
+#: main.c:352
+msgid "Enable logging"
+msgstr ""
+
+#: main.c:353
+msgid "Open URL"
+msgstr ""
+
+#: main.c:354
+msgid "Load an alternate config file."
+msgstr ""
+
+#: main.c:355
+msgid "Unix socket's path"
+msgstr ""
+
+#: main.c:356
+msgid "Send a command on the specified socket (see --socket,-s)"
+msgstr ""
+
+#: main.c:357
+msgid "Show version informations"
+msgstr ""
+
+#: main.c:378
+#, c-format
+msgid "%s %s, developped by David Delassus <david.jose.delassus@gmail.com>\n"
+msgstr ""
+
+#: main.c:379
+#, c-format
+msgid "Released under %s license.\n"
+msgstr ""
+
+#: main.c:381
+#, c-format
+msgid "Builded with:\n"
+msgstr ""
+
+#: main.c:386
+#, c-format
+msgid "Builded on %s with:\n"
+msgstr ""
+
+#: main.c:392
+#, c-format
+msgid "Builded in debug mode.\n"
+msgstr ""
+
+#: main.c:394
+#, c-format
+msgid "Builded in release mode.\n"
+msgstr ""
+
+#: modules.c:69
+msgid "GModule isn't supported."
+msgstr ""
+
+#: modules.c:109
+#, c-format
+msgid "%s: Couldn't open module: %s"
+msgstr ""
+
+#: modules.c:126
+#, c-format
+msgid "%s: Couldn't load symbols: %s"
+msgstr ""
+
+#: modules.c:264
+msgid "Too few arguments"
+msgstr ""
+
+#: socket.c:63
+#, c-format
+msgid "Error reading UNIX socket '%s'"
+msgstr ""
+
+#: socket.c:82
+#, c-format
+msgid "Error writing UNIX socket '%s'"
+msgstr ""
+
+#: socket.c:130
+#, c-format
+msgid "socket(%s) failed: %s"
+msgstr ""
+
+#: socket.c:141 socket.c:154
+#, c-format
+msgid "fcntl(%s) failed: %s"
+msgstr ""
+
+#: socket.c:166
+#, c-format
+msgid "bind(%s) failed: %s"
+msgstr ""
+
+#: socket.c:179
+#, c-format
+msgid "getsockname(%s) failed: %s"
+msgstr ""
+
+#: socket.c:191
+#, c-format
+msgid "listen(%s) failed: %s"
+msgstr ""

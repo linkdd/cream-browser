@@ -101,7 +101,7 @@ gboolean lua_ctx_init (GError **err)
           g_set_error (err,
                        CREAM_LUA_ERROR,
                        CREAM_LUA_ERROR_PACKAGE,
-                       "'package' isn't a table"
+                       _("'package' isn't a table")
           );
           return FALSE;
      }
@@ -112,7 +112,7 @@ gboolean lua_ctx_init (GError **err)
           g_set_error (err,
                        CREAM_LUA_ERROR,
                        CREAM_LUA_ERROR_PACKAGE,
-                       "'package.path' isn't a table."
+                       _("'package.path' isn't a table.")
           );
           return FALSE;
      }
@@ -245,7 +245,7 @@ int luaI_index (lua_State *L)
           lua_pushvalue (L, 2);                   /* dup index */
           lua_gettable (L, lua_upvalueindex (2)); /* else try methods */
           if (lua_isnil (L, -1))                  /* invalid member */
-               luaL_error (L, "cannot get member '%s'", lua_tostring (L, 2));
+               luaL_error (L, _("cannot get member '%s'"), lua_tostring (L, 2));
           return 1;
      }
 
@@ -265,7 +265,7 @@ int luaI_newindex (lua_State *L)
      lua_pushvalue (L, 2);                   /* dup index */
      lua_rawget (L, lua_upvalueindex (1));   /* lookup member by name */
      if (!lua_islightuserdata (L, -1))       /* invalid member */
-          luaL_error (L, "cannot set member '%s'", lua_tostring (L, 2));
+          luaL_error (L, _("cannot set member '%s'"), lua_tostring (L, 2));
      return luaI_call (L);
 }
 

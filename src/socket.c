@@ -60,7 +60,7 @@ static gboolean control_client_socket (GIOChannel *channel)
      if (ret == G_IO_STATUS_ERROR)
      {
           if (error != NULL)
-               print_error (error, FALSE, "Error reading UNIX socket '%s'", global.sock.path);
+               print_error (error, FALSE, _("Error reading UNIX socket '%s'"), global.sock.path);
           g_io_channel_shutdown (channel, TRUE, NULL);
 
           return FALSE;
@@ -79,7 +79,7 @@ static gboolean control_client_socket (GIOChannel *channel)
 
           ret = g_io_channel_write_chars (channel, result->str, result->len, &len, &error);
           if (ret == G_IO_STATUS_ERROR && error != NULL)
-               print_error (error, FALSE, "Error writing UNIX socket '%s'", global.sock.path);
+               print_error (error, FALSE, _("Error writing UNIX socket '%s'"), global.sock.path);
           g_io_channel_flush (channel, NULL);
      }
 
@@ -127,7 +127,7 @@ gboolean socket_init (GError **err)
           g_set_error (err,
                        CREAM_SOCKET_ERROR,
                        CREAM_SOCKET_ERROR_SOCKET,
-                       "socket(%s) failed: %s",
+                       _("socket(%s) failed: %s"),
                        global.sock.path, g_strerror (errno)
           );
           return FALSE;
@@ -138,7 +138,7 @@ gboolean socket_init (GError **err)
           g_set_error (err,
                        CREAM_SOCKET_ERROR,
                        CREAM_SOCKET_ERROR_FCNTL,
-                       "fcntl(%s) failed: %s",
+                       _("fcntl(%s) failed: %s"),
                        global.sock.path, g_strerror (errno)
           );
           close (sock_fd);
@@ -151,7 +151,7 @@ gboolean socket_init (GError **err)
           g_set_error (err,
                        CREAM_SOCKET_ERROR,
                        CREAM_SOCKET_ERROR_FCNTL,
-                       "fcntl(%s) failed: %s",
+                       _("fcntl(%s) failed: %s"),
                        global.sock.path, g_strerror (errno)
           );
           close (sock_fd);
@@ -163,7 +163,7 @@ gboolean socket_init (GError **err)
           g_set_error (err,
                        CREAM_SOCKET_ERROR,
                        CREAM_SOCKET_ERROR_BIND,
-                       "bind(%s) failed: %s",
+                       _("bind(%s) failed: %s"),
                        global.sock.path, g_strerror (errno)
           );
           close (sock_fd);
@@ -176,7 +176,7 @@ gboolean socket_init (GError **err)
           g_set_error (err,
                        CREAM_SOCKET_ERROR,
                        CREAM_SOCKET_ERROR_SOCKNAME,
-                       "getsockname(%s) failed: %s",
+                       _("getsockname(%s) failed: %s"),
                        global.sock.path, g_strerror (errno)
           );
           close (sock_fd);
@@ -188,7 +188,7 @@ gboolean socket_init (GError **err)
           g_set_error (err,
                        CREAM_SOCKET_ERROR,
                        CREAM_SOCKET_ERROR_LISTEN,
-                       "listen(%s) failed: %s",
+                       _("listen(%s) failed: %s"),
                        global.sock.path, g_strerror (errno)
           );
           close (sock_fd);

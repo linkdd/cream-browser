@@ -30,8 +30,6 @@
 #include <stdarg.h>
 
 #include <WebViewClass.h>
-#include <ViewAreaClass.h>
-#include <CreamTabClass.h>
 
 #ifdef G_OS_WIN32
      #define CREAM_MODULE_API __declspec(dllexport)

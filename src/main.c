@@ -195,11 +195,11 @@ void print_error (GError *error, gboolean abort, const gchar *fmt, ...)
 
           va_start (args, fmt);
           str = g_strdup_vprintf (fmt, args);
-          str = g_strdup_printf ("Error (%s:%d): %s: %s\n", g_quark_to_string (error->domain), error->code, str, error->message);
+          str = g_strdup_printf (_("Error (%s:%d): %s: %s\n"), g_quark_to_string (error->domain), error->code, str, error->message);
           va_end (args);
      }
      else
-          str = g_strdup_printf ("Error (%s:%d): %s\n", g_quark_to_string (error->domain), error->code, error->message);
+          str = g_strdup_printf (_("Error (%s:%d): %s\n"), g_quark_to_string (error->domain), error->code, error->message);
 
      g_error_free (error);
 
@@ -263,7 +263,7 @@ static void init (gchar *config)
      {
           if ((rc = find_file (FILE_TYPE_CONFIG, "rc.lua")) == NULL)
           {
-               error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_CONFIG, "Configuration not found.");
+               error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_CONFIG, _("Configuration not found."));
                print_error (error, TRUE, NULL);
           }
      }
@@ -284,7 +284,7 @@ static void init (gchar *config)
 
      if (!global.theme)
      {
-          error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_THEME, "Theme wasn't initialized.");
+          error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_THEME, _("Theme wasn't initialized."));
           print_error (error, TRUE, NULL);
      }
 
@@ -349,17 +349,21 @@ int main (int argc, char **argv)
 
      GOptionEntry options[] =
      {
-          { "log",     'l', 0, G_OPTION_ARG_NONE,    &global.log,       "Enable logging",     NULL },
-          { "open",    'o', 0, G_OPTION_ARG_STRING,  &url,              "Open URL",           NULL },
-          { "config",  'c', 0, G_OPTION_ARG_STRING,  &config,           "Load an alternate config file.", NULL },
-          { "socket",  's', 0, G_OPTION_ARG_STRING,  &global.sock.path, "Unix socket's path", NULL },
-          { "command", 'e', 0, G_OPTION_ARG_STRING,  &cmd,              "Send a command on the specified socket (see --socket,-s)", NULL },
-          { "version", 'v', 0, G_OPTION_ARG_NONE,    &version,          "Show version informations", NULL },
+          { "log",     'l', 0, G_OPTION_ARG_NONE,    &global.log,       gettext_noop ("Enable logging"),     NULL },
+          { "open",    'o', 0, G_OPTION_ARG_STRING,  &url,              gettext_noop ("Open URL"),           NULL },
+          { "config",  'c', 0, G_OPTION_ARG_STRING,  &config,           gettext_noop ("Load an alternate config file."), NULL },
+          { "socket",  's', 0, G_OPTION_ARG_STRING,  &global.sock.path, gettext_noop ("Unix socket's path"), NULL },
+          { "command", 'e', 0, G_OPTION_ARG_STRING,  &cmd,              gettext_noop ("Send a command on the specified socket (see --socket,-s)"), NULL },
+          { "version", 'v', 0, G_OPTION_ARG_NONE,    &version,          gettext_noop ("Show version informations"), NULL },
           { NULL }
      };
 
      GOptionContext *optctx;
      GError *error = NULL;
+
+     setlocale (LC_ALL, "");
+     bindtextdomain (PACKAGE, LOCALEDIR);
+     textdomain (PACKAGE);
 
      /* parse command line */
      optctx = g_option_context_new (" - Web browser");
@@ -371,23 +375,23 @@ int main (int argc, char **argv)
 
      if (version)
      {
-          printf ("%s %s, developped by David Delassus <david.jose.delassus@gmail.com>\n", PACKAGE, VERSION);
-          printf ("Released under %s license.\n", LICENSE);
+          printf (_("%s %s, developped by David Delassus <david.jose.delassus@gmail.com>\n"), PACKAGE, VERSION);
+          printf (_("Released under %s license.\n"), LICENSE);
 
-          printf ("Builded with:\n");
+          printf (_("Builded with:\n"));
           printf (" - GLib %s\n", LIB_GLIB_VERSION);
           printf (" - GTK+ %s\n", LIB_GTK_VERSION);
           printf (" - Lua  %s\n\n", LIB_LUA_VERSION);
 
-          printf ("Builded on %s with:\n", ARCH);
+          printf (_("Builded on %s with:\n"), ARCH);
           printf (" - C Compiler: %s\n", COMPILER);
           printf (" - CFLAGS:     %s\n", CFLAGS);
           printf (" - LDFLAGS:    %s\n", LDFLAGS);
 
           if (HAVE_DEBUG)
-               printf ("Builded in debug mode.\n");
+               printf (_("Builded in debug mode.\n"));
           else
-               printf ("Builded in release mode.\n");
+               printf (_("Builded in release mode.\n"));
 
           exit (EXIT_SUCCESS);
      }
