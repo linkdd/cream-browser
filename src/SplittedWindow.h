@@ -28,6 +28,7 @@
 
 /*!
  * \defgroup split SplittedWindow
+ * \ingroup interface
  * SplittedWindow structure definition
  *
  * @{
@@ -37,7 +38,7 @@ typedef struct _SplittedWindowObject SplittedWindowObject;
 typedef struct _SplittedWindow SplittedWindow;
 
 /*!
- * \struct SplittedWindowObject
+ * \class SplittedWindowObject
  * Internal object's structure for SplittedWindow
  */
 struct _SplittedWindowObject
@@ -50,12 +51,12 @@ struct _SplittedWindowObject
 };
 
 /*!
- * \struct SplittedWindow
+ * \class SplittedWindow
  * #SplittedWindow object.
  */
 struct _SplittedWindow
 {
-     SplittedWindowObject *root;   /*!< Root node of the SplittedWindow's tree. */
+     SplittedWindowObject *root;   /*!< Root node of the #SplittedWindow's tree. */
      SplittedWindowObject *focus;  /*!< Focused node */
 };
 

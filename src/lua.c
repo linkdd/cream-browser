@@ -61,6 +61,7 @@ static GQuark cream_lua_error_quark (void)
 
 /*!
  * \fn gboolean lua_ctx_init (GError **err)
+ * @param err \class{GError} pointer in order to follow possible errors.
  * @return <code>TRUE</code> on success, <code>FALSE</code> otherwise.
  *
  * Initialize the lua VM state.
@@ -159,6 +160,7 @@ gboolean lua_ctx_init (GError **err)
 /*!
  * \fn gboolean lua_ctx_parse (const char *file, GError **err)
  * @param file Path of the file to parse.
+ * @param err \class{GError} pointer in order to follow possible errors.
  * @return <code>TRUE</code> on success, <code>FALSE</code> otherwise.
  *
  * Parse a lua file.

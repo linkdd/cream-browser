@@ -39,14 +39,15 @@
  *
  * On IRC :
  * <ul>
- *   <li>Server: <a>irc.freenode.net</a></li>
+ *   <li>Server: <em><a>irc.freenode.net</a></em></li>
  *   <li>Channel: <strong>\#cream-browser</strong></li>
  * </ul>
  *
  * Or via mail :
  * <ul>
  *   <li>David Delassus &lt; <a href="#">david <strong>(dot)</strong> jose <strong>(dot)</strong> delassus <strong>(at)</strong> gmail <strong>(dot)</strong> com</a> &gt;</li>
- *   <li>Mailing list &lt; <a href="#">cream-browser-devel@lists.sourceforge.net</a> &gt; (subscribe on : http://mails.cream-browser.net)</li>
+ *   <li>Mailing list : <a href="http://groups.google.com/group/cream-browser-devel">Developers</a> -
+ *       <a href="http://groups.google.com/group/cream-browser-users">Users</a></li>
  * </ul>
  *
  */
@@ -98,12 +99,10 @@
 
 extern struct global_t global;
 
-/*! \def FILE_TYPE_CONFIG */
-#define FILE_TYPE_CONFIG           (1 << 0)
-/*! \def FILE_TYPE_DATA */
-#define FILE_TYPE_DATA             (1 << 1)
-/*! \def FILE_TYPE_CACHE */
-#define FILE_TYPE_CACHE            (1 << 2)
+
+#define FILE_TYPE_CONFIG           (1 << 0)       /*!< Used to search a configuration file into standard directories. */
+#define FILE_TYPE_DATA             (1 << 1)       /*!< Used to search a ressource into standard directories. */
+#define FILE_TYPE_CACHE            (1 << 2)       /*!< Used to search a cache file into standard directories. */
 
 gchar *find_file (guint type, const gchar *filename);
 

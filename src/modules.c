@@ -78,6 +78,7 @@ gboolean modules_init (GError **err)
 /*!
  * \fn CreamModule *modules_load (const char *filename, GError **err)
  * @param filename Filename of the library to load.
+ * @param err A \class{GError} pointer in order to follow possible errors.
  * @return A #CreamModule object.
  *
  * Open a \class{GModule} object and check if it contains the correct API (see #CreamModule).
@@ -203,7 +204,7 @@ static luaL_Module *lua_check_module (lua_State *L, int index)
      luaL_checktype (L, index, LUA_TUSERDATA);
      ret = (luaL_Module *) luaL_checkudata (L, index, LUA_TMODULE);
      if (!ret) luaL_typerror (L, index, LUA_TMODULE);
-     if (!ret->self) luaL_error (L, LUA_TMODULE " not referenced.");
+     if (!ret->self) luaL_error (L, _("%s not referenced."), LUA_TMODULE);
      return ret;
 }
 

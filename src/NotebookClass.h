@@ -28,6 +28,7 @@
 
 /*!
  * \defgroup notebook Notebook
+ * \ingroup interface
  * Notebook class definition
  * @{
  */
@@ -45,14 +46,15 @@ typedef struct _NotebookClass NotebookClass;
 
 /*!
  * \class Notebook
+ * Manage notebook.
  */
 struct _Notebook
 {
      /*< private >*/
      GtkNotebook parent;
 
-     GtkWidget *focus;
-     GList *webviews;
+     GtkWidget *focus;   /*!< Focused widget */
+     GList *webviews;    /*!< List of webviews opened */
 };
 
 struct _NotebookClass
@@ -62,5 +64,9 @@ struct _NotebookClass
 };
 
 GtkWidget *notebook_new (void);
+
+GtkWidget *notebook_get_focus (Notebook *obj);
+
+/*! @} */
 
 #endif /* __NOTEBOOK_CLASS_H */

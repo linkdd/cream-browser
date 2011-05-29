@@ -444,7 +444,7 @@ static luaL_WebView *lua_check_webview (lua_State *L, int index)
      luaL_checktype (L, index, LUA_TUSERDATA);
      ret = (luaL_WebView *) luaL_checkudata (L, index, LUA_TWEBVIEW);
      if (!ret) luaL_typerror (L, index, LUA_TWEBVIEW);
-     if (!ret->self) luaL_error (L, LUA_TWEBVIEW " not referenced.");
+     if (!ret->self) luaL_error (L, _("%s not referenced."), LUA_TWEBVIEW);
      return ret;
 }
 

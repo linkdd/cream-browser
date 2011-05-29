@@ -31,6 +31,7 @@
  */
 
 /*!
+ * \public \memberof SplittedWindow
  * \fn SplittedWindow *splittedwindow_new (void)
  * @return A #SplittedWindow object.
  *
@@ -51,9 +52,10 @@ SplittedWindow *splittedwindow_new (void)
 }
 
 /*!
+ * \public \memberof SplittedWindow
  * \fn void splittedwindow_vsplit (SplittedWindow *sw, GtkWidget *nb)
  * @param sw A #SplittedWindow object.
- * @param nb A #GtkWidget object.
+ * @param nb A #Notebook object.
  *
  * Make a vertical split.
  */
@@ -83,9 +85,10 @@ void splittedwindow_vsplit (SplittedWindow *sw, GtkWidget *nb)
 }
 
 /*!
+ * \public \memberof SplittedWindow
  * \fn void splittedwindow_split (SplittedWindow *sw, GtkWidget *nb)
  * @param sw A #SplittedWindow object.
- * @param nb A #GtkWidget object.
+ * @param nb A #Notebook object.
  *
  * Make a horizontal split.
  */
@@ -115,6 +118,7 @@ void splittedwindow_split (SplittedWindow *sw, GtkWidget *nb)
 }
 
 /*!
+ * \public \memberof SplittedWindow
  * \fn void splittedwindow_close (SplittedWindow *sw)
  * @param sw A #SplittedWindow object.
  *
@@ -142,6 +146,7 @@ void splittedwindow_close (SplittedWindow *sw)
 }
 
 /*!
+ * \public \memberof SplittedWindow
  * \fn void splittedwindow_show (SplittedWindow *sw)
  * @param sw A #SplittedWindow object.
  *
