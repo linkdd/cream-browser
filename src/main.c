@@ -282,13 +282,13 @@ static void init (gchar *config)
      if (!lua_ctx_parse (rc, &error))
           print_error (error, TRUE, NULL);
 
+     /*
      if (!global.theme)
      {
           error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_THEME, _("Theme wasn't initialized."));
           print_error (error, TRUE, NULL);
-     }
+     }*/
 
-     ui_show ();
 }
 
 /* Program used to send commands on the specified socket. */
@@ -404,6 +404,9 @@ int main (int argc, char **argv)
 
      init (config);
 
+     notebook_tabopen (NOTEBOOK (global.gui.sw->focus->widget), "dummy://user:pass@domain.com/path/to/index.html#anchor");
+
+     ui_show ();
      gtk_main ();
 
      return EXIT_SUCCESS;

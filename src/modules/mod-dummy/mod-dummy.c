@@ -52,10 +52,10 @@ static void dummy_load_uri (GList *args, gpointer ret, gpointer data)
 
      g_return_if_fail (g_list_length (args) >= 2);
 
-     label = (GtkWidget *) g_list_nth_data (args, 1);
-     uri   = (UriScheme *) g_list_nth_data (args, 2);
+     label = (GtkWidget *) g_list_nth_data (args, 0);
+     uri   = (UriScheme *) g_list_nth_data (args, 1);
 
-     gchar *markup = g_markup_printf_escaped ("<span style=\"bold\">%s</span>\n<span style=\"italic\">%s</span>\n%s",
+     gchar *markup = g_markup_printf_escaped ("<span style=\"normal\">%s</span>\n<span style=\"italic\">%s</span>\n%s",
                                               uri->scheme, uri->userinfo, uri->hostname);
 
      gtk_label_set_markup (GTK_LABEL (label), markup);
