@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-28 15:37+0200\n"
+"POT-Creation-Date: 2011-05-31 07:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,20 +17,25 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: lua.c:104
+#: WebViewClass.c:448 modules.c:207
+#, c-format
+msgid "%s not referenced."
+msgstr ""
+
+#: lua.c:105
 msgid "'package' isn't a table"
 msgstr ""
 
-#: lua.c:115
+#: lua.c:116
 msgid "'package.path' isn't a table."
 msgstr ""
 
-#: lua.c:248
+#: lua.c:250
 #, c-format
 msgid "cannot get member '%s'"
 msgstr ""
 
-#: lua.c:268
+#: lua.c:270
 #, c-format
 msgid "cannot set member '%s'"
 msgstr ""
@@ -47,10 +52,6 @@ msgstr ""
 
 #: main.c:266
 msgid "Configuration not found."
-msgstr ""
-
-#: main.c:287
-msgid "Theme wasn't initialized."
 msgstr ""
 
 #: main.c:352
@@ -111,17 +112,17 @@ msgstr ""
 msgid "GModule isn't supported."
 msgstr ""
 
-#: modules.c:109
+#: modules.c:110
 #, c-format
 msgid "%s: Couldn't open module: %s"
 msgstr ""
 
-#: modules.c:126
+#: modules.c:127
 #, c-format
 msgid "%s: Couldn't load symbols: %s"
 msgstr ""
 
-#: modules.c:264
+#: modules.c:265
 msgid "Too few arguments"
 msgstr ""
 

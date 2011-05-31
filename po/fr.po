@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cream-browser unstable\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-28 13:49+0200\n"
+"POT-Creation-Date: 2011-05-31 07:13+0200\n"
 "PO-Revision-Date: 2011-05-28 14:43+0200\n"
 "Last-Translator: David Delassus <david.jose.delassus@gmail.com>\n"
 "Language-Team: French\n"
@@ -17,20 +17,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: lua.c:104
+#: WebViewClass.c:448 modules.c:207
+#, c-format
+msgid "%s not referenced."
+msgstr "%s n'est pas référencé."
+
+#: lua.c:105
 msgid "'package' isn't a table"
 msgstr "'package' n'est pas une table"
 
-#: lua.c:115
+#: lua.c:116
 msgid "'package.path' isn't a table."
 msgstr "'package.path' n'est pas une table."
 
-#: lua.c:248
+#: lua.c:250
 #, c-format
 msgid "cannot get member '%s'"
 msgstr "Impossible de récupérer le membre '%s'"
 
-#: lua.c:268
+#: lua.c:270
 #, c-format
 msgid "cannot set member '%s'"
 msgstr "Impossible de définir le membre '%s'"
@@ -48,10 +53,6 @@ msgstr "Erreur (%s:%d): %s\n"
 #: main.c:266
 msgid "Configuration not found."
 msgstr "Aucune configuration trouvée."
-
-#: main.c:287
-msgid "Theme wasn't initialized."
-msgstr "Le thème n'a pas été initialisé."
 
 #: main.c:352
 msgid "Enable logging"
@@ -111,17 +112,17 @@ msgstr "Compilé en mode release.\n"
 msgid "GModule isn't supported."
 msgstr "Pas de support GModule."
 
-#: modules.c:109
+#: modules.c:110
 #, c-format
 msgid "%s: Couldn't open module: %s"
 msgstr "%s: Impossible d'ouvrir le module: %s"
 
-#: modules.c:126
+#: modules.c:127
 #, c-format
 msgid "%s: Couldn't load symbols: %s"
 msgstr "%s: Impossible de lire les symboles: %s"
 
-#: modules.c:264
+#: modules.c:265
 msgid "Too few arguments"
 msgstr "Trop peu d'arguments"
 
@@ -159,3 +160,6 @@ msgstr "getsockname(%s) échec: %s"
 #, c-format
 msgid "listen(%s) failed: %s"
 msgstr "listen(%s) échec: %s"
+
+#~ msgid "Theme wasn't initialized."
+#~ msgstr "Le thème n'a pas été initialisé."
