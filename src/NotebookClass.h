@@ -63,9 +63,14 @@ struct _NotebookClass
      GtkNotebookClass parent;
 };
 
+GType notebook_get_type (void);
 GtkWidget *notebook_new (void);
 
 GtkWidget *notebook_get_focus (Notebook *obj);
+void notebook_open (Notebook *obj, const gchar *url);
+void notebook_tabopen (Notebook *obj, const gchar *url);
+
+G_END_DECLS
 
 /*! @} */
 

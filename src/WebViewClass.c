@@ -281,7 +281,7 @@ GtkWidget *webview_new (CreamModule *mod)
      w->child = w->mod->webview_new ();
      webview_child_signal_connect (w);
 
-     gtk_container_add (GTK_CONTAINER (w), w->child);
+     gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (w), w->child);
 
      return GTK_WIDGET (w);
 }
