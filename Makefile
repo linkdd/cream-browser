@@ -21,7 +21,6 @@ project-install:
 		install -c po/$$mo $(DESTDIR)$(LOCALEDIR)/$${mo%.mo}/LC_MESSAGES/$(EXEC).mo -m 644; \
 	done
 
-
 project-uninstall:
 	@echo "Uninstalling $(DESTDIR)$(BINDIR)/$(EXEC)..."
 	@rm -rf $(DESTDIR)$(BINDIR)/$(EXEC)

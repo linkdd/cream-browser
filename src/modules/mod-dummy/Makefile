@@ -12,7 +12,7 @@ module-clean:
 module-install:
 	@echo "Installing $(DESTDIR)$(LIBDIR)/$(LIBNAME)..."
 	@install -d $(DESTDIR)$(LIBDIR)
-	@install -d $(LIBNAME) $(DESTDIR)$(LIBDIR)/$(LIBNAME) -m 755
+	@install -c $(LIBNAME) $(DESTDIR)$(LIBDIR)/$(LIBNAME) -m 755
 
 module-uninstall:
 	@echo "Uninstalling $(DESTDIR)$(LIBDIR)/$(LIBNAME)..."

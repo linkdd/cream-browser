@@ -2,15 +2,6 @@
 
 TOPDIR="`pwd`"
 SRCDIR="$TOPDIR/src"
-PREFIX="/usr/local"
-EXEC_PREFIX="$PREFIX"
-SYSCONFDIR="$PREFIX/etc"
-BINDIR="$PREFIX/bin"
-LIBDIR="$PREFIX/lib"
-DATADIR="$PREFIX/share"
-LOCALEDIR="$DATADIR/locale"
-MANDIR="$PREFIX/man"
-INFODIR="$DATADIR/info"
 
 rm -f common.mk.sed
 
@@ -95,6 +86,16 @@ do
                ;;
      esac
 done
+
+[ "x$PREFIX" = "x" ]          && PREFIX="/usr/local"
+[ "x$EXEC_PREFIX" = "x" ]     && EXEC_PREFIX="$PREFIX"
+[ "x$SYSCONFDIR" = "x" ]      && SYSCONFDIR="$PREFIX/etc"
+[ "x$BINDIR" = "x" ]          && BINDIR="$PREFIX/bin"
+[ "x$LIBDIR" = "x" ]          && LIBDIR="$PREFIX/lib"
+[ "x$DATADIR" = "x" ]         && DATADIR="$PREFIX/share"
+[ "x$LOCALEDIR" = "x" ]       && LOCALEDIR="$DATADIR/locale"
+[ "x$MANDIR" = "x" ]          && MANDIR="$PREFIX/man"
+[ "x$INFODIR" = "x" ]         && INFODIR="$DATADIR/info"
 
 . ./project.conf
 
