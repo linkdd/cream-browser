@@ -1,7 +1,7 @@
 LANG=en
 
 messages.pot:
-	@(cd ../src/ && xgettext --keyword=_ -c=// -o ../po/messages.pot *.c *.h)
+	@xgettext -f POTFILES.in --keyword=_ -c=// -o messages.pot
 
 create_po: messages.pot
 	@msginit --locale=$(LANG) --input=$^
@@ -9,9 +9,4 @@ create_po: messages.pot
 update_po: messages.pot
 	@msgmerge -o $(LANG).po $(LANG).po $^
 
-mo:
-	@for po in *.po; do                \
-		msgfmt -o $${po%.po}.mo $$po; \
-	done
-
-.PHONY: messages.pot create_po update_po mo
+.PHONY: messages.pot create_po update_po

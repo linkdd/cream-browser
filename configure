@@ -1,9 +1,6 @@
 #!/bin/sh
 
-TOPDIR="`pwd`"
-SRCDIR="$TOPDIR/src"
-
-rm -f common.mk.sed
+TOPDIR=`dirname $0`
 
 for arg
 do
@@ -87,6 +84,7 @@ do
      esac
 done
 
+# Installation prefix
 [ "x$PREFIX" = "x" ]          && PREFIX="/usr/local"
 [ "x$EXEC_PREFIX" = "x" ]     && EXEC_PREFIX="$PREFIX"
 [ "x$SYSCONFDIR" = "x" ]      && SYSCONFDIR="$PREFIX/etc"
@@ -97,145 +95,43 @@ done
 [ "x$MANDIR" = "x" ]          && MANDIR="$PREFIX/man"
 [ "x$INFODIR" = "x" ]         && INFODIR="$DATADIR/info"
 
-. ./project.conf
 
-if [ "${is_library}" = "yes" ]; then
-     echo "$LIBNAME.$LIBVERSION, released under $LICENSE license."
-     echo "s:@LIBNAME@:$LIBNAME:" >> common.mk.sed
-     echo "s:@LIBVERSION@:$LIBVERSION:" >> common.mk.sed
-     echo "s:@LICENSE@:$LICENSE:" >> common.mk.sed
-else
-     echo "$PACKAGE $VERSION, released under $LICENSE license."
-     echo "s:@PACKAGE@:$PACKAGE:" >> common.mk.sed
-     echo "s:@VERSION@:$VERSION:" >> common.mk.sed
-     echo "s:@LICENSE@:$LICENSE:" >> common.mk.sed
-fi
+CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_INSTALL_PREFIX=$PREFIX"
+CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_INSTALL_EXEC_PREFIX=$EXEC_PREFIX"
+CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_SYSCONFDIR=$SYSCONFDIR"
+CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_BINDIR=$BINDIR"
+CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_LIBDIR=$LIBDIR"
+CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_DATADIR=$DATADIR"
+CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_LOCALEDIR=$LOCALEDIR"
+CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_MANDIR=$MANDIR"
+CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_INFODIR=$INFODIR"
 
-echo -n "-- Building "
+# Debug
 if [ "${enable_debug}" = "yes" ]; then
-     echo "in debug mode"
-     CFLAGS+=" -g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wpointer-arith -Wno-sign-compare -O2 -I $TOPDIR/ "
-     HAVE_DEBUG="1"
+     CMAKE_OPTS="$CMAKE_OPTS -DDEBUG=ON"
 else
-     echo "in release mode"
-     CFLAGS+=" -Wall -O2 -I $TOPDIR/ "
-     HAVE_DEBUG="0"
+     CMAKE_OPTS="$CMAKE_OPTS -DDEBUG=OFF"
 fi
 
-if [ "${is_library}" = "yes" ]; then
-     CFLAGS+="-fPIC "
-     LDFLAGS+="-shared -Wl,-soname,$LIBNAME.$LIBVERSION "
-fi
-
-# Check CC
-if [ "x$CC" = "x" ]; then
-     CC="cc"
-fi
-
-echo -n "-- Checking for compiler ($CC) ... "
-compiler=`which $CC 2>&1`
-if [ "$?" = "1" ]; then
-     echo "no" && echo "$compiler" && exit 1
+# GTK
+if [ "${with_gtk}" = "3.0" ]; then
+     CMAKE_OPTS="$CMAKE_OPTS -DGTK3=ON"
 else
-     echo "yes"
+     CMAKE_OPTS="$CMAKE_OPTS -DGTK3=OFF"
 fi
 
-# Check architecture
-if [ "x$BUILD" = "x" ]; then
-     BUILD="`$CC -dumpmachine`"
-fi
-
-if [ "x$HOST" = "x" ]; then
-     HOST="$BUILD"
-fi
-
-if [ "$BUILD" != "$HOST" ]; then
-     CROSS_COMPILE="yes"
-     echo "-- Building on $BUILD for $HOST"
+if [ "${with_gtk_directfb}" = "yes" ]; then
+     CMAKE_OPTS="$CMAKE_OPTS -DDIRECTFB=ON"
 else
-     CROSS_COMPILE="no"
-     echo "-- Building on $BUILD"
+     CMAKE_OPTS="$CMAKE_OPTS -DDIRECTFB=OFF"
 fi
 
-echo "s:@BUILD@:$BUILD:" >> common.mk.sed
-echo "s:@HOST@:$HOST:" >> common.mk.sed
-echo "s:@CROSS_COMPILE@:$CROSS_COMPILE:" >> common.mk.sed
-
-# Check pkg-config
-echo -n "-- Checking for pkg-config ... "
-PKGCONFIG=`which pkg-config 2>&1`
-if [ "$?" = "1" ]; then
-     echo "no" && echo "$PKGCONFIG" && exit 1
+# Modules
+if [ "${enable_mod_dummy}" = "yes" ]; then
+     CMAKE_OPTS="$CMAKE_OPTS -DENABLE_MOD_DUMMY=ON"
 else
-     echo "yes"
+     CMAKE_OPTS="$CMAKE_OPTS -DENABLE_MOD_DUMMY=OFF"
 fi
 
-# Check sed
-echo -n "-- Checking for sed ... "
-SED=`which sed 2>&1`
-if [ "$?" = "1" ]; then
-     echo "no" && echo "$SED" && exit 1
-else
-     echo "yes"
-fi
-
-# Check libraries
-for lib in $LIBRARIES
-do
-     echo -n "-- Checking for library $lib ... "
-     LIB_VERSION=`$PKGCONFIG --modversion $lib 2>&1`
-     if [ "$?" = "1" ]; then
-          echo "no" && echo "$LIB_VERSION" && exit 1
-     else
-          CFLAGS+=`$PKGCONFIG --cflags $lib`
-          LDFLAGS+=`$PKGCONFIG --libs $lib`
-          echo "$LIB_VERSION"
-          echo "s:@${lib}_version@:$LIB_VERSION:" >> common.mk.sed
-     fi
-done
-
-# -- common.mk
-echo "
-s:@TOPDIR@:$TOPDIR:
-s:@PREFIX@:$PREFIX:
-s:@EXEC_PREFIX@:$EXEC_PREFIX:
-s:@SYSCONFDIR@:$SYSCONFDIR:
-s:@BINDIR@:$BINDIR:
-s:@LIBDIR@:$LIBDIR:
-s:@DATADIR@:$DATADIR:
-s:@LOCALEDIR@:$LOCALEDIR:
-s:@MANDIR@:$MANDIR:
-s:@INFODIR@:$INFODIR:
-s:@CC@:$compiler:
-s:@CFLAGS@:$CFLAGS:
-s:@LDFLAGS@:$LDFLAGS:
-s:@ARCH@:$ARCH:
-s:@HAVE_DEBUG@:$HAVE_DEBUG:
-s:@SUBDIRS@:$SUBDIRS:
-s:@.*@::" >> common.mk.sed
-
-$SED -f common.mk.sed common.mk.in > common.mk
-
-if [ "$?" = "1" ]; then
-     echo " * Failed to generate common.mk" && exit 1
-else
-     echo "Generated common.mk"
-fi
-
-for subdir in $SUBDIRS
-do
-     echo
-     echo ":: Entering $subdir"
-     cd $subdir
-     CC=$CC ./configure --prefix=$PREFIX \
-                       --exec-prefix=$EXEC_PREFIX \
-                       --sysconfdir=$SYSCONFDIR \
-                       --bindir=$BINDIR \
-                       --libdir=$LIBDIR \
-                       --datadir=$DATADIR \
-                       --localedir=$LOCALEDIR \
-                       --mandir=$MANDIR \
-                       --infodir=$INFODIR \
-                       --enable-debug=${enable_debug} \
-                       $SUBDIR_OPTIONS
-done
+# Execute cmake
+cmake $TOPDIR $CMAKE_OPTS
