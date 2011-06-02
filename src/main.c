@@ -211,7 +211,7 @@ void print_error (GError *error, gboolean abort, const gchar *fmt, ...)
 }
 
 /* Function called when exit() is called. */
-static void quit (int code, void *data)
+static void quit (void)
 {
      if (gtk_main_level () > 0)
           gtk_main_quit ();
@@ -240,7 +240,7 @@ static void init (gchar *config)
      GError *error = NULL;
      char *rc = config;
 
-     on_exit (quit, NULL);
+     atexit (quit);
 
      g_set_prgname ("cream-browser");
      global.prgname = g_get_prgname ();

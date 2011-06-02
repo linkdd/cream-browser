@@ -52,4 +52,4 @@ target_link_libraries (${LIBNAME}
      ${GTK_LIBRARIES}
 )
 
-install (TARGETS ${LIBNAME} DESTINATION lib)
+install (TARGETS ${LIBNAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})

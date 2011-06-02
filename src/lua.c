@@ -118,6 +118,13 @@ gboolean lua_ctx_init (GError **err)
           return FALSE;
      }
 
+     /* add build directories */
+     tmp = g_strdup_printf (";%s", g_build_filename (DATADIR, global.prgname, "lib", "?.lua", NULL));
+     lua_pushlstring (global.luavm, tmp, strlen (tmp));
+     tmp = g_strdup_printf (";%s", g_build_filename (DATADIR, global.prgname, "lib", "?", "init.lua", NULL));
+     lua_pushlstring (global.luavm, tmp, strlen (tmp));
+     lua_concat (global.luavm, 3); /* concatenate with package.path */
+
      /* add user and system config dirs in path */
      tmp = g_strdup_printf (";%s", g_build_filename (usrconfdir, global.prgname, "lib", "?.lua", NULL));
      lua_pushlstring (global.luavm, tmp, strlen (tmp));

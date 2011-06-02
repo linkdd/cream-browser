@@ -2,6 +2,17 @@
 
 TOPDIR=`dirname $0`
 
+absolute()
+{
+     test=`echo $1 | grep "^/"`
+
+     if [ "x$test" = "x" ]; then
+          echo "`pwd`/$1"
+     else
+          echo "$1"
+     fi
+}
+
 for arg
 do
      case $arg in
@@ -14,15 +25,15 @@ do
           --host=*)   HOST=$optarg   ;;
           --target=*) TARGET=$optarg ;;
 
-          --prefix=*)      PREFIX=$optarg      ;;
-          --exec-prefix=*) EXEC_PREFIX=$optarg ;;
-          --sysconfdir=*)  SYSCONFDIR=$optarg  ;;
-          --bindir=*)      BINDIR=$optarg      ;;
-          --libdir=*)      LIBDIR=$optarg      ;;
-          --datadir=*)     DATADIR=$optarg     ;;
-          --localedir=*)   LOCALEDIR=$optarg   ;;
-          --mandir=*)      MANDIR=$optarg      ;;
-          --infodir=*)     INFODIR=$optarg     ;;
+          --prefix=*)      PREFIX=`absolute $optarg`      ;;
+          --exec-prefix=*) EXEC_PREFIX=`absolute $optarg` ;;
+          --sysconfdir=*)  SYSCONFDIR=`absolute $optarg`  ;;
+          --bindir=*)      BINDIR=`absolute $optarg`      ;;
+          --libdir=*)      LIBDIR=`absolute $optarg`      ;;
+          --datadir=*)     DATADIR=`absolute $optarg`     ;;
+          --localedir=*)   LOCALEDIR=`absolute $optarg`   ;;
+          --mandir=*)      MANDIR=`absolute $optarg`      ;;
+          --infodir=*)     INFODIR=`absolute $optarg`     ;;
 
           --enable-*)
                option=`echo $arg | sed -e 's/--enable-//' -e 's/=.*//'`
@@ -85,26 +96,15 @@ do
 done
 
 # Installation prefix
-[ "x$PREFIX" = "x" ]          && PREFIX="/usr/local"
-[ "x$EXEC_PREFIX" = "x" ]     && EXEC_PREFIX="$PREFIX"
-[ "x$SYSCONFDIR" = "x" ]      && SYSCONFDIR="$PREFIX/etc"
-[ "x$BINDIR" = "x" ]          && BINDIR="$PREFIX/bin"
-[ "x$LIBDIR" = "x" ]          && LIBDIR="$PREFIX/lib"
-[ "x$DATADIR" = "x" ]         && DATADIR="$PREFIX/share"
-[ "x$LOCALEDIR" = "x" ]       && LOCALEDIR="$DATADIR/locale"
-[ "x$MANDIR" = "x" ]          && MANDIR="$PREFIX/man"
-[ "x$INFODIR" = "x" ]         && INFODIR="$DATADIR/info"
-
-
-CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_INSTALL_PREFIX=$PREFIX"
-CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_INSTALL_EXEC_PREFIX=$EXEC_PREFIX"
-CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_SYSCONFDIR=$SYSCONFDIR"
-CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_BINDIR=$BINDIR"
-CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_LIBDIR=$LIBDIR"
-CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_DATADIR=$DATADIR"
-CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_LOCALEDIR=$LOCALEDIR"
-CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_MANDIR=$MANDIR"
-CMAKE_OPTS="$CMAKE_OPTS-DCMAKE_INSTALL_INFODIR=$INFODIR"
+[ "x$PREFIX" = "x" ]          || CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_INSTALL_PREFIX=$PREFIX"
+[ "x$EXEC_PREFIX" = "x" ]     || CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_INSTALL_EXEC_PREFIX=$EXEC_PREFIX"
+[ "x$SYSCONFDIR" = "x" ]      || CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_INSTALL_SYSCONFDIR=$SYSCONFDIR"
+[ "x$BINDIR" = "x" ]          || CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_INSTALL_BINDIR=$BINDIR"
+[ "x$LIBDIR" = "x" ]          || CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_INSTALL_LIBDIR=$LIBDIR"
+[ "x$DATADIR" = "x" ]         || CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_INSTALL_DATADIR=$DATADIR"
+[ "x$LOCALEDIR" = "x" ]       || CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_INSTALL_LOCALEDIR=$LOCALEDIR"
+[ "x$MANDIR" = "x" ]          || CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_INSTALL_MANDIR=$MANDIR"
+[ "x$INFODIR" = "x" ]         || CMAKE_OPTS="$CMAKE_OPTS -DCMAKE_INSTALL_INFODIR=$INFODIR"
 
 # Debug
 if [ "${enable_debug}" = "yes" ]; then

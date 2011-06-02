@@ -14,7 +14,7 @@ foreach (DOMAIN ${DOMAINS})
 
      set (SOURCE ${SOURCE} "${DOMAIN}.mo")
 
-     install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${DOMAIN}.mo DESTINATION locale/${DOMAIN}/LC_MESSAGES/ RENAME cream-browser.mo)
+     install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${DOMAIN}.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR}/${DOMAIN}/LC_MESSAGES/ RENAME cream-browser.mo)
 endforeach ()
 
 add_custom_target (locale

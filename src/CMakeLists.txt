@@ -75,7 +75,7 @@ target_link_libraries (cream-browser
      ${GTK_LIBRARIES}
 )
 
-install (TARGETS cream-browser DESTINATION bin)
+install (TARGETS cream-browser DESTINATION ${CMAKE_INSTALL_BINDIR})
 file (GLOB files "${PROJECT_SOURCE_DIR}/lua/cream/*.lua")
-install (FILES ${files} DESTINATION share/cream-browser/cream)
+install (FILES ${files} DESTINATION ${CMAKE_INSTALL_DATADIR}/cream-browser/lib/cream)
 
