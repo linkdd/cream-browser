@@ -53,14 +53,12 @@ static int luaL_theme_new (lua_State *L)
      struct theme_t *t = lua_pushtheme (L);
 
      t->global.font = g_strdup ("sans normal 8");
-     t->global.box  = (struct theme_global_box_t) { FALSE, FALSE, 5 };
 
      t->statusbar.font      = g_strdup ("sans normal 8");
      t->statusbar.bg.normal = g_strdup ("#000000");
      t->statusbar.bg.secure = g_strdup ("#B0FF00");
      t->statusbar.fg.normal = g_strdup ("#FFFFFF");
      t->statusbar.fg.secure = g_strdup ("#000000");
-     t->statusbar.box = (struct theme_box_t) { FALSE, FALSE, FALSE, 0 };
 
      t->tab.font      = g_strdup ("sans normal 8");
      t->tab.bg.border = g_strdup ("1px solid black");
@@ -69,16 +67,12 @@ static int luaL_theme_new (lua_State *L)
      t->tab.fg.border = g_strdup ("1px solid black");
      t->tab.fg.normal = g_strdup ("#CCCCCC");
      t->tab.fg.focus  = g_strdup ("#FFFFFF");
-     t->tab.box = (struct theme_box_t) { TRUE, FALSE, FALSE, 0 };
 
      t->promptbox.font      = g_strdup ("sans normal 8");
      t->promptbox.bg.normal = g_strdup ("#151515");
      t->promptbox.bg.error  = g_strdup ("#FF0000");
      t->promptbox.fg.normal = g_strdup ("#CCCCCC");
      t->promptbox.fg.error  = g_strdup ("#000000");
-     t->promptbox.box = (struct theme_box_t) { FALSE, FALSE, FALSE, 0 };
-
-     t->webview.box = (struct theme_box_t) { TRUE, TRUE, TRUE, 0 };
 
      global.theme = t;
      return 1;
@@ -140,9 +134,6 @@ static const luaI_reg cream_theme_setters[] =
 {
      /* section global */
      { "global.font",            luaI_setstring, offsetof (struct theme_t, global.font) },
-     { "global.box.padding",     luaI_setint,    offsetof (struct theme_t, global.box.padding) },
-     { "global.box.horizontal",  luaI_setbool,   offsetof (struct theme_t, global.box.horizontal) },
-     { "global.box.homogeneous", luaI_setbool,   offsetof (struct theme_t, global.box.homogeneous) },
 
      /* statusbar */
      { "statusbar.font",           luaI_setstring, offsetof (struct theme_t, statusbar.font) },
@@ -150,10 +141,6 @@ static const luaI_reg cream_theme_setters[] =
      { "statusbar.bg.secure",      luaI_setstring, offsetof (struct theme_t, statusbar.bg.secure) },
      { "statusbar.fg.normal",      luaI_setstring, offsetof (struct theme_t, statusbar.fg.normal) },
      { "statusbar.fg.secure",      luaI_setstring, offsetof (struct theme_t, statusbar.fg.secure) },
-     { "statusbar.box.pack_start", luaI_setbool,   offsetof (struct theme_t, statusbar.box.pack_start) },
-     { "statusbar.box.expand",     luaI_setbool,   offsetof (struct theme_t, statusbar.box.expand) },
-     { "statusbar.box.fill",       luaI_setbool,   offsetof (struct theme_t, statusbar.box.fill) },
-     { "statusbar.box.padding",    luaI_setint,    offsetof (struct theme_t, statusbar.box.padding) },
 
      /* tab */
      { "tab.font",           luaI_setstring, offsetof (struct theme_t, tab.font) },
@@ -163,10 +150,6 @@ static const luaI_reg cream_theme_setters[] =
      { "tab.fg.border",      luaI_setstring, offsetof (struct theme_t, tab.fg.border) },
      { "tab.fg.normal",      luaI_setstring, offsetof (struct theme_t, tab.fg.normal) },
      { "tab.fg.focus",       luaI_setstring, offsetof (struct theme_t, tab.fg.focus) },
-     { "tab.box.pack_start", luaI_setbool,   offsetof (struct theme_t, tab.box.pack_start) },
-     { "tab.box.expand",     luaI_setbool,   offsetof (struct theme_t, tab.box.expand) },
-     { "tab.box.fill",       luaI_setbool,   offsetof (struct theme_t, tab.box.fill) },
-     { "tab.box.padding",    luaI_setint,    offsetof (struct theme_t, tab.box.padding) },
 
      /* promptbox */
      { "promptbox.font",           luaI_setstring, offsetof (struct theme_t, promptbox.font) },
@@ -174,16 +157,6 @@ static const luaI_reg cream_theme_setters[] =
      { "promptbox.bg.error",       luaI_setstring, offsetof (struct theme_t, promptbox.bg.error) },
      { "promptbox.fg.normal",      luaI_setstring, offsetof (struct theme_t, promptbox.fg.normal) },
      { "promptbox.fg.error",       luaI_setstring, offsetof (struct theme_t, promptbox.fg.error) },
-     { "promptbox.box.pack_start", luaI_setbool,   offsetof (struct theme_t, promptbox.box.pack_start) },
-     { "promptbox.box.expand",     luaI_setbool,   offsetof (struct theme_t, promptbox.box.expand) },
-     { "promptbox.box.fill",       luaI_setbool,   offsetof (struct theme_t, promptbox.box.fill) },
-     { "promptbox.box.padding",    luaI_setint,    offsetof (struct theme_t, promptbox.box.padding) },
-
-     /* webview */
-     { "webview.box.pack_start", luaI_setbool,   offsetof (struct theme_t, webview.box.pack_start) },
-     { "webview.box.expand",     luaI_setbool,   offsetof (struct theme_t, webview.box.expand) },
-     { "webview.box.fill",       luaI_setbool,   offsetof (struct theme_t, webview.box.fill) },
-     { "webview.box.padding",    luaI_setint,    offsetof (struct theme_t, webview.box.padding) },
 
      { NULL, NULL, 0 }
 };
@@ -192,9 +165,6 @@ static const luaI_reg cream_theme_getters[] =
 {
      /* section global */
      { "global.font",            luaI_getstring, offsetof (struct theme_t, global.font) },
-     { "global.box.padding",     luaI_getint,    offsetof (struct theme_t, global.box.padding) },
-     { "global.box.horizontal",  luaI_getbool,   offsetof (struct theme_t, global.box.horizontal) },
-     { "global.box.homogeneous", luaI_getbool,   offsetof (struct theme_t, global.box.homogeneous) },
 
      /* statusbar */
      { "statusbar.font",           luaI_getstring, offsetof (struct theme_t, statusbar.font) },
@@ -202,10 +172,6 @@ static const luaI_reg cream_theme_getters[] =
      { "statusbar.bg.secure",      luaI_getstring, offsetof (struct theme_t, statusbar.bg.secure) },
      { "statusbar.fg.normal",      luaI_getstring, offsetof (struct theme_t, statusbar.fg.normal) },
      { "statusbar.fg.secure",      luaI_getstring, offsetof (struct theme_t, statusbar.fg.secure) },
-     { "statusbar.box.pack_start", luaI_getbool,   offsetof (struct theme_t, statusbar.box.pack_start) },
-     { "statusbar.box.expand",     luaI_getbool,   offsetof (struct theme_t, statusbar.box.expand) },
-     { "statusbar.box.fill",       luaI_getbool,   offsetof (struct theme_t, statusbar.box.fill) },
-     { "statusbar.box.padding",    luaI_getint,    offsetof (struct theme_t, statusbar.box.padding) },
 
      /* tab */
      { "tab.font",           luaI_getstring, offsetof (struct theme_t, tab.font) },
@@ -215,10 +181,6 @@ static const luaI_reg cream_theme_getters[] =
      { "tab.fg.border",      luaI_getstring, offsetof (struct theme_t, tab.fg.border) },
      { "tab.fg.normal",      luaI_getstring, offsetof (struct theme_t, tab.fg.normal) },
      { "tab.fg.focus",       luaI_getstring, offsetof (struct theme_t, tab.fg.focus) },
-     { "tab.box.pack_start", luaI_getbool,   offsetof (struct theme_t, tab.box.pack_start) },
-     { "tab.box.expand",     luaI_getbool,   offsetof (struct theme_t, tab.box.expand) },
-     { "tab.box.fill",       luaI_getbool,   offsetof (struct theme_t, tab.box.fill) },
-     { "tab.box.padding",    luaI_getint,    offsetof (struct theme_t, tab.box.padding) },
 
      /* promptbox */
      { "promptbox.font",           luaI_getstring, offsetof (struct theme_t, promptbox.font) },
@@ -226,16 +188,6 @@ static const luaI_reg cream_theme_getters[] =
      { "promptbox.bg.error",       luaI_getstring, offsetof (struct theme_t, promptbox.bg.error) },
      { "promptbox.fg.normal",      luaI_getstring, offsetof (struct theme_t, promptbox.fg.normal) },
      { "promptbox.fg.error",       luaI_getstring, offsetof (struct theme_t, promptbox.fg.error) },
-     { "promptbox.box.pack_start", luaI_getbool,   offsetof (struct theme_t, promptbox.box.pack_start) },
-     { "promptbox.box.expand",     luaI_getbool,   offsetof (struct theme_t, promptbox.box.expand) },
-     { "promptbox.box.fill",       luaI_getbool,   offsetof (struct theme_t, promptbox.box.fill) },
-     { "promptbox.box.padding",    luaI_getint,    offsetof (struct theme_t, promptbox.box.padding) },
-
-     /* webview */
-     { "webview.box.pack_start", luaI_getbool,   offsetof (struct theme_t, webview.box.pack_start) },
-     { "webview.box.expand",     luaI_getbool,   offsetof (struct theme_t, webview.box.expand) },
-     { "webview.box.fill",       luaI_getbool,   offsetof (struct theme_t, webview.box.fill) },
-     { "webview.box.padding",    luaI_getint,    offsetof (struct theme_t, webview.box.padding) },
 
      { NULL, NULL, 0 }
 };

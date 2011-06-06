@@ -8,5 +8,6 @@ require ("cream.util")
 --require ("cream.tab")
 --require ("cream.url")
 
+require ("cream.theme")
 
 module ("cream")

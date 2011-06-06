@@ -282,12 +282,11 @@ static void init (gchar *config)
      if (!lua_ctx_parse (rc, &error))
           print_error (error, TRUE, NULL);
 
-     /*
      if (!global.theme)
      {
           error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_THEME, _("Theme wasn't initialized."));
           print_error (error, TRUE, NULL);
-     }*/
+     }
 
 }
 
