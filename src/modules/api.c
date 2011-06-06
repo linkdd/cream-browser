@@ -41,11 +41,15 @@ static struct ModuleCallback *mod_webview_new = NULL;
 
 static GList *webviews = NULL;
 
-static void list_destroy_data (gpointer data)
+static void list_destroy_module (struct ModuleCallback *el)
 {
-     struct ModuleCallback *el = (struct ModuleCallback *) data;
      g_free (el->name);
      g_free (el);
+}
+
+static void list_destroy_webview (GtkWidget *w)
+{
+     gtk_widget_destroy (w);
 }
 
 /* Standard API for Cream-Browser */
@@ -62,14 +66,16 @@ CREAM_MODULE_API void module_unload (void)
      if (mod_unload) ((ModuleUnloadFunc) mod_unload->func) (mod_unload->data);
 
      /* free all webviews previously created */
-     g_list_free_full (webviews, (GDestroyNotify) gtk_widget_destroy);
+     g_list_foreach (webviews, (GFunc) list_destroy_webview, NULL);
+     g_list_free (webviews);
 
      /* free memory used by mod_callbacks */
      g_free (mod_init);
      g_free (mod_unload);
      g_free (mod_webview_new);
 
-     g_list_free_full (mod_call, list_destroy_data);
+     g_list_foreach (mod_call, (GFunc) list_destroy_module, NULL);
+     g_list_free (mod_call);
 }
 
 CREAM_MODULE_API GtkWidget *module_webview_new (void)
