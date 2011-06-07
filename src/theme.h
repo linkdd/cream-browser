@@ -35,21 +35,6 @@
  * @{
  */
 
-struct theme_global_box_t
-{
-     gboolean horizontal;
-     gboolean homogeneous;
-     gint padding;
-};
-
-struct theme_box_t
-{
-     gboolean pack_start;
-     gboolean expand;
-     gboolean fill;
-     gint padding;
-};
-
 /*!
  * \struct theme_t
  * Theme structure to be shared with Lua.
@@ -59,7 +44,6 @@ struct theme_t
      struct
      {
           gchar *font;
-          struct theme_global_box_t box;
      } global;
 
      struct
@@ -71,8 +55,6 @@ struct theme_t
                gchar *normal;
                gchar *secure;
           } bg, fg;
-
-          struct theme_box_t box;
      } statusbar;
 
      struct
@@ -85,8 +67,6 @@ struct theme_t
                gchar *normal;
                gchar *focus;
           } bg, fg;
-
-          struct theme_box_t box;
      } tab;
 
      struct
@@ -98,14 +78,7 @@ struct theme_t
                gchar *normal;
                gchar *error;
           } bg, fg;
-
-          struct theme_box_t box;
      } promptbox;
-
-     struct
-     {
-          struct theme_box_t box;
-     } webview;
 };
 
 /*! @} */

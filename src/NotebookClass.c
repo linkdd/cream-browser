@@ -33,7 +33,9 @@ static void notebook_init (Notebook *obj)
      obj->focus = NULL;
      obj->webviews = NULL;
 
+#if GTK_CHECK_VERSION (2, 24, 0)
      gtk_notebook_set_group_name (GTK_NOTEBOOK (obj), PACKAGE);
+#endif
      gtk_notebook_set_scrollable (GTK_NOTEBOOK (obj), TRUE);
      gtk_notebook_popup_enable (GTK_NOTEBOOK (obj));
 }

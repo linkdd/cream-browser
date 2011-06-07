@@ -6,12 +6,12 @@ useragents = {
 }
 
 -- Load theme
-cream.theme.init ("~/.config/cream-browser/themes/default/theme.lua")
+cream.theme ("~/.config/cream-browser/themes/default/theme.lua")
 
 -- Load wanted modules
-cream.module.enable ("webkit")
-cream.module.enable ("about")
-cream.module.enable ("ftp")
+cream.modules.enable ("webkit")
+cream.modules.enable ("about")
+cream.modules.enable ("ftp")
 
 -- Misc
 cream.config.proxy.url    = "192.168.1.172:8123"
@@ -23,16 +23,7 @@ cream.config.session.enable = true
 cream.config.encodage = "UTF-8"
 cream.config.homepage = "http://cream-browser.net"
 
--- Build GUI
-cream.widgets.box ({
-     cream.widgets.notebook,
-     cream.widgets.webview,
-     cream.widgets.statusbar,
-     cream.widgets.promptbox
-})
-
 -- Mouse bindings
-
 cream.widgets.notebook:buttons (cream.util.table.join (
      cream.button ({ },        1, function (t) cream.tab.focus = t; t:raise () end),
      cream.button ({ "Mod1" }, 3, function (t) t:close () end),
