@@ -49,3 +49,30 @@ foreach (mod "dummy")
      endif ()
 endforeach (mod)
 
+# Documentation
+add_custom_target (luadoc
+     COMMENT "Generating lua documentation"
+     COMMAND mkdir -p ${CMAKE_BINARY_DIR}/docs/lua
+     COMMAND luadoc ${CMAKE_SOURCE_DIR}/src/lua/**/*.lua -d ${CMAKE_BINARY_DIR}/docs/lua --nofiles
+)
+
+add_custom_target (doxygen
+     COMMENT "Generating doxygen documentation"
+     COMMAND mkdir -p ${CMAKE_BINARY_DIR}/docs/cream-browser
+     COMMAND doxygen ${CMAKE_SOURCE_DIR}/Doxyfile
+)
+
+add_custom_target (doc
+     DEPENDS "luadoc" "doxygen"
+)
+
+# Uninstall target
+configure_file (
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY
+)
+
+add_custom_target (uninstall
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+)
