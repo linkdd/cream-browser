@@ -23,7 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "local.h"
+#include "../local.h"
 
 /*!
  * \defgroup util API.util

@@ -77,13 +77,12 @@
 #include "marshal.h"
 #include "WebViewClass.h"
 #include "NotebookClass.h"
-#include "SplittedWindow.h"
+#include "GtkVimSplit.h"
 
 #include "lua.h"
 #include "modules.h"
 #include "interface.h"
 
-#include "theme.h"
 #include "structs.h"
 
 /*!

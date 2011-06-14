@@ -54,6 +54,162 @@ static guint webview_signals[WEBVIEW_NB_SIGNALS] = { 0 };
 
 G_DEFINE_TYPE (WebView, webview, GTK_TYPE_SCROLLED_WINDOW)
 
+/* Constructors */
+
+/*!
+ * \public \memberof WebView
+ * \fn GtkWidget *webview_new (CreaMModule *mod)
+ * @param mod A #CreamModule object.
+ * @return A #WebView object.
+ *
+ * Create a new #WebView.
+ */
+GtkWidget *webview_new (CreamModule *mod)
+{
+     WebView *w = g_object_new (webview_get_type (), NULL);
+
+     g_return_val_if_fail (w != NULL && mod != NULL, NULL);
+
+     w->mod = mod;
+     w->child = w->mod->webview_new ();
+     webview_child_signal_connect (w);
+
+     gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (w), w->child);
+
+     return GTK_WIDGET (w);
+}
+
+static void webview_class_init (WebViewClass *klass)
+{
+#if GTK_CHECK_VERSION (3, 0, 0)
+     typedef void (*DestroyCallback) (GtkWidget *);
+     GtkWidgetClass *object_class = (GtkWidgetClass *) klass;
+#else
+     typedef void (*DestroyCallback) (GtkObject *);
+     GtkObjectClass *object_class = (GtkObjectClass *) klass;
+#endif
+
+     object_class->destroy = (DestroyCallback) webview_destroy;
+
+     /* signals */
+     webview_signals[WEBVIEW_LOAD_COMMIT_SIGNAL] = g_signal_new (
+               "load-commit",
+               G_TYPE_FROM_CLASS (klass),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (WebViewClass, load_commit),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__STRING,
+               G_TYPE_NONE,
+               1, G_TYPE_STRING);
+
+     webview_signals[WEBVIEW_LOAD_CHANGED_SIGNAL] = g_signal_new (
+               "load-changed",
+               G_TYPE_FROM_CLASS (klass),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (WebViewClass, load_changed),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__INT,
+               G_TYPE_NONE,
+               1, G_TYPE_INT);
+
+     webview_signals[WEBVIEW_LOAD_FINISHED_SIGNAL] = g_signal_new (
+               "load-finished",
+               G_TYPE_FROM_CLASS (klass),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (WebViewClass, load_finished),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__VOID,
+               G_TYPE_NONE,
+               0);
+
+     webview_signals[WEBVIEW_URI_CHANGED_SIGNAL] = g_signal_new (
+               "uri-changed",
+               G_TYPE_FROM_CLASS (klass),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (WebViewClass, uri_changed),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__STRING,
+               G_TYPE_NONE,
+               1, G_TYPE_STRING);
+
+     webview_signals[WEBVIEW_TITLE_CHANGED_SIGNAL] = g_signal_new (
+               "title-changed",
+               G_TYPE_FROM_CLASS (klass),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (WebViewClass, title_changed),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__STRING,
+               G_TYPE_NONE,
+               1, G_TYPE_STRING);
+
+     webview_signals[WEBVIEW_STATUS_CHANGED_SIGNAL] = g_signal_new (
+               "status-changed",
+               G_TYPE_FROM_CLASS (klass),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (WebViewClass, status_changed),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__STRING,
+               G_TYPE_NONE,
+               1, G_TYPE_STRING);
+
+     webview_signals[WEBVIEW_RAISE_SIGNAL] = g_signal_new (
+               "raise",
+               G_TYPE_FROM_CLASS (klass),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (WebViewClass, raise),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__VOID,
+               G_TYPE_NONE,
+               0);
+
+     webview_signals[WEBVIEW_DOWNLOAD_SIGNAL] = g_signal_new (
+               "download-requested",
+               G_TYPE_FROM_CLASS (klass),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (WebViewClass, download),
+               NULL, NULL,
+               cream_marshal_BOOLEAN__STRING,
+               G_TYPE_BOOLEAN,
+               1, G_TYPE_STRING);
+}
+
+static void webview_init (WebView *obj)
+{
+     obj->mod   = NULL;
+     obj->child = NULL;
+     obj->has_focus = FALSE;
+
+     obj->uri    = NULL;
+     obj->title  = NULL;
+     obj->status = NULL;
+     obj->load_status = 0;
+}
+
+/* Destructor */
+
+static void webview_destroy (GObject *obj)
+{
+     WebView *w;
+
+     g_return_if_fail (obj);
+     g_return_if_fail (IS_WEB_VIEW (obj));
+     w = WEB_VIEW (obj);
+
+     gtk_container_remove (GTK_CONTAINER (w), w->child);
+     gtk_widget_destroy (w->child);
+
+     if (w->uri) g_free (w->uri);
+     if (w->title) g_free (w->title);
+     if (w->status) g_free (w->status);
+
+#if !GTK_CHECK_VERSION (3, 0, 0)
+     GtkObjectClass *obj_class = GTK_OBJECT_CLASS (gtk_type_class (webview_get_type ()));
+     if (obj_class->destroy)
+          obj_class->destroy (GTK_OBJECT (obj));
+#endif
+}
+
+
 /* Methods */
 
 /*!
@@ -260,369 +416,5 @@ static void webview_child_signal_connect (WebView *w)
      g_signal_connect (G_OBJECT (w->child), "status-changed",     G_CALLBACK (webview_child_signal_status_changed),     w);
      g_signal_connect (G_OBJECT (w->child), "download-requested", G_CALLBACK (webview_child_signal_download_requested), w);
 }
-
-/* Constructors */
-
-/*!
- * \public \memberof WebView
- * \fn GtkWidget *webview_new (CreaMModule *mod)
- * @param mod A #CreamModule object.
- * @return A #WebView object.
- *
- * Create a new #WebView.
- */
-GtkWidget *webview_new (CreamModule *mod)
-{
-     WebView *w = g_object_new (webview_get_type (), NULL);
-
-     g_return_val_if_fail (w != NULL && mod != NULL, NULL);
-
-     w->mod = mod;
-     w->child = w->mod->webview_new ();
-     webview_child_signal_connect (w);
-
-     gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (w), w->child);
-
-     return GTK_WIDGET (w);
-}
-
-static void webview_class_init (WebViewClass *klass)
-{
-#if GTK_CHECK_VERSION (3, 0, 0)
-     typedef void (*DestroyCallback) (GtkWidget *);
-     GtkWidgetClass *object_class = (GtkWidgetClass *) klass;
-#else
-     typedef void (*DestroyCallback) (GtkObject *);
-     GtkObjectClass *object_class = (GtkObjectClass *) klass;
-#endif
-
-     object_class->destroy = (DestroyCallback) webview_destroy;
-
-     /* signals */
-     webview_signals[WEBVIEW_LOAD_COMMIT_SIGNAL] = g_signal_new (
-               "load-commit",
-               G_TYPE_FROM_CLASS (klass),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-               G_STRUCT_OFFSET (WebViewClass, load_commit),
-               NULL, NULL,
-               g_cclosure_marshal_VOID__STRING,
-               G_TYPE_NONE,
-               1, G_TYPE_STRING);
-
-     webview_signals[WEBVIEW_LOAD_CHANGED_SIGNAL] = g_signal_new (
-               "load-changed",
-               G_TYPE_FROM_CLASS (klass),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-               G_STRUCT_OFFSET (WebViewClass, load_changed),
-               NULL, NULL,
-               g_cclosure_marshal_VOID__INT,
-               G_TYPE_NONE,
-               1, G_TYPE_INT);
-
-     webview_signals[WEBVIEW_LOAD_FINISHED_SIGNAL] = g_signal_new (
-               "load-finished",
-               G_TYPE_FROM_CLASS (klass),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-               G_STRUCT_OFFSET (WebViewClass, load_finished),
-               NULL, NULL,
-               g_cclosure_marshal_VOID__VOID,
-               G_TYPE_NONE,
-               0);
-
-     webview_signals[WEBVIEW_URI_CHANGED_SIGNAL] = g_signal_new (
-               "uri-changed",
-               G_TYPE_FROM_CLASS (klass),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-               G_STRUCT_OFFSET (WebViewClass, uri_changed),
-               NULL, NULL,
-               g_cclosure_marshal_VOID__STRING,
-               G_TYPE_NONE,
-               1, G_TYPE_STRING);
-
-     webview_signals[WEBVIEW_TITLE_CHANGED_SIGNAL] = g_signal_new (
-               "title-changed",
-               G_TYPE_FROM_CLASS (klass),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-               G_STRUCT_OFFSET (WebViewClass, title_changed),
-               NULL, NULL,
-               g_cclosure_marshal_VOID__STRING,
-               G_TYPE_NONE,
-               1, G_TYPE_STRING);
-
-     webview_signals[WEBVIEW_STATUS_CHANGED_SIGNAL] = g_signal_new (
-               "status-changed",
-               G_TYPE_FROM_CLASS (klass),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-               G_STRUCT_OFFSET (WebViewClass, status_changed),
-               NULL, NULL,
-               g_cclosure_marshal_VOID__STRING,
-               G_TYPE_NONE,
-               1, G_TYPE_STRING);
-
-     webview_signals[WEBVIEW_RAISE_SIGNAL] = g_signal_new (
-               "raise",
-               G_TYPE_FROM_CLASS (klass),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-               G_STRUCT_OFFSET (WebViewClass, raise),
-               NULL, NULL,
-               g_cclosure_marshal_VOID__VOID,
-               G_TYPE_NONE,
-               0);
-
-     webview_signals[WEBVIEW_DOWNLOAD_SIGNAL] = g_signal_new (
-               "download-requested",
-               G_TYPE_FROM_CLASS (klass),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-               G_STRUCT_OFFSET (WebViewClass, download),
-               NULL, NULL,
-               cream_marshal_BOOLEAN__STRING,
-               G_TYPE_BOOLEAN,
-               1, G_TYPE_STRING);
-}
-
-static void webview_init (WebView *obj)
-{
-     obj->mod   = NULL;
-     obj->child = NULL;
-     obj->has_focus = FALSE;
-
-     obj->uri    = NULL;
-     obj->title  = NULL;
-     obj->status = NULL;
-     obj->load_status = 0;
-}
-
-/* Destructor */
-
-static void webview_destroy (GObject *obj)
-{
-     WebView *w;
-
-     g_return_if_fail (obj);
-     g_return_if_fail (IS_WEB_VIEW (obj));
-     w = WEB_VIEW (obj);
-
-     gtk_container_remove (GTK_CONTAINER (w), w->child);
-     gtk_widget_destroy (w->child);
-
-     if (w->uri) g_free (w->uri);
-     if (w->title) g_free (w->title);
-     if (w->status) g_free (w->status);
-
-#if !GTK_CHECK_VERSION (3, 0, 0)
-     GtkObjectClass *obj_class = GTK_OBJECT_CLASS (gtk_type_class (webview_get_type ()));
-     if (obj_class->destroy)
-          obj_class->destroy (GTK_OBJECT (obj));
-#endif
-}
-
-/*! @} */
-
-/*!
- * \defgroup lua-webview WebView
- * \ingroup lua
- * #WebView bindings for lua.
- * @{
- */
-
-typedef struct
-{
-     WebView *w;
-     int self;
-} luaL_WebView;
-
-static luaL_WebView *lua_cast_webview (lua_State *L, int index)
-{
-     luaL_WebView *ret = (luaL_WebView *) lua_touserdata (L, index);
-     if (!ret) luaL_typerror (L, index, LUA_TWEBVIEW);
-     return ret;
-}
-
-static luaL_WebView *lua_check_webview (lua_State *L, int index)
-{
-     luaL_WebView *ret;
-     luaL_checktype (L, index, LUA_TUSERDATA);
-     ret = (luaL_WebView *) luaL_checkudata (L, index, LUA_TWEBVIEW);
-     if (!ret) luaL_typerror (L, index, LUA_TWEBVIEW);
-     if (!ret->self) luaL_error (L, _("%s not referenced."), LUA_TWEBVIEW);
-     return ret;
-}
-
-/*!
- * \fn void lua_pushwebview (lua_State *L, WebView *w)
- * @param L The lua VM state.
- * @param w The #WebView object to push in lua.
- *
- * Push a #WebView object in lua.
- */
-void lua_pushwebview (lua_State *L, WebView *w)
-{
-     luaL_WebView *ret = (luaL_WebView *) lua_newuserdata (L, sizeof (luaL_WebView));
-     ret->w = w;
-
-     /* create a self reference */
-     ret->self = luaL_ref (L, LUA_REGISTRYINDEX);
-     lua_rawgeti (L, LUA_REGISTRYINDEX, ret->self);
-
-     luaL_getmetatable (L, LUA_TWEBVIEW);
-     lua_setmetatable (L, -2);
-}
-
-/* methods */
-
-/*!
- * \fn static int luaL_webview_uri (lua_State *L)
- * @param L The lua VM state.
- * @return Number of return value in lua.
- *
- * Get the current URI loaded.
- * \code function WebView:uri () \endcode
- */
-static int luaL_webview_uri (lua_State *L)
-{
-     luaL_WebView *obj = lua_check_webview (L, 1);
-     lua_pushstring (L, webview_get_uri (obj->w));
-     return 1;
-}
-
-/*!
- * \fn static int luaL_webview_title (lua_State *L)
- * @param L The lua VM state.
- * @return Number of return value in lua.
- *
- * Get the title of the loaded page.
- * \code function WebView:title () \endcode
- */
-static int luaL_webview_title (lua_State *L)
-{
-     luaL_WebView *obj = lua_check_webview (L, 1);
-     lua_pushstring (L, webview_get_title (obj->w));
-     return 1;
-}
-
-/*!
- * \fn static int luaL_webview_load_uri (lua_State *L)
- * @param L The lua VM state.
- * @return Number of return value in lua.
- *
- * Load a new URI.
- * \code function WebView:open (uri) \endcode
- */
-static int luaL_webview_load_uri (lua_State *L)
-{
-     luaL_WebView *obj = lua_check_webview (L, 1);
-     const gchar *uri = luaL_checkstring (L, 2);
-     webview_load_uri (obj->w, uri);
-     return 0;
-}
-
-/*!
- * \fn static int luaL_webview_useragent (lua_State *L)
- * @param L The lua VM state.
- * @return Number of return value in lua.
- *
- * Set User-Agent.
- * \code function WebView:useragent (ua) \endcode
- */
-static int luaL_webview_useragent (lua_State *L)
-{
-     luaL_WebView *obj = lua_check_webview (L, 1);
-     const gchar *ua = luaL_checkstring (L, 2);
-     obj->w->mod->call ("useragent", NULL, obj->w->child, ua, NULL);
-     return 0;
-}
-
-/*!
- * \fn static int luaL_webview_raise (lua_State *L)
- * @param L The lua VM state.
- * @return Number of return value in lua.
- *
- * Raise the #WebView.
- * \code function WebView:raise () \endcode
- */
-static int luaL_webview_raise (lua_State *L)
-{
-     luaL_WebView *obj = lua_check_webview (L, 1);
-     webview_raise (obj->w);
-     return 0;
-}
-
-/*!
- * \fn static int luaL_webview_close (lua_State *L)
- * @param L The lua VM state.
- * @return Number of return value in lua.
- *
- * Close the #WebView. After calling this function, the object
- * is unusable but still exists in Lua (will be deleted by the
- * garbage collector).
- * \code function WebView:close () \endcode
- */
-static int luaL_webview_close (lua_State *L)
-{
-     luaL_WebView *obj = lua_check_webview (L, 1);
-
-     /* delete self reference */
-     luaL_unref (L, LUA_REGISTRYINDEX, obj->self);
-     obj->self = 0;
-
-     gtk_widget_destroy (GTK_WIDGET (obj->w));
-     return 0;
-}
-
-static const luaL_reg cream_webview_methods[] =
-{
-     { "uri",       luaL_webview_uri },
-     { "title",     luaL_webview_title },
-     { "open",      luaL_webview_load_uri },
-     { "close",     luaL_webview_close },
-     { "useragent", luaL_webview_useragent },
-     { "raise",     luaL_webview_raise },
-     { NULL, NULL }
-};
-
-/* metatable */
-
-/*!
- * \fn static int luaL_webview_tostring (lua_State *L)
- * @param L The lua VM state.
- * @return Number of return value in lua.
- *
- * Lua metatable: <code>__tostring</code>
- */
-static int luaL_webview_tostring (lua_State *L)
-{
-     lua_pushfstring (L, LUA_TWEBVIEW ": %p", lua_cast_webview (L, 1));
-     return 1;
-}
-
-static const luaL_reg cream_webview_meta[] =
-{
-     { "__tostring", luaL_webview_tostring },
-     { NULL, NULL }
-};
-
-/* Setters / Getters */
-
-static const luaI_reg cream_webview_getters[] =
-{
-     { "uri",       luaI_getstring,     offsetof (WebView, uri) },
-     { "title",     luaI_getstring,     offsetof (WebView, title) },
-     { "focus",     luaI_getbool,       offsetof (WebView, has_focus) },
-     { NULL, NULL, 0 }
-};
-
-static const luaI_reg cream_webview_setters[] =
-{
-     { NULL, NULL, 0 }
-};
-
-/*!
- * \fn int luaL_webview_register (lua_State *L)
- * @param L The lua VM state.
- * @return Number of return value in lua.
- *
- * Register package in the lua VM state.
- */
-LUAL_REGISTER_DECL (webview, LUA_TWEBVIEW)
 
 /*! @} */

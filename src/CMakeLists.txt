@@ -52,14 +52,14 @@ add_custom_command (
 set (SOURCE
      "${CMAKE_CURRENT_BINARY_DIR}/marshal.c"
      "${CMAKE_CURRENT_BINARY_DIR}/marshal.h"
-     "WebViewClass.c"     "WebViewClass.h"
+     "WebViewClass.c"     "WebViewClass.h"   "lua/WebViewClass.c"
      "NotebookClass.c"    "NotebookClass.h"
-     "SplittedWindow.c"   "SplittedWindow.h"
-     "modules.c"          "modules.h"
+     "GtkVimSplit.c"      "GtkVimSplit.h"
+     "modules.c"          "modules.h"        "lua/modules.c"
      "lua.c"              "lua.h"
-     "clipboard.c"
-     "util.c"
-     "theme.c"            "theme.h"
+     "lua/clipboard.c"
+     "lua/util.c"
+     "lua/theme.c"        "lua/theme.h"
      "interface.c"        "interface.h"
      "modules/scheme.c"   "modules/scheme.h"
      "socket.c"
@@ -76,6 +76,6 @@ target_link_libraries (cream-browser
 )
 
 install (TARGETS cream-browser DESTINATION ${CMAKE_INSTALL_BINDIR})
-file (GLOB files "${PROJECT_SOURCE_DIR}/lua/cream/*.lua")
+file (GLOB files "${PROJECT_SOURCE_DIR}/lua/lib/cream/*.lua")
 install (FILES ${files} DESTINATION ${CMAKE_INSTALL_DATADIR}/cream-browser/lib/cream)
 

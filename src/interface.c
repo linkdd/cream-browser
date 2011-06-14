@@ -45,12 +45,9 @@ void ui_init (void)
      gtk_window_set_title (GTK_WINDOW (global.gui.window), PACKAGE);
      g_signal_connect (G_OBJECT (global.gui.window), "destroy", G_CALLBACK (window_destroy), NULL);
 
-     global.gui.sw  = splittedwindow_new ();
-     global.gui.box = gtk_vbox_new (FALSE, 0);
-
-     global.gui.splittedwindow = global.gui.sw->root->widget;
-     gtk_box_pack_start (GTK_BOX (global.gui.box), global.gui.splittedwindow, TRUE, TRUE, 0);
-
+     global.gui.box      = gtk_vbox_new (FALSE, 0);
+     global.gui.vimsplit = gtk_vim_split_new ();
+     gtk_box_pack_start (GTK_BOX (global.gui.box), global.gui.vimsplit, TRUE, TRUE, 0);
      gtk_container_add (GTK_CONTAINER (global.gui.window), global.gui.box);
 }
 

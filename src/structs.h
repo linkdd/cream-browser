@@ -26,16 +26,18 @@
 #ifndef __STRUCTS_H
 #define __STRUCTS_H
 
+#include "lua/theme.h"
+
 /*! \struct GUI */
 struct GUI
 {
      GtkWidget *window;         /*!< Main Window */
-     GtkWidget *splittedwindow; /*!< Split area */
+     GtkWidget *vimsplit;       /*!< Split area */
      GtkWidget *statusbar;      /*!< Statusbar widget */
      GtkWidget *promptbox;      /*!< Promptbox widget */
      GtkWidget *box;            /*!< Box containing all widgets */
 
-     SplittedWindow *sw;
+     GList *notebooks;
 };
 
 /*! \struct Socket */
