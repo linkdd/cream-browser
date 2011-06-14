@@ -67,19 +67,39 @@ static void gtk_vim_split_init (GtkVimSplit *obj)
  */
 GtkWidget *gtk_vim_split_get_focus (GtkVimSplit *obj)
 {
+     g_return_val_if_fail (GTK_IS_VIM_SPLIT (obj), NULL);
      return obj->focus;
 }
 
-void gtk_vim_split_set_focus (GtkVimSplit *obj, Notebook *nb)
+/*!
+ * \fn void gtk_vim_split_set_focus (GtkVimSplit *obj, GtkWidget *nb)
+ * @param obj A #GtkVimSplit widget.
+ * @param nb A #Notebook widget.
+ *
+ * Set \arg nb as the current focused notebook.
+ */
+void gtk_vim_split_set_focus (GtkVimSplit *obj, GtkWidget *nb)
 {
-     obj->focus = GTK_WIDGET (nb);
+     g_return_if_fail (GTK_IS_VIM_SPLIT (obj));
+     g_return_if_fail (CREAM_IS_NOTEBOOK (nb));
+     g_return_if_fail (g_list_find (obj->widgets, nb) != NULL);
+
+     obj->focus = nb;
      gtk_widget_grab_focus (GTK_WIDGET (nb));
 }
 
+/*!
+ * \fn void gtk_vim_split_add (GtkVimSplit *obj, GtkWidget *child, GtkOrientation o)
+ * @param obj A #GtkVimSplit widget.
+ * @param child A #Notebook widget.
+ * @param o Split orientation.
+ *
+ * Split the focused widget.
+ */
 void gtk_vim_split_add (GtkVimSplit *obj, GtkWidget *child, GtkOrientation o)
 {
      g_return_if_fail (GTK_IS_VIM_SPLIT (obj));
-     g_return_if_fail (IS_NOTEBOOK (child));
+     g_return_if_fail (CREAM_IS_NOTEBOOK (child));
 
      obj->widgets = g_list_append (obj->widgets, GTK_WIDGET (g_object_ref (child)));
 

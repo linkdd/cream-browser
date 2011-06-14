@@ -75,8 +75,8 @@
 #include <fcntl.h>
 
 #include "marshal.h"
-#include "WebViewClass.h"
-#include "NotebookClass.h"
+#include "WebView.h"
+#include "Notebook.h"
 #include "GtkVimSplit.h"
 
 #include "lua.h"

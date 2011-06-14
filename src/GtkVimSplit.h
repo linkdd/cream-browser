@@ -23,8 +23,8 @@
 * OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef __GTK_VIM_SPLIT_H
-#define __GTK_VIM_SPLIT_H
+#ifndef __CLASS_GTK_VIM_SPLIT_H
+#define __CLASS_GTK_VIM_SPLIT_H
 
 /*!
  * \defgroup gtkvimsplit GtkVimSplit
@@ -68,7 +68,7 @@ GType gtk_vim_split_get_type (void);
 GtkWidget *gtk_vim_split_new (void);
 
 GtkWidget *gtk_vim_split_get_focus (GtkVimSplit *obj);
-void gtk_vim_split_set_focus (GtkVimSplit *obj, Notebook *nb);
+void gtk_vim_split_set_focus (GtkVimSplit *obj, GtkWidget *nb);
 
 void gtk_vim_split_add (GtkVimSplit *obj, GtkWidget *child, GtkOrientation o);
 
@@ -76,4 +76,4 @@ G_END_DECLS
 
 /*! @} */
 
-#endif /* __GTK_VIM_SPLIT_H */
+#endif /* __CLASS_GTK_VIM_SPLIT_H */

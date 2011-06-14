@@ -65,7 +65,8 @@ gboolean uri_scheme_parse (UriScheme *u, const gchar *uri)
 
      const gchar *p, *tmp;
 
-     g_return_val_if_fail (u && uri, FALSE);
+     g_return_val_if_fail (u != NULL, FALSE);
+     g_return_val_if_fail (uri != NULL, FALSE);
 
      /* skip whitespaces */
      for (p = uri; *p && g_ascii_isspace (*p); ++p);

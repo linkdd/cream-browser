@@ -30,7 +30,7 @@
 #include <gtk/gtk.h>
 #include <stdarg.h>
 
-#include <WebViewClass.h>
+#include <WebView.h>
 
 #ifdef G_OS_WIN32
      #define CREAM_MODULE_API __declspec(dllexport)

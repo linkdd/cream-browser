@@ -66,9 +66,10 @@ G_DEFINE_TYPE (WebView, webview, GTK_TYPE_SCROLLED_WINDOW)
  */
 GtkWidget *webview_new (CreamModule *mod)
 {
-     WebView *w = g_object_new (webview_get_type (), NULL);
+     WebView *w = g_object_new (CREAM_TYPE_WEBVIEW, NULL);
 
-     g_return_val_if_fail (w != NULL && mod != NULL, NULL);
+     g_return_val_if_fail (w != NULL, NULL);
+     g_return_val_if_fail (mod != NULL, NULL);
 
      w->mod = mod;
      w->child = w->mod->webview_new ();
@@ -189,11 +190,7 @@ static void webview_init (WebView *obj)
 
 static void webview_destroy (GObject *obj)
 {
-     WebView *w;
-
-     g_return_if_fail (obj);
-     g_return_if_fail (IS_WEB_VIEW (obj));
-     w = WEB_VIEW (obj);
+     WebView *w = CREAM_WEBVIEW (obj);
 
      gtk_container_remove (GTK_CONTAINER (w), w->child);
      gtk_widget_destroy (w->child);
@@ -222,7 +219,8 @@ static void webview_destroy (GObject *obj)
  */
 CreamModule *webview_get_module (WebView *w)
 {
-     return (w ? w->mod : NULL);
+     g_return_val_if_fail (CREAM_IS_WEBVIEW (w), NULL);
+     return w->mod;
 }
 
 /*!
@@ -235,15 +233,15 @@ CreamModule *webview_get_module (WebView *w)
  */
 void webview_set_module (WebView *w, CreamModule *mod)
 {
-     if (w && mod)
-     {
-          gtk_container_remove (GTK_CONTAINER (w), w->child);
-          gtk_widget_destroy (w->child);
-          w->mod = mod;
-          w->child = mod->webview_new ();
-          webview_child_signal_connect (w);
-          gtk_container_add (GTK_CONTAINER (w), w->child);
-     }
+     g_return_if_fail (CREAM_IS_WEBVIEW (w));
+     g_return_if_fail (mod != NULL);
+
+     gtk_container_remove (GTK_CONTAINER (w), w->child);
+     gtk_widget_destroy (w->child);
+     w->mod = mod;
+     w->child = mod->webview_new ();
+     webview_child_signal_connect (w);
+     gtk_container_add (GTK_CONTAINER (w), w->child);
 }
 
 /*!
@@ -256,7 +254,8 @@ void webview_set_module (WebView *w, CreamModule *mod)
  */
 GtkWidget *webview_get_child (WebView *w)
 {
-     return (w ? w->child : NULL);
+     g_return_val_if_fail (CREAM_IS_WEBVIEW (w), NULL);
+     return w->child;
 }
 
 /*!
@@ -269,7 +268,8 @@ GtkWidget *webview_get_child (WebView *w)
  */
 gboolean webview_has_focus (WebView *w)
 {
-     return (w ? w->has_focus : FALSE);
+     g_return_val_if_fail (CREAM_IS_WEBVIEW (w), FALSE);
+     return w->has_focus;
 }
 
 /*!
@@ -281,7 +281,7 @@ gboolean webview_has_focus (WebView *w)
  */
 void webview_raise (WebView *w)
 {
-     g_return_if_fail (w);
+     g_return_if_fail (CREAM_IS_WEBVIEW (w));
      w->has_focus = TRUE;
      g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_RAISE_SIGNAL], 0);
 }
@@ -298,7 +298,8 @@ void webview_load_uri (WebView *w, const gchar *uri)
 {
      UriScheme u;
 
-     g_return_if_fail (w && uri);
+     g_return_if_fail (CREAM_IS_WEBVIEW (w));
+     g_return_if_fail (uri != NULL);
 
      uri_scheme_parse (&u, uri);
 
@@ -323,7 +324,8 @@ void webview_load_uri (WebView *w, const gchar *uri)
  */
 const gchar *webview_get_uri (WebView *w)
 {
-     return (w ? w->uri : NULL);
+     g_return_val_if_fail (CREAM_IS_WEBVIEW (w), NULL);
+     return w->uri;
 }
 
 /*!
@@ -336,7 +338,8 @@ const gchar *webview_get_uri (WebView *w)
  */
 const gchar *webview_get_title (WebView *w)
 {
-     return (w ? w->title : NULL);
+     g_return_val_if_fail (CREAM_IS_WEBVIEW (w), NULL);
+     return w->title;
 }
 
 /*!
@@ -349,7 +352,8 @@ const gchar *webview_get_title (WebView *w)
  */
 const gchar *webview_get_status (WebView *w)
 {
-     return (w ? w->status : NULL);
+     g_return_val_if_fail (CREAM_IS_WEBVIEW (w), NULL);
+     return w->status;
 }
 
 /* Signals */
@@ -406,7 +410,8 @@ static gboolean webview_child_signal_download_requested (GtkWidget *child, const
 
 static void webview_child_signal_connect (WebView *w)
 {
-     g_return_if_fail (w && w->child);
+     g_return_if_fail (CREAM_IS_WEBVIEW (w));
+     g_return_if_fail (w->child != NULL);
 
      g_signal_connect (G_OBJECT (w->child), "load-commit",        G_CALLBACK (webview_child_signal_load_commit),        w);
      g_signal_connect (G_OBJECT (w->child), "load-changed",       G_CALLBACK (webview_child_signal_load_changed),       w);

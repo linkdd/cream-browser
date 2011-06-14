@@ -23,8 +23,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __WEBVIEW_CLASS_H
-#define __WEBVIEW_CLASS_H
+#ifndef __CLASS_WEBVIEW_H
+#define __CLASS_WEBVIEW_H
 
 /*!
  * \defgroup webview WebView
@@ -38,9 +38,10 @@
 
 G_BEGIN_DECLS
 
-#define WEB_VIEW(obj)         G_TYPE_CHECK_INSTANCE_CAST(obj, webview_get_type (), WebView)
-#define WEB_VIEW_CLASS(klass) G_TYPE_CHECK_CLASS_CAST(klass, webview_get_type (), WebViewClass)
-#define IS_WEB_VIEW(obj)      G_TYPE_CHECK_INSTANCE_TYPE(obj, webview_get_type ())
+#define CREAM_TYPE_WEBVIEW              (webview_get_type ())
+#define CREAM_WEBVIEW(obj)              (G_TYPE_CHECK_INSTANCE_CAST (obj, CREAM_TYPE_WEBVIEW, WebView))
+#define CREAM_IS_WEBVIEW(obj)           (G_TYPE_CHECK_INSTANCE_TYPE (obj, CREAM_TYPE_WEBVIEW))
+#define CREAM_WEBVIEW_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST (klass, CREAM_TYPE_WEBVIEW, WebViewClass))
 
 typedef struct _WebView WebView;
 typedef struct _WebViewClass WebViewClass;
@@ -190,4 +191,4 @@ G_END_DECLS
 
 /*! @} */
 
-#endif /* __WEBVIEW_CLASS_H */
+#endif /* __CLASS_WEBVIEW_H */

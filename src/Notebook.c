@@ -48,7 +48,8 @@ static void notebook_init (Notebook *obj)
  */
 GtkWidget *notebook_get_focus (Notebook *obj)
 {
-     return (obj != NULL ? obj->focus : NULL);
+     g_return_val_if_fail (CREAM_IS_NOTEBOOK (obj), NULL);
+     return obj->focus;
 }
 
 /*!
@@ -63,7 +64,8 @@ void notebook_open (Notebook *obj, const gchar *url)
 {
      GtkWidget *webview;
 
-     g_return_if_fail (obj && url);
+     g_return_if_fail (CREAM_IS_NOTEBOOK (obj));
+     g_return_if_fail (url != NULL);
 
      if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (obj)) == 0)
           notebook_tabopen (obj, url);
@@ -73,7 +75,7 @@ void notebook_open (Notebook *obj, const gchar *url)
                gtk_notebook_get_current_page (GTK_NOTEBOOK (obj))
           );
 
-          webview_load_uri (WEB_VIEW (webview), url);
+          webview_load_uri (CREAM_WEBVIEW (webview), url);
      }
 }
 
@@ -91,11 +93,12 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
      GtkWidget *webview;
      UriScheme u;
 
+     g_return_if_fail (CREAM_IS_NOTEBOOK (obj));
      g_return_if_fail (uri_scheme_parse (&u, url));
 
      module = get_protocol (u.scheme);
      webview = webview_new (module);
-     webview_load_uri (WEB_VIEW (webview), url);
+     webview_load_uri (CREAM_WEBVIEW (webview), url);
 
      gtk_notebook_append_page_menu (GTK_NOTEBOOK (obj), webview,
                NULL,

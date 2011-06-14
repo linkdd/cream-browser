@@ -52,8 +52,8 @@ add_custom_command (
 set (SOURCE
      "${CMAKE_CURRENT_BINARY_DIR}/marshal.c"
      "${CMAKE_CURRENT_BINARY_DIR}/marshal.h"
-     "WebViewClass.c"     "WebViewClass.h"   "lua/WebViewClass.c"
-     "NotebookClass.c"    "NotebookClass.h"
+     "WebView.c"          "WebView.h"   "lua/WebView.c"
+     "Notebook.c"         "Notebook.h"
      "GtkVimSplit.c"      "GtkVimSplit.h"
      "modules.c"          "modules.h"        "lua/modules.c"
      "lua.c"              "lua.h"

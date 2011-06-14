@@ -23,8 +23,8 @@
 * OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef __NOTEBOOK_CLASS_H
-#define __NOTEBOOK_CLASS_H
+#ifndef __CLASS_NOTEBOOK_H
+#define __CLASS_NOTEBOOK_H
 
 /*!
  * \defgroup notebook Notebook
@@ -37,9 +37,10 @@
 
 G_BEGIN_DECLS
 
-#define NOTEBOOK(obj)              G_TYPE_CHECK_INSTANCE_CAST(obj, notebook_get_type (), Notebook)
-#define NOTEBOOK_CLASS(klass)      G_TYPE_CHECK_CLASS_CAST(klass, notebook_get_type (), NotebookClass)
-#define IS_NOTEBOOK(obj)           G_TYPE_CHECK_INSTANCE_TYPE(obj, notebook_get_type ())
+#define CREAM_TYPE_NOTEBOOK             (notebook_get_type ())
+#define CREAM_NOTEBOOK(obj)             (G_TYPE_CHECK_INSTANCE_CAST (obj, CREAM_TYPE_NOTEBOOK, Notebook))
+#define CREAM_IS_NOTEBOOK(obj)          (G_TYPE_CHECK_INSTANCE_TYPE (obj, CREAM_TYPE_NOTEBOOK))
+#define CREAM_NOTEBOOK_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST (klass, CREAM_TYPE_NOTEBOOK, NotebookClass))
 
 typedef struct _Notebook Notebook;
 typedef struct _NotebookClass NotebookClass;
@@ -74,4 +75,4 @@ G_END_DECLS
 
 /*! @} */
 
-#endif /* __NOTEBOOK_CLASS_H */
+#endif /* __CLASS_NOTEBOOK_H */

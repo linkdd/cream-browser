@@ -407,9 +407,9 @@ int main (int argc, char **argv)
      GtkWidget *nb2 = notebook_new ();
      GtkWidget *nb3 = notebook_new ();
 
-     notebook_tabopen (NOTEBOOK (nb), "dummy://user:pass@domain.com/path/to/index.html#anchor");
-     notebook_tabopen (NOTEBOOK (nb2), "dummy://user2:pas2s@domain2.com/path2/to2/index2.html#anchor2");
-     notebook_tabopen (NOTEBOOK (nb3), "dummy://user3:pas3s@domain3.com/path3/to3/index3.html#anchor3");
+     notebook_tabopen (CREAM_NOTEBOOK (nb), "dummy://user:pass@domain.com/path/to/index.html#anchor");
+     notebook_tabopen (CREAM_NOTEBOOK (nb2), "dummy://user2:pas2s@domain2.com/path2/to2/index2.html#anchor2");
+     notebook_tabopen (CREAM_NOTEBOOK (nb3), "dummy://user3:pas3s@domain3.com/path3/to3/index3.html#anchor3");
 
      gtk_vim_split_add (GTK_VIM_SPLIT (global.gui.vimsplit), nb, GTK_ORIENTATION_VERTICAL);
      gtk_vim_split_add (GTK_VIM_SPLIT (global.gui.vimsplit), nb2, GTK_ORIENTATION_VERTICAL);
