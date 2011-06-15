@@ -69,7 +69,7 @@ add_custom_target (doc
 # Archive
 add_custom_target (dist
      COMMENT "Creating tar archive"
-     COMMAND cd ${CMAKE_SOURCE_DIR} && git archive --format=tar --prefix=cream-browser-`git rev-parse --short HEAD`/ HEAD > ${CMAKE_BINARY_DIR}/cream-browser-`git rev-parse --short HEAD`.tar
+     COMMAND cd ${CMAKE_SOURCE_DIR} && git archive --format=tar --prefix=${CMAKE_PROJECT_NAME}-`git rev-parse --short HEAD`/ HEAD > ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-`git rev-parse --short HEAD`.tar
 )
 
 # Uninstall target
