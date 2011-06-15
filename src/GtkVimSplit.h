@@ -62,6 +62,16 @@ struct _GtkVimSplit
 struct _GtkVimSplitClass
 {
      GtkEventBoxClass parent;
+
+     /*!
+      * \public \memberof GtkVimSplit
+      * \signalof{GtkVimSplit}
+      * \fn void signal_no_more_split (GtkVimSplit *obj);
+      * @param obj The #GtkVimSplit object from which the signal was emitted.
+      *
+      * Signal emitted when the last view is closed (see gtk_vim_split_close()).
+      */
+     void (*no_more_split) (GtkVimSplit *obj);
 };
 
 GType gtk_vim_split_get_type (void);
@@ -71,6 +81,7 @@ GtkWidget *gtk_vim_split_get_focus (GtkVimSplit *obj);
 void gtk_vim_split_set_focus (GtkVimSplit *obj, GtkWidget *nb);
 
 void gtk_vim_split_add (GtkVimSplit *obj, GtkWidget *child, GtkOrientation o);
+void gtk_vim_split_close (GtkVimSplit *obj);
 
 G_END_DECLS
 

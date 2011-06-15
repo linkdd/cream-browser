@@ -30,11 +30,22 @@
  * @{
  */
 
+/* signals */
+
+enum
+{
+     GTK_VIM_SPLIT_NO_MORE_SPLIT_SIGNAL,
+     GTK_VIM_SPLIT_NB_SIGNALS
+};
+
+static guint gtk_vim_split_signals[GTK_VIM_SPLIT_NB_SIGNALS] = { 0 };
+
 G_DEFINE_TYPE (GtkVimSplit, gtk_vim_split, GTK_TYPE_EVENT_BOX)
 
 /* Constructors */
 
 /*!
+ * \public \memberof GtkVimSplit
  * \fn GtkWidget *gtk_vim_split_new (void)
  * @return A new #GtkVimSplit widget.
  *
@@ -47,7 +58,16 @@ GtkWidget *gtk_vim_split_new (void)
 
 static void gtk_vim_split_class_init (GtkVimSplitClass *klass)
 {
-     return;
+     /* signals */
+     gtk_vim_split_signals[GTK_VIM_SPLIT_NO_MORE_SPLIT_SIGNAL] = g_signal_new (
+               "no-more-split",
+               G_TYPE_FROM_CLASS (klass),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (GtkVimSplitClass, no_more_split),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__VOID,
+               G_TYPE_NONE,
+               0);
 }
 
 static void gtk_vim_split_init (GtkVimSplit *obj)
@@ -59,6 +79,7 @@ static void gtk_vim_split_init (GtkVimSplit *obj)
 /* Methods */
 
 /*!
+ * \public \memberof GtkVimSplit
  * \fn GtkWidget *gtk_vim_split_get_focus (GtkVimSplit *obj)
  * @param obj A #GtkVimSplit widget.
  * @return A #Notebook widget.
@@ -72,6 +93,7 @@ GtkWidget *gtk_vim_split_get_focus (GtkVimSplit *obj)
 }
 
 /*!
+ * \public \memberof GtkVimSplit
  * \fn void gtk_vim_split_set_focus (GtkVimSplit *obj, GtkWidget *nb)
  * @param obj A #GtkVimSplit widget.
  * @param nb A #Notebook widget.
@@ -89,6 +111,7 @@ void gtk_vim_split_set_focus (GtkVimSplit *obj, GtkWidget *nb)
 }
 
 /*!
+ * \public \memberof GtkVimSplit
  * \fn void gtk_vim_split_add (GtkVimSplit *obj, GtkWidget *child, GtkOrientation o)
  * @param obj A #GtkVimSplit widget.
  * @param child A #Notebook widget.
@@ -100,6 +123,7 @@ void gtk_vim_split_add (GtkVimSplit *obj, GtkWidget *child, GtkOrientation o)
 {
      g_return_if_fail (GTK_IS_VIM_SPLIT (obj));
      g_return_if_fail (CREAM_IS_NOTEBOOK (child));
+     g_return_if_fail (g_list_find (obj->widgets, child) == NULL);
 
      obj->widgets = g_list_append (obj->widgets, GTK_WIDGET (g_object_ref (child)));
 
@@ -137,6 +161,72 @@ void gtk_vim_split_add (GtkVimSplit *obj, GtkWidget *child, GtkOrientation o)
      }
 
      obj->focus = child;
+}
+
+/*!
+ * \public \memberof GtkVimSplit
+ * \fn void gtk_vim_split_close (GtkVimSplit *obj)
+ * @param obj A #GtkVimSplit widget.
+ *
+ * Close the focused notebook.
+ */
+void gtk_vim_split_close (GtkVimSplit *obj)
+{
+     GtkWidget *parent;
+
+     g_return_if_fail (GTK_IS_VIM_SPLIT (obj));
+     g_return_if_fail (obj->focus != NULL);
+
+     parent = gtk_widget_get_parent (obj->focus);
+     if (parent == GTK_WIDGET (obj))
+     {
+          g_signal_emit (G_OBJECT (obj), gtk_vim_split_signals[GTK_VIM_SPLIT_NO_MORE_SPLIT_SIGNAL], 0);
+     }
+     else
+     {
+          GtkWidget *new_parent = gtk_widget_get_parent (parent);
+          GtkWidget *reparent;
+
+          /* Here we are in a GtkPaned with two widgets,
+           * obj->focus and reparent.
+           *
+           * We are closing obj->focus and going to set the
+           * GtkPaned's parent as the parent widget of reparent.
+           */
+          if (obj->focus == gtk_paned_get_child1 (GTK_PANED (parent)))
+               reparent = gtk_paned_get_child2 (GTK_PANED (parent));
+          else
+               reparent = gtk_paned_get_child1 (GTK_PANED (parent));
+
+          /* remove widgets from container */
+          obj->widgets = g_list_remove (obj->widgets, obj->focus);
+          gtk_container_remove (GTK_CONTAINER (parent), obj->focus);
+          gtk_container_remove (GTK_CONTAINER (parent), reparent);
+
+          if (GTK_IS_VIM_SPLIT (new_parent))
+          {
+               gtk_container_remove (GTK_CONTAINER (new_parent), parent);
+               gtk_container_add (GTK_CONTAINER (new_parent), reparent);
+          }
+          else if (GTK_IS_PANED (new_parent))
+          {
+               /* if the GtkPaned's parent is a GtkPaned too, check in
+                * which side we are
+                */
+               if (parent == gtk_paned_get_child1 (GTK_PANED (new_parent)))
+               {
+                    gtk_container_remove (GTK_CONTAINER (new_parent), parent);
+                    gtk_paned_pack1 (GTK_PANED (new_parent), reparent, TRUE, TRUE);
+               }
+               else
+               {
+                    gtk_container_remove (GTK_CONTAINER (new_parent), parent);
+                    gtk_paned_pack2 (GTK_PANED (new_parent), reparent, TRUE, TRUE);
+               }
+          }
+
+          obj->focus = GTK_WIDGET (g_list_nth_data (obj->widgets, 0));
+     }
 }
 
 /*! @} */
