@@ -27,8 +27,8 @@ else ()
      set (HAVE_DEBUG 0)
 endif ()
 
-set (CMAKE_C_FLAGS_DEBUG "-g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wpointer-arith -Wno-sign-compare -O2")
-set (CMAKE_C_FLAGS_RELEASE "-Wall -O2")
+set (CMAKE_C_FLAGS_DEBUG "-D_GNU_SOURCE -g -ggdb3 -fno-inline -Wall -Wstrict-prototypes -Wpointer-arith -Wno-sign-compare -O2")
+set (CMAKE_C_FLAGS_RELEASE "-Wall -O2 -D_GNU_SOURCE")
 add_subdirectory (src)
 add_subdirectory (po)
 
@@ -50,16 +50,21 @@ foreach (mod "dummy")
 endforeach (mod)
 
 # Documentation
+configure_file (
+     "${CMAKE_SOURCE_DIR}/Doxyfile.in"
+     "${CMAKE_BINARY_DIR}/Doxyfile"
+)
+
 add_custom_target (luadoc
      COMMENT "Generating lua documentation"
      COMMAND mkdir -p ${CMAKE_BINARY_DIR}/docs/lua
-     COMMAND luadoc ${CMAKE_SOURCE_DIR}/src/lua/**/*.lua -d ${CMAKE_BINARY_DIR}/docs/lua --nofiles
+     COMMAND luadoc ${CMAKE_SOURCE_DIR}/src/lua/lib/**/*.lua -d ${CMAKE_BINARY_DIR}/docs/lua --nofiles
 )
 
 add_custom_target (doxygen
      COMMENT "Generating doxygen documentation"
      COMMAND mkdir -p ${CMAKE_BINARY_DIR}/docs/cream-browser
-     COMMAND doxygen ${CMAKE_SOURCE_DIR}/Doxyfile
+     COMMAND doxygen ${CMAKE_BINARY_DIR}/Doxyfile
 )
 
 add_custom_target (doc
