@@ -76,6 +76,13 @@ static void gtk_vim_split_init (GtkVimSplit *obj)
      obj->widgets = NULL;
 }
 
+/* callbacks */
+
+static void gtk_vim_split_grab_focus_cb (GtkWidget *w, GtkVimSplit *self)
+{
+     self->focus = w;
+}
+
 /* Methods */
 
 /*!
@@ -161,6 +168,8 @@ void gtk_vim_split_add (GtkVimSplit *obj, GtkWidget *child, GtkOrientation o)
      }
 
      obj->focus = child;
+
+     g_signal_connect (G_OBJECT (obj->focus), "grab-focus", G_CALLBACK (gtk_vim_split_grab_focus_cb), obj);
 }
 
 /*!
@@ -168,7 +177,7 @@ void gtk_vim_split_add (GtkVimSplit *obj, GtkWidget *child, GtkOrientation o)
  * \fn void gtk_vim_split_close (GtkVimSplit *obj)
  * @param obj A #GtkVimSplit widget.
  *
- * Close the focused notebook.
+  Close the focused notebook.
  */
 void gtk_vim_split_close (GtkVimSplit *obj)
 {
@@ -225,7 +234,7 @@ void gtk_vim_split_close (GtkVimSplit *obj)
                }
           }
 
-          obj->focus = GTK_WIDGET (g_list_nth_data (obj->widgets, 0));
+          obj->focus = reparent;
      }
 }
 

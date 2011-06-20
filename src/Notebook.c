@@ -5,6 +5,8 @@
  * @{
  */
 
+static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint page_num, gpointer unused);
+
 G_DEFINE_TYPE (Notebook, notebook, GTK_TYPE_NOTEBOOK);
 
 /*!
@@ -16,7 +18,11 @@ G_DEFINE_TYPE (Notebook, notebook, GTK_TYPE_NOTEBOOK);
  */
 GtkWidget *notebook_new (void)
 {
-     return GTK_WIDGET (g_object_new (notebook_get_type (), NULL));
+     Notebook *obj = g_object_new (notebook_get_type (), NULL);
+
+     g_signal_connect (G_OBJECT (obj), "", G_CALLBACK (notebook_switch_page_cb), NULL);
+
+     return GTK_WIDGET (obj);
 }
 
 static void notebook_class_init (NotebookClass *klass)
@@ -34,6 +40,13 @@ static void notebook_init (Notebook *obj)
 #endif
      gtk_notebook_set_scrollable (GTK_NOTEBOOK (obj), TRUE);
      gtk_notebook_popup_enable (GTK_NOTEBOOK (obj));
+}
+
+/* callbacks */
+
+static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint page_num, gpointer unused)
+{
+     self->focus = webview;
 }
 
 /* methods */
@@ -104,6 +117,8 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
                NULL,
                NULL
      );
+
+     obj->focus = webview;
 }
 
 /*! @} */

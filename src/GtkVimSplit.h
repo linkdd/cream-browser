@@ -49,6 +49,10 @@ typedef struct _GtkVimSplitClass GtkVimSplitClass;
 /*!
  * \class GtkVimSplit
  * #GtkVimSplit object.
+ *
+ * \signalsection
+ * \signal{no-more-split, signal_no_more_split, void signal_no_more_split (GtkVimSplit *obj);}
+ * \signalendsection
  */
 struct _GtkVimSplit
 {
