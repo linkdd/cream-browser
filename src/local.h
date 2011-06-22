@@ -78,6 +78,7 @@
 #include "WebView.h"
 #include "Notebook.h"
 #include "GtkVimSplit.h"
+#include "Inputbox.h"
 
 #include "lua.h"
 #include "modules.h"
@@ -92,7 +93,6 @@
  * \todo Add support of cookies.
  * \todo Implements dynamic proxy (ie: proxy enabled for a specified website).
  * \todo Add session support (ie: saving multiple sessions and choose which to restore at start, maybe with simple files ?).
- * \todo Create Vim-like interface.
  *
  * @{
  */
@@ -104,16 +104,20 @@ extern struct global_t global;
 #define FILE_TYPE_DATA             (1 << 1)       /*!< Used to search a ressource into standard directories. */
 #define FILE_TYPE_CACHE            (1 << 2)       /*!< Used to search a cache file into standard directories. */
 
+
+/* main.c */
 gchar *find_file (guint type, const gchar *filename);
-
-gboolean socket_init (GError **err);
-
 char *str_replace (const char *search, const char *replace, const char *string);
 void add_protocol (const gchar *scheme, CreamModule *mod);
 void del_protocol (CreamModule *mod);
 CreamModule *get_protocol (const gchar *scheme);
-
 void print_error (GError *error, gboolean abort, const gchar *fmt, ...);
+
+/* socket.c */
+gboolean socket_init (GError **err);
+
+/* command.c */
+gboolean run_command (const char *cmd, GError **err);
 
 /*! @} */
 

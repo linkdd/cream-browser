@@ -34,7 +34,7 @@ struct GUI
      GtkWidget *window;         /*!< Main Window */
      GtkWidget *vimsplit;       /*!< Split area */
      GtkWidget *statusbar;      /*!< Statusbar widget */
-     GtkWidget *promptbox;      /*!< Promptbox widget */
+     GtkWidget *inputbox;       /*!< Inputbox widget */
      GtkWidget *box;            /*!< Box containing all widgets */
 
      GList *notebooks;

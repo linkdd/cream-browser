@@ -46,7 +46,10 @@ void ui_init (void)
 
      global.gui.box      = gtk_vbox_new (FALSE, 0);
      global.gui.vimsplit = gtk_vim_split_new ();
+     global.gui.inputbox = inputbox_new ();
+
      gtk_box_pack_start (GTK_BOX (global.gui.box), global.gui.vimsplit, TRUE, TRUE, 0);
+     gtk_box_pack_end (GTK_BOX (global.gui.box), global.gui.inputbox, FALSE, TRUE, 0);
      gtk_container_add (GTK_CONTAINER (global.gui.window), global.gui.box);
 
      g_signal_connect (G_OBJECT (global.gui.window),   "destroy",       G_CALLBACK (window_destroy), NULL);

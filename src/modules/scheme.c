@@ -156,6 +156,7 @@ _path:
      }
 
      /* put all of this into the structure. */
+     u->string   = g_strdup (uri);
      u->scheme   = (scheme ? g_string_free (scheme, FALSE) : NULL);
      u->userinfo = (userinfo ? g_string_free (userinfo, FALSE) : NULL);
      u->hostname = (hostname ? g_string_free (hostname, FALSE) : NULL);

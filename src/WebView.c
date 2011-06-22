@@ -241,7 +241,7 @@ void webview_set_module (WebView *w, CreamModule *mod)
      w->mod = mod;
      w->child = mod->webview_new ();
      webview_child_signal_connect (w);
-     gtk_container_add (GTK_CONTAINER (w), w->child);
+     gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (w), w->child);
 }
 
 /*!

@@ -42,6 +42,7 @@
  */
 typedef struct
 {
+     char *string;       /*!< String passed to uri_scheme_parse() */
      char *scheme;       /*!< Protocol used. */
      char *userinfo;     /*!< User informations. */
      char *hostname;     /*!< Hostname, or IP adresse. */

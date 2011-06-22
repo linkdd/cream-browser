@@ -74,7 +74,16 @@ static gboolean control_client_socket (GIOChannel *channel)
 
      if (line)
      {
-          /* parse command */
+          if (!run_command (line, &error))
+          {
+               print_error (error, FALSE, _("Error while running command"));
+          }
+
+          if (error != NULL)
+          {
+               result = g_string_append (result, error->message);
+               g_error_free (error);
+          }
           result = g_string_append (result, "\r\n");
 
           ret = g_io_channel_write_chars (channel, result->str, result->len, &len, &error);

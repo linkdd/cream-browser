@@ -5,6 +5,7 @@ set (VERSION "unstable")
 set (LICENSE "MIT")
 
 option (ENABLE_MOD_DUMMY "Build module 'dummy'" ON)
+option (ENABLE_MOD_WEBKIT "Build module 'webkit'" ON)
 
 # prefix directories
 
@@ -40,7 +41,7 @@ configure_file (
 )
 
 # Build modules
-foreach (mod "dummy")
+foreach (mod "dummy" "webkit")
      string (TOUPPER ${mod} modname)
 
      if (ENABLE_MOD_${modname})
