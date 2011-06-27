@@ -20,7 +20,7 @@ GtkWidget *notebook_new (void)
 {
      Notebook *obj = g_object_new (notebook_get_type (), NULL);
 
-     g_signal_connect (G_OBJECT (obj), "", G_CALLBACK (notebook_switch_page_cb), NULL);
+     g_signal_connect (G_OBJECT (obj), "switch-page", G_CALLBACK (notebook_switch_page_cb), NULL);
 
      return GTK_WIDGET (obj);
 }
@@ -102,7 +102,7 @@ void notebook_open (Notebook *obj, const gchar *url)
  */
 void notebook_tabopen (Notebook *obj, const gchar *url)
 {
-     CreamModule *module;
+     GObject *module;
      GtkWidget *webview;
      UriScheme u;
 
@@ -119,6 +119,8 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
      );
 
      obj->focus = webview;
+
+     g_signal_connect (G_OBJECT (webview), "module-changed", G_CALLBACK (ui_show), NULL);
 }
 
 /*! @} */

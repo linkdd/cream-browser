@@ -3,6 +3,9 @@
 
 #define HAVE_DEBUG       @HAVE_DEBUG@
 
+#cmakedefine HAVE_MOD_DUMMY  @HAVE_MOD_DUMMY@
+#cmakedefine HAVE_MOD_WEBKIT @HAVE_MOD_WEBKIT@
+
 #define LIB_GLIB_VERSION     "@GLIB_VERSION@"
 #define LIB_GTK_VERSION      "@GTK_VERSION@"
 #define LIB_LUA_VERSION      "@LUA_VERSION@"
@@ -10,7 +13,7 @@
 #define COMPILER         "@CMAKE_C_COMPILER@"
 #define CFLAGS           "@CMAKE_C_FLAGS@ @GLIB_CFLAGS@ @LUA_CFLAGS@ @GTK_CFLAGS@"
 #define LDFLAGS          "@CMAKE_EXE_LINKER_FLAGS@ @GLIB_LDFLAGS@ @LUA_LDFLAGS@ @GTK_LDFLAGS@"
-#define ARCH             "@ARCH@"
+#define ARCH             "@CMAKE_HOST_SYSTEM_PROCESSOR@"
 
 #define PACKAGE          "@CMAKE_PROJECT_NAME@"
 #define VERSION          "@VERSION@"

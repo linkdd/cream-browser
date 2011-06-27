@@ -7,16 +7,21 @@ option (GTK3 "Build with GTK+-3.0" OFF)
 option (DIRECTFB "Build with GTK+-2.0 DirectFB backend" OFF)
 option (DEBUG "Build in debug mode" ON)
 
+option (ENABLE_MOD_DUMMY "Build module 'dummy'" ON)
+option (ENABLE_MOD_WEBKIT "Build module 'webkit'" ON)
+
 # Check libraries
 find_package (PkgConfig REQUIRED)
 
 pkg_check_modules (GLIB REQUIRED glib-2.0)
 include_directories (${GLIB_INCLUDE_DIRS})
 link_directories (${GLIB_LIBRARY_DIRS})
+set (LIBRARIES ${GLIB_LIBRARIES})
 
 pkg_check_modules (LUA REQUIRED lua)
 include_directories (${LUA_INCLUDE_DIRS})
 link_directories (${LUA_LIBRARY_DIRS})
+set (LIBRARIES ${LIBRARIES} ${LUA_LIBRARIES})
 
 # check we are not asking GTK+-3.0 with DirectFB.
 if (DIRECTFB AND GTK3)
@@ -34,6 +39,7 @@ endif ()
 
 include_directories (${GTK_INCLUDE_DIRS})
 link_directories (${GTK_LIBRARY_DIRS})
+set (LIBRARIES ${LIBRARIES} ${GTK_LIBRARIES})
 
 # Generate marshal.h/.c
 add_custom_command (
@@ -52,30 +58,55 @@ add_custom_command (
 set (SOURCE
      "${CMAKE_CURRENT_BINARY_DIR}/marshal.c"
      "${CMAKE_CURRENT_BINARY_DIR}/marshal.h"
-     "WebView.c"          "WebView.h"   "lua/WebView.c"
-     "Notebook.c"         "Notebook.h"
-     "GtkVimSplit.c"      "GtkVimSplit.h"
-     "Inputbox.c"         "Inputbox.h"
-     "command.c"
-     "modules.c"          "modules.h"   "lua/modules.c"
-     "lua.c"              "lua.h"
+     "WebView.c"
+     "Notebook.c"
+     "GtkVimSplit.c"
+     "Inputbox.c"
+     "interface.c"
+     "lua.c"
+     "lua/WebView.c"
      "lua/clipboard.c"
      "lua/util.c"
-     "lua/theme.c"        "lua/theme.h"
-     "interface.c"        "interface.h"
-     "modules/scheme.c"   "modules/scheme.h"
+     "lua/theme.c"
+     "command.c"
+     "scheme.c"
+     "modules.c"
      "socket.c"
-     "main.c"             "structs.h" "local.h"
+     "main.c"
+     "WebView.h"
+     "Notebook.h"
+     "GtkVimSplit.h"
+     "Inputbox.h"
+     "interface.h"
+     "lua.h"
+     "lua/theme.h"
+     "scheme.h"
+     "structs.h"
+     "local.h"
 )
+
+if (ENABLE_MOD_DUMMY)
+     set (SOURCE ${SOURCE} "modules/dummy.c" "modules/dummy.h")
+endif ()
+
+if (ENABLE_MOD_WEBKIT)
+     set (SOURCE ${SOURCE} "modules/webkit.c" "modules/webkit.h")
+
+     if (GTK3)
+          pkg_check_modules (WEBKIT REQUIRED webkitgtk-3.0)
+     else ()
+          pkg_check_modules (WEBKIT REQUIRED webkit-1.0)
+     endif ()
+
+     include_directories (${WEBKIT_INCLUDE_DIRS})
+     link_directories (${WEBKIT_LIBRARY_DIRS})
+     set (LIBRARIES ${LIBRARIES} ${WEBKIT_LIBRARIES})
+endif ()
 
 include_directories ("${PROJECT_BINARY_DIR}/..")
 include_directories ("${PROJECT_BINARY_DIR}")
 add_executable (cream-browser ${SOURCE})
-target_link_libraries (cream-browser
-     ${GLIB_LIBRARIES}
-     ${LUA_LIBRARIES}
-     ${GTK_LIBRARIES}
-)
+target_link_libraries (cream-browser ${LIBRARIES})
 
 install (TARGETS cream-browser DESTINATION ${CMAKE_INSTALL_BINDIR})
 file (GLOB files "${PROJECT_SOURCE_DIR}/lua/lib/cream/*.lua")

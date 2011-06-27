@@ -4,9 +4,6 @@ project (Cream-Browser)
 set (VERSION "unstable")
 set (LICENSE "MIT")
 
-option (ENABLE_MOD_DUMMY "Build module 'dummy'" ON)
-option (ENABLE_MOD_WEBKIT "Build module 'webkit'" ON)
-
 # prefix directories
 
 set (CMAKE_INSTALL_EXEC_PREFIX "${CMAKE_INSTALL_PREFIX}"         CACHE STRING "Iinstallation base")
@@ -35,20 +32,18 @@ add_subdirectory (po)
 
 # configure header
 
+if (ENABLE_MOD_DUMMY)
+     set (HAVE_MOD_DUMMY 1)
+endif ()
+
+if (ENABLE_MOD_WEBKIT)
+     set (HAVE_MOD_WEBKIT 1)
+endif ()
+
 configure_file (
      "${PROJECT_SOURCE_DIR}/cream-browser_build.h.in"
      "${PROJECT_BINARY_DIR}/cream-browser_build.h"
 )
-
-# Build modules
-foreach (mod "dummy" "webkit")
-     string (TOUPPER ${mod} modname)
-
-     if (ENABLE_MOD_${modname})
-          message ("-- Enabling module ${mod}")
-          add_subdirectory (src/modules/mod-${mod})
-     endif ()
-endforeach (mod)
 
 # Documentation
 configure_file (

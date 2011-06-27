@@ -80,9 +80,6 @@ gboolean lua_ctx_init (GError **err)
      /* open libraries */
      luaL_openlibs (global.luavm);
 
-     luaL_module_register (global.luavm);
-     lua_pop (global.luavm, 1);
-
      luaL_clipboard_register (global.luavm);
      lua_pop (global.luavm, 1);
 

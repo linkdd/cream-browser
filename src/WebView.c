@@ -31,21 +31,19 @@
  */
 
 static void webview_destroy (GObject *obj);
-static void webview_child_signal_connect (WebView *w);
+static void webview_connect_signals (WebView *w);
 
 /* signals */
 enum
 {
-     WEBVIEW_LOAD_COMMIT_SIGNAL,
-     WEBVIEW_LOAD_CHANGED_SIGNAL,
-     WEBVIEW_LOAD_FINISHED_SIGNAL,
-
      WEBVIEW_URI_CHANGED_SIGNAL,
      WEBVIEW_TITLE_CHANGED_SIGNAL,
      WEBVIEW_STATUS_CHANGED_SIGNAL,
 
      WEBVIEW_RAISE_SIGNAL,
      WEBVIEW_DOWNLOAD_SIGNAL,
+
+     WEBVIEW_MODULE_CHANGED_SIGNAL,
 
      WEBVIEW_NB_SIGNALS
 };
@@ -58,13 +56,13 @@ G_DEFINE_TYPE (WebView, webview, GTK_TYPE_SCROLLED_WINDOW)
 
 /*!
  * \public \memberof WebView
- * \fn GtkWidget *webview_new (CreaMModule *mod)
+ * \fn GtkWidget *webview_new (GObject *mod)
  * @param mod A #CreamModule object.
  * @return A #WebView object.
  *
  * Create a new #WebView.
  */
-GtkWidget *webview_new (CreamModule *mod)
+GtkWidget *webview_new (GObject *mod)
 {
      WebView *w = g_object_new (CREAM_TYPE_WEBVIEW, NULL);
 
@@ -72,8 +70,8 @@ GtkWidget *webview_new (CreamModule *mod)
      g_return_val_if_fail (mod != NULL, NULL);
 
      w->mod = mod;
-     w->child = w->mod->webview_new ();
-     webview_child_signal_connect (w);
+     w->child = cream_module_webview_new (CREAM_MODULE (mod));
+     webview_connect_signals (w);
 
      gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (w), w->child);
 
@@ -93,36 +91,6 @@ static void webview_class_init (WebViewClass *klass)
      object_class->destroy = (DestroyCallback) webview_destroy;
 
      /* signals */
-     webview_signals[WEBVIEW_LOAD_COMMIT_SIGNAL] = g_signal_new (
-               "load-commit",
-               G_TYPE_FROM_CLASS (klass),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-               G_STRUCT_OFFSET (WebViewClass, load_commit),
-               NULL, NULL,
-               g_cclosure_marshal_VOID__STRING,
-               G_TYPE_NONE,
-               1, G_TYPE_STRING);
-
-     webview_signals[WEBVIEW_LOAD_CHANGED_SIGNAL] = g_signal_new (
-               "load-changed",
-               G_TYPE_FROM_CLASS (klass),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-               G_STRUCT_OFFSET (WebViewClass, load_changed),
-               NULL, NULL,
-               g_cclosure_marshal_VOID__INT,
-               G_TYPE_NONE,
-               1, G_TYPE_INT);
-
-     webview_signals[WEBVIEW_LOAD_FINISHED_SIGNAL] = g_signal_new (
-               "load-finished",
-               G_TYPE_FROM_CLASS (klass),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-               G_STRUCT_OFFSET (WebViewClass, load_finished),
-               NULL, NULL,
-               g_cclosure_marshal_VOID__VOID,
-               G_TYPE_NONE,
-               0);
-
      webview_signals[WEBVIEW_URI_CHANGED_SIGNAL] = g_signal_new (
                "uri-changed",
                G_TYPE_FROM_CLASS (klass),
@@ -166,12 +134,22 @@ static void webview_class_init (WebViewClass *klass)
      webview_signals[WEBVIEW_DOWNLOAD_SIGNAL] = g_signal_new (
                "download-requested",
                G_TYPE_FROM_CLASS (klass),
-               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
                G_STRUCT_OFFSET (WebViewClass, download),
                NULL, NULL,
                cream_marshal_BOOLEAN__STRING,
                G_TYPE_BOOLEAN,
                1, G_TYPE_STRING);
+
+     webview_signals[WEBVIEW_MODULE_CHANGED_SIGNAL] = g_signal_new (
+               "module-changed",
+               G_TYPE_FROM_CLASS (klass),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (WebViewClass, module_changed),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__OBJECT,
+               G_TYPE_NONE,
+               1, G_TYPE_OBJECT);
 }
 
 static void webview_init (WebView *obj)
@@ -200,7 +178,7 @@ static void webview_destroy (GObject *obj)
      if (w->status) g_free (w->status);
 
 #if !GTK_CHECK_VERSION (3, 0, 0)
-     GtkObjectClass *obj_class = GTK_OBJECT_CLASS (gtk_type_class (webview_get_type ()));
+     GtkObjectClass *obj_class = GTK_OBJECT_CLASS (gtk_type_class (CREAM_TYPE_WEBVIEW));
      if (obj_class->destroy)
           obj_class->destroy (GTK_OBJECT (obj));
 #endif
@@ -211,13 +189,13 @@ static void webview_destroy (GObject *obj)
 
 /*!
  * \public \memberof WebView
- * \fn CreamModule *webview_get_module (WebView *w)
+ * \fn GObject *webview_get_module (WebView *w)
  * @param w A #WebView object.
  * @return A #CreamModule object.
  *
  * Get the #CreamModule used.
  */
-CreamModule *webview_get_module (WebView *w)
+GObject *webview_get_module (WebView *w)
 {
      g_return_val_if_fail (CREAM_IS_WEBVIEW (w), NULL);
      return w->mod;
@@ -225,13 +203,13 @@ CreamModule *webview_get_module (WebView *w)
 
 /*!
  * \public \memberof WebView
- * \fn void webview_set_module (WebView *w, CreamModule *mod)
+ * \fn void webview_set_module (WebView *w, GObject *mod)
  * @param w A #WebView object.
  * @param mod A #CreamModule object.
  *
  * Associate a new #CreamModule to the #WebView.
  */
-void webview_set_module (WebView *w, CreamModule *mod)
+void webview_set_module (WebView *w, GObject *mod)
 {
      g_return_if_fail (CREAM_IS_WEBVIEW (w));
      g_return_if_fail (mod != NULL);
@@ -239,9 +217,11 @@ void webview_set_module (WebView *w, CreamModule *mod)
      gtk_container_remove (GTK_CONTAINER (w), w->child);
      gtk_widget_destroy (w->child);
      w->mod = mod;
-     w->child = mod->webview_new ();
-     webview_child_signal_connect (w);
+     w->child = cream_module_webview_new (CREAM_MODULE (mod));
+     webview_connect_signals (w);
      gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (w), w->child);
+
+     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_MODULE_CHANGED_SIGNAL], 0, mod);
 }
 
 /*!
@@ -306,11 +286,11 @@ void webview_load_uri (WebView *w, const gchar *uri)
      g_return_if_fail (get_protocol (u.scheme) != 0);
 
      if (w->mod == get_protocol (u.scheme))
-          w->mod->call ("load-uri", NULL, w->child, &u, NULL);
+          cream_module_load_uri (CREAM_MODULE (w->mod), w->child, &u);
      else
      {
           webview_set_module (w, get_protocol (u.scheme));
-          w->mod->call ("load-uri", NULL, w->child, &u, NULL);
+          cream_module_load_uri (CREAM_MODULE (w->mod), w->child, &u);
      }
 }
 
@@ -356,70 +336,57 @@ const gchar *webview_get_status (WebView *w)
      return w->status;
 }
 
-/* Signals */
+/* signals */
 
-static void webview_child_signal_load_commit (GtkWidget *child, const char *uri, WebView *w)
+
+static void webview_signal_uri_changed_cb (CreamModule *self, GtkWidget *webview, const gchar *uri, WebView *w)
 {
-     if (w->uri) g_free (w->uri);
-     w->uri = g_strdup (uri);
-
-     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_LOAD_COMMIT_SIGNAL], 0, uri);
+     if (webview == w->child)
+          g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_URI_CHANGED_SIGNAL], 0, uri);
 }
 
-static void webview_child_signal_load_changed (GtkWidget *child, gint progress, WebView *w)
+static void webview_signal_title_changed_cb (CreamModule *self, GtkWidget *webview, const gchar *title, WebView *w)
 {
-     w->load_status = progress;
-     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_LOAD_CHANGED_SIGNAL], 0, progress);
+     if (webview == w->child)
+          g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_TITLE_CHANGED_SIGNAL], 0, title);
 }
 
-static void webview_child_signal_load_finished (GtkWidget *child, WebView *w)
+static void webview_signal_progress_changed_cb (CreamModule *self, GtkWidget *webview, gdouble progress, WebView *w)
 {
-     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_LOAD_FINISHED_SIGNAL], 0);
+     gchar *status = NULL;
+
+     if (progress == 0)
+          status = g_strdup (_("Waiting for hostname..."));
+     else if (progress == 1)
+          status = g_strdup (w->uri);
+     else
+          status = g_strdup_printf (_("Transfering data from %s..."), w->uri);
+
+     if (webview == w->child)
+          g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_STATUS_CHANGED_SIGNAL], 0, status);
+     else
+          g_free (status);
 }
 
-static void webview_child_signal_uri_changed (GtkWidget *child, const char *uri, WebView *w)
-{
-     if (w->uri) g_free (w->uri);
-     w->uri = g_strdup (uri);
-
-     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_URI_CHANGED_SIGNAL], 0, uri);
-}
-
-static void webview_child_signal_title_changed (GtkWidget *child, const char *title, WebView *w)
-{
-     if (w->title) g_free (w->title);
-     w->title = g_strdup (title);
-
-     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_TITLE_CHANGED_SIGNAL], 0, title);
-}
-
-static void webview_child_signal_status_changed (GtkWidget *child, const char *status, WebView *w)
-{
-     if (w->status) g_free (w->status);
-     w->status = g_strdup (status);
-
-     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_STATUS_CHANGED_SIGNAL], 0, status);
-}
-
-static gboolean webview_child_signal_download_requested (GtkWidget *child, const char *file_uri, WebView *w)
+static gboolean webview_signal_download_cb (CreamModule *self, GtkWidget *webview, const gchar *file, WebView *w)
 {
      gboolean ret = FALSE;
-     g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_DOWNLOAD_SIGNAL], 0, file_uri, &ret);
+
+     if (webview == w->child)
+          g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_DOWNLOAD_SIGNAL], 0, file, &ret);
+
      return ret;
 }
 
-static void webview_child_signal_connect (WebView *w)
+
+static void webview_connect_signals (WebView *w)
 {
      g_return_if_fail (CREAM_IS_WEBVIEW (w));
-     g_return_if_fail (w->child != NULL);
 
-     g_signal_connect (G_OBJECT (w->child), "load-commit",        G_CALLBACK (webview_child_signal_load_commit),        w);
-     g_signal_connect (G_OBJECT (w->child), "load-changed",       G_CALLBACK (webview_child_signal_load_changed),       w);
-     g_signal_connect (G_OBJECT (w->child), "load-finished",      G_CALLBACK (webview_child_signal_load_finished),      w);
-     g_signal_connect (G_OBJECT (w->child), "uri-changed",        G_CALLBACK (webview_child_signal_uri_changed),        w);
-     g_signal_connect (G_OBJECT (w->child), "title-changed",      G_CALLBACK (webview_child_signal_title_changed),      w);
-     g_signal_connect (G_OBJECT (w->child), "status-changed",     G_CALLBACK (webview_child_signal_status_changed),     w);
-     g_signal_connect (G_OBJECT (w->child), "download-requested", G_CALLBACK (webview_child_signal_download_requested), w);
+     g_signal_connect (G_OBJECT (w->mod), "uri-changed",      G_CALLBACK (webview_signal_uri_changed_cb),      w);
+     g_signal_connect (G_OBJECT (w->mod), "title-changed",    G_CALLBACK (webview_signal_title_changed_cb),    w);
+     g_signal_connect (G_OBJECT (w->mod), "progress-changed", G_CALLBACK (webview_signal_progress_changed_cb), w);
+     g_signal_connect (G_OBJECT (w->mod), "download",         G_CALLBACK (webview_signal_download_cb),         w);
 }
 
 /*! @} */

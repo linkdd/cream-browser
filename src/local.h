@@ -84,6 +84,14 @@
 #include "modules.h"
 #include "interface.h"
 
+#ifdef HAVE_MOD_DUMMY
+#    include "modules/dummy.h"
+#endif
+
+#ifdef HAVE_MOD_WEBKIT
+#    include "modules/webkit.h"
+#endif
+
 #include "structs.h"
 
 /*!
@@ -108,9 +116,9 @@ extern struct global_t global;
 /* main.c */
 gchar *find_file (guint type, const gchar *filename);
 char *str_replace (const char *search, const char *replace, const char *string);
-void add_protocol (const gchar *scheme, CreamModule *mod);
-void del_protocol (CreamModule *mod);
-CreamModule *get_protocol (const gchar *scheme);
+void add_protocol (const gchar *scheme, GObject *mod);
+void del_protocol (GObject *mod);
+GObject *get_protocol (const gchar *scheme);
 void print_error (GError *error, gboolean abort, const gchar *fmt, ...);
 
 /* socket.c */

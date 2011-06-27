@@ -1,178 +1,218 @@
 /*
- * Copyright © 2011, David Delassus <david.jose.delassus@gmail.com>
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- */
+* Copyright © 2011, David Delassus <david.jose.delassus@gmail.com>
+*
+* Permission is hereby granted, free of charge, to any person
+* obtaining a copy of this software and associated documentation
+* files (the "Software"), to deal in the Software without
+* restriction, including without limitation the rights to use,
+* copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the
+* Software is furnished to do so, subject to the following
+* conditions:
+*
+* The above copyright notice and this permission notice shall be
+* included in all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+* OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+* HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+* WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+* OTHER DEALINGS IN THE SOFTWARE.
+*/
 
 #include "local.h"
 
 /*!
  * \addtogroup modules
+ *
  * @{
  */
 
-#define CREAM_MODULE_ERROR         cream_module_error_quark()
-
-typedef enum
+/* define interface */
+static void cream_module_base_init (gpointer g_class)
 {
-     CREAM_MODULE_ERROR_SUPPORTED,
-     CREAM_MODULE_ERROR_OPEN,
-     CREAM_MODULE_ERROR_SYMBOLS,
-     CREAM_MODULE_ERROR_CLOSE,
-     CREAM_MODULE_ERROR_FAILED
-} CreamModuleError;
+     static gboolean is_initialized = FALSE;
 
-static GQuark cream_module_error_quark (void)
-{
-     static GQuark domain = 0;
+     if (!is_initialized)
+     {
+          GParamSpec *pspec;
 
-     if (!domain)
-          domain = g_quark_from_string ("cream.modules");
+          pspec = g_param_spec_string ("name", "Name", "Module's name", "(none)", G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
+          g_object_interface_install_property (g_class, pspec);
 
-     return domain;
+          is_initialized = TRUE;
+     }
 }
 
-static GList *modules = NULL;
-
-/*!
- * \fn gboolean modules_init (GError **err)
- * @return <code>TRUE</code> if \class{GModule} is supported, <code>FALSE</code> otherwise.
- *
- * Check if \class{GModule} is supported.
- */
-gboolean modules_init (GError **err)
+GType cream_module_get_type (void)
 {
-     if (!g_module_supported ())
+     static GType iface_type = 0;
+
+     if (iface_type == 0)
      {
-          g_set_error (err,
-                       CREAM_MODULE_ERROR,
-                       CREAM_MODULE_ERROR_SUPPORTED,
-                       _("GModule isn't supported.")
-          );
-
-          return FALSE;
-     }
-
-     return TRUE;
-}
-
-/*!
- * \fn CreamModule *modules_load (const char *filename, GError **err)
- * @param filename Filename of the library to load.
- * @param err A \class{GError} pointer in order to follow possible errors.
- * @return A #CreamModule object.
- *
- * Open a \class{GModule} object and check if it contains the correct API (see #CreamModule).
- * If the module is alreay loaded, just returns it.
- */
-CreamModule *modules_load (const char *filename, GError **err)
-{
-     CreamModule *m;
-     GList *tmp;
-
-     guint id = g_str_hash (filename);
-
-     for (tmp = modules; tmp != NULL; tmp = tmp->next)
-     {
-          m = tmp->data;
-          if (m->module_id == id)
-               return m;
-     }
-
-     /* open module */
-     m = g_malloc (sizeof (CreamModule));
-
-     m->module = g_module_open (g_strdup_printf ("libcreammod-%s.so", filename), G_MODULE_BIND_LAZY);
-     if (!m->module)
-     {
-          g_set_error (err,
-                       CREAM_MODULE_ERROR,
-                       CREAM_MODULE_ERROR_OPEN,
-                       _("%s: Couldn't open module: %s"),
-                       filename, g_module_error ()
-          );
-          return NULL;
-     }
-
-     /* load symbols */
-     if (!(g_module_symbol (m->module, "module_init", (gpointer *) &m->init)
-          && g_module_symbol (m->module, "module_unload", (gpointer *) &m->unload)
-          && g_module_symbol (m->module, "module_webview_new", (gpointer *) &m->webview_new)
-          && g_module_symbol (m->module, "module_call", (gpointer *) &m->call))
-          || !(m->init != NULL && m->unload != NULL && m->webview_new != NULL && m->call != NULL)
-        )
-     {
-          g_set_error (err,
-                       CREAM_MODULE_ERROR,
-                       CREAM_MODULE_ERROR_SYMBOLS,
-                       _("%s: Couldn't load symbols: %s"),
-                       filename, g_module_error ()
-          );
-
-          if (!g_module_close (m->module))
-               g_warning ("%s: %s", filename, g_module_error ());
-
-          return NULL;
-     }
-
-     m->init ();
-
-     m->modulename = g_strdup (filename);
-     m->module_id = id;
-
-     modules = g_list_append (modules, m);
-
-     return m;
-}
-
-/*!
- * \fn void modules_unload (CreamModule *mod)
- * @param mod A #CreamModule object.
- *
- * Unload a module
- */
-void modules_unload (CreamModule *mod)
-{
-     GList *tmp;
-
-     g_return_if_fail (mod);
-
-     for (tmp = modules; tmp != NULL; tmp = tmp->next)
-     {
-          CreamModule *m = tmp->data;
-
-          if (m->module_id == mod->module_id)
+          static const GTypeInfo info =
           {
-               m->unload ();
+               sizeof (CreamModuleIface),
+               cream_module_base_init,
+               NULL
+          };
 
-               if (!g_module_close (m->module))
-                    g_warning ("%s: %s", m->modulename, g_module_error ());
-
-               modules = g_list_remove_link (modules, tmp);
-
-               g_free (m->modulename);
-               break;
-          }
+          iface_type = g_type_register_static (G_TYPE_INTERFACE, "CreamModule", &info, 0);
      }
+
+     return iface_type;
+}
+
+/*!
+ * \fn void modules_init (void)
+ * Initialize modules.
+ */
+void modules_init (void)
+{
+     GObject *mod = NULL;
+
+#ifdef HAVE_MOD_DUMMY
+     mod = g_object_new (CREAM_MODULE_TYPE_DUMMY, "name", "dummy", NULL);
+     add_protocol ("dummy", mod);
+#endif
+#ifdef HAVE_MOD_WEBKIT
+     mod = g_object_new (CREAM_MODULE_TYPE_WEBKIT, "name", "webkit", NULL);
+     add_protocol ("http", mod);
+     add_protocol ("webkit", mod);
+#endif
+}
+
+/*!
+ * \public \memberof CreamModule
+ * \fn GtkWidget *cream_module_webview_new (CreamModule *self)
+ * @param self The module to use.
+ * @return A new widget to be used in #WebView.
+ */
+GtkWidget *cream_module_webview_new (CreamModule *self)
+{
+     CreamModuleIface *iface;
+     g_return_val_if_fail (CREAM_IS_MODULE (self), NULL);
+     iface = CREAM_MODULE_GET_INTERFACE (self);
+     g_return_val_if_fail (iface->webview_new != NULL, NULL);
+     return iface->webview_new (self);
+}
+
+/*!
+ * \public \memberof CreamModule
+ * \fn void cream_module_load_uri (CreamModule *self, GtkWidget *webview, UriScheme *uri)
+ * @param self The module to use.
+ * @param webview A webview.
+ * @param uri URI to load, see #UriScheme.
+ */
+void cream_module_load_uri (CreamModule *self, GtkWidget *webview, UriScheme *uri)
+{
+     CreamModuleIface *iface;
+     g_return_if_fail (CREAM_IS_MODULE (self));
+     iface = CREAM_MODULE_GET_INTERFACE (self);
+     g_return_if_fail (iface->load_uri != NULL);
+     iface->load_uri (self, webview, uri);
+}
+
+/*!
+ * \public \memberof CreamModule
+ * \fn void cream_module_reload (CreamModule *self, GtkWidget *webview)
+ * @param self The module to use.
+ * @param webview A webview.
+ */
+void cream_module_reload (CreamModule *self, GtkWidget *webview)
+{
+     CreamModuleIface *iface;
+     g_return_if_fail (CREAM_IS_MODULE (self));
+     iface = CREAM_MODULE_GET_INTERFACE (self);
+     g_return_if_fail (iface->reload != NULL);
+     iface->reload (self, webview);
+}
+
+/*!
+ * \public \memberof CreamModule
+ * \fn void cream_module_backward (CreamModule *self, GtkWidget *webview)
+ * @param self The module to use.
+ * @param webview A webview.
+ */
+void cream_module_backward (CreamModule *self, GtkWidget *webview)
+{
+     CreamModuleIface *iface;
+     g_return_if_fail (CREAM_IS_MODULE (self));
+     iface = CREAM_MODULE_GET_INTERFACE (self);
+     g_return_if_fail (iface->backward != NULL);
+     iface->backward (self, webview);
+}
+
+/*!
+ * \public \memberof CreamModule
+ * \fn void cream_module_forward (CreamModule *self, GtkWidget *webview)
+ * @param self The module to use.
+ * @param webview A webview.
+ */
+void cream_module_forward (CreamModule *self, GtkWidget *webview)
+{
+     CreamModuleIface *iface;
+     g_return_if_fail (CREAM_IS_MODULE (self));
+     iface = CREAM_MODULE_GET_INTERFACE (self);
+     g_return_if_fail (iface->forward != NULL);
+     iface->forward (self, webview);
+}
+
+/*!
+ * \public \memberof CreamModule
+ * \fn void cream_module_search (CreamModule *self, GtkWidget *webview, const gchar *text, gboolean forward)
+ * @param self The module to use.
+ * @param webview A webview.
+ * @param text Text to look for.
+ * @param forward Search forward or backward.
+ * @return <code>TRUE</code> on success, <code>FALSE</code> otherwise.
+ *
+ * Looks for a specified string inside webview.
+ */
+gboolean cream_module_search (CreamModule *self, GtkWidget *webview, const gchar *text, gboolean forward)
+{
+     CreamModuleIface *iface;
+     g_return_val_if_fail (CREAM_IS_MODULE (self), FALSE);
+     iface = CREAM_MODULE_GET_INTERFACE (self);
+     g_return_val_if_fail (iface->search != NULL, FALSE);
+     return iface->search (self, webview, text, forward);
+}
+
+/*!
+ * \public \memberof CreamModule
+ * \fn void cream_module_proxy (CreamModule *self, const gchar *uri)
+ * @param self The module to use.
+ * @param uri Proxy URL.
+ *
+ * Set uri as a proxy in the module.
+ */
+void cream_module_proxy (CreamModule *self, const gchar *uri)
+{
+     CreamModuleIface *iface;
+     g_return_if_fail (CREAM_IS_MODULE (self));
+     iface = CREAM_MODULE_GET_INTERFACE (self);
+     g_return_if_fail (iface->proxy != NULL);
+     iface->proxy (self, uri);
+}
+
+/*!
+ * \public \memberof CreamModule
+ * \fn void cream_module_useragent (CreamModule *self, const gchar *ua)
+ * @param self The module to use.
+ * @param ua Useragent.
+ *
+ * Set the useragent.
+ */
+void cream_module_useragent (CreamModule *self, const gchar *ua)
+{
+     CreamModuleIface *iface;
+     g_return_if_fail (CREAM_IS_MODULE (self));
+     iface = CREAM_MODULE_GET_INTERFACE (self);
+     g_return_if_fail (iface->useragent != NULL);
+     iface->useragent (self, ua);
 }
 
 /*! @} */

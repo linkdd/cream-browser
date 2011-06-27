@@ -135,7 +135,7 @@ static int luaL_webview_useragent (lua_State *L)
 {
      luaL_WebView *obj = lua_check_webview (L, 1);
      const gchar *ua = luaL_checkstring (L, 2);
-     obj->w->mod->call ("useragent", NULL, obj->w->child, ua, NULL);
+     cream_module_useragent (CREAM_MODULE (obj->w->mod), ua);
      return 0;
 }
 

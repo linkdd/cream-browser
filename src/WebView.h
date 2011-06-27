@@ -52,9 +52,6 @@ typedef struct _WebViewClass WebViewClass;
  * This widget is an interface between the \class{GModule} and Cream-Browser.
  *
  * \signalsection
- * \signal{load-commit, signal_load_commit, void load_commit (WebView *obj\, const char *uri)}
- * \signal{load-changed, signal_load_changed, void load_changed (WebView *obj\, gint load)}
- * \signal{load-finished, signal_load_finished, void load_finished (WebView *obj)}
  * \signal{uri-changed, signal_uri_changed, void uri_changed (WebView *obj\, const gchar *uri)}
  * \signal{title-changed, signal_title_changed, void title_changed (WebView *obj\, const gchar *title)}
  * \signal{status-changed, signal_status_changed, void status_changed (WebView *obj\, const gchar *status)}
@@ -67,7 +64,7 @@ struct _WebView
      GtkScrolledWindow parent;
 
      gboolean has_focus;
-     CreamModule *mod;
+     GObject *mod;
      GtkWidget *child;
 
      gchar *uri;
@@ -82,38 +79,6 @@ struct _WebViewClass
      GtkScrolledWindowClass parent;
 
      /*< public >*/
-
-     /*!
-      * \public \memberof WebView
-      * \signalof{WebView}
-      * \fn void signal_load_commit (WebView *obj, const char *uri)
-      * @param obj The #WebView object from which the signal was emitted.
-      * @param uri New URI to be loaded.
-      *
-      * Signal emitted on new URI request.
-      */
-     void (*load_commit) (WebView *obj, const char *uri);
-
-     /*!
-      * \public \memberof WebView
-      * \signalof{WebView}
-      * \fn void signal_load_changed (WebView *obj, gint load)
-      * @param obj The #WebView object from which the signal was emitted.
-      * @param load Percent of loading.
-      *
-      * Signal emitted on new load changes.
-      */
-     void (*load_changed) (WebView *obj, gint load);
-
-     /*!
-      * \public \memberof WebView
-      * \signalof{WebView}
-      * \fn void signal_load_finished (WebView *obj)
-      * @param obj The #WebView object from which the signal was emitted.
-      *
-      * Signal emitted when the load is ended.
-      */
-     void (*load_finished) (WebView *obj);
 
      /*!
       * \public \memberof WebView
@@ -161,7 +126,7 @@ struct _WebViewClass
      /*!
       * \public \memberof WebView
       * \signalof{WebView}
-      * \fn gboolean signal_download (WebView *obj, const gchar *file_uri);
+      * \fn gboolean signal_download (WebView *obj, const gchar *file_uri)
       * @param obj The #WebView object from which the signal was emitted.
       * @param file_uri URI of the file to download.
       * @return <code>TRUE</code> if the signal is handled, <code>FALSE</code> otherwise.
@@ -170,13 +135,23 @@ struct _WebViewClass
       */
      gboolean (*download) (WebView *obj, const gchar *file_uri);
 
+     /*!
+      * \public \memberof WebView
+      * \signalof{WebView}
+      * \fn void signal_module_changed (WebView *obj, GObject *module)
+      * @param obj The #WebView object from which the signal was emitted.
+      * @param module The new #CreamModule object used by the webview.
+      *
+      * Signal emitted when the webview uses a new module.
+      */
+     void (*module_changed) (WebView *obj, GObject *module);
 };
 
 GType webview_get_type (void);
-GtkWidget *webview_new (CreamModule *mod);
+GtkWidget *webview_new (GObject *mod);
 
-CreamModule *webview_get_module (WebView *w);
-void webview_set_module (WebView *w, CreamModule *mod);
+GObject *webview_get_module (WebView *w);
+void webview_set_module (WebView *w, GObject *mod);
 GtkWidget *webview_get_child (WebView *w);
 
 gboolean webview_has_focus (WebView *w);

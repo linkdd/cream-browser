@@ -148,38 +148,38 @@ char *str_replace (const char *search, const char *replace, const char *string)
 }
 
 /*!
- * \fn void add_protocol (const gchar *scheme, CreamModule *mod)
+ * \fn void add_protocol (const gchar *scheme, GObject *mod)
  * @param scheme A scheme.
  * @param mod A #CreamModule object.
  *
  * Associate a protocol to a module.
  */
-void add_protocol (const gchar *scheme, CreamModule *mod)
+void add_protocol (const gchar *scheme, GObject *mod)
 {
      g_hash_table_insert (global.protocols, g_strdup (scheme), mod);
 }
 
 /*!
- * \fn void del_protocol (CreamModule *mod)
+ * \fn void del_protocol (GObject *mod)
  * @param mod A #CreamModule object.
  *
  * Delete a module from the list.
  */
-void del_protocol (CreamModule *mod)
+void del_protocol (GObject *mod)
 {
      g_hash_table_foreach_remove (global.protocols, (GHRFunc) g_direct_equal, mod);
 }
 
 /*!
- * \fn CreamModule *get_protocol (const gchar *scheme)
+ * \fn GObject *get_protocol (const gchar *scheme)
  * @param scheme A scheme.
  * @return The associated #CreamModule.
  *
  * Returns the associated #CreamModule object.
  */
-CreamModule *get_protocol (const gchar *scheme)
+GObject *get_protocol (const gchar *scheme)
 {
-     return (CreamModule *) g_hash_table_lookup (global.protocols, scheme);
+     return (GObject *) g_hash_table_lookup (global.protocols, scheme);
 }
 
 /* Print a GError */
@@ -255,10 +255,6 @@ static void init (gchar *config)
 
      global.protocols = g_hash_table_new (g_str_hash, g_str_equal);
 
-     /* init modules */
-     if (!modules_init (&error))
-          print_error (error, TRUE, NULL);
-
      /* find lua config */
      if (!rc || !g_file_test (rc, G_FILE_TEST_EXISTS))
      {
@@ -268,6 +264,9 @@ static void init (gchar *config)
                print_error (error, TRUE, NULL);
           }
      }
+
+     /* init modules */
+     modules_init ();
 
      /* init socket */
      if (!socket_init (&error))

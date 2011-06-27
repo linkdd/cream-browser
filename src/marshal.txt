@@ -1,3 +1,9 @@
 # WebView::"signal-requested"
 BOOLEAN:STRING
-
+# CreamModule::"uri-changed"
+# CreamModule::"title-changed"
+VOID:OBJECT,STRING
+# CreamModule::"progress-changed"
+VOID:OBJECT,DOUBLE
+# CreamModule::"download"
+BOOLEAN:OBJECT,STRING

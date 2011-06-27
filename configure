@@ -133,5 +133,11 @@ else
      CMAKE_OPTS="$CMAKE_OPTS -DENABLE_MOD_DUMMY=OFF"
 fi
 
+if [ "${enable_mod_webkit}" = "yes" ]; then
+     CMAKE_OPTS="$CMAKE_OPTS -DENABLE_MOD_WEBKIT=ON"
+else
+     CMAKE_OPTS="$CMAKE_OPTS -DENABLE_MOD_WEBKIT=OFF"
+fi
+
 # Execute cmake
 cmake $TOPDIR $CMAKE_OPTS
