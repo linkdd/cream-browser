@@ -7,6 +7,8 @@
 
 static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint page_num, gpointer unused);
 
+static void notebook_signal_title_changed_cb (WebView *webview, const gchar *title, Notebook *obj);
+
 G_DEFINE_TYPE (Notebook, notebook, GTK_TYPE_NOTEBOOK);
 
 /*!
@@ -47,6 +49,7 @@ static void notebook_init (Notebook *obj)
 static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint page_num, gpointer unused)
 {
      self->focus = webview;
+     g_signal_emit_by_name (G_OBJECT (self), "grab-focus");
 }
 
 /* methods */
@@ -121,6 +124,14 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
      obj->focus = webview;
 
      g_signal_connect (G_OBJECT (webview), "module-changed", G_CALLBACK (ui_show), NULL);
+     g_signal_connect (G_OBJECT (webview), "title-changed",  G_CALLBACK (notebook_signal_title_changed_cb), obj);
+}
+
+/* signals */
+
+static void notebook_signal_title_changed_cb (WebView *webview, const gchar *title, Notebook *obj)
+{
+     gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (obj), GTK_WIDGET (webview), title);
 }
 
 /*! @} */
