@@ -378,7 +378,6 @@ static gboolean webview_signal_download_cb (CreamModule *self, GtkWidget *webvie
      return ret;
 }
 
-
 static void webview_connect_signals (WebView *w)
 {
      g_return_if_fail (CREAM_IS_WEBVIEW (w));

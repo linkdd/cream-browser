@@ -68,11 +68,14 @@ static void inputbox_init (Inputbox *self)
 static void inputbox_activate_cb (Inputbox *obj, gpointer unused)
 {
      GError *error = NULL;
+     WebView *fwebview;
      gchar *txt;
 
      g_return_if_fail (gtk_entry_get_text_length (GTK_ENTRY (obj)) > 0);
      txt = g_strdup (gtk_entry_get_text (GTK_ENTRY (obj)));
      gtk_entry_set_text (GTK_ENTRY (obj), "");
+
+     fwebview = CREAM_WEBVIEW (notebook_get_focus (CREAM_NOTEBOOK (gtk_vim_split_get_focus (GTK_VIM_SPLIT (global.gui.vimsplit)))));
 
      switch (txt[0])
      {
@@ -87,14 +90,28 @@ static void inputbox_activate_cb (Inputbox *obj, gpointer unused)
 
           case '/':
                /* search forward */
+               if (!cream_module_search (CREAM_MODULE (webview_get_module (fwebview)), fwebview->child, txt + 1, TRUE))
+               {
+                    gchar *err = g_strdup_printf ("No matches found for: %s", txt + 1);
+                    gtk_entry_set_text (GTK_ENTRY (obj), err);
+                    g_free (err);
+               }
                break;
 
           case '?':
                /* search backward */
+               if (!cream_module_search (CREAM_MODULE (webview_get_module (fwebview)), fwebview->child, txt + 1, FALSE))
+               {
+                    gchar *err = g_strdup_printf ("No matches found for: %s", txt + 1);
+                    gtk_entry_set_text (GTK_ENTRY (obj), err);
+                    g_free (err);
+               }
                break;
 
           default: break;
      }
+
+     gtk_editable_set_position (GTK_EDITABLE (obj), -1);
 
      obj->history = g_list_prepend (obj->history, txt);
 }
