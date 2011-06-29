@@ -44,6 +44,10 @@ static void cream_module_webkit_init (CreamModuleWebKit *self)
      self->wsettings = webkit_web_settings_new ();
 
      g_object_set (G_OBJECT (self->wsettings), "enable-developer-extras", TRUE, NULL);
+
+     add_protocol ("http",  G_OBJECT (self));
+     add_protocol ("https", G_OBJECT (self));
+     add_protocol ("about", G_OBJECT (self));
 }
 
 /* methods */

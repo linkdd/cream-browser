@@ -35,7 +35,7 @@ CREAM_DEFINE_MODULE (CreamModuleDummy, cream_module_dummy);
 
 static void cream_module_dummy_init (CreamModuleDummy *self)
 {
-     return;
+     add_protocol ("dummy", G_OBJECT (self));
 }
 
 /* methods */
@@ -71,8 +71,7 @@ static void cream_module_dummy_forward (CreamModule *self, GtkWidget *webview)
 
 static gboolean cream_module_dummy_search (CreamModule *self, GtkWidget *webview, const gchar *text, gboolean forward)
 {
-     const gchar *lbl = gtk_label_get_text (GTK_LABEL (webview));
-     return (strstr (lbl, text) ? TRUE : FALSE);
+     return FALSE;
 }
 
 static void cream_module_dummy_proxy (CreamModule *self, const gchar *uri)

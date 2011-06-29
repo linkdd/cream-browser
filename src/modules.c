@@ -76,12 +76,9 @@ void modules_init (void)
 
 #ifdef HAVE_MOD_DUMMY
      mod = g_object_new (CREAM_MODULE_TYPE_DUMMY, "name", "dummy", NULL);
-     add_protocol ("dummy", mod);
 #endif
 #ifdef HAVE_MOD_WEBKIT
      mod = g_object_new (CREAM_MODULE_TYPE_WEBKIT, "name", "webkit", NULL);
-     add_protocol ("http", mod);
-     add_protocol ("webkit", mod);
 #endif
 }
 
