@@ -153,7 +153,7 @@ static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer u
           ret = FALSE;
      }
 
-     gtk_editable_set_position (GTK_EDITABLE (obj), -1);
+     if (ret) gtk_editable_set_position (GTK_EDITABLE (obj), -1);
 
      return ret;
 }
