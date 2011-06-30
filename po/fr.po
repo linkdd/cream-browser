@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cream-browser unstable\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-31 07:13+0200\n"
+"POT-Creation-Date: 2011-06-30 16:16+0200\n"
 "PO-Revision-Date: 2011-05-28 14:43+0200\n"
 "Last-Translator: David Delassus <david.jose.delassus@gmail.com>\n"
 "Language-Team: French\n"
@@ -17,149 +17,202 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: WebViewClass.c:448 modules.c:207
-#, c-format
-msgid "%s not referenced."
-msgstr "%s n'est pas référencé."
+#: ../src/command.c:76
+msgid "Exit Cream-Browser"
+msgstr "Quitter Cream-Browser"
 
-#: lua.c:105
+#: ../src/command.c:77 ../src/main.c:352
+msgid "Open URL"
+msgstr "Ouvrir une URL"
+
+#: ../src/command.c:78
+msgid "Open URL in a new view"
+msgstr "Ouvrir une URL dans un nouvel onglet"
+
+#: ../src/command.c:79
+msgid "Split the current view"
+msgstr "Divise la vue actuelle en deux nouvelles"
+
+#: ../src/command.c:80
+msgid "Split the current view vertically"
+msgstr "Divise verticalement la vue actuelle en deux nouvelles"
+
+#: ../src/command.c:81
+msgid "Close the current view"
+msgstr "Ferme la vue actuelle"
+
+#: ../src/command.c:109
+#, c-format
+msgid "%s isn't implemented"
+msgstr "%s n'est pas implémenté"
+
+#: ../src/command.c:114
+#, c-format
+msgid "Unknow command '%s'"
+msgstr "Commande inconnue '%s'"
+
+#: ../src/command.c:133
+#, fuzzy
+msgid "open: Too few arguments"
+msgstr "open: Trop peu d'arguments"
+
+#: ../src/command.c:155
+#, fuzzy
+msgid "tabopen: Too few arguments"
+msgstr "tabopen: Trop peu d'arguments"
+
+#: ../src/lua.c:102
 msgid "'package' isn't a table"
 msgstr "'package' n'est pas une table"
 
-#: lua.c:116
+#: ../src/lua.c:113
 msgid "'package.path' isn't a table."
 msgstr "'package.path' n'est pas une table."
 
-#: lua.c:250
+#: ../src/lua.c:254
 #, c-format
 msgid "cannot get member '%s'"
 msgstr "Impossible de récupérer le membre '%s'"
 
-#: lua.c:270
+#: ../src/lua.c:274
 #, c-format
 msgid "cannot set member '%s'"
 msgstr "Impossible de définir le membre '%s'"
 
-#: main.c:198
+#: ../src/lua/WebView.c:54
+#, c-format
+msgid "%s not referenced."
+msgstr "%s n'est pas référencé."
+
+#: ../src/main.c:198
 #, c-format
 msgid "Error (%s:%d): %s: %s\n"
 msgstr "Erreur (%s:%d): %s: %s\n"
 
-#: main.c:202
+#: ../src/main.c:202
 #, c-format
 msgid "Error (%s:%d): %s\n"
 msgstr "Erreur (%s:%d): %s\n"
 
-#: main.c:266
+#: ../src/main.c:263
 msgid "Configuration not found."
 msgstr "Aucune configuration trouvée."
 
-#: main.c:352
+#: ../src/main.c:287
+msgid "Theme wasn't initialized."
+msgstr "Le thème n'a pas été initialisé."
+
+#: ../src/main.c:351
 msgid "Enable logging"
 msgstr "Active le log"
 
-#: main.c:353
-msgid "Open URL"
-msgstr "Ouvrir URL"
-
-#: main.c:354
+#: ../src/main.c:353
 msgid "Load an alternate config file."
 msgstr "Charger une configuration alternative."
 
-#: main.c:355
+#: ../src/main.c:354
 msgid "Unix socket's path"
 msgstr "Chemin vers le socket UNIX"
 
-#: main.c:356
+#: ../src/main.c:355
 msgid "Send a command on the specified socket (see --socket,-s)"
 msgstr "Envoie une commande sur le socket spécifié (voir --socket,-s)"
 
-#: main.c:357
+#: ../src/main.c:356
 msgid "Show version informations"
 msgstr "Affiche les informations sur la version actuelle"
 
-#: main.c:378
+#: ../src/main.c:377
 #, c-format
 msgid "%s %s, developped by David Delassus <david.jose.delassus@gmail.com>\n"
 msgstr "%s %s, développé par David Delassus <david.jose.delassus@gmail.com>\n"
 
-#: main.c:379
+#: ../src/main.c:378
 #, c-format
 msgid "Released under %s license.\n"
 msgstr "Distribué sous les termes de la licence %s.\n"
 
-#: main.c:381
+#: ../src/main.c:380
 #, c-format
 msgid "Builded with:\n"
 msgstr "Compilé avec :\n"
 
-#: main.c:386
+#: ../src/main.c:385
 #, c-format
 msgid "Builded on %s with:\n"
 msgstr "Compilé sur %s avec :\n"
 
-#: main.c:392
+#: ../src/main.c:391
 #, c-format
 msgid "Builded in debug mode.\n"
 msgstr "Compilé en mode debug.\n"
 
-#: main.c:394
+#: ../src/main.c:393
 #, c-format
 msgid "Builded in release mode.\n"
 msgstr "Compilé en mode release.\n"
 
-#: modules.c:69
-msgid "GModule isn't supported."
-msgstr "Pas de support GModule."
-
-#: modules.c:110
-#, c-format
-msgid "%s: Couldn't open module: %s"
-msgstr "%s: Impossible d'ouvrir le module: %s"
-
-#: modules.c:127
-#, c-format
-msgid "%s: Couldn't load symbols: %s"
-msgstr "%s: Impossible de lire les symboles: %s"
-
-#: modules.c:265
-msgid "Too few arguments"
-msgstr "Trop peu d'arguments"
-
-#: socket.c:63
+#: ../src/socket.c:63
 #, c-format
 msgid "Error reading UNIX socket '%s'"
 msgstr "Erreur lors de la lecture du socket UNIX '%s'"
 
-#: socket.c:82
+#: ../src/socket.c:79
+msgid "Error while running command"
+msgstr ""
+
+#: ../src/socket.c:91
 #, c-format
 msgid "Error writing UNIX socket '%s'"
 msgstr "Erreur lors de l'écriture du socket UNIX '%s'"
 
-#: socket.c:130
+#: ../src/socket.c:139
 #, c-format
 msgid "socket(%s) failed: %s"
 msgstr "socket(%s) échec: %s"
 
-#: socket.c:141 socket.c:154
+#: ../src/socket.c:150 ../src/socket.c:163
 #, c-format
 msgid "fcntl(%s) failed: %s"
 msgstr "fcntl(%s) échec: %s"
 
-#: socket.c:166
+#: ../src/socket.c:175
 #, c-format
 msgid "bind(%s) failed: %s"
 msgstr "bind(%s) échec: %s"
 
-#: socket.c:179
+#: ../src/socket.c:188
 #, c-format
 msgid "getsockname(%s) failed: %s"
 msgstr "getsockname(%s) échec: %s"
 
-#: socket.c:191
+#: ../src/socket.c:200
 #, c-format
 msgid "listen(%s) failed: %s"
 msgstr "listen(%s) échec: %s"
 
-#~ msgid "Theme wasn't initialized."
-#~ msgstr "Le thème n'a pas été initialisé."
+#: ../src/Statusbar.c:58
+msgid "Current state"
+msgstr "Mode actuel"
+
+#: ../src/Statusbar.c:59
+msgid "Current focused webview's link"
+msgstr "Lien de la page ayant le focus"
+
+#: ../src/Statusbar.c:60
+msgid "Current history state"
+msgstr "Etat de l'historique de la page ayant le focus"
+
+#: ../src/Statusbar.c:61
+msgid "Current scroll state"
+msgstr "Etat du scroll de la page ayant le focus"
+
+#: ../src/WebView.c:359
+msgid "Waiting for hostname..."
+msgstr "En attente de l'hôte..."
+
+#: ../src/WebView.c:363
+#, c-format
+msgid "Transfering data from %s..."
+msgstr "Transfert des données depuis %s..."
+
