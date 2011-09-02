@@ -79,6 +79,7 @@
 #include "Notebook.h"
 #include "GtkVimSplit.h"
 #include "Inputbox.h"
+#include "Statusbar.h"
 
 #include "lua.h"
 #include "modules.h"

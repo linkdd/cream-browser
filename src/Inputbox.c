@@ -92,7 +92,7 @@ static void inputbox_activate_cb (Inputbox *obj, gpointer unused)
                /* search forward */
                if (!cream_module_search (CREAM_MODULE (webview_get_module (fwebview)), fwebview->child, txt + 1, TRUE))
                {
-                    gchar *err = g_strdup_printf ("No matches found for: %s", txt + 1);
+                    gchar *err = g_strdup_printf (_("No matches found for: %s"), txt + 1);
                     gtk_entry_set_text (GTK_ENTRY (obj), err);
                     g_free (err);
                }
@@ -102,7 +102,7 @@ static void inputbox_activate_cb (Inputbox *obj, gpointer unused)
                /* search backward */
                if (!cream_module_search (CREAM_MODULE (webview_get_module (fwebview)), fwebview->child, txt + 1, FALSE))
                {
-                    gchar *err = g_strdup_printf ("No matches found for: %s", txt + 1);
+                    gchar *err = g_strdup_printf (_("No matches found for: %s"), txt + 1);
                     gtk_entry_set_text (GTK_ENTRY (obj), err);
                     g_free (err);
                }

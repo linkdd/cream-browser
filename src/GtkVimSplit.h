@@ -36,6 +36,8 @@
 
 #include <gtk/gtk.h>
 
+#include "Notebook.h"
+
 G_BEGIN_DECLS
 
 #define GTK_TYPE_VIM_SPLIT              (gtk_vim_split_get_type ())
@@ -76,6 +78,7 @@ struct _GtkVimSplitClass
       * Signal emitted when the last view is closed (see gtk_vim_split_close()).
       */
      void (*no_more_split) (GtkVimSplit *obj);
+     void (*focus_changed) (GtkVimSplit *obj, Notebook *focus);
 };
 
 GType gtk_vim_split_get_type (void);

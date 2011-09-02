@@ -336,7 +336,7 @@ static void creamctl (const char *cmd)
      }
      else
      {
-          fprintf (stderr, "Usage: cream-browser -s /path/to/socket -c \"command\"\n");
+          fprintf (stderr, _("Usage: cream-browser -s /path/to/socket -c \"command\"\n"));
           exit (EXIT_FAILURE);
      }
 }
@@ -402,6 +402,16 @@ int main (int argc, char **argv)
      gtk_init (&argc, &argv);
 
      init (config);
+
+     if (url)
+     {
+          gchar *cmd = g_strdup_printf ("open %s", url);
+
+          if (!run_command (cmd, &error))
+               print_error (error, FALSE, NULL);
+
+          g_free (cmd);
+     }
 
      ui_show ();
      gtk_main ();

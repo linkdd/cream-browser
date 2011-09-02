@@ -35,6 +35,7 @@
 enum
 {
      GTK_VIM_SPLIT_NO_MORE_SPLIT_SIGNAL,
+     GTK_VIM_SPLIT_FOCUS_CHANGED_SIGNAL,
      GTK_VIM_SPLIT_NB_SIGNALS
 };
 
@@ -68,6 +69,17 @@ static void gtk_vim_split_class_init (GtkVimSplitClass *klass)
                g_cclosure_marshal_VOID__VOID,
                G_TYPE_NONE,
                0);
+
+     gtk_vim_split_signals[GTK_VIM_SPLIT_FOCUS_CHANGED_SIGNAL] = g_signal_new (
+               "focus-changed",
+               G_TYPE_FROM_CLASS (klass),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (GtkVimSplitClass, focus_changed),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__OBJECT,
+               G_TYPE_NONE,
+               1, CREAM_TYPE_NOTEBOOK);
+
 }
 
 static void gtk_vim_split_init (GtkVimSplit *obj)
@@ -81,6 +93,7 @@ static void gtk_vim_split_init (GtkVimSplit *obj)
 static void gtk_vim_split_grab_focus_cb (GtkWidget *w, GtkVimSplit *self)
 {
      self->focus = w;
+     g_signal_emit (G_OBJECT (self), gtk_vim_split_signals[GTK_VIM_SPLIT_FOCUS_CHANGED_SIGNAL], 0, w);
 }
 
 /* Methods */
@@ -236,6 +249,8 @@ void gtk_vim_split_close (GtkVimSplit *obj)
 
           obj->focus = reparent;
      }
+
+     gtk_widget_grab_focus (obj->focus);
 }
 
 /*! @} */

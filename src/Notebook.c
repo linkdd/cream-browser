@@ -1,3 +1,28 @@
+/*
+* Copyright © 2011, David Delassus <david.jose.delassus@gmail.com>
+*
+* Permission is hereby granted, free of charge, to any person
+* obtaining a copy of this software and associated documentation
+* files (the "Software"), to deal in the Software without
+* restriction, including without limitation the rights to use,
+* copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the
+* Software is furnished to do so, subject to the following
+* conditions:
+*
+* The above copyright notice and this permission notice shall be
+* included in all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+* OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+* HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+* WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+* OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 #include "local.h"
 
 /*!
@@ -8,6 +33,7 @@
 static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint page_num, gpointer unused);
 
 static void notebook_signal_title_changed_cb (WebView *webview, const gchar *title, Notebook *obj);
+static void notebook_signal_grab_focus_cb (WebView *webview, Notebook *obj);
 
 G_DEFINE_TYPE (Notebook, notebook, GTK_TYPE_NOTEBOOK);
 
@@ -124,6 +150,7 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
      obj->focus = webview;
 
      g_signal_connect (G_OBJECT (webview), "module-changed", G_CALLBACK (ui_show), NULL);
+     g_signal_connect (G_OBJECT (webview), "grab-focus",     G_CALLBACK (notebook_signal_grab_focus_cb), obj);
      g_signal_connect (G_OBJECT (webview), "title-changed",  G_CALLBACK (notebook_signal_title_changed_cb), obj);
 }
 
@@ -132,6 +159,11 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
 static void notebook_signal_title_changed_cb (WebView *webview, const gchar *title, Notebook *obj)
 {
      gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (obj), GTK_WIDGET (webview), title);
+}
+
+static void notebook_signal_grab_focus_cb (WebView *webview, Notebook *obj)
+{
+     g_signal_emit_by_name (G_OBJECT (obj), "grab-focus");
 }
 
 /*! @} */

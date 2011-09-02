@@ -35,6 +35,8 @@
 
 #include <gtk/gtk.h>
 
+#include "Statusbar.h"
+
 G_BEGIN_DECLS
 
 #define CREAM_TYPE_NOTEBOOK             (notebook_get_type ())

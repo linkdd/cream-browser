@@ -214,7 +214,6 @@ void webview_set_module (WebView *w, GObject *mod)
      g_return_if_fail (CREAM_IS_WEBVIEW (w));
      g_return_if_fail (mod != NULL);
 
-     gtk_container_remove (GTK_CONTAINER (w), w->child);
      gtk_widget_destroy (w->child);
      w->mod = mod;
      w->child = cream_module_webview_new (CREAM_MODULE (mod));
@@ -338,17 +337,41 @@ const gchar *webview_get_status (WebView *w)
 
 /* signals */
 
+static void webview_signal_grab_focus_cb (GtkWidget *child, WebView *w)
+{
+     g_signal_emit_by_name (G_OBJECT (w), "grab-focus");
+}
 
 static void webview_signal_uri_changed_cb (CreamModule *self, GtkWidget *webview, const gchar *uri, WebView *w)
 {
      if (webview == w->child)
+     {
           g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_URI_CHANGED_SIGNAL], 0, uri);
+
+          if (w->uri) g_free (w->uri);
+          w->uri = g_strdup (uri);
+     }
+
+     if (GTK_WIDGET (w) == global.gui.fwebview)
+          statusbar_set_link (CREAM_STATUSBAR (global.gui.statusbar), uri);
 }
 
 static void webview_signal_title_changed_cb (CreamModule *self, GtkWidget *webview, const gchar *title, WebView *w)
 {
      if (webview == w->child)
+     {
           g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_TITLE_CHANGED_SIGNAL], 0, title);
+
+          if (w->title) g_free (w->title);
+          w->title = g_strdup (title);
+     }
+
+     if (GTK_WIDGET (w) == global.gui.fwebview)
+     {
+          gchar *title = g_strdup_printf ("%s - %s", PACKAGE, webview_get_title (CREAM_WEBVIEW (w)));
+          gtk_window_set_title (GTK_WINDOW (global.gui.window), title);
+          g_free (title);
+     }
 }
 
 static void webview_signal_progress_changed_cb (CreamModule *self, GtkWidget *webview, gdouble progress, WebView *w)
@@ -366,6 +389,12 @@ static void webview_signal_progress_changed_cb (CreamModule *self, GtkWidget *we
           g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_STATUS_CHANGED_SIGNAL], 0, status);
      else
           g_free (status);
+
+     if (GTK_WIDGET (w) == global.gui.fwebview)
+     {
+          statusbar_set_link (CREAM_STATUSBAR (global.gui.statusbar), status);
+          statusbar_set_progress (CREAM_STATUSBAR (global.gui.statusbar), progress);
+     }
 }
 
 static gboolean webview_signal_download_cb (CreamModule *self, GtkWidget *webview, const gchar *file, WebView *w)
@@ -382,10 +411,11 @@ static void webview_connect_signals (WebView *w)
 {
      g_return_if_fail (CREAM_IS_WEBVIEW (w));
 
-     g_signal_connect (G_OBJECT (w->mod), "uri-changed",      G_CALLBACK (webview_signal_uri_changed_cb),      w);
-     g_signal_connect (G_OBJECT (w->mod), "title-changed",    G_CALLBACK (webview_signal_title_changed_cb),    w);
-     g_signal_connect (G_OBJECT (w->mod), "progress-changed", G_CALLBACK (webview_signal_progress_changed_cb), w);
-     g_signal_connect (G_OBJECT (w->mod), "download",         G_CALLBACK (webview_signal_download_cb),         w);
+     g_signal_connect (G_OBJECT (w->child), "grab-focus",       G_CALLBACK (webview_signal_grab_focus_cb),       w);
+     g_signal_connect (G_OBJECT (w->mod),   "uri-changed",      G_CALLBACK (webview_signal_uri_changed_cb),      w);
+     g_signal_connect (G_OBJECT (w->mod),   "title-changed",    G_CALLBACK (webview_signal_title_changed_cb),    w);
+     g_signal_connect (G_OBJECT (w->mod),   "progress-changed", G_CALLBACK (webview_signal_progress_changed_cb), w);
+     g_signal_connect (G_OBJECT (w->mod),   "download",         G_CALLBACK (webview_signal_download_cb),         w);
 }
 
 /*! @} */

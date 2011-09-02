@@ -30,9 +30,22 @@
  * @{
  */
 
-static void window_destroy (GtkWidget *widget, gpointer data)
+static void window_destroy (void)
 {
      exit (EXIT_SUCCESS);
+}
+
+static void window_update (GtkVimSplit *obj)
+{
+     global.gui.fwebview = notebook_get_focus (CREAM_NOTEBOOK (gtk_vim_split_get_focus (obj)));
+
+     gchar *title = g_strdup_printf ("%s - %s", PACKAGE, webview_get_title (CREAM_WEBVIEW (global.gui.fwebview)));
+     gtk_window_set_title (GTK_WINDOW (global.gui.window), title);
+     g_free (title);
+
+     statusbar_set_link (CREAM_STATUSBAR (global.gui.statusbar), webview_get_uri (CREAM_WEBVIEW (global.gui.fwebview)));
+
+     ui_show ();
 }
 
 /*!
@@ -44,16 +57,19 @@ void ui_init (void)
      global.gui.window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
      gtk_window_set_title (GTK_WINDOW (global.gui.window), PACKAGE);
 
-     global.gui.box      = gtk_vbox_new (FALSE, 0);
-     global.gui.vimsplit = gtk_vim_split_new ();
-     global.gui.inputbox = inputbox_new ();
+     global.gui.box       = gtk_vbox_new (FALSE, 0);
+     global.gui.vimsplit  = gtk_vim_split_new ();
+     global.gui.inputbox  = inputbox_new ();
+     global.gui.statusbar = statusbar_new ();
 
      gtk_box_pack_start (GTK_BOX (global.gui.box), global.gui.vimsplit, TRUE, TRUE, 0);
      gtk_box_pack_end (GTK_BOX (global.gui.box), global.gui.inputbox, FALSE, TRUE, 0);
+     gtk_box_pack_end (GTK_BOX (global.gui.box), global.gui.statusbar, FALSE, TRUE, 0);
      gtk_container_add (GTK_CONTAINER (global.gui.window), global.gui.box);
 
-     g_signal_connect (G_OBJECT (global.gui.window),   "destroy",       G_CALLBACK (window_destroy), NULL);
-     g_signal_connect (G_OBJECT (global.gui.vimsplit), "no-more-split", G_CALLBACK (window_destroy), NULL);
+     g_signal_connect (G_OBJECT (global.gui.window),   "destroy",       G_CALLBACK (window_destroy),   NULL);
+     g_signal_connect (G_OBJECT (global.gui.vimsplit), "no-more-split", G_CALLBACK (window_destroy),   NULL);
+     g_signal_connect (G_OBJECT (global.gui.vimsplit), "focus-changed", G_CALLBACK (window_update),    NULL);
 }
 
 /*!

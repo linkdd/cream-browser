@@ -32,7 +32,6 @@
  * Inputbox class definition
  *
  * \todo Completion
- * \todo Commands history
  *
  * @{
  */

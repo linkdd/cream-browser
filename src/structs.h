@@ -37,7 +37,7 @@ struct GUI
      GtkWidget *inputbox;       /*!< Inputbox widget */
      GtkWidget *box;            /*!< Box containing all widgets */
 
-     GList *notebooks;
+     GtkWidget *fwebview;
 };
 
 /*! \struct Socket */
@@ -62,6 +62,7 @@ struct global_t
      gchar *prgname;          /*!< Program's name */
 
      GHashTable *protocols;   /*!< List of protocols and asscoiated modules */
+     CreamMode mode;          /*!< Current mode */
 
      lua_State *luavm;        /*!< Lua VM state */
      struct theme_t *theme;   /*!< Cream-Browser's theme */

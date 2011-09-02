@@ -40,6 +40,7 @@ struct _StatusbarPrivate
      GtkWidget *llink;
      GtkWidget *lhistory;
      GtkWidget *lscroll;
+     GtkWidget *lprogress;
 };
 
 G_DEFINE_TYPE (Statusbar, statusbar, GTK_TYPE_EVENT_BOX)
@@ -68,11 +69,12 @@ static void statusbar_init (Statusbar *self)
 {
      StatusbarPrivate *priv = CREAM_STATUSBAR_GET_PRIVATE (self);
 
-     priv->hbox     = gtk_hbox_new (FALSE, 0);
-     priv->lstate   = gtk_label_new (NULL);
-     priv->llink    = gtk_label_new (NULL);
-     priv->lhistory = gtk_label_new (NULL);
-     priv->lscroll  = gtk_label_new (NULL);
+     priv->hbox      = gtk_hbox_new (FALSE, 0);
+     priv->lstate    = gtk_label_new (NULL);
+     priv->llink     = gtk_label_new (NULL);
+     priv->lhistory  = gtk_label_new (NULL);
+     priv->lscroll   = gtk_label_new (NULL);
+     priv->lprogress = gtk_label_new (NULL);
 
      gtk_label_set_selectable (GTK_LABEL (priv->llink), TRUE);
 
@@ -80,6 +82,7 @@ static void statusbar_init (Statusbar *self)
      gtk_box_pack_start (GTK_BOX (priv->hbox), priv->llink, FALSE, FALSE, 2);
      gtk_box_pack_start (GTK_BOX (priv->hbox), priv->lhistory, FALSE, FALSE, 2);
      gtk_box_pack_end (GTK_BOX (priv->hbox), priv->lscroll, FALSE, FALSE, 2);
+     gtk_box_pack_end (GTK_BOX (priv->hbox), priv->lprogress, FALSE, FALSE, 2);
      gtk_container_add (GTK_CONTAINER (self), priv->hbox);
 
      self->priv = priv;
@@ -149,5 +152,18 @@ void statusbar_set_scroll (Statusbar *obj, gdouble progress)
 
      txt = g_strdup_printf ("%02d%%", (int) (progress * 100.0));
      gtk_label_set_text (GTK_LABEL (priv->lscroll), txt);
+     g_free (txt);
+}
+
+void statusbar_set_progress (Statusbar *obj, gdouble progress)
+{
+     StatusbarPrivate *priv;
+     gchar *txt;
+
+     g_return_if_fail (CREAM_IS_STATUSBAR (obj));
+     priv = CREAM_STATUSBAR_GET_PRIVATE (obj);
+
+     txt = g_strdup_printf ("%02d%%", (int) (progress * 100.0));
+     gtk_label_set_text (GTK_LABEL (priv->lprogress), txt);
      g_free (txt);
 }
