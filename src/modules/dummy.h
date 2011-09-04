@@ -28,6 +28,7 @@
 
 #include <glib.h>
 #include "../modules.h"
+#include "../Statusbar.h"
 
 /*!
  * \defgroup mod-dummy Module Dummy
@@ -66,6 +67,7 @@ struct _CreamModuleDummyClass
      void (*uri_changed) (CreamModuleDummy *self, GtkWidget *webview, const gchar *uri);
      void (*title_changed) (CreamModuleDummy *self, GtkWidget *webview, const gchar *title);
      void (*progress_changed) (CreamModuleDummy *self, GtkWidget *webview, gdouble progress);
+     void (*state_changed) (CreamModuleDummy *self, GtkWidget *webview, CreamMode state);
      gboolean (*download) (CreamModuleDummy *self, GtkWidget *webview, const gchar *file);
 };
 

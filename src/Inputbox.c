@@ -32,6 +32,8 @@
 
 static void inputbox_activate_cb (Inputbox *obj, gpointer unused);
 static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer unused);
+static void inputbox_focus_in_cb (Inputbox *obj, GdkEvent *event, gpointer unused);
+static void inputbox_focus_out_cb (Inputbox *obj, GdkEvent *event, gpointer unused);
 
 G_DEFINE_TYPE (Inputbox, inputbox, GTK_TYPE_ENTRY)
 
@@ -49,6 +51,8 @@ GtkWidget *inputbox_new (void)
      Inputbox *obj = g_object_new (CREAM_TYPE_INPUTBOX, NULL);
      g_signal_connect (G_OBJECT (obj), "activate", G_CALLBACK (inputbox_activate_cb), NULL);
      g_signal_connect (G_OBJECT (obj), "key-press-event", G_CALLBACK (inputbox_keypress_cb), NULL);
+     g_signal_connect (G_OBJECT (obj), "focus-in-event", G_CALLBACK (inputbox_focus_in_cb), NULL);
+     g_signal_connect (G_OBJECT (obj), "focus-out-event", G_CALLBACK (inputbox_focus_out_cb), NULL);
      return GTK_WIDGET (obj);
 }
 
@@ -156,6 +160,16 @@ static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer u
      if (ret) gtk_editable_set_position (GTK_EDITABLE (obj), -1);
 
      return ret;
+}
+
+static void inputbox_focus_in_cb (Inputbox *obj, GdkEvent *event, gpointer unused)
+{
+     statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), CREAM_MODE_COMMAND);
+}
+
+static void inputbox_focus_out_cb (Inputbox *obj, GdkEvent *event, gpointer unused)
+{
+     statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), CREAM_MODE_NORMAL);
 }
 
 /* methods */

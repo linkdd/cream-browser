@@ -397,6 +397,12 @@ static void webview_signal_progress_changed_cb (CreamModule *self, GtkWidget *we
      }
 }
 
+static void webview_signal_state_changed_cb (CreamModule *self, GtkWidget *webview, CreamMode state, WebView *w)
+{
+     if (GTK_WIDGET (w) == global.gui.fwebview)
+          statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), state);
+}
+
 static gboolean webview_signal_download_cb (CreamModule *self, GtkWidget *webview, const gchar *file, WebView *w)
 {
      gboolean ret = FALSE;
@@ -415,6 +421,7 @@ static void webview_connect_signals (WebView *w)
      g_signal_connect (G_OBJECT (w->mod),   "uri-changed",      G_CALLBACK (webview_signal_uri_changed_cb),      w);
      g_signal_connect (G_OBJECT (w->mod),   "title-changed",    G_CALLBACK (webview_signal_title_changed_cb),    w);
      g_signal_connect (G_OBJECT (w->mod),   "progress-changed", G_CALLBACK (webview_signal_progress_changed_cb), w);
+     g_signal_connect (G_OBJECT (w->mod),   "state-changed",    G_CALLBACK (webview_signal_state_changed_cb),    w);
      g_signal_connect (G_OBJECT (w->mod),   "download",         G_CALLBACK (webview_signal_download_cb),         w);
 }
 

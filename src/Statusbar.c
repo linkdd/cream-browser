@@ -116,7 +116,7 @@ void statusbar_set_state (Statusbar *obj, CreamMode state)
 
           case CREAM_MODE_NORMAL:
           default:
-               gtk_label_set_text (GTK_LABEL (priv->lstate), " ");
+               gtk_label_set_text (GTK_LABEL (priv->lstate), NULL);
                break;
      }
 }
@@ -158,12 +158,30 @@ void statusbar_set_scroll (Statusbar *obj, gdouble progress)
 void statusbar_set_progress (Statusbar *obj, gdouble progress)
 {
      StatusbarPrivate *priv;
-     gchar *txt;
+     gchar *txt = NULL;
 
      g_return_if_fail (CREAM_IS_STATUSBAR (obj));
      priv = CREAM_STATUSBAR_GET_PRIVATE (obj);
 
-     txt = g_strdup_printf ("%02d%%", (int) (progress * 100.0));
+     if (progress < 1) /* print a download bar */
+     {
+          GString *str = g_string_new ("[");
+          int i;
+
+          for (i = 0; i < (int) (progress * 100.0); i += 10)
+               str = g_string_append (str, "=");
+
+          if (i < 100)
+          {
+               str = g_string_append (str, ">");
+
+               for (; i < 100; i += 10)
+                    str = g_string_append (str, " ");
+          }
+          str = g_string_append (str, "]");
+          txt = g_string_free (str, FALSE);
+     }
+
      gtk_label_set_text (GTK_LABEL (priv->lprogress), txt);
      g_free (txt);
 }

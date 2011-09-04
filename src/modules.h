@@ -93,120 +93,130 @@ void cream_module_useragent (CreamModule *self, const gchar *ua);
  * It defines the GObject, implements the interface, declares all functions,
  * properties and signals.
  */
-#define CREAM_DEFINE_MODULE(ctype,fn_prefix)                                                                            \
-     static void fn_prefix##_interface_init (CreamModuleIface *iface);                                                  \
-     static GtkWidget* fn_prefix##_webview_new (CreamModule *self);                                                     \
-     static void fn_prefix##_load_uri (CreamModule *self, GtkWidget *webview, UriScheme *uri);                          \
-     static void fn_prefix##_reload (CreamModule *self, GtkWidget *webview);                                            \
-     static void fn_prefix##_backward (CreamModule *self, GtkWidget *webview);                                          \
-     static void fn_prefix##_forward (CreamModule *self, GtkWidget *webview);                                           \
-     static gboolean fn_prefix##_search (CreamModule *self, GtkWidget *webview, const gchar *text, gboolean forward);   \
-     static void fn_prefix##_proxy (CreamModule *self, const gchar *uri);                                               \
-     static void fn_prefix##_useragent (CreamModule *self, const gchar *ua);                                            \
-                                                                                                                        \
-     enum { PROP_0, PROP_NAME };                                                                                        \
-     enum { SIGNAL_URI_CHANGED, SIGNAL_TITLE_CHANGED, SIGNAL_PROGRESS_CHANGED, SIGNAL_DOWNLOAD, NB_SIGNAL };            \
-     static guint fn_prefix##_signals[NB_SIGNAL] = { 0 };                                                               \
-                                                                                                                        \
-     G_DEFINE_TYPE_WITH_CODE (ctype, fn_prefix, G_TYPE_OBJECT,                                                          \
-                              G_IMPLEMENT_INTERFACE (CREAM_TYPE_MODULE,                                                 \
-                                                     fn_prefix##_interface_init                                         \
-                              )                                                                                         \
-     );                                                                                                                 \
-                                                                                                                        \
-     static void fn_prefix##_set_property (GObject *object, guint propid, const GValue *value, GParamSpec *pspec)       \
-     {                                                                                                                  \
-          ctype *self = G_TYPE_CHECK_INSTANCE_CAST (object, fn_prefix##_get_type (), ctype);                            \
-                                                                                                                        \
-          switch (propid)                                                                                               \
-          {                                                                                                             \
-               case PROP_NAME:                                                                                          \
-                    g_free (self->name);                                                                                \
-                    self->name = g_value_dup_string (value);                                                            \
-                    break;                                                                                              \
-                                                                                                                        \
-               default:                                                                                                 \
-                    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, propid, pspec);                                          \
-                    break;                                                                                              \
-          }                                                                                                             \
-     }                                                                                                                  \
-                                                                                                                        \
-     static void fn_prefix##_get_property (GObject *object, guint propid, GValue *value, GParamSpec *pspec)             \
-     {                                                                                                                  \
-          ctype *self = G_TYPE_CHECK_INSTANCE_CAST (object, fn_prefix##_get_type (), ctype);                            \
-                                                                                                                        \
-          switch (propid)                                                                                               \
-          {                                                                                                             \
-               case PROP_NAME:                                                                                          \
-                    g_value_set_string (value, self->name);                                                             \
-                    break;                                                                                              \
-                                                                                                                        \
-               default:                                                                                                 \
-                    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, propid, pspec);                                          \
-                    break;                                                                                              \
-          }                                                                                                             \
-     }                                                                                                                  \
-                                                                                                                        \
-     static void fn_prefix##_interface_init (CreamModuleIface *iface)                                                   \
-     {                                                                                                                  \
-          iface->webview_new = fn_prefix##_webview_new;                                                                 \
-          iface->load_uri    = fn_prefix##_load_uri;                                                                    \
-          iface->reload      = fn_prefix##_reload;                                                                      \
-          iface->backward    = fn_prefix##_backward;                                                                    \
-          iface->forward     = fn_prefix##_forward;                                                                     \
-          iface->search      = fn_prefix##_search;                                                                      \
-          iface->proxy       = fn_prefix##_proxy;                                                                       \
-          iface->useragent   = fn_prefix##_useragent;                                                                   \
-     }                                                                                                                  \
-                                                                                                                        \
-     static void fn_prefix##_class_init (ctype##Class *klass)                                                           \
-     {                                                                                                                  \
-          GObjectClass *gclass = G_OBJECT_CLASS (klass);                                                                \
-                                                                                                                        \
-          gclass->set_property = fn_prefix##_set_property;                                                              \
-          gclass->get_property = fn_prefix##_get_property;                                                              \
-                                                                                                                        \
-          g_object_class_override_property (gclass, PROP_NAME, "name");                                                 \
-                                                                                                                        \
-          fn_prefix##_signals[SIGNAL_URI_CHANGED] = g_signal_new (                                                      \
-                    "uri-changed",                                                                                      \
-                    G_TYPE_FROM_CLASS (klass),                                                                          \
-                    G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,                                                               \
-                    G_STRUCT_OFFSET (ctype##Class, uri_changed),                                                        \
-                    NULL, NULL,                                                                                         \
-                    cream_marshal_VOID__OBJECT_STRING,                                                                  \
-                    G_TYPE_NONE,                                                                                        \
-                    2, G_TYPE_OBJECT, G_TYPE_STRING);                                                                   \
-                                                                                                                        \
-          fn_prefix##_signals[SIGNAL_TITLE_CHANGED] = g_signal_new (                                                    \
-                    "title-changed",                                                                                    \
-                    G_TYPE_FROM_CLASS (klass),                                                                          \
-                    G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,                                                               \
-                    G_STRUCT_OFFSET (ctype##Class, title_changed),                                                      \
-                    NULL, NULL,                                                                                         \
-                    cream_marshal_VOID__OBJECT_STRING,                                                                  \
-                    G_TYPE_NONE,                                                                                        \
-                    2, G_TYPE_OBJECT, G_TYPE_STRING);                                                                   \
-                                                                                                                        \
-          fn_prefix##_signals[SIGNAL_PROGRESS_CHANGED] = g_signal_new (                                                 \
-                    "progress-changed",                                                                                 \
-                    G_TYPE_FROM_CLASS (klass),                                                                          \
-                    G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,                                                               \
-                    G_STRUCT_OFFSET (ctype##Class, progress_changed),                                                   \
-                    NULL, NULL,                                                                                         \
-                    cream_marshal_VOID__OBJECT_DOUBLE,                                                                  \
-                    G_TYPE_NONE,                                                                                        \
-                    2, G_TYPE_OBJECT, G_TYPE_DOUBLE);                                                                   \
-                                                                                                                        \
-          fn_prefix##_signals[SIGNAL_DOWNLOAD] = g_signal_new (                                                         \
-                    "download",                                                                                         \
-                    G_TYPE_FROM_CLASS (klass),                                                                          \
-                    G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,                                                                \
-                    G_STRUCT_OFFSET (ctype##Class, download),                                                           \
-                    NULL, NULL,                                                                                         \
-                    cream_marshal_BOOLEAN__OBJECT_STRING,                                                               \
-                    G_TYPE_BOOLEAN,                                                                                     \
-                    2, G_TYPE_OBJECT, G_TYPE_STRING);                                                                   \
+#define CREAM_DEFINE_MODULE(ctype,fn_prefix)                                                                                           \
+     static void fn_prefix##_interface_init (CreamModuleIface *iface);                                                                 \
+     static GtkWidget* fn_prefix##_webview_new (CreamModule *self);                                                                    \
+     static void fn_prefix##_load_uri (CreamModule *self, GtkWidget *webview, UriScheme *uri);                                         \
+     static void fn_prefix##_reload (CreamModule *self, GtkWidget *webview);                                                           \
+     static void fn_prefix##_backward (CreamModule *self, GtkWidget *webview);                                                         \
+     static void fn_prefix##_forward (CreamModule *self, GtkWidget *webview);                                                          \
+     static gboolean fn_prefix##_search (CreamModule *self, GtkWidget *webview, const gchar *text, gboolean forward);                  \
+     static void fn_prefix##_proxy (CreamModule *self, const gchar *uri);                                                              \
+     static void fn_prefix##_useragent (CreamModule *self, const gchar *ua);                                                           \
+                                                                                                                                       \
+     enum { PROP_0, PROP_NAME };                                                                                                       \
+     enum { SIGNAL_URI_CHANGED, SIGNAL_TITLE_CHANGED, SIGNAL_PROGRESS_CHANGED, SIGNAL_STATE_CHANGED, SIGNAL_DOWNLOAD, NB_SIGNAL };     \
+     static guint fn_prefix##_signals[NB_SIGNAL] = { 0 };                                                                              \
+                                                                                                                                       \
+     G_DEFINE_TYPE_WITH_CODE (ctype, fn_prefix, G_TYPE_OBJECT,                                                                         \
+                              G_IMPLEMENT_INTERFACE (CREAM_TYPE_MODULE,                                                                \
+                                                     fn_prefix##_interface_init                                                        \
+                              )                                                                                                        \
+     );                                                                                                                                \
+                                                                                                                                       \
+     static void fn_prefix##_set_property (GObject *object, guint propid, const GValue *value, GParamSpec *pspec)                      \
+     {                                                                                                                                 \
+          ctype *self = G_TYPE_CHECK_INSTANCE_CAST (object, fn_prefix##_get_type (), ctype);                                           \
+                                                                                                                                       \
+          switch (propid)                                                                                                              \
+          {                                                                                                                            \
+               case PROP_NAME:                                                                                                         \
+                    g_free (self->name);                                                                                               \
+                    self->name = g_value_dup_string (value);                                                                           \
+                    break;                                                                                                             \
+                                                                                                                                       \
+               default:                                                                                                                \
+                    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, propid, pspec);                                                         \
+                    break;                                                                                                             \
+          }                                                                                                                            \
+     }                                                                                                                                 \
+                                                                                                                                       \
+     static void fn_prefix##_get_property (GObject *object, guint propid, GValue *value, GParamSpec *pspec)                            \
+     {                                                                                                                                 \
+          ctype *self = G_TYPE_CHECK_INSTANCE_CAST (object, fn_prefix##_get_type (), ctype);                                           \
+                                                                                                                                       \
+          switch (propid)                                                                                                              \
+          {                                                                                                                            \
+               case PROP_NAME:                                                                                                         \
+                    g_value_set_string (value, self->name);                                                                            \
+                    break;                                                                                                             \
+                                                                                                                                       \
+               default:                                                                                                                \
+                    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, propid, pspec);                                                         \
+                    break;                                                                                                             \
+          }                                                                                                                            \
+     }                                                                                                                                 \
+                                                                                                                                       \
+     static void fn_prefix##_interface_init (CreamModuleIface *iface)                                                                  \
+     {                                                                                                                                 \
+          iface->webview_new = fn_prefix##_webview_new;                                                                                \
+          iface->load_uri    = fn_prefix##_load_uri;                                                                                   \
+          iface->reload      = fn_prefix##_reload;                                                                                     \
+          iface->backward    = fn_prefix##_backward;                                                                                   \
+          iface->forward     = fn_prefix##_forward;                                                                                    \
+          iface->search      = fn_prefix##_search;                                                                                     \
+          iface->proxy       = fn_prefix##_proxy;                                                                                      \
+          iface->useragent   = fn_prefix##_useragent;                                                                                  \
+     }                                                                                                                                 \
+                                                                                                                                       \
+     static void fn_prefix##_class_init (ctype##Class *klass)                                                                          \
+     {                                                                                                                                 \
+          GObjectClass *gclass = G_OBJECT_CLASS (klass);                                                                               \
+                                                                                                                                       \
+          gclass->set_property = fn_prefix##_set_property;                                                                             \
+          gclass->get_property = fn_prefix##_get_property;                                                                             \
+                                                                                                                                       \
+          g_object_class_override_property (gclass, PROP_NAME, "name");                                                                \
+                                                                                                                                       \
+          fn_prefix##_signals[SIGNAL_URI_CHANGED] = g_signal_new (                                                                     \
+                    "uri-changed",                                                                                                     \
+                    G_TYPE_FROM_CLASS (klass),                                                                                         \
+                    G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,                                                                              \
+                    G_STRUCT_OFFSET (ctype##Class, uri_changed),                                                                       \
+                    NULL, NULL,                                                                                                        \
+                    cream_marshal_VOID__OBJECT_STRING,                                                                                 \
+                    G_TYPE_NONE,                                                                                                       \
+                    2, G_TYPE_OBJECT, G_TYPE_STRING);                                                                                  \
+                                                                                                                                       \
+          fn_prefix##_signals[SIGNAL_TITLE_CHANGED] = g_signal_new (                                                                   \
+                    "title-changed",                                                                                                   \
+                    G_TYPE_FROM_CLASS (klass),                                                                                         \
+                    G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,                                                                              \
+                    G_STRUCT_OFFSET (ctype##Class, title_changed),                                                                     \
+                    NULL, NULL,                                                                                                        \
+                    cream_marshal_VOID__OBJECT_STRING,                                                                                 \
+                    G_TYPE_NONE,                                                                                                       \
+                    2, G_TYPE_OBJECT, G_TYPE_STRING);                                                                                  \
+                                                                                                                                       \
+          fn_prefix##_signals[SIGNAL_PROGRESS_CHANGED] = g_signal_new (                                                                \
+                    "progress-changed",                                                                                                \
+                    G_TYPE_FROM_CLASS (klass),                                                                                         \
+                    G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,                                                                              \
+                    G_STRUCT_OFFSET (ctype##Class, progress_changed),                                                                  \
+                    NULL, NULL,                                                                                                        \
+                    cream_marshal_VOID__OBJECT_DOUBLE,                                                                                 \
+                    G_TYPE_NONE,                                                                                                       \
+                    2, G_TYPE_OBJECT, G_TYPE_DOUBLE);                                                                                  \
+                                                                                                                                       \
+          fn_prefix##_signals[SIGNAL_STATE_CHANGED] = g_signal_new (                                                                   \
+                    "state-changed",                                                                                                   \
+                    G_TYPE_FROM_CLASS (klass),                                                                                         \
+                    G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,                                                                               \
+                    G_STRUCT_OFFSET (ctype##Class, state_changed),                                                                     \
+                    NULL, NULL,                                                                                                        \
+                    cream_marshal_VOID__OBJECT_INT,                                                                                    \
+                    G_TYPE_NONE,                                                                                                       \
+                    2, G_TYPE_OBJECT, G_TYPE_INT);                                                                                     \
+                                                                                                                                       \
+          fn_prefix##_signals[SIGNAL_DOWNLOAD] = g_signal_new (                                                                        \
+                    "download",                                                                                                        \
+                    G_TYPE_FROM_CLASS (klass),                                                                                         \
+                    G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,                                                                               \
+                    G_STRUCT_OFFSET (ctype##Class, download),                                                                          \
+                    NULL, NULL,                                                                                                        \
+                    cream_marshal_BOOLEAN__OBJECT_STRING,                                                                              \
+                    G_TYPE_BOOLEAN,                                                                                                    \
+                    2, G_TYPE_OBJECT, G_TYPE_STRING);                                                                                  \
      }
 
 G_END_DECLS

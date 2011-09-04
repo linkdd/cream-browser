@@ -34,6 +34,7 @@
 static void cream_module_webkit_notify_uri_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self);
 static void cream_module_webkit_notify_title_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self);
 static void cream_module_webkit_notify_progress_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self);
+static gboolean cream_module_webkit_button_press_event_cb (WebKitWebView *webview, GdkEventButton *event, CreamModuleWebKit *self);
 static gboolean cream_module_webkit_signal_download_cb (WebKitWebView *webview, WebKitDownload *download, CreamModuleWebKit *self);
 
 CREAM_DEFINE_MODULE (CreamModuleWebKit, cream_module_webkit)
@@ -69,6 +70,10 @@ static GtkWidget *cream_module_webkit_webview_new (CreamModule *self)
 
      g_signal_connect (G_OBJECT (webview), "notify::progress",
                        G_CALLBACK (cream_module_webkit_notify_progress_cb),
+                       self);
+
+     g_signal_connect (G_OBJECT (webview), "button-press-event",
+                       G_CALLBACK (cream_module_webkit_button_press_event_cb),
                        self);
 
      g_signal_connect (G_OBJECT (webview), "download-requested",
@@ -165,6 +170,21 @@ static void cream_module_webkit_notify_progress_cb (WebKitWebView *webview, GPar
                     cream_module_webkit_signals[SIGNAL_PROGRESS_CHANGED],
                     0, webview, progress
      );
+}
+
+static gboolean cream_module_webkit_button_press_event_cb (WebKitWebView *webview, GdkEventButton *event, CreamModuleWebKit *self)
+{
+     WebKitHitTestResult *result = webkit_web_view_get_hit_test_result (webview, event);
+     WebKitHitTestResultContext context;
+
+     g_object_get (result, "context", &context, NULL);
+
+     g_signal_emit (G_OBJECT (self),
+                    cream_module_webkit_signals[SIGNAL_STATE_CHANGED],
+                    0, webview, ((context & WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE) ? CREAM_MODE_INSERT : CREAM_MODE_NORMAL)
+     );
+
+     return FALSE;
 }
 
 static gboolean cream_module_webkit_signal_download_cb (WebKitWebView *webview, WebKitDownload *download, CreamModuleWebKit *self)

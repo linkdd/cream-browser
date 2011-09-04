@@ -47,4 +47,4 @@ static int luaL_inputbox_text (lua_State *L)
      }
 }
 
-
+/*! @} */

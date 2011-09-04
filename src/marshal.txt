@@ -5,5 +5,7 @@ BOOLEAN:STRING
 VOID:OBJECT,STRING
 # CreamModule::"progress-changed"
 VOID:OBJECT,DOUBLE
+# CreamModule::"state-changed"
+VOID:OBJECT,INT
 # CreamModule::"download"
 BOOLEAN:OBJECT,STRING
