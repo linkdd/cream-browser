@@ -70,14 +70,6 @@ static void notebook_init (Notebook *obj)
      gtk_notebook_popup_enable (GTK_NOTEBOOK (obj));
 }
 
-/* callbacks */
-
-static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint page_num, gpointer unused)
-{
-     self->focus = webview;
-     g_signal_emit_by_name (G_OBJECT (self), "grab-focus");
-}
-
 /* methods */
 
 /*!
@@ -147,14 +139,36 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
                NULL
      );
 
-     obj->focus = webview;
-
      g_signal_connect (G_OBJECT (webview), "module-changed", G_CALLBACK (ui_show), NULL);
      g_signal_connect (G_OBJECT (webview), "grab-focus",     G_CALLBACK (notebook_signal_grab_focus_cb), obj);
      g_signal_connect (G_OBJECT (webview), "title-changed",  G_CALLBACK (notebook_signal_title_changed_cb), obj);
+
+     gtk_widget_grab_focus (webview);
+}
+
+/*!
+ * \public \memberof Notebook
+ * \fn void notebook_close (Notebook *obj, gint page)
+ * @param obj A #Notebook object.
+ * @param page The page to close.
+ *
+ * Close a tab in the notebook.
+ */
+void notebook_close (Notebook *obj, gint page)
+{
+     GtkWidget *webview = gtk_notebook_get_nth_page (GTK_NOTEBOOK (obj), page);
+     GList *node = g_list_find (obj->webviews, webview);
+     obj->webviews = g_list_remove_link (obj->webviews, node);
+     gtk_notebook_remove_page (GTK_NOTEBOOK (obj), page);
 }
 
 /* signals */
+
+static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint page_num, gpointer unused)
+{
+     self->focus = webview;
+     g_signal_emit_by_name (G_OBJECT (self), "grab-focus");
+}
 
 static void notebook_signal_title_changed_cb (WebView *webview, const gchar *title, Notebook *obj)
 {
@@ -163,6 +177,8 @@ static void notebook_signal_title_changed_cb (WebView *webview, const gchar *tit
 
 static void notebook_signal_grab_focus_cb (WebView *webview, Notebook *obj)
 {
+     obj->focus = GTK_WIDGET (webview);
+     gtk_notebook_set_current_page (GTK_NOTEBOOK (obj), gtk_notebook_page_num (GTK_NOTEBOOK (obj), obj->focus));
      g_signal_emit_by_name (G_OBJECT (obj), "grab-focus");
 }
 

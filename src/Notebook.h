@@ -72,6 +72,7 @@ GtkWidget *notebook_new (void);
 GtkWidget *notebook_get_focus (Notebook *obj);
 void notebook_open (Notebook *obj, const gchar *url);
 void notebook_tabopen (Notebook *obj, const gchar *url);
+void notebook_close (Notebook *obj, gint page);
 
 G_END_DECLS
 

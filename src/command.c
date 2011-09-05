@@ -35,6 +35,7 @@
 static gboolean command_exit (gint argc, gchar **argv, GError **err);
 static gboolean command_open (gint argc, gchar **argv, GError **err);
 static gboolean command_tabopen (gint argc, gchar **argv, GError **err);
+static gboolean command_tabclose (gint argc, gchar **argv, GError **err);
 static gboolean command_split (gint argc, gchar **argv, GError **err);
 static gboolean command_vsplit (gint argc, gchar **argv, GError **err);
 static gboolean command_close (gint argc, gchar **argv, GError **err);
@@ -75,7 +76,8 @@ static struct command_t internal_commands[] =
 {
      { "exit",      gettext_noop ("Exit Cream-Browser"),                   command_exit },
      { "open",      gettext_noop ("Open URL"),                             command_open },
-     { "tabopen",   gettext_noop ("Open URL in a new view"),               command_tabopen },
+     { "tabopen",   gettext_noop ("Open URL in a new tab"),                command_tabopen },
+     { "tabclose",  gettext_noop ("Close the current tab"),                command_tabclose },
      { "split",     gettext_noop ("Split the current view"),               command_split },
      { "vsplit",    gettext_noop ("Split the current view vertically"),    command_vsplit },
      { "close",     gettext_noop ("Close the current view"),               command_close },
@@ -160,6 +162,31 @@ static gboolean command_tabopen (gint argc, gchar **argv, GError **err)
 
      for (i = 1; i < argc; ++i)
           notebook_tabopen (CREAM_NOTEBOOK (notebook), argv[i]);
+
+     ui_show ();
+     return TRUE;
+}
+
+static gboolean command_tabclose (gint argc, gchar **argv, GError **err)
+{
+     GtkWidget *notebook = gtk_vim_split_get_focus (GTK_VIM_SPLIT (global.gui.vimsplit));
+     gint page = gtk_notebook_get_current_page (GTK_NOTEBOOK (notebook));
+
+     if (argc == 1)
+          notebook_close (CREAM_NOTEBOOK (notebook), page);
+     else
+     {
+          int i;
+
+          for (i = 1; i < argc; ++i)
+          {
+               page = g_ascii_strtoll (argv[i], NULL, 10);
+               notebook_close (CREAM_NOTEBOOK (notebook), page-1);
+          }
+     }
+
+     if (0 == gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook)))
+          gtk_vim_split_close (GTK_VIM_SPLIT (global.gui.vimsplit));
 
      ui_show ();
      return TRUE;
