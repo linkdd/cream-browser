@@ -74,7 +74,7 @@ struct _CreamModuleWebKitClass
      void (*uri_changed) (CreamModuleWebKit *self, GtkWidget *webview, const gchar *uri);
      void (*title_changed) (CreamModuleWebKit *self, GtkWidget *webview, const gchar *title);
      void (*progress_changed) (CreamModuleWebKit *self, GtkWidget *webview, gdouble progress);
-     void (*state_changed) (CreamModuleDummy *self, GtkWidget *webview, CreamMode state);
+     void (*state_changed) (CreamModuleWebKit *self, GtkWidget *webview, CreamMode state);
      gboolean (*download) (CreamModuleWebKit *self, GtkWidget *webview, const gchar *file);
 };
 

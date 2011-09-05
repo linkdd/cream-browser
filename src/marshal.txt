@@ -7,5 +7,7 @@ VOID:OBJECT,STRING
 VOID:OBJECT,DOUBLE
 # CreamModule::"state-changed"
 VOID:OBJECT,INT
+# CreamModule::"viewport-attributes-changed"
+VOID:OBJECT,INT,INT
 # CreamModule::"download"
 BOOLEAN:OBJECT,STRING

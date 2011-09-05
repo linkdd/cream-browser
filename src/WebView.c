@@ -73,7 +73,7 @@ GtkWidget *webview_new (GObject *mod)
      w->child = cream_module_webview_new (CREAM_MODULE (mod));
      webview_connect_signals (w);
 
-     gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (w), w->child);
+     gtk_container_add (GTK_CONTAINER (w), w->child);
 
      return GTK_WIDGET (w);
 }
@@ -218,7 +218,7 @@ void webview_set_module (WebView *w, GObject *mod)
      w->mod = mod;
      w->child = cream_module_webview_new (CREAM_MODULE (mod));
      webview_connect_signals (w);
-     gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (w), w->child);
+     gtk_container_add (GTK_CONTAINER (w), w->child);
 
      g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_MODULE_CHANGED_SIGNAL], 0, mod);
 }
@@ -417,12 +417,12 @@ static void webview_connect_signals (WebView *w)
 {
      g_return_if_fail (CREAM_IS_WEBVIEW (w));
 
-     g_signal_connect (G_OBJECT (w->child), "grab-focus",       G_CALLBACK (webview_signal_grab_focus_cb),       w);
-     g_signal_connect (G_OBJECT (w->mod),   "uri-changed",      G_CALLBACK (webview_signal_uri_changed_cb),      w);
-     g_signal_connect (G_OBJECT (w->mod),   "title-changed",    G_CALLBACK (webview_signal_title_changed_cb),    w);
-     g_signal_connect (G_OBJECT (w->mod),   "progress-changed", G_CALLBACK (webview_signal_progress_changed_cb), w);
-     g_signal_connect (G_OBJECT (w->mod),   "state-changed",    G_CALLBACK (webview_signal_state_changed_cb),    w);
-     g_signal_connect (G_OBJECT (w->mod),   "download",         G_CALLBACK (webview_signal_download_cb),         w);
+     g_signal_connect (G_OBJECT (w->child), "grab-focus",        G_CALLBACK (webview_signal_grab_focus_cb),        w);
+     g_signal_connect (G_OBJECT (w->mod),   "uri-changed",       G_CALLBACK (webview_signal_uri_changed_cb),       w);
+     g_signal_connect (G_OBJECT (w->mod),   "title-changed",     G_CALLBACK (webview_signal_title_changed_cb),     w);
+     g_signal_connect (G_OBJECT (w->mod),   "progress-changed",  G_CALLBACK (webview_signal_progress_changed_cb),  w);
+     g_signal_connect (G_OBJECT (w->mod),   "state-changed",     G_CALLBACK (webview_signal_state_changed_cb),     w);
+     g_signal_connect (G_OBJECT (w->mod),   "download",          G_CALLBACK (webview_signal_download_cb),          w);
 }
 
 /*! @} */
