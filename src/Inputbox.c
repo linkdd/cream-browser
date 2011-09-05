@@ -35,6 +35,8 @@ static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer u
 static void inputbox_focus_in_cb (Inputbox *obj, GdkEvent *event, gpointer unused);
 static void inputbox_focus_out_cb (Inputbox *obj, GdkEvent *event, gpointer unused);
 
+static void inputbox_check_mode (Inputbox *obj);
+
 G_DEFINE_TYPE (Inputbox, inputbox, GTK_TYPE_ENTRY)
 
 /* Constructors */
@@ -129,6 +131,7 @@ static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer u
      if (g_str_equal (key, "Escape"))
      {
           gtk_entry_set_text (GTK_ENTRY (obj), "");
+          inputbox_check_mode (obj);
      }
      else if (g_str_equal (key, "Tab"))
      {
@@ -141,6 +144,7 @@ static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer u
           if (obj->current != NULL)
           {
                gtk_entry_set_text (GTK_ENTRY (obj), (gchar *) obj->current->data);
+               inputbox_check_mode (obj);
           }
      }
      else if (g_str_equal (key, "Down") && obj->history != NULL)
@@ -150,10 +154,24 @@ static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer u
           if (obj->current != NULL)
           {
                gtk_entry_set_text (GTK_ENTRY (obj), (gchar *) obj->current->data);
+               inputbox_check_mode (obj);
           }
+     }
+     else if (g_str_equal (key, "BackSpace"))
+     {
+          const gchar *txt = gtk_entry_get_text (GTK_ENTRY (obj));
+
+          if (strlen (txt) == 1)
+          {
+               statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), CREAM_MODE_NORMAL);
+               gtk_grab_remove (GTK_WIDGET (obj));
+          }
+
+          ret = FALSE;
      }
      else
      {
+          inputbox_check_mode (obj);
           ret = FALSE;
      }
 
@@ -173,5 +191,26 @@ static void inputbox_focus_out_cb (Inputbox *obj, GdkEvent *event, gpointer unus
 }
 
 /* methods */
+
+static void inputbox_check_mode (Inputbox *obj)
+{
+     const gchar *txt = gtk_entry_get_text (GTK_ENTRY (obj));
+
+     if (strlen (txt) > 0)
+     {
+          if (txt[0] == '?' || txt[0] == '/')
+          {
+               statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), CREAM_MODE_SEARCH);
+               gtk_grab_add (GTK_WIDGET (obj));
+          }
+          else
+               gtk_grab_remove (GTK_WIDGET (obj));
+     }
+     else
+     {
+          statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), CREAM_MODE_COMMAND);
+          gtk_grab_remove (GTK_WIDGET (obj));
+     }
+}
 
 /*! @} */

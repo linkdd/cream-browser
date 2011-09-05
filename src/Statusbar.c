@@ -96,12 +96,14 @@ void statusbar_set_state (Statusbar *obj, CreamMode state)
      g_return_if_fail (CREAM_IS_STATUSBAR (obj));
      priv = CREAM_STATUSBAR_GET_PRIVATE (obj);
 
+     global.mode = state;
      switch (state)
      {
           case CREAM_MODE_INSERT:
                gtk_label_set_text (GTK_LABEL (priv->lstate), _("-- INSERT --"));
                break;
 
+          case CREAM_MODE_SEARCH:
           case CREAM_MODE_COMMAND:
                gtk_label_set_text (GTK_LABEL (priv->lstate), _("-- CMD --"));
                break;
