@@ -54,8 +54,11 @@ static void window_update (GtkVimSplit *obj)
  */
 void ui_init (void)
 {
+     global.gui.accelgroup = gtk_accel_group_new ();
+
      global.gui.window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
      gtk_window_set_title (GTK_WINDOW (global.gui.window), PACKAGE);
+     gtk_window_add_accel_group (GTK_WINDOW (global.gui.window), global.gui.accelgroup);
 
      global.gui.box       = gtk_vbox_new (FALSE, 0);
      global.gui.vimsplit  = gtk_vim_split_new ();

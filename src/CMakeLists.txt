@@ -69,6 +69,7 @@ set (SOURCE
      "lua/clipboard.c"
      "lua/util.c"
      "lua/theme.c"
+     "lua/widgets.c"
      "command.c"
      "scheme.c"
      "modules.c"

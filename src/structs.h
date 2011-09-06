@@ -37,7 +37,8 @@ struct GUI
      GtkWidget *inputbox;       /*!< Inputbox widget */
      GtkWidget *box;            /*!< Box containing all widgets */
 
-     GtkWidget *fwebview;
+     GtkWidget *fwebview;       /*!< Current focused webview */
+     GtkAccelGroup *accelgroup; /*!< Accelerator group (for key bindings) */
 };
 
 /*! \struct Socket */

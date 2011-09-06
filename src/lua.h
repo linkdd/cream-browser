@@ -99,12 +99,6 @@ static inline gboolean luaL_checkboolean (lua_State *L, int idx)
 }
 
 /*!
- * \def LUA_TMODULE
- * Userdata type associated to #CreamModule.
- */
-#define LUA_TMODULE    "CreamModule"
-
-/*!
  * \def LUA_TCLIPBOARD
  * Userdata type associated to \class{GtkClipboard}.
  */
@@ -127,12 +121,6 @@ static inline gboolean luaL_checkboolean (lua_State *L, int idx)
  * Userdata type associated to #theme_t.
  */
 #define LUA_TTHEME     "theme"
-
-
-#define LUA_TNOTEBOOK    "Notebook"
-#define LUA_TVIEWAREA    "ViewArea"
-#define LUA_TSTATUSBAR   "Statusbar"
-#define LUA_TPROMPTBOX   "Promptbox"
 
 gboolean lua_ctx_init (GError **err);
 gboolean lua_ctx_parse (const char *file, GError **err);

@@ -36,14 +36,18 @@
 
 #include <gtk/gtk.h>
 
+/*!
+ * \enum CreamMode
+ * Browser's mode.
+ */
 typedef enum
 {
-     CREAM_MODE_INSERT,
-     CREAM_MODE_COMMAND,
-     CREAM_MODE_SEARCH,
-     CREAM_MODE_EMBED,
-     CREAM_MODE_CARET,
-     CREAM_MODE_NORMAL
+     CREAM_MODE_INSERT,  /*!< Insert mode (focus on #WebView) */
+     CREAM_MODE_COMMAND, /*!< Command mode (focus on #Inputbox) */
+     CREAM_MODE_SEARCH,  /*!< Search mode (focus grabbed on #Inputbox) */
+     CREAM_MODE_EMBED,   /*!< Embed mode (focus on a plugin from the #WebView) */
+     CREAM_MODE_CARET,   /*!< Caret mode (focus on #WebView) */
+     CREAM_MODE_NORMAL   /*!< Normal mode */
 } CreamMode;
 
 G_BEGIN_DECLS

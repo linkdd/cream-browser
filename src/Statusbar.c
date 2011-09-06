@@ -90,6 +90,14 @@ static void statusbar_init (Statusbar *self)
 
 /* methods */
 
+/*!
+ * \public \memberof Statusbar
+ * \fn void statusbar_set_state (Statusbar *obj, CreamMode state)
+ * @param obj A #Statusbar object.
+ * @param state Browser's state (see #CreamMode).
+ *
+ * Set browser's state.
+ */
 void statusbar_set_state (Statusbar *obj, CreamMode state)
 {
      StatusbarPrivate *priv;
@@ -104,6 +112,9 @@ void statusbar_set_state (Statusbar *obj, CreamMode state)
                break;
 
           case CREAM_MODE_SEARCH:
+               gtk_label_set_text (GTK_LABEL (priv->lstate), _("-- FIND --"));
+               break;
+
           case CREAM_MODE_COMMAND:
                gtk_label_set_text (GTK_LABEL (priv->lstate), _("-- CMD --"));
                break;
@@ -123,6 +134,14 @@ void statusbar_set_state (Statusbar *obj, CreamMode state)
      }
 }
 
+/*!
+ * \public \memberof Statusbar
+ * \fn void statusbar_set_link (Statusbar *obj, const gchar *link)
+ * @param obj A #Statusbar object.
+ * @param link URL to print in statusbar.
+ *
+ * Set link in statusbar.
+ */
 void statusbar_set_link (Statusbar *obj, const gchar *link)
 {
      StatusbarPrivate *priv;
@@ -131,6 +150,15 @@ void statusbar_set_link (Statusbar *obj, const gchar *link)
      gtk_label_set_text (GTK_LABEL (priv->llink), link);
 }
 
+/*!
+ * \public \memberof Statusbar
+ * \fn void statusbar_set_history (Statusbar *obj, gboolean can_go_back, gboolean can_go_forward)
+ * @param obj A #Statusbar object.
+ * @param can_go_back If <code>TRUE</code>, we can go back in history.
+ * @param can_go_forward If <code>TRUE</code>, we can go forward in history.
+ *
+ * Display history indicator in statusbar.
+ */
 void statusbar_set_history (Statusbar *obj, gboolean can_go_back, gboolean can_go_forward)
 {
      StatusbarPrivate *priv;
@@ -144,6 +172,14 @@ void statusbar_set_history (Statusbar *obj, gboolean can_go_back, gboolean can_g
      g_free (txt);
 }
 
+/*!
+ * \public \memberof Statusbar
+ * \fn void statusbar_set_scroll (Statusbar *obj, gdouble progress)
+ * @param obj A #Statusbar object.
+ * @param progress Scrolling percent.
+ *
+ * Set scrolling percent.
+ */
 void statusbar_set_scroll (Statusbar *obj, gdouble progress)
 {
      StatusbarPrivate *priv;
@@ -156,6 +192,16 @@ void statusbar_set_scroll (Statusbar *obj, gdouble progress)
      gtk_label_set_text (GTK_LABEL (priv->lscroll), txt);
      g_free (txt);
 }
+
+
+/*!
+ * \public \memberof Statusbar
+ * \fn void statusbar_set_progress (Statusbar *obj, gdouble progress)
+ * @param obj A #Statusbar object.
+ * @param progress Loading percent.
+ *
+ * Display a download bar.
+ */
 
 void statusbar_set_progress (Statusbar *obj, gdouble progress)
 {
@@ -187,3 +233,5 @@ void statusbar_set_progress (Statusbar *obj, gdouble progress)
      gtk_label_set_text (GTK_LABEL (priv->lprogress), txt);
      g_free (txt);
 }
+
+/*! @} */

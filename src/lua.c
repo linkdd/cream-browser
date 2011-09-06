@@ -30,6 +30,7 @@ extern int luaL_clipboard_register (lua_State *L);
 extern int luaL_util_register (lua_State *L);
 extern int luaL_webview_register (lua_State *L);
 extern int luaL_theme_register (lua_State *L);
+extern int luaL_widgets_register (lua_State *L);
 
 /*!
  * \addtogroup lua
@@ -90,6 +91,9 @@ gboolean lua_ctx_init (GError **err)
      lua_pop (global.luavm, 1);
 
      luaL_theme_register (global.luavm);
+     lua_pop (global.luavm, 1);
+
+     luaL_widgets_register (global.luavm);
      lua_pop (global.luavm, 1);
 
      /* get package.path */
