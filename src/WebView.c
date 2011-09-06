@@ -353,7 +353,12 @@ static void webview_signal_uri_changed_cb (CreamModule *self, GtkWidget *webview
      }
 
      if (GTK_WIDGET (w) == global.gui.fwebview)
+     {
           statusbar_set_link (CREAM_STATUSBAR (global.gui.statusbar), uri);
+          statusbar_set_history (CREAM_STATUSBAR (global.gui.statusbar),
+                    cream_module_can_go_back (self, webview),
+                    cream_module_can_go_forward (self, webview));
+     }
 }
 
 static void webview_signal_title_changed_cb (CreamModule *self, GtkWidget *webview, const gchar *title, WebView *w)

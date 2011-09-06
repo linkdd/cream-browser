@@ -130,6 +130,21 @@ void cream_module_reload (CreamModule *self, GtkWidget *webview)
 
 /*!
  * \public \memberof CreamModule
+ * \fn gboolean cream_module_can_go_back (CreamModule *self, GtkWidget *webview)
+ * @param self The module to use.
+ * @param webview A webview.
+ */
+gboolean cream_module_can_go_back (CreamModule *self, GtkWidget *webview)
+{
+     CreamModuleIface *iface;
+     g_return_val_if_fail (CREAM_IS_MODULE (self), FALSE);
+     iface = CREAM_MODULE_GET_INTERFACE (self);
+     g_return_val_if_fail (iface->can_go_back != NULL, FALSE);
+     return iface->can_go_back (self, webview);
+}
+
+/*!
+ * \public \memberof CreamModule
  * \fn void cream_module_backward (CreamModule *self, GtkWidget *webview)
  * @param self The module to use.
  * @param webview A webview.
@@ -141,6 +156,21 @@ void cream_module_backward (CreamModule *self, GtkWidget *webview)
      iface = CREAM_MODULE_GET_INTERFACE (self);
      g_return_if_fail (iface->backward != NULL);
      iface->backward (self, webview);
+}
+
+/*!
+ * \public \memberof CreamModule
+ * \fn gboolean cream_module_can_go_forward (CreamModule *self, GtkWidget *webview)
+ * @param self The module to use.
+ * @param webview A webview.
+ */
+gboolean cream_module_can_go_forward (CreamModule *self, GtkWidget *webview)
+{
+     CreamModuleIface *iface;
+     g_return_val_if_fail (CREAM_IS_MODULE (self), FALSE);
+     iface = CREAM_MODULE_GET_INTERFACE (self);
+     g_return_val_if_fail (iface->can_go_forward != NULL, FALSE);
+     return iface->can_go_forward (self, webview);
 }
 
 /*!

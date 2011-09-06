@@ -59,10 +59,21 @@ static void cream_module_dummy_reload (CreamModule *self, GtkWidget *webview)
      return;
 }
 
+static gboolean cream_module_dummy_can_go_back (CreamModule *self, GtkWidget *webview)
+{
+     return FALSE;
+}
+
 static void cream_module_dummy_backward (CreamModule *self, GtkWidget *webview)
 {
      return;
 }
+
+static gboolean cream_module_dummy_can_go_forward (CreamModule *self, GtkWidget *webview)
+{
+     return FALSE;
+}
+
 
 static void cream_module_dummy_forward (CreamModule *self, GtkWidget *webview)
 {

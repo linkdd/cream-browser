@@ -65,7 +65,9 @@ struct _CreamModuleIface
      GtkWidget * (*webview_new) (CreamModule *self);
      void (*load_uri) (CreamModule *self, GtkWidget *, UriScheme *);
      void (*reload) (CreamModule *self, GtkWidget *);
+     gboolean (*can_go_back) (CreamModule *self, GtkWidget *);
      void (*backward) (CreamModule *self, GtkWidget *);
+     gboolean (*can_go_forward) (CreamModule *self, GtkWidget *);
      void (*forward) (CreamModule *self, GtkWidget *);
      gboolean (*search) (CreamModule *self, GtkWidget *, const gchar *, gboolean);
      void (*proxy) (CreamModule *self, const gchar *);
@@ -78,7 +80,9 @@ void modules_init (void);
 GtkWidget *cream_module_webview_new (CreamModule *self);
 void cream_module_load_uri (CreamModule *self, GtkWidget *webview, UriScheme *uri);
 void cream_module_reload (CreamModule *self, GtkWidget *webview);
+gboolean cream_module_can_go_back (CreamModule *self, GtkWidget *webview);
 void cream_module_backward (CreamModule *self, GtkWidget *webview);
+gboolean cream_module_can_go_forward (CreamModule *self, GtkWidget *webview);
 void cream_module_forward (CreamModule *self, GtkWidget *webview);
 gboolean cream_module_search (CreamModule *self, GtkWidget *webview, const gchar *text, gboolean forward);
 void cream_module_proxy (CreamModule *self, const gchar *uri);
@@ -98,7 +102,9 @@ void cream_module_useragent (CreamModule *self, const gchar *ua);
      static GtkWidget* fn_prefix##_webview_new (CreamModule *self);                                                     \
      static void fn_prefix##_load_uri (CreamModule *self, GtkWidget *webview, UriScheme *uri);                          \
      static void fn_prefix##_reload (CreamModule *self, GtkWidget *webview);                                            \
+     static gboolean fn_prefix##_can_go_back (CreamModule *self, GtkWidget *webview);                                   \
      static void fn_prefix##_backward (CreamModule *self, GtkWidget *webview);                                          \
+     static gboolean fn_prefix##_can_go_forward (CreamModule *self, GtkWidget *webview);                                \
      static void fn_prefix##_forward (CreamModule *self, GtkWidget *webview);                                           \
      static gboolean fn_prefix##_search (CreamModule *self, GtkWidget *webview, const gchar *text, gboolean forward);   \
      static void fn_prefix##_proxy (CreamModule *self, const gchar *uri);                                               \
@@ -157,14 +163,16 @@ void cream_module_useragent (CreamModule *self, const gchar *ua);
                                                                                                                         \
      static void fn_prefix##_interface_init (CreamModuleIface *iface)                                                   \
      {                                                                                                                  \
-          iface->webview_new = fn_prefix##_webview_new;                                                                 \
-          iface->load_uri    = fn_prefix##_load_uri;                                                                    \
-          iface->reload      = fn_prefix##_reload;                                                                      \
-          iface->backward    = fn_prefix##_backward;                                                                    \
-          iface->forward     = fn_prefix##_forward;                                                                     \
-          iface->search      = fn_prefix##_search;                                                                      \
-          iface->proxy       = fn_prefix##_proxy;                                                                       \
-          iface->useragent   = fn_prefix##_useragent;                                                                   \
+          iface->webview_new    = fn_prefix##_webview_new;                                                              \
+          iface->load_uri       = fn_prefix##_load_uri;                                                                 \
+          iface->reload         = fn_prefix##_reload;                                                                   \
+          iface->can_go_back    = fn_prefix##_can_go_back;                                                              \
+          iface->backward       = fn_prefix##_backward;                                                                 \
+          iface->can_go_forward = fn_prefix##_can_go_forward;                                                           \
+          iface->forward        = fn_prefix##_forward;                                                                  \
+          iface->search         = fn_prefix##_search;                                                                   \
+          iface->proxy          = fn_prefix##_proxy;                                                                    \
+          iface->useragent      = fn_prefix##_useragent;                                                                \
      }                                                                                                                  \
                                                                                                                         \
      static void fn_prefix##_class_init (ctype##Class *klass)                                                           \

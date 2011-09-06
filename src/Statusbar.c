@@ -167,9 +167,14 @@ void statusbar_set_history (Statusbar *obj, gboolean can_go_back, gboolean can_g
      g_return_if_fail (CREAM_IS_STATUSBAR (obj));
      priv = CREAM_STATUSBAR_GET_PRIVATE (obj);
 
-     txt = g_strdup_printf ("[%s%s]", (can_go_back ? "-" : ""), (can_go_forward ? "+" : ""));
-     gtk_label_set_text (GTK_LABEL (priv->lhistory), txt);
-     g_free (txt);
+     if (can_go_back || can_go_forward)
+     {
+          txt = g_strdup_printf ("[%s%s]", (can_go_back ? "-" : ""), (can_go_forward ? "+" : ""));
+          gtk_label_set_text (GTK_LABEL (priv->lhistory), txt);
+          g_free (txt);
+     }
+     else
+          gtk_label_set_text (GTK_LABEL (priv->lhistory), NULL);
 }
 
 /*!

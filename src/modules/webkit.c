@@ -94,6 +94,11 @@ static void cream_module_webkit_reload (CreamModule *self, GtkWidget *webview)
      webkit_web_view_reload (WEBKIT_WEB_VIEW (webview));
 }
 
+static gboolean cream_module_webkit_can_go_back (CreamModule *self, GtkWidget *webview)
+{
+     return webkit_web_view_can_go_back (WEBKIT_WEB_VIEW (webview));
+}
+
 static void cream_module_webkit_backward (CreamModule *self, GtkWidget *webview)
 {
      const char *uri;
@@ -102,6 +107,11 @@ static void cream_module_webkit_backward (CreamModule *self, GtkWidget *webview)
           webkit_web_view_go_back (WEBKIT_WEB_VIEW (webview));
 
      uri = webkit_web_view_get_uri (WEBKIT_WEB_VIEW (webview));
+}
+
+static gboolean cream_module_webkit_can_go_forward (CreamModule *self, GtkWidget *webview)
+{
+     return webkit_web_view_can_go_forward (WEBKIT_WEB_VIEW (webview));
 }
 
 static void cream_module_webkit_forward (CreamModule *self, GtkWidget *webview)
