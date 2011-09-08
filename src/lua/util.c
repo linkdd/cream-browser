@@ -33,9 +33,33 @@
  */
 
 /*!
+ * \fn static int luaL_util_state (lua_State *L)
+ * @param L The lua VM state.
+ * @return Number of return value in lua.
+ *
+ * Get current browser's mode, or set it.
+ * \code function state () \endcode
+ * \code function state (newmode) \endcode
+ */
+static int luaL_util_state (lua_State *L)
+{
+     if (lua_gettop (L) >= 1)
+     {
+          statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), luaL_checkint (L, 1));
+          return 0;
+     }
+
+     lua_pushinteger (L, global.mode);
+     return 1;
+}
+
+/*!
  * \fn static int luaL_util_spawn (lua_State *L)
  * @param L The lua VM state.
  * @return Number of return value in lua.
+ *
+ * Spawn a process.
+ * \code function spawn (command) \endcode
  */
 static int luaL_util_spawn (lua_State *L)
 {
@@ -70,6 +94,9 @@ static int luaL_util_spawn (lua_State *L)
  * \fn static int luaL_util_quit (lua_State *L)
  * @param L The lua VM state.
  * @return Number of return value in lua.
+ *
+ * Exit Cream-Browser.
+ * \code function quit (code = EXIT_SUCCESS) \endcode
  */
 static int luaL_util_quit (lua_State *L)
 {
@@ -84,6 +111,7 @@ static int luaL_util_quit (lua_State *L)
 
 static const luaL_reg cream_util_functions[] =
 {
+     { "state", luaL_util_state },
      { "spawn", luaL_util_spawn },
      { "quit",  luaL_util_quit },
      { NULL, NULL }

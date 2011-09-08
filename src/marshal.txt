@@ -11,3 +11,5 @@ VOID:OBJECT,INT
 VOID:OBJECT,INT,INT
 # CreamModule::"download"
 BOOLEAN:OBJECT,STRING
+# KeyBind::Closure
+VOID:VOID

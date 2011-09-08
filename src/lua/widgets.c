@@ -63,6 +63,21 @@ static int luaL_inputbox_text (lua_State *L)
      }
 }
 
+/*
+ * \fn static int luaL_inputbox_focus (lua_State *L)
+ * @param L The lua VM state.
+ * @return Number of return value in lua.
+ *
+ * Give focus to the inputbox.
+ * \code function inputbox.focus () \endcode
+ */
+static int luaL_inputbox_focus (lua_State *L)
+{
+     gtk_widget_grab_focus (global.gui.inputbox);
+     gtk_editable_set_position (GTK_EDITABLE (global.gui.inputbox), -1);
+     return 0;
+}
+
 /*! @} */
 
 /*!
@@ -161,6 +176,7 @@ static int luaL_statusbar_set_progress (lua_State *L)
 static const luaL_reg cream_widgets_functions[] =
 {
      { "inputbox_text",          luaL_inputbox_text },
+     { "inputbox_focus",         luaL_inputbox_focus },
      { "statusbar_set_state",    luaL_statusbar_set_state },
      { "statusbar_set_link",     luaL_statusbar_set_link },
      { "statusbar_set_history",  luaL_statusbar_set_history },

@@ -83,6 +83,7 @@
 
 #include "lua.h"
 #include "modules.h"
+#include "keybinds.h"
 #include "interface.h"
 
 #ifdef HAVE_MOD_DUMMY

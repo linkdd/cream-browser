@@ -212,9 +212,6 @@ static const luaL_reg cream_webview_meta[] =
 
 static const luaI_reg cream_webview_getters[] =
 {
-     { "uri",       luaI_getstring,     offsetof (WebView, uri) },
-     { "title",     luaI_getstring,     offsetof (WebView, title) },
-     { "focus",     luaI_getbool,       offsetof (WebView, has_focus) },
      { NULL, NULL, 0 }
 };
 

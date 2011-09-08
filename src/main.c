@@ -274,6 +274,7 @@ static void init (gchar *config)
 
      /* init gui */
      ui_init ();
+     keybinds_init ();
 
      /* init and parse lua */
      if (!lua_ctx_init (&error))

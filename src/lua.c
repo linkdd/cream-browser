@@ -28,9 +28,11 @@
 extern int luaL_module_register (lua_State *L);
 extern int luaL_clipboard_register (lua_State *L);
 extern int luaL_util_register (lua_State *L);
+extern int luaL_bit_register (lua_State *L);
 extern int luaL_webview_register (lua_State *L);
 extern int luaL_theme_register (lua_State *L);
 extern int luaL_widgets_register (lua_State *L);
+extern int luaL_keybinds_register (lua_State *L);
 
 /*!
  * \addtogroup lua
@@ -61,6 +63,36 @@ static GQuark cream_lua_error_quark (void)
 }
 
 /*!
+ * \fn int luaL_error_handler (lua_State *L)
+ * @param L The lua VM state.
+ * @return Number of return value in lua.
+ *
+ * Error handler.
+ */
+int luaL_error_handler (lua_State *L)
+{
+     GError *err = NULL;
+
+     /* duplicate string error */
+     lua_pushvalue (L, -1);
+
+     err = g_error_new (CREAM_LUA_ERROR, CREAM_LUA_ERROR_FAILED, "%s", luaL_checkstring (L, 1));
+     print_error (err, FALSE, NULL);
+
+     if (!luaL_dostring (L, "return debug.traceback (\"error while running function\", 3)"))
+     {
+          /* move traceback before error */
+          lua_insert (L, -2);
+          /* Insert sentence */
+          lua_pushliteral (L, "\nerror: ");
+          /* Move it before error */
+          lua_insert (L, -2);
+          lua_concat (L, 3);
+     }
+     return 1;
+}
+
+/*!
  * \fn gboolean lua_ctx_init (GError **err)
  * @param err \class{GError} pointer in order to follow possible errors.
  * @return <code>TRUE</code> on success, <code>FALSE</code> otherwise.
@@ -87,6 +119,9 @@ gboolean lua_ctx_init (GError **err)
      luaL_util_register (global.luavm);
      lua_pop (global.luavm, 1);
 
+     luaL_bit_register (global.luavm);
+     lua_pop (global.luavm, 1);
+
      luaL_webview_register (global.luavm);
      lua_pop (global.luavm, 1);
 
@@ -94,6 +129,9 @@ gboolean lua_ctx_init (GError **err)
      lua_pop (global.luavm, 1);
 
      luaL_widgets_register (global.luavm);
+     lua_pop (global.luavm, 1);
+
+     luaL_keybinds_register (global.luavm);
      lua_pop (global.luavm, 1);
 
      /* get package.path */
@@ -181,7 +219,11 @@ gboolean lua_ctx_parse (const char *file, GError **err)
 
      s = luaL_loadfile (global.luavm, file);
      if (s == 0)
-          s = lua_pcall (global.luavm, 0, LUA_MULTRET, 0);
+     {
+          lua_pushcfunction (global.luavm, luaL_error_handler);
+          lua_insert (global.luavm, -2);
+          s = lua_pcall (global.luavm, 0, LUA_MULTRET, -2);
+     }
 
      if (s != 0)
      {
@@ -313,7 +355,7 @@ int luaI_getbool (lua_State *L, gpointer v)
  * @param v C data.
  * @return Number of return value in lua.
  *
- * Int getter.
+ * String getter.
  */
 int luaI_getstring (lua_State *L, gpointer v)
 {

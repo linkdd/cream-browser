@@ -30,6 +30,7 @@
 #include <lualib.h>
 #include <lauxlib.h>
 #include <glib.h>
+#include <err.h>
 
 /*!
  * \defgroup lua Lua context
@@ -37,6 +38,8 @@
  *
  * @{
  */
+
+int luaL_error_handler (lua_State *L);
 
 /*!
  * \fn static inline int luaL_checkfunction (lua_State *L, int idx)
@@ -50,7 +53,7 @@
 static inline int luaL_checkfunction (lua_State *L, int idx)
 {
      luaL_checktype (L, idx, LUA_TFUNCTION);
-     lua_pushvalue (L, -1);
+     lua_pushvalue (L, idx);
      return luaL_ref (L, LUA_REGISTRYINDEX);
 }
 
@@ -67,8 +70,26 @@ static inline void luaL_callfunction (lua_State *L, int ref, int nargs, int nret
 {
      if (ref)
      {
+          int errfunc;
+
           lua_rawgeti (L, LUA_REGISTRYINDEX, ref);
-          lua_call (L, nargs, nreturns);
+
+          /* Move function before arguments */
+          lua_insert (L, - nargs - 1);
+
+          /* push error handler and move it before args and function */
+          lua_pushcfunction (L, luaL_error_handler);
+          lua_insert (L, - nargs - 2);
+          errfunc = lua_gettop (L) - nargs - 1;
+
+          if (lua_pcall (L, nargs, nreturns, - nargs - 2))
+          {
+               warn ("%s", lua_tostring (L, -1));
+               lua_pop (L, 2);
+               return;
+          }
+
+          lua_remove (L, errfunc);
      }
 }
 

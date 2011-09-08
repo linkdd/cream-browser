@@ -42,12 +42,12 @@
  */
 typedef enum
 {
-     CREAM_MODE_INSERT,  /*!< Insert mode (focus on #WebView) */
-     CREAM_MODE_COMMAND, /*!< Command mode (focus on #Inputbox) */
-     CREAM_MODE_SEARCH,  /*!< Search mode (focus grabbed on #Inputbox) */
-     CREAM_MODE_EMBED,   /*!< Embed mode (focus on a plugin from the #WebView) */
-     CREAM_MODE_CARET,   /*!< Caret mode (focus on #WebView) */
-     CREAM_MODE_NORMAL   /*!< Normal mode */
+     CREAM_MODE_INSERT  = 1 << 0,  /*!< Insert mode (focus on #WebView) */
+     CREAM_MODE_COMMAND = 1 << 1,  /*!< Command mode (focus on #Inputbox) */
+     CREAM_MODE_SEARCH  = 1 << 2,  /*!< Search mode (focus grabbed on #Inputbox) */
+     CREAM_MODE_EMBED   = 1 << 3,  /*!< Embed mode (focus on a plugin from the #WebView) */
+     CREAM_MODE_CARET   = 1 << 4,  /*!< Caret mode (focus on #WebView) */
+     CREAM_MODE_NORMAL  = 1 << 5   /*!< Normal mode */
 } CreamMode;
 
 G_BEGIN_DECLS

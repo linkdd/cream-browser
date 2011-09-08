@@ -132,6 +132,7 @@ static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer u
      {
           gtk_entry_set_text (GTK_ENTRY (obj), "");
           inputbox_check_mode (obj);
+          statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), CREAM_MODE_NORMAL);
      }
      else if (g_str_equal (key, "Tab"))
      {

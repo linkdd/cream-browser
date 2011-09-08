@@ -73,9 +73,9 @@ static int luaL_clipboard_new (lua_State *L)
      GtkClipboard *clip;
      GdkAtom atom;
 
-     if (lua_gettop (L) == 1 && lua_isstring (L, 1))
+     if (lua_gettop (L) == 1)
      {
-          const gchar *tmp = lua_tostring (L, 1);
+          const gchar *tmp = luaL_checkstring (L, 1);
           atom = gdk_atom_intern (tmp, FALSE);
      }
      else

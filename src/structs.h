@@ -28,7 +28,9 @@
 
 #include "lua/theme.h"
 
-/*! \struct GUI */
+/*! \struct GUI
+ * GUI structure.
+ */
 struct GUI
 {
      GtkWidget *window;         /*!< Main Window */
@@ -38,10 +40,11 @@ struct GUI
      GtkWidget *box;            /*!< Box containing all widgets */
 
      GtkWidget *fwebview;       /*!< Current focused webview */
-     GtkAccelGroup *accelgroup; /*!< Accelerator group (for key bindings) */
 };
 
-/*! \struct Socket */
+/*! \struct Socket
+ * Socket structure.
+ */
 struct Socket
 {
      gchar *path;             /*!< Path to the Unix socket */
@@ -51,7 +54,7 @@ struct Socket
 
 /*!
  * \struct global_t
- * \brief Global structure to access in every point of the program to all usefull structures and widgets
+ * Global structure to access in every point of the program to all usefull structures and widgets
  */
 struct global_t
 {
