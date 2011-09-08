@@ -172,7 +172,7 @@ static int luaL_webview_close (lua_State *L)
      luaL_unref (L, LUA_REGISTRYINDEX, obj->self);
      obj->self = 0;
 
-     gtk_widget_destroy (GTK_WIDGET (obj->w));
+     notebook_close (CREAM_NOTEBOOK (obj->w->notebook), gtk_notebook_page_num (GTK_NOTEBOOK (obj->w->notebook), GTK_WIDGET (obj->w)));
      return 0;
 }
 

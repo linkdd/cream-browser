@@ -132,6 +132,7 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
 
      module = get_protocol (u.scheme);
      webview = webview_new (module);
+     CREAM_WEBVIEW (webview)->notebook = GTK_WIDGET (obj);
      webview_load_uri (CREAM_WEBVIEW (webview), url);
 
      gtk_notebook_append_page_menu (GTK_NOTEBOOK (obj), webview,
@@ -156,7 +157,7 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
  */
 void notebook_close (Notebook *obj, gint page)
 {
-     GtkWidget *webview = gtk_notebook_get_nth_page (GTK_NOTEBOOK (obj), page);
+     GtkWidget *webview = g_object_ref (gtk_notebook_get_nth_page (GTK_NOTEBOOK (obj), page));
      GList *node = g_list_find (obj->webviews, webview);
      obj->webviews = g_list_remove_link (obj->webviews, node);
      gtk_notebook_remove_page (GTK_NOTEBOOK (obj), page);

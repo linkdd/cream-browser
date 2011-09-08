@@ -66,6 +66,7 @@ struct _WebView
      gboolean has_focus;
      GObject *mod;
      GtkWidget *child;
+     GtkWidget *notebook;
 
      gchar *uri;
      gchar *title;
