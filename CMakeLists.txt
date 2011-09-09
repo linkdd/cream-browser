@@ -54,7 +54,7 @@ configure_file (
 add_custom_target (luadoc
      COMMENT "Generating lua documentation"
      COMMAND mkdir -p ${CMAKE_BINARY_DIR}/docs/lua
-     COMMAND luadoc ${CMAKE_SOURCE_DIR}/src/lua/lib/**/*.lua -d ${CMAKE_BINARY_DIR}/docs/lua --nofiles
+     COMMAND luadoc ${CMAKE_SOURCE_DIR}/src/lua/doc/*.lua -d ${CMAKE_BINARY_DIR}/docs/lua --nofiles
 )
 
 add_custom_target (doxygen

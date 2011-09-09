@@ -32,17 +32,23 @@
  */
 
 static GSList *keys = NULL;
-static GString *command = NULL;
 
 static gboolean keybinds_callback (GtkWindow *window, GdkEvent *event)
 {
+     static GString *command = NULL;
+
      guint modifiers = gtk_accelerator_get_default_mod_mask ();
      GdkEventKey ekey = event->key;
      GSList *tmp;
 
-     if (command == NULL)
-          command = g_string_new ("");
+     /* Escape is the default key to clear the buffer */
+     if (g_str_equal ("Escape", gdk_keyval_name (ekey.keyval)) && command)
+          g_string_free (command, TRUE), command = NULL;
 
+     /* initialize buffer */
+     if (command == NULL) command = g_string_new ("");
+
+     /* get key */
      if (ekey.is_modifier)
      {
           return FALSE;
@@ -50,6 +56,7 @@ static gboolean keybinds_callback (GtkWindow *window, GdkEvent *event)
      else if (global.mode & (CREAM_MODE_NORMAL | CREAM_MODE_EMBED | CREAM_MODE_CARET))
           command = g_string_append (command, gdk_keyval_name (ekey.keyval));
 
+     /* check for keybind */
      for (tmp = keys; tmp != NULL; tmp = tmp->next)
      {
           struct key_t *keybind = (struct key_t *) tmp->data;

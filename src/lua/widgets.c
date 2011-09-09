@@ -29,6 +29,9 @@
  * \defgroup lua-widgets Widgets
  * \ingroup lua
  * Lua bindings of some Cream-Browser's widgets.
+ *
+ * @{
+ * @}
  */
 
 /*!

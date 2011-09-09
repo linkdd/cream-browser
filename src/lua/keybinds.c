@@ -27,6 +27,7 @@
 
 /*!
  * \defgroup lua-keybinds Key Bindings.
+ * \ingroup lua
  * Lua bindings for key bindings.
  *
  * @{
@@ -38,7 +39,7 @@
  * @return Number of return value in lua.
  *
  * Add a keybind.
- * \code keys.add (accelerator, mode, func) \encode
+ * \code keys.add (accelerator, mode, func) \endcode
  */
 static int luaL_keybinds_add (lua_State *L)
 {
