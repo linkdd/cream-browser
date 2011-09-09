@@ -67,6 +67,7 @@ set (SOURCE
      "interface.c"
      "lua.c"
      "lua/WebView.c"
+     "lua/Notebook.c"
      "lua/clipboard.c"
      "lua/util.c"
      "lua/bit.c"

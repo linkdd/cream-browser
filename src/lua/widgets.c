@@ -171,6 +171,31 @@ static int luaL_statusbar_set_progress (lua_State *L)
 /*! @} */
 
 /*!
+ * \defgroup lua-notebook Notebook
+ * \ingroup lua-widgets
+ * #Notebook usefull functions.
+ *
+ * @{
+ */
+
+/*!
+ * \fn static int luaL_notebook_get_focused (lua_State *L)
+ * @param L The lua VM state.
+ * @return Number of return value in lua
+ *
+ * Get focused notebook.
+ * \code function notebook.get_focus () \endcode
+ */
+static int luaL_notebook_get_focused (lua_State *L)
+{
+     Notebook *n = CREAM_NOTEBOOK (gtk_vim_split_get_focus (GTK_VIM_SPLIT (global.gui.vimsplit)));
+     lua_pushnotebook (L, n);
+     return 1;
+}
+
+/*! @} */
+
+/*!
  * \addtogroup lua-widgets
  *
  * @{
@@ -185,6 +210,7 @@ static const luaL_reg cream_widgets_functions[] =
      { "statusbar_set_history",  luaL_statusbar_set_history },
      { "statusbar_set_scroll",   luaL_statusbar_set_scroll },
      { "statusbar_set_progress", luaL_statusbar_set_progress },
+     { "notebook_get_focused",   luaL_notebook_get_focused },
      { NULL, NULL }
 };
 

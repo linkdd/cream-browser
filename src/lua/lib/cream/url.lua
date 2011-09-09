@@ -7,8 +7,8 @@ local clip = require ("cream.clipboard")
 
 module ("cream.url")
 
-primary = clip ("primary")
-second  = clip ("secondary")
+primary = clip.primary
+second  = clip.default
 
 yanked = nil
 
@@ -17,14 +17,9 @@ yanked = nil
 -- @param primary <code>true</code> to yank the current url or selection to the primary clipboard, <code>false</code> otherwise. (default: <code>true</code>)
 -- @param selection <code>true</code> to yank the current selection, <code>false</code> for the URL. (default: <code>false</code>)
 function yank (primary, selection)
-     if primary == nil then primary = true end
-     if selection == nil then selection = false end
-
-     if selection then
-          yanked = tab.focus:url ()
-     else
-          yanked = tab.focus:selection ()
-     end
+     primary = primary == nil and true
+     selection = selection == nil and false
+     yanked = selection and tab.focus:uri () or tab.focus:selection ()
 
      if primary then
           primary:set (yanked)
@@ -37,7 +32,7 @@ end
 -- Open in the current tab the yanked URL.
 -- @param primary <code>true</code> to paste the yanked url from the primary clipboard, <code>false</code> otherwise. (default: <code>true</code>)
 function paste (primary)
-     if primary == nil then primary = true end
+     primary = primary == nil and true
 
      if primary and yanked == nil then
           yanked = primary:get ()
@@ -45,7 +40,7 @@ function paste (primary)
           yanked = second:get ()
      end
 
-     tab.focus:open (yanked)
+     tab.current ():focus ():open (yanked)
 end
 
 

@@ -20,9 +20,3 @@ prompt.bg_error  = "#FF0000"
 prompt.fg_normal = "#CCCCCC"
 prompt.fg_error  = "#000000"
 
--- Module VTE (Virtual Terminal Emulator)
-modules.vte = {}
-modules.vte.font  = "droidsans normal 8"
-modules.vte.shell = "/bin/sh"
-modules.vte.bg    = "#000000"
-modules.vte.fg    = "#CCCCCC"

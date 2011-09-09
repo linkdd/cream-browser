@@ -3,32 +3,36 @@
 
 local capi =
 {
-     notebook = notebook
+     notebook = notebook,
+     widgets = widgets
 }
 
 module ("cream.tab")
 
-focus = nil
+function current ()
+     return capi.widgets.notebook_get_focused ()
+end
+
+function focus ()
+     return capi.notebook:focus ()
+end
 
 function viewprev ()
-     focus = capi.notebook:viewprev ()
+     capi.notebook:viewprev ()
 end
 
 function viewnext ()
-     focus = capi.notebook:viewnext ()
+     capi.notebook:viewnext ()
 end
 
 function goto (idx)
-     focus = capi.notebook.webviews[idx]
-     focus:raise ()
+     capi.notebook:webviews(idx):raise ()
 end
 
 function close (idx)
-     capi.notebook.webviews[idx]:close ()
-     focus = capi.notebook.webviews[0]
-     focus:raise ()
+     capi.notebook:webviews(idx):close ()
 end
 
 function new (url)
-     focus = capi.notebook:new (url)
+     capi.notebook:new (url)
 end

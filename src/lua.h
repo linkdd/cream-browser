@@ -138,6 +138,13 @@ static inline gboolean luaL_checkboolean (lua_State *L, int idx)
 #define LUA_TWEBVIEW   "WebView"
 
 /*!
+ * \def LUA_TNOTEBOOK
+ * Userdata type associated to #Notebook.
+ */
+#define LUA_TNOTEBOOK  "Notebook"
+
+
+/*!
  * \def LUA_TTHEME
  * Userdata type associated to #theme_t.
  */
@@ -147,7 +154,9 @@ gboolean lua_ctx_init (GError **err);
 gboolean lua_ctx_parse (const char *file, GError **err);
 void lua_ctx_close (void);
 
+/* push objects */
 extern void lua_pushwebview (lua_State *L, WebView *w);
+extern void lua_pushnotebook (lua_State *L, Notebook *n);
 
 /* Used for __index and __newindex */
 
