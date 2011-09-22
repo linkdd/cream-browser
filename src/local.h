@@ -67,13 +67,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-/* For sockets */
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <fcntl.h>
-
 #include "marshal.h"
 #include "WebView.h"
 #include "Notebook.h"
@@ -85,6 +78,7 @@
 #include "modules.h"
 #include "keybinds.h"
 #include "interface.h"
+#include "socket.h"
 
 #ifdef HAVE_MOD_DUMMY
 #    include "modules/dummy.h"
@@ -122,9 +116,6 @@ void add_protocol (const gchar *scheme, GObject *mod);
 void del_protocol (GObject *mod);
 GObject *get_protocol (const gchar *scheme);
 void print_error (GError *error, gboolean abort, const gchar *fmt, ...);
-
-/* socket.c */
-gboolean socket_init (GError **err);
 
 /* command.c */
 gboolean run_command (const char *cmd, GError **err);

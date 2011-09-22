@@ -201,7 +201,7 @@ void print_error (GError *error, gboolean abort, const gchar *fmt, ...)
      else
           str = g_strdup_printf (_("Error (%s:%d): %s\n"), g_quark_to_string (error->domain), error->code, error->message);
 
-     g_error_free (error);
+     g_error_free (error), error = NULL;
 
      if (global.flog) fprintf (global.flog, "%s", str);
      fprintf (stderr, "%s", str);
@@ -213,14 +213,18 @@ void print_error (GError *error, gboolean abort, const gchar *fmt, ...)
 /* Function called when exit() is called. */
 static void quit (void)
 {
+     GError *error = NULL;
+
      if (gtk_main_level () > 0)
           gtk_main_quit ();
 
-     if (global.sock.channel)
+     if (global.sock)
      {
-          g_io_channel_shutdown (global.sock.channel, TRUE, NULL);
-          close (global.sock.fd);
-          unlink (global.sock.path);
+          if (!g_socket_close (G_SOCKET (global.sock), &error))
+               print_error (error, TRUE, "socket.close");
+
+          unlink (global.sock->path);
+          g_object_unref (global.sock);
      }
 
      g_hash_table_remove_all (global.protocols);
@@ -269,8 +273,8 @@ static void init (gchar *config)
      modules_init ();
 
      /* init socket */
-     if (!socket_init (&error))
-          print_error (error, TRUE, NULL);
+     if ((global.sock = socket_new (&error)) == NULL)
+          print_error (error, FALSE, "socket");
 
      /* init gui */
      ui_init ();
@@ -292,46 +296,43 @@ static void init (gchar *config)
 }
 
 /* Program used to send commands on the specified socket. */
-static void creamctl (const char *cmd)
+static void creamctl (const char *cmd, const char *path)
 {
      GError *error = NULL;
+     GSocketAddress *addr;
+     GSocket *s;
+     char tmp;
+     int len;
 
-     if (global.sock.path && cmd)
+     if (path && cmd)
      {
-          int s, len;
-          struct sockaddr_un remote;
-          char tmp;
+          s    = g_socket_new (G_SOCKET_FAMILY_UNIX, G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_DEFAULT, &error);
+          addr = g_unix_socket_address_new (path);
 
-          if ((s = socket (AF_UNIX, SOCK_STREAM, 0)) == -1)
-          {
-               error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_SOCKET, "%s", g_strerror (errno));
+          if (s == NULL && error != NULL)
                print_error (error, TRUE, "socket");
-          }
 
-          remote.sun_family = AF_UNIX;
-          strcpy (remote.sun_path, (char *) global.sock.path);
-          len = strlen (remote.sun_path) + sizeof (remote.sun_family);
-
-          if (connect (s, (struct sockaddr *) &remote, len) == -1)
-          {
-               error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_CONNECT, "%s", g_strerror (errno));
+          if (!g_socket_connect (s, addr, NULL, &error))
                print_error (error, TRUE, "connect");
-          }
 
-          if ((send (s, cmd, strlen (cmd), 0) == -1) || (send (s, "\n", 1, 0) == -1))
+          if (!g_socket_send (s, cmd, strlen (cmd), NULL, &error)
+              || !g_socket_send (s, "\n", 1, NULL, &error))
           {
-               error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_SEND, "%s", g_strerror (errno));
                print_error (error, TRUE, "send");
           }
 
-          while ((len = recv (s, &tmp, 1, 0)))
+          while ((len = g_socket_receive (s, &tmp, 1, NULL, &error)))
           {
+               if (len == -1 || error != NULL)
+                    print_error (error, TRUE, "recv");
+
                putchar (tmp);
                if (tmp == '\n')
                     break;
           }
 
-          close (s);
+          if (!g_socket_close (s, &error))
+               print_error (error, TRUE, "close");
 
           exit (EXIT_SUCCESS);
      }
@@ -344,7 +345,7 @@ static void creamctl (const char *cmd)
 
 int main (int argc, char **argv)
 {
-     gchar *url = NULL, *cmd = NULL, *config = NULL;
+     gchar *url = NULL, *cmd = NULL, *config = NULL, *path;
      gboolean version = FALSE;
 
      GOptionEntry options[] =
@@ -352,7 +353,7 @@ int main (int argc, char **argv)
           { "log",     'l', 0, G_OPTION_ARG_NONE,    &global.log,       gettext_noop ("Enable logging"),     NULL },
           { "open",    'o', 0, G_OPTION_ARG_STRING,  &url,              gettext_noop ("Open URL"),           NULL },
           { "config",  'c', 0, G_OPTION_ARG_STRING,  &config,           gettext_noop ("Load an alternate config file."), NULL },
-          { "socket",  's', 0, G_OPTION_ARG_STRING,  &global.sock.path, gettext_noop ("Unix socket's path"), NULL },
+          { "socket",  's', 0, G_OPTION_ARG_STRING,  &path,             gettext_noop ("Unix socket's path"), NULL },
           { "command", 'e', 0, G_OPTION_ARG_STRING,  &cmd,              gettext_noop ("Send a command on the specified socket (see --socket,-s)"), NULL },
           { "version", 'v', 0, G_OPTION_ARG_NONE,    &version,          gettext_noop ("Show version informations"), NULL },
           { NULL }
@@ -398,7 +399,7 @@ int main (int argc, char **argv)
 
      /* if cmd isn't NULL, use creamctl() */
      if (cmd != NULL)
-          creamctl (cmd);
+          creamctl (cmd, path);
 
      gtk_init (&argc, &argv);
 

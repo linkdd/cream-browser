@@ -25,29 +25,51 @@
 
 #include "local.h"
 
-#define CREAM_SOCKET_ERROR         cream_socket_error_quark()
+static gboolean control_client_socket (GIOChannel *channel);
+static gboolean control_socket (GIOChannel *channel, GIOCondition cond, Socket *s);
 
-typedef enum
+G_DEFINE_TYPE (Socket, socket, G_TYPE_SOCKET)
+
+/* constructors */
+Socket *socket_new (GError **err)
 {
-     CREAM_SOCKET_ERROR_SOCKET,
-     CREAM_SOCKET_ERROR_FCNTL,
-     CREAM_SOCKET_ERROR_BIND,
-     CREAM_SOCKET_ERROR_SOCKNAME,
-     CREAM_SOCKET_ERROR_LISTEN,
-     CREAM_SOCKET_ERROR_FAILED
-} CreamSocketError;
+     Socket *ret = g_initable_new (CREAM_TYPE_SOCKET,
+               NULL, err,
+               "family",   G_SOCKET_FAMILY_UNIX,
+               "type",     G_SOCKET_TYPE_STREAM,
+               "protocol", G_SOCKET_PROTOCOL_DEFAULT,
+               NULL);
 
-static GQuark cream_socket_error_quark (void)
-{
-     static GQuark domain = 0;
+     if (!g_initable_init (G_INITABLE (ret), NULL, err))
+          return NULL;
 
-     if (!domain)
-          domain = g_quark_from_string ("cream.socket");
+     g_socket_set_blocking (G_SOCKET (ret), FALSE);
 
-     return domain;
+     if (!g_socket_bind (G_SOCKET (ret), ret->addr, TRUE, err))
+          return NULL;
+
+     if (!g_socket_listen (G_SOCKET (ret), err))
+          return NULL;
+
+     ret->iochannel = g_io_channel_unix_new (g_socket_get_fd (G_SOCKET (ret)));
+     g_io_add_watch (ret->iochannel, G_IO_IN | G_IO_HUP, (GIOFunc) control_socket, ret);
+
+     return ret;
 }
 
-/* Control the client socket. */
+static void socket_class_init (SocketClass *klass)
+{
+     return;
+}
+
+static void socket_init (Socket *self)
+{
+     self->path  = g_strdup_printf ("%s%s%s_%d.socket", g_get_tmp_dir (), G_DIR_SEPARATOR_S, PACKAGE, getpid ());
+     self->addr  = g_unix_socket_address_new (self->path);
+}
+
+/* callbacks */
+
 static gboolean control_client_socket (GIOChannel *channel)
 {
      GString *result = g_string_new ("\n");
@@ -60,7 +82,7 @@ static gboolean control_client_socket (GIOChannel *channel)
      if (ret == G_IO_STATUS_ERROR)
      {
           if (error != NULL)
-               print_error (error, FALSE, _("Error reading UNIX socket '%s'"), global.sock.path);
+               print_error (error, FALSE, _("Error reading UNIX socket '%s'"), socket_get_path (global.sock));
           g_io_channel_shutdown (channel, TRUE, NULL);
 
           return FALSE;
@@ -88,7 +110,7 @@ static gboolean control_client_socket (GIOChannel *channel)
 
           ret = g_io_channel_write_chars (channel, result->str, result->len, &len, &error);
           if (ret == G_IO_STATUS_ERROR && error != NULL)
-               print_error (error, FALSE, _("Error writing UNIX socket '%s'"), global.sock.path);
+               print_error (error, FALSE, _("Error writing UNIX socket '%s'"), socket_get_path (global.sock));
           g_io_channel_flush (channel, NULL);
      }
 
@@ -98,116 +120,36 @@ static gboolean control_client_socket (GIOChannel *channel)
      return TRUE;
 }
 
-/* Control the server socket. */
-static gboolean control_socket (GIOChannel *channel)
+static gboolean control_socket (GIOChannel *channel, GIOCondition cond, Socket *s)
 {
-     struct sockaddr_un remote;
-     unsigned int t = sizeof (remote);
+     GError *err = NULL;
+     GSocket *csock = g_socket_accept (G_SOCKET (s), NULL, &err);
+     GIOChannel *ciochannel;
 
-     int csock;
-     GIOChannel *cchannel;
-
-     csock = accept (g_io_channel_unix_get_fd (channel), (struct sockaddr *) &remote, &t);
-     if ((cchannel = g_io_channel_unix_new (csock)))
+     if (err != NULL)
      {
-          g_io_add_watch (cchannel, G_IO_IN | G_IO_HUP, (GIOFunc) control_client_socket, cchannel);
+          print_error (err, FALSE, "socket.accept");
+          return FALSE;
      }
 
+     g_return_val_if_fail (csock != NULL, FALSE);
+
+     ciochannel = g_io_channel_unix_new (g_socket_get_fd (csock));
+     g_io_add_watch (ciochannel, G_IO_IN | G_IO_HUP, (GIOFunc) control_client_socket, ciochannel);
      return TRUE;
 }
 
-/* Initialize socket. */
-gboolean socket_init (GError **err)
+/* methods */
+
+const gchar *socket_get_path (Socket *obj)
 {
-     struct sockaddr_un sa_un;
-     int sock_fd;
-     int flags;
-     socklen_t n;
-
-     /* create path */
-     global.sock.path = g_strdup_printf ("%s%s%s_%d_socket", g_get_tmp_dir (), G_DIR_SEPARATOR_S, PACKAGE, getpid ());
-
-     /* create socket */
-     strncpy (sa_un.sun_path, global.sock.path, sizeof (sa_un.sun_path) - 1);
-     sa_un.sun_family = AF_UNIX;
-
-     if (!(sock_fd = socket (AF_UNIX, SOCK_STREAM, 0)))
-     {
-          g_set_error (err,
-                       CREAM_SOCKET_ERROR,
-                       CREAM_SOCKET_ERROR_SOCKET,
-                       _("socket(%s) failed: %s"),
-                       global.sock.path, g_strerror (errno)
-          );
-          return FALSE;
-     }
-
-     if ((flags = fcntl (sock_fd, F_GETFL, 0)) == -1)
-     {
-          g_set_error (err,
-                       CREAM_SOCKET_ERROR,
-                       CREAM_SOCKET_ERROR_FCNTL,
-                       _("fcntl(%s) failed: %s"),
-                       global.sock.path, g_strerror (errno)
-          );
-          close (sock_fd);
-          return FALSE;
-     }
-
-     /* make the socket non-blocking */
-     if (fcntl (sock_fd, F_SETFL, flags | O_NONBLOCK) == -1)
-     {
-          g_set_error (err,
-                       CREAM_SOCKET_ERROR,
-                       CREAM_SOCKET_ERROR_FCNTL,
-                       _("fcntl(%s) failed: %s"),
-                       global.sock.path, g_strerror (errno)
-          );
-          close (sock_fd);
-          return FALSE;
-     }
-
-     if (bind (sock_fd, (struct sockaddr *) &sa_un, SUN_LEN (&sa_un)) != 0)
-     {
-          g_set_error (err,
-                       CREAM_SOCKET_ERROR,
-                       CREAM_SOCKET_ERROR_BIND,
-                       _("bind(%s) failed: %s"),
-                       global.sock.path, g_strerror (errno)
-          );
-          close (sock_fd);
-          return FALSE;
-     }
-
-     n = sizeof (sa_un);
-     if (getsockname (sock_fd, (struct sockaddr *) &sa_un, &n))
-     {
-          g_set_error (err,
-                       CREAM_SOCKET_ERROR,
-                       CREAM_SOCKET_ERROR_SOCKNAME,
-                       _("getsockname(%s) failed: %s"),
-                       global.sock.path, g_strerror (errno)
-          );
-          close (sock_fd);
-          return FALSE;
-     }
-
-     if (listen (sock_fd, 10))
-     {
-          g_set_error (err,
-                       CREAM_SOCKET_ERROR,
-                       CREAM_SOCKET_ERROR_LISTEN,
-                       _("listen(%s) failed: %s"),
-                       global.sock.path, g_strerror (errno)
-          );
-          close (sock_fd);
-          return FALSE;
-     }
-
-     /* create channel */
-     global.sock.channel = g_io_channel_unix_new (sock_fd);
-     global.sock.fd = sock_fd;
-     g_io_add_watch (global.sock.channel, G_IO_IN | G_IO_HUP, (GIOFunc) control_socket, NULL);
-
-     return TRUE;
+     g_return_val_if_fail (CREAM_IS_SOCKET (obj), NULL);
+     return obj->path;
 }
+
+GSocketAddress *socket_get_addr (Socket *obj)
+{
+     g_return_val_if_fail (CREAM_IS_SOCKET (obj), NULL);
+     return obj->addr;
+}
+

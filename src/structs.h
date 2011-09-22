@@ -42,16 +42,6 @@ struct GUI
      GtkWidget *fwebview;       /*!< Current focused webview */
 };
 
-/*! \struct Socket
- * Socket structure.
- */
-struct Socket
-{
-     gchar *path;             /*!< Path to the Unix socket */
-     int fd;                  /*!< Socket file descriptor */
-     GIOChannel *channel;     /*!< \class{GIOChannel} to use the socket */
-};
-
 /*!
  * \struct global_t
  * Global structure to access in every point of the program to all usefull structures and widgets
@@ -59,7 +49,7 @@ struct Socket
 struct global_t
 {
      struct GUI gui;          /*!< GUI */
-     struct Socket sock;      /*!< Unix socket */
+     Socket *sock;            /*!< Unix socket */
 
      gboolean log;            /*!< if <code>TRUE</code> log every errors */
      FILE *flog;              /*!< Log's file descriptor */

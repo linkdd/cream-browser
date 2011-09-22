@@ -18,6 +18,11 @@ include_directories (${GLIB_INCLUDE_DIRS})
 link_directories (${GLIB_LIBRARY_DIRS})
 set (LIBRARIES ${GLIB_LIBRARIES})
 
+pkg_check_modules (GIO gio-unix-2.0)
+include_directories (${GIO_INCLUDE_DIRS})
+link_directories (${GIO_LIBRARY_DIRS})
+set (LIBRARIES ${LIBRARIES} ${GIO_LIBRARIES})
+
 pkg_check_modules (LUA REQUIRED lua)
 include_directories (${LUA_INCLUDE_DIRS})
 link_directories (${LUA_LIBRARY_DIRS})
@@ -86,6 +91,7 @@ set (SOURCE
      "Statusbar.h"
      "keybinds.h"
      "interface.h"
+     "socket.h"
      "lua.h"
      "lua/theme.h"
      "scheme.h"
