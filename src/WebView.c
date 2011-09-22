@@ -80,13 +80,8 @@ GtkWidget *webview_new (GObject *mod)
 
 static void webview_class_init (WebViewClass *klass)
 {
-#if GTK_CHECK_VERSION (3, 0, 0)
      typedef void (*DestroyCallback) (GtkWidget *);
      GtkWidgetClass *object_class = (GtkWidgetClass *) klass;
-#else
-     typedef void (*DestroyCallback) (GtkObject *);
-     GtkObjectClass *object_class = (GtkObjectClass *) klass;
-#endif
 
      object_class->destroy = (DestroyCallback) webview_destroy;
 
@@ -176,12 +171,6 @@ static void webview_destroy (GObject *obj)
      if (w->uri) g_free (w->uri);
      if (w->title) g_free (w->title);
      if (w->status) g_free (w->status);
-
-#if !GTK_CHECK_VERSION (3, 0, 0)
-     GtkObjectClass *obj_class = GTK_OBJECT_CLASS (gtk_type_class (CREAM_TYPE_WEBVIEW));
-     if (obj_class->destroy)
-          obj_class->destroy (GTK_OBJECT (obj));
-#endif
 }
 
 

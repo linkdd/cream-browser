@@ -32,11 +32,10 @@ struct _SocketClass
 };
 
 GType socket_get_type (void);
+Socket *socket_new (GError **err);
 
 const gchar *socket_get_path (Socket *obj);
 GSocketAddress *socket_get_addr (Socket *obj);
-
-gboolean socket_initialize (GError **err);
 
 G_END_DECLS
 

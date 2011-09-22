@@ -113,19 +113,6 @@ else
      CMAKE_OPTS="$CMAKE_OPTS -DDEBUG=OFF"
 fi
 
-# GTK
-if [ "${with_gtk}" = "3.0" ]; then
-     CMAKE_OPTS="$CMAKE_OPTS -DGTK3=ON"
-else
-     CMAKE_OPTS="$CMAKE_OPTS -DGTK3=OFF"
-fi
-
-if [ "${with_gtk_directfb}" = "yes" ]; then
-     CMAKE_OPTS="$CMAKE_OPTS -DDIRECTFB=ON"
-else
-     CMAKE_OPTS="$CMAKE_OPTS -DDIRECTFB=OFF"
-fi
-
 # Modules
 if [ "${enable_mod_dummy}" = "yes" ]; then
      CMAKE_OPTS="$CMAKE_OPTS -DENABLE_MOD_DUMMY=ON"

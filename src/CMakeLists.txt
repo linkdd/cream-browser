@@ -3,9 +3,7 @@ project (cream-browser)
 
 # Build options
 
-option (GTK3 "Build with GTK+-3.0" OFF)
 option (DIRECTFB "Build with GTK+-2.0 DirectFB backend" OFF)
-option (DEBUG "Build in debug mode" ON)
 
 option (ENABLE_MOD_DUMMY "Build module 'dummy'" ON)
 option (ENABLE_MOD_WEBKIT "Build module 'webkit'" ON)
@@ -28,20 +26,7 @@ include_directories (${LUA_INCLUDE_DIRS})
 link_directories (${LUA_LIBRARY_DIRS})
 set (LIBRARIES ${LIBRARIES} ${LUA_LIBRARIES})
 
-# check we are not asking GTK+-3.0 with DirectFB.
-if (DIRECTFB AND GTK3)
-     message (WARNING "GTK+-3.0 doesn't have DirectFB support, using GTK+-2.0 instead.")
-     set (GTK3 OFF)
-endif ()
-
-if (GTK3)
-     pkg_check_modules (GTK REQUIRED gtk+-3.0)
-elseif (DIRECTFB)
-     pkg_check_modules (GTK REQUIRED gtk+-directfb-2.0)
-else ()
-     pkg_check_modules (GTK REQUIRED gtk+-2.0)
-endif ()
-
+pkg_check_modules (GTK REQUIRED gtk+-3.0)
 include_directories (${GTK_INCLUDE_DIRS})
 link_directories (${GTK_LIBRARY_DIRS})
 set (LIBRARIES ${LIBRARIES} ${GTK_LIBRARIES})
@@ -99,6 +84,7 @@ set (SOURCE
      "local.h"
 )
 
+# Check modules
 if (ENABLE_MOD_DUMMY)
      set (SOURCE ${SOURCE} "modules/dummy.c" "modules/dummy.h")
 endif ()
@@ -106,12 +92,7 @@ endif ()
 if (ENABLE_MOD_WEBKIT)
      set (SOURCE ${SOURCE} "modules/webkit.c" "modules/webkit.h")
 
-     if (GTK3)
-          pkg_check_modules (WEBKIT REQUIRED webkitgtk-3.0)
-     else ()
-          pkg_check_modules (WEBKIT REQUIRED webkit-1.0)
-     endif ()
-
+     pkg_check_modules (WEBKIT REQUIRED webkitgtk-3.0)
      include_directories (${WEBKIT_INCLUDE_DIRS})
      link_directories (${WEBKIT_LIBRARY_DIRS})
      set (LIBRARIES ${LIBRARIES} ${WEBKIT_LIBRARIES})
