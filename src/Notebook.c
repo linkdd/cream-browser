@@ -171,6 +171,8 @@ static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint p
 static void notebook_signal_title_changed_cb (WebView *webview, const gchar *title, Notebook *obj)
 {
      gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (obj), GTK_WIDGET (webview), title);
+     gtk_notebook_set_menu_label_text (GTK_NOTEBOOK (obj), GTK_WIDGET (webview), title);
+
 }
 
 static void notebook_signal_grab_focus_cb (WebView *webview, Notebook *obj)

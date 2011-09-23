@@ -31,7 +31,6 @@ extern int luaL_util_register (lua_State *L);
 extern int luaL_bit_register (lua_State *L);
 extern int luaL_webview_register (lua_State *L);
 extern int luaL_notebook_register (lua_State *L);
-extern int luaL_theme_register (lua_State *L);
 extern int luaL_widgets_register (lua_State *L);
 extern int luaL_keybinds_register (lua_State *L);
 
@@ -127,9 +126,6 @@ gboolean lua_ctx_init (GError **err)
      lua_pop (global.luavm, 1);
 
      luaL_notebook_register (global.luavm);
-     lua_pop (global.luavm, 1);
-
-     luaL_theme_register (global.luavm);
      lua_pop (global.luavm, 1);
 
      luaL_widgets_register (global.luavm);

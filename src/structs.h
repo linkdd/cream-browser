@@ -26,9 +26,8 @@
 #ifndef __STRUCTS_H
 #define __STRUCTS_H
 
-#include "lua/theme.h"
-
-/*! \struct GUI
+/*!
+ * \struct GUI
  * GUI structure.
  */
 struct GUI
@@ -59,7 +58,7 @@ struct global_t
      CreamMode mode;          /*!< Current mode */
 
      lua_State *luavm;        /*!< Lua VM state */
-     struct theme_t *theme;   /*!< Cream-Browser's theme */
+     Theme *theme;            /*!< Cream-Browser's theme */
 };
 
 #endif /* __STRUCTS_H */

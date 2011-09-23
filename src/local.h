@@ -78,6 +78,7 @@
 #include "modules.h"
 #include "keybinds.h"
 #include "interface.h"
+#include "theme.h"
 #include "socket.h"
 
 #ifdef HAVE_MOD_DUMMY

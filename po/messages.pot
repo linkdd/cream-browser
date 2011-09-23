@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-30 16:16+0200\n"
+"POT-Creation-Date: 2011-09-23 23:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,62 +17,71 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/command.c:76
+#: ../src/command.c:77
 msgid "Exit Cream-Browser"
 msgstr ""
 
-#: ../src/command.c:77 ../src/main.c:352
+#: ../src/command.c:78 ../src/main.c:348
 msgid "Open URL"
 msgstr ""
 
-#: ../src/command.c:78
-msgid "Open URL in a new view"
-msgstr ""
-
 #: ../src/command.c:79
-msgid "Split the current view"
+msgid "Open URL in a new tab"
 msgstr ""
 
 #: ../src/command.c:80
-msgid "Split the current view vertically"
+msgid "Close the current tab"
 msgstr ""
 
 #: ../src/command.c:81
+msgid "Split the current view"
+msgstr ""
+
+#: ../src/command.c:82
+msgid "Split the current view vertically"
+msgstr ""
+
+#: ../src/command.c:83
 msgid "Close the current view"
 msgstr ""
 
-#: ../src/command.c:109
+#: ../src/command.c:111
 #, c-format
 msgid "%s isn't implemented"
 msgstr ""
 
-#: ../src/command.c:114
+#: ../src/command.c:116
 #, c-format
 msgid "Unknow command '%s'"
 msgstr ""
 
-#: ../src/command.c:133
+#: ../src/command.c:135
 msgid "open: Too few arguments"
 msgstr ""
 
-#: ../src/command.c:155
+#: ../src/command.c:157
 msgid "tabopen: Too few arguments"
 msgstr ""
 
-#: ../src/lua.c:102
+#: ../src/Inputbox.c:101 ../src/Inputbox.c:111
+#, c-format
+msgid "No matches found for: %s"
+msgstr ""
+
+#: ../src/lua.c:144
 msgid "'package' isn't a table"
 msgstr ""
 
-#: ../src/lua.c:113
+#: ../src/lua.c:155
 msgid "'package.path' isn't a table."
 msgstr ""
 
-#: ../src/lua.c:254
+#: ../src/lua.c:300
 #, c-format
 msgid "cannot get member '%s'"
 msgstr ""
 
-#: ../src/lua.c:274
+#: ../src/lua.c:320
 #, c-format
 msgid "cannot set member '%s'"
 msgstr ""
@@ -92,124 +101,104 @@ msgstr ""
 msgid "Error (%s:%d): %s\n"
 msgstr ""
 
-#: ../src/main.c:263
+#: ../src/main.c:267
 msgid "Configuration not found."
 msgstr ""
 
-#: ../src/main.c:287
-msgid "Theme wasn't initialized."
+#: ../src/main.c:335
+#, c-format
+msgid "Usage: cream-browser -s /path/to/socket -e \"command\"\n"
 msgstr ""
 
-#: ../src/main.c:351
+#: ../src/main.c:347
 msgid "Enable logging"
 msgstr ""
 
-#: ../src/main.c:353
+#: ../src/main.c:349
 msgid "Load an alternate config file."
 msgstr ""
 
-#: ../src/main.c:354
+#: ../src/main.c:350
 msgid "Unix socket's path"
 msgstr ""
 
-#: ../src/main.c:355
+#: ../src/main.c:351
 msgid "Send a command on the specified socket (see --socket,-s)"
 msgstr ""
 
-#: ../src/main.c:356
+#: ../src/main.c:352
 msgid "Show version informations"
 msgstr ""
 
-#: ../src/main.c:377
+#: ../src/main.c:373
 #, c-format
 msgid "%s %s, developped by David Delassus <david.jose.delassus@gmail.com>\n"
 msgstr ""
 
-#: ../src/main.c:378
+#: ../src/main.c:374
 #, c-format
 msgid "Released under %s license.\n"
 msgstr ""
 
-#: ../src/main.c:380
+#: ../src/main.c:376
 #, c-format
 msgid "Builded with:\n"
 msgstr ""
 
-#: ../src/main.c:385
+#: ../src/main.c:381
 #, c-format
 msgid "Builded on %s with:\n"
 msgstr ""
 
-#: ../src/main.c:391
+#: ../src/main.c:387
 #, c-format
 msgid "Builded in debug mode.\n"
 msgstr ""
 
-#: ../src/main.c:393
+#: ../src/main.c:389
 #, c-format
 msgid "Builded in release mode.\n"
 msgstr ""
 
-#: ../src/socket.c:63
+#: ../src/socket.c:85
 #, c-format
 msgid "Error reading UNIX socket '%s'"
 msgstr ""
 
-#: ../src/socket.c:79
+#: ../src/socket.c:101
 msgid "Error while running command"
 msgstr ""
 
-#: ../src/socket.c:91
+#: ../src/socket.c:113
 #, c-format
 msgid "Error writing UNIX socket '%s'"
 msgstr ""
 
-#: ../src/socket.c:139
-#, c-format
-msgid "socket(%s) failed: %s"
+#: ../src/Statusbar.c:111
+msgid "-- INSERT --"
 msgstr ""
 
-#: ../src/socket.c:150 ../src/socket.c:163
-#, c-format
-msgid "fcntl(%s) failed: %s"
+#: ../src/Statusbar.c:115
+msgid "-- FIND --"
 msgstr ""
 
-#: ../src/socket.c:175
-#, c-format
-msgid "bind(%s) failed: %s"
+#: ../src/Statusbar.c:119
+msgid "-- CMD --"
 msgstr ""
 
-#: ../src/socket.c:188
-#, c-format
-msgid "getsockname(%s) failed: %s"
+#: ../src/Statusbar.c:123
+msgid "-- EMBED --"
 msgstr ""
 
-#: ../src/socket.c:200
-#, c-format
-msgid "listen(%s) failed: %s"
+#: ../src/Statusbar.c:127
+msgid "-- CARET --"
 msgstr ""
 
-#: ../src/Statusbar.c:58
-msgid "Current state"
-msgstr ""
-
-#: ../src/Statusbar.c:59
-msgid "Current focused webview's link"
-msgstr ""
-
-#: ../src/Statusbar.c:60
-msgid "Current history state"
-msgstr ""
-
-#: ../src/Statusbar.c:61
-msgid "Current scroll state"
-msgstr ""
-
-#: ../src/WebView.c:359
+#: ../src/WebView.c:376
 msgid "Waiting for hostname..."
 msgstr ""
 
-#: ../src/WebView.c:363
+#: ../src/WebView.c:380
 #, c-format
 msgid "Transfering data from %s..."
 msgstr ""

@@ -277,6 +277,7 @@ static void init (gchar *config)
           print_error (error, FALSE, "socket");
 
      /* init gui */
+     global.theme = CREAM_THEME (g_object_new (CREAM_TYPE_THEME, NULL));
      ui_init ();
      keybinds_init ();
 
@@ -286,13 +287,6 @@ static void init (gchar *config)
 
      if (!lua_ctx_parse (rc, &error))
           print_error (error, TRUE, NULL);
-
-     if (!global.theme)
-     {
-          error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_THEME, _("Theme wasn't initialized."));
-          print_error (error, TRUE, NULL);
-     }
-
 }
 
 /* Program used to send commands on the specified socket. */
@@ -338,7 +332,7 @@ static void creamctl (const char *cmd, const char *path)
      }
      else
      {
-          fprintf (stderr, _("Usage: cream-browser -s /path/to/socket -c \"command\"\n"));
+          fprintf (stderr, _("Usage: cream-browser -s /path/to/socket -e \"command\"\n"));
           exit (EXIT_FAILURE);
      }
 }
