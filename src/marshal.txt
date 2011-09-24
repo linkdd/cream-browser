@@ -3,6 +3,8 @@ BOOLEAN:STRING
 # CreamModule::"uri-changed"
 # CreamModule::"title-changed"
 VOID:OBJECT,STRING
+# CreamModule::"favicon-changed"
+VOID:OBJECT,OBJECT
 # CreamModule::"progress-changed"
 VOID:OBJECT,DOUBLE
 # CreamModule::"state-changed"

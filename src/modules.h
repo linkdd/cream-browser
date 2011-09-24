@@ -72,6 +72,7 @@ struct _CreamModuleIface
      gboolean (*search) (CreamModule *self, GtkWidget *, const gchar *, gboolean);
      void (*proxy) (CreamModule *self, const gchar *);
      void (*useragent) (CreamModule *self, const gchar *);
+     void (*load_favicon) (CreamModule *self, GtkWidget *);
 };
 
 GType cream_module_get_type (void);
@@ -87,6 +88,7 @@ void cream_module_forward (CreamModule *self, GtkWidget *webview);
 gboolean cream_module_search (CreamModule *self, GtkWidget *webview, const gchar *text, gboolean forward);
 void cream_module_proxy (CreamModule *self, const gchar *uri);
 void cream_module_useragent (CreamModule *self, const gchar *ua);
+void cream_module_load_favicon (CreamModule *self, GtkWidget *webview);
 
 /*!
  * \def CREAM_DEFINE_MODULE (ctype, fn_prefix)
@@ -109,12 +111,14 @@ void cream_module_useragent (CreamModule *self, const gchar *ua);
      static gboolean fn_prefix##_search (CreamModule *self, GtkWidget *webview, const gchar *text, gboolean forward);   \
      static void fn_prefix##_proxy (CreamModule *self, const gchar *uri);                                               \
      static void fn_prefix##_useragent (CreamModule *self, const gchar *ua);                                            \
+     static void fn_prefix##_load_favicon (CreamModule *self, GtkWidget *webview);                                      \
                                                                                                                         \
      enum { PROP_0, PROP_NAME };                                                                                        \
      enum                                                                                                               \
      {                                                                                                                  \
           SIGNAL_URI_CHANGED,                                                                                           \
           SIGNAL_TITLE_CHANGED,                                                                                         \
+          SIGNAL_FAVICON_CHANGED,                                                                                       \
           SIGNAL_PROGRESS_CHANGED,                                                                                      \
           SIGNAL_STATE_CHANGED,                                                                                         \
           SIGNAL_DOWNLOAD,                                                                                              \
@@ -173,6 +177,7 @@ void cream_module_useragent (CreamModule *self, const gchar *ua);
           iface->search         = fn_prefix##_search;                                                                   \
           iface->proxy          = fn_prefix##_proxy;                                                                    \
           iface->useragent      = fn_prefix##_useragent;                                                                \
+          iface->load_favicon   = fn_prefix##_load_favicon;                                                             \
      }                                                                                                                  \
                                                                                                                         \
      static void fn_prefix##_class_init (ctype##Class *klass)                                                           \
@@ -203,6 +208,16 @@ void cream_module_useragent (CreamModule *self, const gchar *ua);
                     cream_marshal_VOID__OBJECT_STRING,                                                                  \
                     G_TYPE_NONE,                                                                                        \
                     2, G_TYPE_OBJECT, G_TYPE_STRING);                                                                   \
+                                                                                                                        \
+          fn_prefix##_signals[SIGNAL_FAVICON_CHANGED] = g_signal_new (                                                  \
+                    "favicon-changed",                                                                                  \
+                    G_TYPE_FROM_CLASS (klass),                                                                          \
+                    G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,                                                               \
+                    G_STRUCT_OFFSET (ctype##Class, favicon_changed),                                                    \
+                    NULL, NULL,                                                                                         \
+                    cream_marshal_VOID__OBJECT_OBJECT,                                                                  \
+                    G_TYPE_NONE,                                                                                        \
+                    2, G_TYPE_OBJECT, GDK_TYPE_PIXBUF);                                                                 \
                                                                                                                         \
           fn_prefix##_signals[SIGNAL_PROGRESS_CHANGED] = g_signal_new (                                                 \
                     "progress-changed",                                                                                 \

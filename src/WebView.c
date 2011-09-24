@@ -38,6 +38,7 @@ enum
 {
      WEBVIEW_URI_CHANGED_SIGNAL,
      WEBVIEW_TITLE_CHANGED_SIGNAL,
+     WEBVIEW_FAVICON_CHANGED_SIGNAL,
      WEBVIEW_STATUS_CHANGED_SIGNAL,
 
      WEBVIEW_RAISE_SIGNAL,
@@ -105,6 +106,16 @@ static void webview_class_init (WebViewClass *klass)
                g_cclosure_marshal_VOID__STRING,
                G_TYPE_NONE,
                1, G_TYPE_STRING);
+
+     webview_signals[WEBVIEW_FAVICON_CHANGED_SIGNAL] = g_signal_new (
+               "favicon-changed",
+               G_TYPE_FROM_CLASS (klass),
+               G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+               G_STRUCT_OFFSET (WebViewClass, favicon_changed),
+               NULL, NULL,
+               g_cclosure_marshal_VOID__OBJECT,
+               G_TYPE_NONE,
+               1, GDK_TYPE_PIXBUF);
 
      webview_signals[WEBVIEW_STATUS_CHANGED_SIGNAL] = g_signal_new (
                "status-changed",
@@ -339,6 +350,8 @@ static void webview_signal_uri_changed_cb (CreamModule *self, GtkWidget *webview
 
           if (w->uri) g_free (w->uri);
           w->uri = g_strdup (uri);
+
+          cream_module_load_favicon (self, webview);
      }
 
      if (GTK_WIDGET (w) == global.gui.fwebview)
@@ -366,6 +379,12 @@ static void webview_signal_title_changed_cb (CreamModule *self, GtkWidget *webvi
           gtk_window_set_title (GTK_WINDOW (global.gui.window), title);
           g_free (title);
      }
+}
+
+static void webview_signal_favicon_changed_cb (CreamModule *self, GtkWidget *webview, GdkPixbuf *pixbuf, WebView *w)
+{
+     if (webview == w->child)
+          g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_FAVICON_CHANGED_SIGNAL], 0, pixbuf);
 }
 
 static void webview_signal_progress_changed_cb (CreamModule *self, GtkWidget *webview, gdouble progress, WebView *w)
@@ -414,6 +433,7 @@ static void webview_connect_signals (WebView *w)
      g_signal_connect (G_OBJECT (w->child), "grab-focus",        G_CALLBACK (webview_signal_grab_focus_cb),        w);
      g_signal_connect (G_OBJECT (w->mod),   "uri-changed",       G_CALLBACK (webview_signal_uri_changed_cb),       w);
      g_signal_connect (G_OBJECT (w->mod),   "title-changed",     G_CALLBACK (webview_signal_title_changed_cb),     w);
+     g_signal_connect (G_OBJECT (w->mod),   "favicon-changed",   G_CALLBACK (webview_signal_favicon_changed_cb),   w);
      g_signal_connect (G_OBJECT (w->mod),   "progress-changed",  G_CALLBACK (webview_signal_progress_changed_cb),  w);
      g_signal_connect (G_OBJECT (w->mod),   "state-changed",     G_CALLBACK (webview_signal_state_changed_cb),     w);
      g_signal_connect (G_OBJECT (w->mod),   "download",          G_CALLBACK (webview_signal_download_cb),          w);

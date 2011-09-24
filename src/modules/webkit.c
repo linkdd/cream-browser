@@ -31,6 +31,7 @@
  * @{
  */
 
+static void cream_module_webkit_notify_dlstatus_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self);
 static void cream_module_webkit_notify_uri_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self);
 static void cream_module_webkit_notify_title_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self);
 static void cream_module_webkit_notify_progress_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self);
@@ -153,6 +154,19 @@ static void cream_module_webkit_useragent (CreamModule *self, const gchar *ua)
      g_object_set (G_OBJECT (mod->wsettings), "user-agent", ua, NULL);
 }
 
+static void cream_module_webkit_load_favicon (CreamModule *self, GtkWidget *webview)
+{
+     const gchar *favicon_uri = webkit_web_view_get_icon_uri (WEBKIT_WEB_VIEW (webview));
+     WebKitNetworkRequest *dlrequest = webkit_network_request_new (favicon_uri);
+     WebKitDownload *dl = webkit_download_new (dlrequest);
+
+     /* TODO: get icon in cache */
+
+     g_signal_connect (G_OBJECT (dl), "notify::status", G_CALLBACK (cream_module_webkit_notify_dlstatus_cb), self);
+
+     webkit_download_start (dl);
+}
+
 /* signals */
 
 static void cream_module_webkit_notify_uri_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self)
@@ -181,6 +195,20 @@ static void cream_module_webkit_notify_progress_cb (WebKitWebView *webview, GPar
                     cream_module_webkit_signals[SIGNAL_PROGRESS_CHANGED],
                     0, webview, progress
      );
+}
+
+static void cream_module_webkit_notify_dlstatus_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self)
+{
+     WebKitDownloadStatus dlstatus;
+     gchar *dest;
+
+     g_object_get (G_OBJECT (webview), "status", &dlstatus, "destination-rui", &dest, NULL);
+
+     if (dlstatus == WEBKIT_DOWNLOAD_STATUS_FINISHED)
+     {
+          /* TODO: put icon in cache */;
+          /* TODO: emit signal "favicon-changed" */
+     }
 }
 
 static gboolean cream_module_webkit_button_press_event_cb (WebKitWebView *webview, GdkEventButton *event, CreamModuleWebKit *self)

@@ -76,6 +76,7 @@ struct _CreamModuleWebKitClass
      void (*progress_changed) (CreamModuleWebKit *self, GtkWidget *webview, gdouble progress);
      void (*state_changed) (CreamModuleWebKit *self, GtkWidget *webview, CreamMode state);
      gboolean (*download) (CreamModuleWebKit *self, GtkWidget *webview, const gchar *file);
+     void (*favicon_changed) (CreamModuleWebKit *self, GtkWidget *webview, GdkPixbuf *pixbuf);
 };
 
 GType cream_module_webkit_get_type (void);

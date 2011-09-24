@@ -48,7 +48,7 @@ struct GUI
 struct global_t
 {
      struct GUI gui;          /*!< GUI */
-     Socket *sock;            /*!< Unix socket */
+     Theme *theme;            /*!< Cream-Browser's theme */
 
      gboolean log;            /*!< if <code>TRUE</code> log every errors */
      FILE *flog;              /*!< Log's file descriptor */
@@ -58,7 +58,7 @@ struct global_t
      CreamMode mode;          /*!< Current mode */
 
      lua_State *luavm;        /*!< Lua VM state */
-     Theme *theme;            /*!< Cream-Browser's theme */
+     Socket *sock;            /*!< Unix socket */
 };
 
 #endif /* __STRUCTS_H */

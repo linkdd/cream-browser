@@ -69,6 +69,7 @@ struct _CreamModuleDummyClass
      void (*progress_changed) (CreamModuleDummy *self, GtkWidget *webview, gdouble progress);
      void (*state_changed) (CreamModuleDummy *self, GtkWidget *webview, CreamMode state);
      gboolean (*download) (CreamModuleDummy *self, GtkWidget *webview, const gchar *file);
+     void (*favicon_changed) (CreamModuleDummy *self, GtkWidget *webview, GdkPixbuf *pixbuf);
 };
 
 GType cream_module_dummy_get_type (void);

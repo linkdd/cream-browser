@@ -95,5 +95,9 @@ static void cream_module_dummy_useragent (CreamModule *self, const gchar *ua)
      return;
 }
 
+static void cream_module_dummy_load_favicon (CreamModule *self, GtkWidget *webview)
+{
+     return;
+}
 
 /*! @} */

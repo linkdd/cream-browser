@@ -151,7 +151,7 @@ void gtk_vim_split_add (GtkVimSplit *obj, GtkWidget *child, GtkOrientation o)
      {
           GtkWidget *focus  = obj->focus;
           GtkWidget *parent = gtk_widget_get_parent (focus);
-          GtkWidget *paned  = (o == GTK_ORIENTATION_VERTICAL ? gtk_vpaned_new () : gtk_hpaned_new ());
+          GtkWidget *paned  = gtk_paned_new (o);
 
           if (GTK_IS_VIM_SPLIT (parent))
           {

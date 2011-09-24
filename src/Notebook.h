@@ -35,6 +35,7 @@
 
 #include <gtk/gtk.h>
 
+#include "NotebookTabLabel.h"
 #include "Statusbar.h"
 
 G_BEGIN_DECLS

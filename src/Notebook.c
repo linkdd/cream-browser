@@ -33,6 +33,7 @@
 static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint page_num, gpointer unused);
 
 static void notebook_signal_title_changed_cb (WebView *webview, const gchar *title, Notebook *obj);
+static void notebook_signal_favicon_changed_cb (WebView *webview, GdkPixbuf *favicon, Notebook *obj);
 static void notebook_signal_grab_focus_cb (WebView *webview, Notebook *obj);
 
 G_DEFINE_TYPE (Notebook, notebook, GTK_TYPE_NOTEBOOK);
@@ -122,6 +123,7 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
 {
      GObject *module;
      GtkWidget *webview;
+     GtkWidget *tablabel;
      UriScheme u;
 
      g_return_if_fail (CREAM_IS_NOTEBOOK (obj));
@@ -132,14 +134,16 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
      CREAM_WEBVIEW (webview)->notebook = GTK_WIDGET (obj);
      webview_load_uri (CREAM_WEBVIEW (webview), url);
 
+     tablabel = g_object_new (CREAM_TYPE_NOTEBOOK_TAB_LABEL, NULL);
      gtk_notebook_append_page_menu (GTK_NOTEBOOK (obj), webview,
-               NULL,
-               NULL
+               tablabel,
+               CREAM_NOTEBOOK_TAB_LABEL (tablabel)->lbl
      );
 
-     g_signal_connect (G_OBJECT (webview), "module-changed", G_CALLBACK (ui_show), NULL);
-     g_signal_connect (G_OBJECT (webview), "grab-focus",     G_CALLBACK (notebook_signal_grab_focus_cb), obj);
-     g_signal_connect (G_OBJECT (webview), "title-changed",  G_CALLBACK (notebook_signal_title_changed_cb), obj);
+     g_signal_connect (G_OBJECT (webview), "module-changed",  G_CALLBACK (ui_show), NULL);
+     g_signal_connect (G_OBJECT (webview), "grab-focus",      G_CALLBACK (notebook_signal_grab_focus_cb), obj);
+     g_signal_connect (G_OBJECT (webview), "title-changed",   G_CALLBACK (notebook_signal_title_changed_cb), obj);
+     g_signal_connect (G_OBJECT (webview), "favicon-changed", G_CALLBACK (notebook_signal_favicon_changed_cb), obj);
 
      gtk_widget_grab_focus (webview);
 }
@@ -170,9 +174,14 @@ static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint p
 
 static void notebook_signal_title_changed_cb (WebView *webview, const gchar *title, Notebook *obj)
 {
-     gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (obj), GTK_WIDGET (webview), title);
-     gtk_notebook_set_menu_label_text (GTK_NOTEBOOK (obj), GTK_WIDGET (webview), title);
+     NotebookTabLabel *tablabel = CREAM_NOTEBOOK_TAB_LABEL (gtk_notebook_get_tab_label (GTK_NOTEBOOK (obj), GTK_WIDGET (webview)));
+     notebook_tab_label_set_text (tablabel, title);
+}
 
+static void notebook_signal_favicon_changed_cb (WebView *webview, GdkPixbuf *favicon, Notebook *obj)
+{
+     NotebookTabLabel *tablabel = CREAM_NOTEBOOK_TAB_LABEL (gtk_notebook_get_tab_label (GTK_NOTEBOOK (obj), GTK_WIDGET (webview)));
+     notebook_tab_label_set_pixbuf (tablabel, favicon);
 }
 
 static void notebook_signal_grab_focus_cb (WebView *webview, Notebook *obj)

@@ -54,8 +54,11 @@ typedef struct _WebViewClass WebViewClass;
  * \signalsection
  * \signal{uri-changed, signal_uri_changed, void uri_changed (WebView *obj\, const gchar *uri)}
  * \signal{title-changed, signal_title_changed, void title_changed (WebView *obj\, const gchar *title)}
+ * \signal{favicon-changed, signal_favicon_changed, void favicon_changed (WebView *obj\, GdkPixbuf *pixbuf)}
  * \signal{status-changed, signal_status_changed, void status_changed (WebView *obj\, const gchar *status)}
  * \signal{raise, signal_raise, void raise (WebView *obj)}
+ * \signal{download, signal_download, gboolean download (WebView *obj\, const gchar *file_uri)}
+ * \signal{module-changed, signal_module_changed, void module_changed (WebView *obj\, GObject *module)}
  * \signalendsection
  */
 struct _WebView
@@ -146,6 +149,17 @@ struct _WebViewClass
       * Signal emitted when the webview uses a new module.
       */
      void (*module_changed) (WebView *obj, GObject *module);
+
+     /*!
+      * \public \memberof WebView
+      * \signalof{WebView}
+      * \fn void signal_favicon_changed (WebView *obj, GdkPixbuf *pixbuf)
+      * @param obj The #WebView object from which the signal was emitted.
+      * @param pixbuf The new favicon's pixbuf.
+      *
+      * Signal emitted when the webview's favicon is loaded.
+      */
+     void (*favicon_changed) (WebView *obj, GdkPixbuf *pixbuf);
 };
 
 GType webview_get_type (void);
