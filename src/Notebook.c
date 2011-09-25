@@ -135,9 +135,10 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
      webview_load_uri (CREAM_WEBVIEW (webview), url);
 
      tablabel = g_object_new (CREAM_TYPE_NOTEBOOK_TAB_LABEL, NULL);
+     gtk_widget_show_all (tablabel);
      gtk_notebook_append_page_menu (GTK_NOTEBOOK (obj), webview,
                tablabel,
-               CREAM_NOTEBOOK_TAB_LABEL (tablabel)->lbl
+               gtk_label_new ("")
      );
 
      g_signal_connect (G_OBJECT (webview), "module-changed",  G_CALLBACK (ui_show), NULL);
@@ -176,6 +177,7 @@ static void notebook_signal_title_changed_cb (WebView *webview, const gchar *tit
 {
      NotebookTabLabel *tablabel = CREAM_NOTEBOOK_TAB_LABEL (gtk_notebook_get_tab_label (GTK_NOTEBOOK (obj), GTK_WIDGET (webview)));
      notebook_tab_label_set_text (tablabel, title);
+     gtk_notebook_set_menu_label_text (GTK_NOTEBOOK (obj), GTK_WIDGET (webview), title);
 }
 
 static void notebook_signal_favicon_changed_cb (WebView *webview, GdkPixbuf *favicon, Notebook *obj)

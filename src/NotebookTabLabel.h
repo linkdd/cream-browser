@@ -55,7 +55,6 @@ struct _NotebookTabLabel
 
      GtkWidget *img;
      GtkWidget *lbl;
-     GtkWidget *close;
 };
 
 struct _NotebookTabLabelClass

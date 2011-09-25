@@ -39,33 +39,14 @@ static void notebook_tab_label_class_init (NotebookTabLabelClass *klass)
 
 static void notebook_tab_label_init (NotebookTabLabel *self)
 {
-     GtkIconTheme *icons = gtk_icon_theme_get_default ();
-     GError *error = NULL;
-
      gtk_box_set_homogeneous (GTK_BOX (self), FALSE);
      gtk_box_set_spacing (GTK_BOX (self), 2);
 
-     self->img = gtk_image_new_from_pixbuf (
-               gtk_icon_theme_load_icon (icons,
-                    GTK_STOCK_FILE,
-                    GTK_ICON_SIZE_MENU,
-                    GTK_ICON_LOOKUP_FORCE_SIZE,
-                    &error
-               )
-     );
-
-     if (error != NULL)
-          print_error (error, FALSE, "notebook.tab.label");
-
+     self->img = gtk_image_new_from_stock (GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_MENU);
      self->lbl = gtk_label_new ("");
-     self->close = gtk_button_new_from_stock (GTK_STOCK_CLOSE);
 
-     gtk_button_set_label (GTK_BUTTON (self->close), "");
-     gtk_button_set_relief (GTK_BUTTON (self->close), GTK_RELIEF_NONE);
-
-     gtk_box_pack_start (GTK_BOX (self), self->img, FALSE, FALSE, 0);
-     gtk_box_pack_start (GTK_BOX (self), self->lbl, TRUE, TRUE, 0);
-     gtk_box_pack_end (GTK_BOX (self), self->close, FALSE, FALSE, 0);
+     gtk_box_pack_start (GTK_BOX (self), self->img, FALSE, TRUE, 0);
+     gtk_box_pack_start (GTK_BOX (self), self->lbl, TRUE, TRUE, 5);
 }
 
 /* methods */
