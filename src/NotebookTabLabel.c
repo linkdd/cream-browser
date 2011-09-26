@@ -62,7 +62,7 @@ static void notebook_tab_label_init (NotebookTabLabel *self)
 void notebook_tab_label_set_pixbuf (NotebookTabLabel *obj, GdkPixbuf *pixbuf)
 {
      g_return_if_fail (CREAM_IS_NOTEBOOK_TAB_LABEL (obj));
-     gtk_image_set_from_pixbuf (GTK_IMAGE (obj->img), pixbuf);
+     gtk_image_set_from_pixbuf (GTK_IMAGE (obj->img), gdk_pixbuf_scale_simple (pixbuf, 12, 12, GDK_INTERP_BILINEAR));
 }
 
 /*!

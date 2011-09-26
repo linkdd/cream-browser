@@ -242,21 +242,4 @@ void cream_module_useragent (CreamModule *self, const gchar *ua)
      iface->useragent (self, ua);
 }
 
-/*!
- * \public \memberof CreamModule
- * \fn void cream_module_load_favicon (CreamModule *self, GtkWidget *webview)
- * @param self The module to use.
- * @param webview The child widget.
- *
- * Request favicon's loading.
- */
-void cream_module_load_favicon (CreamModule *self, GtkWidget *webview)
-{
-     CreamModuleIface *iface;
-     g_return_if_fail (CREAM_IS_MODULE (self));
-     iface = CREAM_MODULE_GET_INTERFACE (self);
-     g_return_if_fail (iface->load_favicon != NULL);
-     iface->load_favicon (self, webview);
-}
-
 /*! @} */

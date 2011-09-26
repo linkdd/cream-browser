@@ -182,6 +182,7 @@ static void notebook_signal_title_changed_cb (WebView *webview, const gchar *tit
 
 static void notebook_signal_favicon_changed_cb (WebView *webview, GdkPixbuf *favicon, Notebook *obj)
 {
+     if (favicon == NULL) return;
      NotebookTabLabel *tablabel = CREAM_NOTEBOOK_TAB_LABEL (gtk_notebook_get_tab_label (GTK_NOTEBOOK (obj), GTK_WIDGET (webview)));
      notebook_tab_label_set_pixbuf (tablabel, favicon);
 }

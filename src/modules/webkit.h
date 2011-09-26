@@ -65,6 +65,7 @@ struct _CreamModuleWebKit
 
      SoupSession *wsession;
      WebKitWebSettings *wsettings;
+     WebKitIconDatabase *wfavicons;
 };
 
 struct _CreamModuleWebKitClass

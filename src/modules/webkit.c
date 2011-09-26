@@ -31,9 +31,9 @@
  * @{
  */
 
-static void cream_module_webkit_notify_dlstatus_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self);
 static void cream_module_webkit_notify_uri_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self);
 static void cream_module_webkit_notify_title_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self);
+static void cream_module_webkit_notify_favicon_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self);
 static void cream_module_webkit_notify_progress_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self);
 static gboolean cream_module_webkit_button_press_event_cb (WebKitWebView *webview, GdkEventButton *event, CreamModuleWebKit *self);
 static gboolean cream_module_webkit_signal_download_cb (WebKitWebView *webview, WebKitDownload *download, CreamModuleWebKit *self);
@@ -44,6 +44,7 @@ static void cream_module_webkit_init (CreamModuleWebKit *self)
 {
      self->wsession  = webkit_get_default_session ();
      self->wsettings = webkit_web_settings_new ();
+     self->wfavicons = webkit_get_icon_database ();
 
      g_object_set (G_OBJECT (self->wsettings), "enable-developer-extras", TRUE, NULL);
 
@@ -68,6 +69,10 @@ static GtkWidget *cream_module_webkit_webview_new (CreamModule *self)
 
      g_signal_connect (G_OBJECT (webview), "notify::title",
                        G_CALLBACK (cream_module_webkit_notify_title_cb),
+                       self);
+
+     g_signal_connect (G_OBJECT (webview), "notify::icon-uri",
+                       G_CALLBACK (cream_module_webkit_notify_favicon_cb),
                        self);
 
      g_signal_connect (G_OBJECT (webview), "notify::progress",
@@ -154,19 +159,6 @@ static void cream_module_webkit_useragent (CreamModule *self, const gchar *ua)
      g_object_set (G_OBJECT (mod->wsettings), "user-agent", ua, NULL);
 }
 
-static void cream_module_webkit_load_favicon (CreamModule *self, GtkWidget *webview)
-{
-     const gchar *favicon_uri = webkit_web_view_get_icon_uri (WEBKIT_WEB_VIEW (webview));
-     WebKitNetworkRequest *dlrequest = webkit_network_request_new (favicon_uri);
-     WebKitDownload *dl = webkit_download_new (dlrequest);
-
-     /* TODO: get icon in cache */
-
-     g_signal_connect (G_OBJECT (dl), "notify::status", G_CALLBACK (cream_module_webkit_notify_dlstatus_cb), self);
-
-     webkit_download_start (dl);
-}
-
 /* signals */
 
 static void cream_module_webkit_notify_uri_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self)
@@ -185,6 +177,19 @@ static void cream_module_webkit_notify_title_cb (WebKitWebView *webview, GParamS
      );
 }
 
+static void cream_module_webkit_notify_favicon_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self)
+{
+     /* check favicon */
+     GdkPixbuf *favicon = webkit_icon_database_get_icon_pixbuf (self->wfavicons, webkit_web_view_get_uri (webview));
+
+     g_signal_emit (G_OBJECT (self),
+                    cream_module_webkit_signals[SIGNAL_FAVICON_CHANGED],
+                    0, webview, favicon
+     );
+
+     /* TODO: put favicon in cache */
+}
+
 static void cream_module_webkit_notify_progress_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self)
 {
      gdouble progress = 0.0;
@@ -195,20 +200,6 @@ static void cream_module_webkit_notify_progress_cb (WebKitWebView *webview, GPar
                     cream_module_webkit_signals[SIGNAL_PROGRESS_CHANGED],
                     0, webview, progress
      );
-}
-
-static void cream_module_webkit_notify_dlstatus_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self)
-{
-     WebKitDownloadStatus dlstatus;
-     gchar *dest;
-
-     g_object_get (G_OBJECT (webview), "status", &dlstatus, "destination-rui", &dest, NULL);
-
-     if (dlstatus == WEBKIT_DOWNLOAD_STATUS_FINISHED)
-     {
-          /* TODO: put icon in cache */;
-          /* TODO: emit signal "favicon-changed" */
-     }
 }
 
 static gboolean cream_module_webkit_button_press_event_cb (WebKitWebView *webview, GdkEventButton *event, CreamModuleWebKit *self)

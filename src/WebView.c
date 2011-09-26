@@ -350,8 +350,6 @@ static void webview_signal_uri_changed_cb (CreamModule *self, GtkWidget *webview
 
           if (w->uri) g_free (w->uri);
           w->uri = g_strdup (uri);
-
-          cream_module_load_favicon (self, webview);
      }
 
      if (GTK_WIDGET (w) == global.gui.fwebview)

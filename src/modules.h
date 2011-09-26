@@ -88,7 +88,6 @@ void cream_module_forward (CreamModule *self, GtkWidget *webview);
 gboolean cream_module_search (CreamModule *self, GtkWidget *webview, const gchar *text, gboolean forward);
 void cream_module_proxy (CreamModule *self, const gchar *uri);
 void cream_module_useragent (CreamModule *self, const gchar *ua);
-void cream_module_load_favicon (CreamModule *self, GtkWidget *webview);
 
 /*!
  * \def CREAM_DEFINE_MODULE (ctype, fn_prefix)
@@ -111,7 +110,6 @@ void cream_module_load_favicon (CreamModule *self, GtkWidget *webview);
      static gboolean fn_prefix##_search (CreamModule *self, GtkWidget *webview, const gchar *text, gboolean forward);   \
      static void fn_prefix##_proxy (CreamModule *self, const gchar *uri);                                               \
      static void fn_prefix##_useragent (CreamModule *self, const gchar *ua);                                            \
-     static void fn_prefix##_load_favicon (CreamModule *self, GtkWidget *webview);                                      \
                                                                                                                         \
      enum { PROP_0, PROP_NAME };                                                                                        \
      enum                                                                                                               \
@@ -177,7 +175,6 @@ void cream_module_load_favicon (CreamModule *self, GtkWidget *webview);
           iface->search         = fn_prefix##_search;                                                                   \
           iface->proxy          = fn_prefix##_proxy;                                                                    \
           iface->useragent      = fn_prefix##_useragent;                                                                \
-          iface->load_favicon   = fn_prefix##_load_favicon;                                                             \
      }                                                                                                                  \
                                                                                                                         \
      static void fn_prefix##_class_init (ctype##Class *klass)                                                           \
