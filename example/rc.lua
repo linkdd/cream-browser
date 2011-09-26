@@ -1,9 +1,6 @@
 -- Load Cream-Browser's API
 require ("cream")
 
--- Load theme
-cream.theme ("~/.config/cream-browser/theme.lua")
-
 -- keybindings
 local state =
 {

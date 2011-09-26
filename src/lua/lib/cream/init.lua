@@ -6,7 +6,6 @@ require ("cream.clipboard")
 require ("cream.util")
 require ("cream.keys")
 require ("cream.tab")
-require ("cream.theme")
 
 local capi =
 {
