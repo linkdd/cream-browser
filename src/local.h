@@ -89,6 +89,7 @@
 #    include "modules/webkit.h"
 #endif
 
+#include "cache.h"
 #include "structs.h"
 
 /*!

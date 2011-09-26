@@ -231,6 +231,7 @@ static void quit (void)
 
      lua_ctx_close ();
 
+     g_free (global.profile);
      if (global.flog)
           fclose (global.flog);
 }
@@ -242,9 +243,6 @@ static void init (gchar *config)
      char *rc = config;
 
      atexit (quit);
-
-     g_set_prgname ("cream-browser");
-     global.prgname = g_get_prgname ();
 
      /* init threads */
      if (!g_thread_supported ())
@@ -340,15 +338,17 @@ static void creamctl (const char *cmd, const char *path)
 int main (int argc, char **argv)
 {
      gchar *url = NULL, *cmd = NULL, *config = NULL, *path;
-     gboolean version = FALSE;
+     gboolean version = FALSE, checkconf = FALSE;
 
      GOptionEntry options[] =
      {
-          { "log",     'l', 0, G_OPTION_ARG_NONE,    &global.log,       gettext_noop ("Enable logging"),     NULL },
-          { "open",    'o', 0, G_OPTION_ARG_STRING,  &url,              gettext_noop ("Open URL"),           NULL },
+          { "chkcfg",  'k', 0, G_OPTION_ARG_NONE,    &checkconf,        gettext_noop ("Check the validity of the lua configuration"), NULL },
+          { "log",     'l', 0, G_OPTION_ARG_NONE,    &global.log,       gettext_noop ("Enable logging"), NULL },
+          { "open",    'o', 0, G_OPTION_ARG_STRING,  &url,              gettext_noop ("Open URL"), NULL },
           { "config",  'c', 0, G_OPTION_ARG_STRING,  &config,           gettext_noop ("Load an alternate config file."), NULL },
           { "socket",  's', 0, G_OPTION_ARG_STRING,  &path,             gettext_noop ("Unix socket's path"), NULL },
           { "command", 'e', 0, G_OPTION_ARG_STRING,  &cmd,              gettext_noop ("Send a command on the specified socket (see --socket,-s)"), NULL },
+          { "profile", 'p', 0, G_OPTION_ARG_STRING,  &global.profile,   gettext_noop ("Select a profile (default='default')"), NULL },
           { "version", 'v', 0, G_OPTION_ARG_NONE,    &version,          gettext_noop ("Show version informations"), NULL },
           { NULL }
      };
@@ -367,6 +367,9 @@ int main (int argc, char **argv)
 
      if (!g_option_context_parse (optctx, &argc, &argv, &error) && error != NULL)
           print_error (error, TRUE, NULL);
+
+     g_set_prgname ("cream-browser");
+     global.prgname = g_get_prgname ();
 
      if (version)
      {
@@ -391,9 +394,40 @@ int main (int argc, char **argv)
           exit (EXIT_SUCCESS);
      }
 
+     if (checkconf)
+     {
+          char *rc = config;
+
+          /* find lua config */
+          if (!rc || !g_file_test (rc, G_FILE_TEST_EXISTS))
+          {
+               if ((rc = find_file (FILE_TYPE_CONFIG, "rc.lua")) == NULL)
+               {
+                    error = g_error_new (CREAM_GLOBAL_ERROR, CREAM_GLOBAL_ERROR_CONFIG, _("Configuration not found."));
+                    print_error (error, TRUE, NULL);
+               }
+          }
+
+          /* init and parse lua */
+          if (!lua_ctx_init (&error))
+               print_error (error, TRUE, NULL);
+
+          if (!lua_ctx_parse (rc, &error))
+               print_error (error, TRUE, NULL);
+
+          lua_ctx_close ();
+
+          g_printf ("No errors found.\n");
+          exit (EXIT_SUCCESS);
+     }
+
      /* if cmd isn't NULL, use creamctl() */
      if (cmd != NULL)
           creamctl (cmd, path);
+
+     /* if none passed, select default profile */
+     if (global.profile == NULL)
+          global.profile = g_strdup ("default");
 
      gtk_init (&argc, &argv);
 

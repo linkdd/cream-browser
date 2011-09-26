@@ -53,12 +53,14 @@ struct global_t
      gboolean log;            /*!< if <code>TRUE</code> log every errors */
      FILE *flog;              /*!< Log's file descriptor */
      gchar *prgname;          /*!< Program's name */
+     gchar *profile;          /*!< Cream-Browser's profile */
 
      GHashTable *protocols;   /*!< List of protocols and asscoiated modules */
      CreamMode mode;          /*!< Current mode */
 
      lua_State *luavm;        /*!< Lua VM state */
      Socket *sock;            /*!< Unix socket */
+     Cache *cache;            /*!< Cream-Browser's cache */
 };
 
 #endif /* __STRUCTS_H */
