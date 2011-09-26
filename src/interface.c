@@ -54,8 +54,15 @@ static void window_update (GtkVimSplit *obj)
  */
 void ui_init (void)
 {
+     GError *error = NULL;
+
      global.gui.window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+     gtk_window_set_default_size (GTK_WINDOW (global.gui.window), 800, 600);
      gtk_window_set_title (GTK_WINDOW (global.gui.window), PACKAGE);
+     gtk_window_set_wmclass (GTK_WINDOW (global.gui.window), PACKAGE, "Navigator");
+
+     if (!gtk_window_set_icon_from_file (GTK_WINDOW (global.gui.window), find_file (FILE_TYPE_DATA, "cream-browser.png"), &error) && error != NULL)
+          print_error (error, FALSE, "window.icon");
 
      global.gui.box       = gtk_vbox_new (FALSE, 0);
      global.gui.vimsplit  = gtk_vim_split_new ();
