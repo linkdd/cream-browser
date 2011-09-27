@@ -28,10 +28,6 @@
 CreamBrowser *app = NULL;
 
 /*!
- * \addtogroup cream-browser
- * @{
- */
-/*!
  * \fn gchar *find_file (guint type, const gchar *filename)
  * @param type Type of file to find (#FILE_TYPE_CONFIG, #FILE_TYPE_DATA or #FILE_TYPE_CACHE).
  * @param filename Name of the file to find.
@@ -131,8 +127,13 @@ int main (int argc, char **argv)
 
      app = cream_browser_new ();
      status = g_application_run (G_APPLICATION (app), argc, argv);
-     g_object_unref (app);
+
+     /* we are not running a command-line part of cream-browser */
+     if (!app->cmdline)
+     {
+          g_object_run_dispose (G_OBJECT (app));
+          g_object_unref (app);
+     }
+
      return status;
 }
-
-/*! @} */

@@ -76,6 +76,7 @@ struct _CreamBrowser
      gboolean checkconf;
 
      GApplicationCommandLine *gappcmdline;
+     gboolean cmdline;
 
      struct
      {
@@ -113,6 +114,8 @@ void cream_browser_set_focused_webview (CreamBrowser *self, GtkWidget *webview);
 void cream_browser_add_protocol (CreamBrowser *self, const gchar *scheme, GObject *mod);
 void cream_browser_del_protocol (CreamBrowser *self, GObject *mod);
 GObject *cream_browser_get_protocol (CreamBrowser *self, const gchar *scheme);
+
+void cream_browser_exit (CreamBrowser *self, int exit_code);
 
 /*! @} */
 

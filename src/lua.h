@@ -143,13 +143,6 @@ static inline gboolean luaL_checkboolean (lua_State *L, int idx)
  */
 #define LUA_TNOTEBOOK  "Notebook"
 
-
-/*!
- * \def LUA_TTHEME
- * Userdata type associated to #theme_t.
- */
-#define LUA_TTHEME     "theme"
-
 gboolean lua_ctx_init (GError **err);
 gboolean lua_ctx_parse (const char *file, GError **err);
 void lua_ctx_close (void);

@@ -86,7 +86,6 @@ static struct command_t internal_commands[] =
 
 /*!
  * \fn gboolean run_command (const char *cmd, GError **err)
- * @param app CreamBrowser application.
  * @param cmd Command to execute
  * @param err \class{GError} pointer in order to follow possible errors.
  * @return <code>TRUE</code> on success, <code>FALSE</code> otherwise.
@@ -122,7 +121,7 @@ gboolean run_command (const char *cmd, GError **err)
 
 static gboolean command_exit (gint argc, gchar **argv, GError **err)
 {
-     g_application_release (G_APPLICATION (app));
+     cream_browser_exit (app, EXIT_SUCCESS);
      return FALSE;
 }
 

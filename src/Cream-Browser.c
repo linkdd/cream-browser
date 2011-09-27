@@ -31,11 +31,11 @@
  */
 
 static void cream_browser_error_handler (CreamBrowser *self, gboolean abort, GError *error);
-static void cream_browser_finalize (GObject *obj);
+static void cream_browser_dispose (GObject *obj);
 static void cream_browser_activate (GApplication *gapp);
 static gint cream_browser_command_line (GApplication *gapp, GApplicationCommandLine *cmdline);
 static void cream_browser_startup (CreamBrowser *self);
-static void cream_browser_ctl (CreamBrowser *self);
+static gint cream_browser_ctl (CreamBrowser *self);
 
 #define CREAM_BROWSER_ERROR         cream_browser_error_quark()
 
@@ -59,17 +59,18 @@ G_DEFINE_TYPE (CreamBrowser, cream_browser, GTK_TYPE_APPLICATION)
 
 CreamBrowser *cream_browser_new (void)
 {
+     gchar *appid = g_strdup_printf ("org.gtk.CreamBrowser.pid%d", getpid ());
      g_type_init ();
 
      return g_object_new (GAPP_TYPE_CREAM_BROWSER,
-                          "application-id", "org.gtk.CreamBrowser",
+                          "application-id", appid,
                           "flags", G_APPLICATION_HANDLES_COMMAND_LINE,
                           NULL);
 }
 
 static void cream_browser_class_init (CreamBrowserClass *klass)
 {
-     G_OBJECT_CLASS (klass)->finalize = cream_browser_finalize;
+     G_OBJECT_CLASS (klass)->dispose = cream_browser_dispose;
 
      G_APPLICATION_CLASS (klass)->activate     = cream_browser_activate;
      G_APPLICATION_CLASS (klass)->command_line = cream_browser_command_line;
@@ -84,6 +85,7 @@ static void cream_browser_init (CreamBrowser *self)
      self->sockpath  = NULL;
      self->cmd       = NULL;
 
+     self->cmdline   = TRUE;
      self->profile   = NULL;
 
      self->log       = FALSE;
@@ -108,25 +110,23 @@ static void cream_browser_error_handler (CreamBrowser *self, gboolean abort, GEr
      fprintf (stderr, "%s", str);
 
      if (abort)
-     {
-          g_application_command_line_set_exit_status (self->gappcmdline, EXIT_FAILURE);
-          g_application_release (G_APPLICATION (self));
-     }
+          cream_browser_exit (self, EXIT_FAILURE);
 }
 
-static void cream_browser_finalize (GObject *obj)
+static void cream_browser_dispose (GObject *obj)
 {
      CreamBrowser *self = CREAM_BROWSER (obj);
      GError *error = NULL;
 
-     G_APPLICATION_CLASS (cream_browser_parent_class)->quit_mainloop (G_APPLICATION (self));
+     if (gtk_main_level () > 0)
+          gtk_main_quit ();
 
      if (self->sock)
      {
           if (!g_socket_close (G_SOCKET (self->sock), &error))
                CREAM_BROWSER_GET_CLASS (self)->error (self, TRUE, error);
 
-          unlink (self->sockpath);
+          unlink (self->sock->path);
           g_object_unref (self->sock);
      }
 
@@ -137,7 +137,7 @@ static void cream_browser_finalize (GObject *obj)
 
      if (self->flog) fclose (self->flog);
 
-     G_OBJECT_CLASS (cream_browser_parent_class)->finalize (G_OBJECT (self));
+     G_OBJECT_CLASS (cream_browser_parent_class)->dispose (obj);
 }
 
 /*! Run the browser */
@@ -146,61 +146,7 @@ static void cream_browser_activate (GApplication *gapp)
      CreamBrowser *self = CREAM_BROWSER (gapp);
      GError *error = NULL;
 
-     /* cream-browser -v */
-     if (self->version)
-     {
-          printf (_("%s %s, developped by David Delassus <david.jose.delassus@gmail.com>\n"), PACKAGE, VERSION);
-          printf (_("Released under %s license.\n"), LICENSE);
-
-          printf (_("Builded with:\n"));
-          printf (" - GLib %s\n", LIB_GLIB_VERSION);
-          printf (" - GTK+ %s\n", LIB_GTK_VERSION);
-          printf (" - Lua  %s\n\n", LIB_LUA_VERSION);
-
-          printf (_("Builded on %s with:\n"), ARCH);
-          printf (" - C Compiler: %s\n", COMPILER);
-          printf (" - CFLAGS:     %s\n", CFLAGS);
-          printf (" - LDFLAGS:    %s\n", LDFLAGS);
-
-          if (HAVE_DEBUG)
-               printf (_("Builded in debug mode.\n"));
-          else
-               printf (_("Builded in release mode.\n"));
-
-          g_application_release (G_APPLICATION (self));
-     }
-
-     /* cream-browser -k */
-     if (self->checkconf)
-     {
-          char *rc = self->config;
-
-          /* find lua config */
-          if (!rc || !g_file_test (rc, G_FILE_TEST_EXISTS))
-          {
-               if ((rc = find_file (FILE_TYPE_CONFIG, "rc.lua")) == NULL)
-               {
-                    error = g_error_new (CREAM_BROWSER_ERROR, CREAM_BROWSER_ERROR_CONFIG, _("Configuration not found."));
-                    CREAM_BROWSER_GET_CLASS (self)->error (self, TRUE, error);
-               }
-          }
-
-          /* init and parse lua */
-          if (!lua_ctx_init (&error))
-               CREAM_BROWSER_GET_CLASS (self)->error (self, TRUE, error);
-
-          if (!lua_ctx_parse (rc, &error))
-               CREAM_BROWSER_GET_CLASS (self)->error (self, TRUE, error);
-
-          lua_ctx_close ();
-
-          printf ("No errors found.\n");
-          g_application_release (G_APPLICATION (self));
-     }
-
-     /* creamctl */
-     if (self->cmd != NULL)
-          cream_browser_ctl (self);
+     self->cmdline = FALSE;
 
      /* cream-browser -p "profile" */
      if (self->profile == NULL)
@@ -258,6 +204,68 @@ static gint cream_browser_command_line (GApplication *gapp, GApplicationCommandL
      if (!g_option_context_parse (optctx, &argc, &argv, &error) && error != NULL)
           CREAM_BROWSER_GET_CLASS (self)->error (self, TRUE, error);
 
+     /* cream-browser -v */
+     if (self->version)
+     {
+          printf (_("%s %s, developped by David Delassus <david.jose.delassus@gmail.com>\n"), PACKAGE, VERSION);
+          printf (_("Released under %s license.\n"), LICENSE);
+
+          printf (_("Builded with:\n"));
+          printf (" - GLib %s\n", LIB_GLIB_VERSION);
+          printf (" - GTK+ %s\n", LIB_GTK_VERSION);
+          printf (" - Lua  %s\n\n", LIB_LUA_VERSION);
+
+          printf (_("Builded on %s with:\n"), ARCH);
+          printf (" - C Compiler: %s\n", COMPILER);
+          printf (" - CFLAGS:     %s\n", CFLAGS);
+          printf (" - LDFLAGS:    %s\n", LDFLAGS);
+
+          if (HAVE_DEBUG)
+               printf (_("Builded in debug mode.\n"));
+          else
+               printf (_("Builded in release mode.\n"));
+
+          return EXIT_SUCCESS;
+     }
+
+     /* cream-browser -k */
+     if (self->checkconf)
+     {
+          char *rc = self->config;
+
+          /* find lua config */
+          if (!rc || !g_file_test (rc, G_FILE_TEST_EXISTS))
+          {
+               if ((rc = find_file (FILE_TYPE_CONFIG, "rc.lua")) == NULL)
+               {
+                    error = g_error_new (CREAM_BROWSER_ERROR, CREAM_BROWSER_ERROR_CONFIG, _("Configuration not found."));
+                    CREAM_BROWSER_GET_CLASS (self)->error (self, TRUE, error);
+               }
+          }
+
+          /* init and parse lua */
+          if (!lua_ctx_init (&error))
+          {
+               CREAM_BROWSER_GET_CLASS (self)->error (self, FALSE, error);
+               return EXIT_FAILURE;
+          }
+
+          if (!lua_ctx_parse (rc, &error))
+          {
+               CREAM_BROWSER_GET_CLASS (self)->error (self, FALSE, error);
+               return EXIT_FAILURE;
+          }
+
+          lua_ctx_close ();
+
+          printf ("No errors found.\n");
+          return EXIT_SUCCESS;
+     }
+
+     /* creamctl */
+     if (self->cmd != NULL)
+          return cream_browser_ctl (self);
+
      g_application_activate (gapp);
      return EXIT_SUCCESS;
 }
@@ -313,7 +321,7 @@ static void cream_browser_startup (CreamBrowser *self)
 }
 
 /*! Send command on the socket */
-static void cream_browser_ctl (CreamBrowser *self)
+static gint cream_browser_ctl (CreamBrowser *self)
 {
      GError *error = NULL;
      GSocketAddress *addr;
@@ -351,13 +359,12 @@ static void cream_browser_ctl (CreamBrowser *self)
           if (!g_socket_close (s, &error))
                CREAM_BROWSER_GET_CLASS (self)->error (self, TRUE, error);
 
-          g_application_release (G_APPLICATION (self));
+          return EXIT_SUCCESS;
      }
      else
      {
           fprintf (stderr, _("Usage: cream-browser -s /path/to/socket -e \"command\"\n"));
-          g_application_command_line_set_exit_status (self->gappcmdline, EXIT_FAILURE);
-          g_application_release (G_APPLICATION (self));
+          return EXIT_FAILURE;
      }
 }
 
@@ -401,6 +408,12 @@ void cream_browser_del_protocol (CreamBrowser *self, GObject *mod)
 GObject *cream_browser_get_protocol (CreamBrowser *self, const gchar *scheme)
 {
      return (GObject *) g_hash_table_lookup (self->protocols, scheme);
+}
+
+void cream_browser_exit (CreamBrowser *self, int exit_code)
+{
+     g_application_command_line_set_exit_status (self->gappcmdline, EXIT_FAILURE);
+     g_application_release (G_APPLICATION (self));
 }
 
 /*! @} */

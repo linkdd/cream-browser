@@ -105,7 +105,7 @@ static int luaL_util_quit (lua_State *L)
      if (lua_gettop (L) >= 1)
           ret = luaL_checkint (L, 1);
 
-     exit (ret);
+     cream_browser_exit (app, ret);
      return 0;
 }
 
