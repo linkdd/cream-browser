@@ -30,55 +30,59 @@
  * @{
  */
 
-static void window_destroy (void)
+static void window_destroy (GtkWindow *window)
 {
-     exit (EXIT_SUCCESS);
+     gtk_application_remove_window (GTK_APPLICATION (app), window);
 }
 
 static void window_update (GtkVimSplit *obj)
 {
-     global.gui.fwebview = notebook_get_focus (CREAM_NOTEBOOK (gtk_vim_split_get_focus (obj)));
+     GtkWidget *webview = notebook_get_focus (CREAM_NOTEBOOK (gtk_vim_split_get_focus (obj)));
 
-     gchar *title = g_strdup_printf ("%s - %s", PACKAGE, webview_get_title (CREAM_WEBVIEW (global.gui.fwebview)));
-     gtk_window_set_title (GTK_WINDOW (global.gui.window), title);
+     cream_browser_set_focused_webview (app, webview);
+
+     gchar *title = g_strdup_printf ("%s - %s", PACKAGE, webview_get_title (CREAM_WEBVIEW (webview)));
+     gtk_window_set_title (GTK_WINDOW (app->gui.window), title);
      g_free (title);
 
-     statusbar_set_link (CREAM_STATUSBAR (global.gui.statusbar), webview_get_uri (CREAM_WEBVIEW (global.gui.fwebview)));
+     statusbar_set_link (CREAM_STATUSBAR (app->gui.statusbar), webview_get_uri (CREAM_WEBVIEW (webview)));
 
      ui_show ();
 }
 
 /*!
  * \fn void ui_init (void)
- * Create the main window.
+ * Create the main window
  */
 void ui_init (void)
 {
      GError *error = NULL;
 
-     global.gui.window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-     gtk_window_set_default_size (GTK_WINDOW (global.gui.window), 800, 600);
-     gtk_window_set_title (GTK_WINDOW (global.gui.window), PACKAGE);
-     gtk_window_set_wmclass (GTK_WINDOW (global.gui.window), PACKAGE, "Navigator");
+     app->gui.window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+     gtk_window_set_default_size (GTK_WINDOW (app->gui.window), 800, 600);
+     gtk_window_set_title (GTK_WINDOW (app->gui.window), PACKAGE);
+     gtk_window_set_wmclass (GTK_WINDOW (app->gui.window), PACKAGE, "Navigator");
 
-     if (!gtk_window_set_icon_from_file (GTK_WINDOW (global.gui.window), find_file (FILE_TYPE_DATA, "cream-browser.png"), &error) && error != NULL)
-          print_error (error, FALSE, "window.icon");
+     if (!gtk_window_set_icon_from_file (GTK_WINDOW (app->gui.window), find_file (FILE_TYPE_DATA, "cream-browser.png"), &error) && error != NULL)
+          CREAM_BROWSER_GET_CLASS (app)->error (app, FALSE, error);
 
-     global.gui.box       = gtk_vbox_new (FALSE, 0);
-     global.gui.vimsplit  = gtk_vim_split_new ();
-     global.gui.inputbox  = inputbox_new ();
-     global.gui.statusbar = statusbar_new ();
+     app->gui.box       = gtk_vbox_new (FALSE, 0);
+     app->gui.vimsplit  = gtk_vim_split_new ();
+     app->gui.inputbox  = inputbox_new ();
+     app->gui.statusbar = statusbar_new ();
 
-     statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), CREAM_MODE_NORMAL);
+     statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), CREAM_MODE_NORMAL);
 
-     gtk_box_pack_start (GTK_BOX (global.gui.box), global.gui.vimsplit, TRUE, TRUE, 0);
-     gtk_box_pack_end (GTK_BOX (global.gui.box), global.gui.inputbox, FALSE, TRUE, 0);
-     gtk_box_pack_end (GTK_BOX (global.gui.box), global.gui.statusbar, FALSE, TRUE, 0);
-     gtk_container_add (GTK_CONTAINER (global.gui.window), global.gui.box);
+     gtk_box_pack_start (GTK_BOX (app->gui.box), app->gui.vimsplit, TRUE, TRUE, 0);
+     gtk_box_pack_end (GTK_BOX (app->gui.box), app->gui.inputbox, FALSE, TRUE, 0);
+     gtk_box_pack_end (GTK_BOX (app->gui.box), app->gui.statusbar, FALSE, TRUE, 0);
+     gtk_container_add (GTK_CONTAINER (app->gui.window), app->gui.box);
 
-     g_signal_connect (G_OBJECT (global.gui.window),   "destroy",       G_CALLBACK (window_destroy),   NULL);
-     g_signal_connect (G_OBJECT (global.gui.vimsplit), "no-more-split", G_CALLBACK (window_destroy),   NULL);
-     g_signal_connect (G_OBJECT (global.gui.vimsplit), "focus-changed", G_CALLBACK (window_update),    NULL);
+     g_signal_connect (G_OBJECT (app->gui.window),   "destroy",       G_CALLBACK (window_destroy),   NULL);
+     g_signal_connect (G_OBJECT (app->gui.vimsplit), "no-more-split", G_CALLBACK (window_destroy),   NULL);
+     g_signal_connect (G_OBJECT (app->gui.vimsplit), "focus-changed", G_CALLBACK (window_update),    NULL);
+
+     gtk_application_add_window (GTK_APPLICATION (app), GTK_WINDOW (app->gui.window));
 }
 
 /*!
@@ -87,7 +91,7 @@ void ui_init (void)
  */
 void ui_show (void)
 {
-     gtk_widget_show_all (global.gui.window);
+     gtk_widget_show_all (app->gui.window);
 }
 
 /*! @} */

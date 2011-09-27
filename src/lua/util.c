@@ -45,11 +45,11 @@ static int luaL_util_state (lua_State *L)
 {
      if (lua_gettop (L) >= 1)
      {
-          statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), luaL_checkint (L, 1));
+          statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), luaL_checkint (L, 1));
           return 0;
      }
 
-     lua_pushinteger (L, global.mode);
+     lua_pushinteger (L, app->mode);
      return 1;
 }
 

@@ -129,7 +129,7 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
      g_return_if_fail (CREAM_IS_NOTEBOOK (obj));
      g_return_if_fail (uri_scheme_parse (&u, url));
 
-     module = get_protocol (u.scheme);
+     module = cream_browser_get_protocol (app, u.scheme);
      webview = webview_new (module);
      CREAM_WEBVIEW (webview)->notebook = GTK_WIDGET (obj);
      webview_load_uri (CREAM_WEBVIEW (webview), url);

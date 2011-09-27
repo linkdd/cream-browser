@@ -82,7 +82,7 @@ static gboolean control_client_socket (GIOChannel *channel)
      if (ret == G_IO_STATUS_ERROR)
      {
           if (error != NULL)
-               print_error (error, FALSE, _("Error reading UNIX socket '%s'"), socket_get_path (global.sock));
+               CREAM_BROWSER_GET_CLASS (app)->error (app, FALSE, error);
           g_io_channel_shutdown (channel, TRUE, NULL);
 
           return FALSE;
@@ -97,9 +97,7 @@ static gboolean control_client_socket (GIOChannel *channel)
      if (line)
      {
           if (!run_command (line, &error))
-          {
-               print_error (error, FALSE, _("Error while running command"));
-          }
+               CREAM_BROWSER_GET_CLASS (app)->error (app, FALSE, error);
 
           if (error != NULL)
           {
@@ -110,7 +108,7 @@ static gboolean control_client_socket (GIOChannel *channel)
 
           ret = g_io_channel_write_chars (channel, result->str, result->len, &len, &error);
           if (ret == G_IO_STATUS_ERROR && error != NULL)
-               print_error (error, FALSE, _("Error writing UNIX socket '%s'"), socket_get_path (global.sock));
+               CREAM_BROWSER_GET_CLASS (app)->error (app, FALSE, error);
           g_io_channel_flush (channel, NULL);
      }
 
@@ -128,7 +126,7 @@ static gboolean control_socket (GIOChannel *channel, GIOCondition cond, Socket *
 
      if (err != NULL)
      {
-          print_error (err, FALSE, "socket.accept");
+          CREAM_BROWSER_GET_CLASS (app)->error (app, FALSE, err);
           return FALSE;
      }
 

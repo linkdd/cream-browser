@@ -104,7 +104,7 @@ void statusbar_set_state (Statusbar *obj, CreamMode state)
      g_return_if_fail (CREAM_IS_STATUSBAR (obj));
      priv = CREAM_STATUSBAR_GET_PRIVATE (obj);
 
-     global.mode = state;
+     app->mode = state;
      switch (state)
      {
           case CREAM_MODE_INSERT:

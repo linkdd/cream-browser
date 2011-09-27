@@ -69,6 +69,7 @@ set (SOURCE
      "scheme.c"
      "modules.c"
      "socket.c"
+     "Cream-Browser.c"
      "main.c"
      "WebView.h"
      "Notebook.h"
@@ -82,7 +83,7 @@ set (SOURCE
      "socket.h"
      "lua.h"
      "scheme.h"
-     "structs.h"
+     "Cream-Browser.h"
      "local.h"
 )
 

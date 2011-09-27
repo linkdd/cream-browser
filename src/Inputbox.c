@@ -81,7 +81,7 @@ static void inputbox_activate_cb (Inputbox *obj, gpointer unused)
      txt = g_strdup (gtk_entry_get_text (GTK_ENTRY (obj)));
      gtk_entry_set_text (GTK_ENTRY (obj), "");
 
-     fwebview = CREAM_WEBVIEW (notebook_get_focus (CREAM_NOTEBOOK (gtk_vim_split_get_focus (GTK_VIM_SPLIT (global.gui.vimsplit)))));
+     fwebview = CREAM_WEBVIEW (cream_browser_get_focused_webview (app));
 
      switch (txt[0])
      {
@@ -132,7 +132,7 @@ static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer u
      {
           gtk_entry_set_text (GTK_ENTRY (obj), "");
           inputbox_check_mode (obj);
-          statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), CREAM_MODE_NORMAL);
+          statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), CREAM_MODE_NORMAL);
      }
      else if (g_str_equal (key, "Tab"))
      {
@@ -164,7 +164,7 @@ static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer u
 
           if (strlen (txt) == 1)
           {
-               statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), CREAM_MODE_NORMAL);
+               statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), CREAM_MODE_NORMAL);
                gtk_grab_remove (GTK_WIDGET (obj));
           }
 
@@ -183,12 +183,12 @@ static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer u
 
 static void inputbox_focus_in_cb (Inputbox *obj, GdkEvent *event, gpointer unused)
 {
-     statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), CREAM_MODE_COMMAND);
+     statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), CREAM_MODE_COMMAND);
 }
 
 static void inputbox_focus_out_cb (Inputbox *obj, GdkEvent *event, gpointer unused)
 {
-     statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), CREAM_MODE_NORMAL);
+     statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), CREAM_MODE_NORMAL);
 }
 
 /* methods */
@@ -201,7 +201,7 @@ static void inputbox_check_mode (Inputbox *obj)
      {
           if (txt[0] == '?' || txt[0] == '/')
           {
-               statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), CREAM_MODE_SEARCH);
+               statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), CREAM_MODE_SEARCH);
                gtk_grab_add (GTK_WIDGET (obj));
           }
           else
@@ -209,7 +209,7 @@ static void inputbox_check_mode (Inputbox *obj)
      }
      else
      {
-          statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), CREAM_MODE_COMMAND);
+          statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), CREAM_MODE_COMMAND);
           gtk_grab_remove (GTK_WIDGET (obj));
      }
 }

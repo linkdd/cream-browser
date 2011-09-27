@@ -86,6 +86,7 @@ static struct command_t internal_commands[] =
 
 /*!
  * \fn gboolean run_command (const char *cmd, GError **err)
+ * @param app CreamBrowser application.
  * @param cmd Command to execute
  * @param err \class{GError} pointer in order to follow possible errors.
  * @return <code>TRUE</code> on success, <code>FALSE</code> otherwise.
@@ -121,7 +122,7 @@ gboolean run_command (const char *cmd, GError **err)
 
 static gboolean command_exit (gint argc, gchar **argv, GError **err)
 {
-     exit (EXIT_SUCCESS);
+     g_application_release (G_APPLICATION (app));
      return FALSE;
 }
 
@@ -136,14 +137,14 @@ static gboolean command_open (gint argc, gchar **argv, GError **err)
           return FALSE;
      }
 
-     notebook = gtk_vim_split_get_focus (GTK_VIM_SPLIT (global.gui.vimsplit));
+     notebook = gtk_vim_split_get_focus (GTK_VIM_SPLIT (app->gui.vimsplit));
 
      if (notebook == NULL)
           return command_split (argc, argv, err);
 
-     webview  = notebook_get_focus (CREAM_NOTEBOOK (notebook));
-
+     webview = notebook_get_focus (CREAM_NOTEBOOK (notebook));
      webview_load_uri (CREAM_WEBVIEW (webview), argv[1]);
+
      return TRUE;
 }
 
@@ -158,7 +159,7 @@ static gboolean command_tabopen (gint argc, gchar **argv, GError **err)
           return FALSE;
      }
 
-     notebook = gtk_vim_split_get_focus (GTK_VIM_SPLIT (global.gui.vimsplit));
+     notebook = gtk_vim_split_get_focus (GTK_VIM_SPLIT (app->gui.vimsplit));
 
      for (i = 1; i < argc; ++i)
           notebook_tabopen (CREAM_NOTEBOOK (notebook), argv[i]);
@@ -169,7 +170,7 @@ static gboolean command_tabopen (gint argc, gchar **argv, GError **err)
 
 static gboolean command_tabclose (gint argc, gchar **argv, GError **err)
 {
-     GtkWidget *notebook = gtk_vim_split_get_focus (GTK_VIM_SPLIT (global.gui.vimsplit));
+     GtkWidget *notebook = gtk_vim_split_get_focus (GTK_VIM_SPLIT (app->gui.vimsplit));
      gint page = gtk_notebook_get_current_page (GTK_NOTEBOOK (notebook));
 
      if (argc == 1)
@@ -186,7 +187,7 @@ static gboolean command_tabclose (gint argc, gchar **argv, GError **err)
      }
 
      if (0 == gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook)))
-          gtk_vim_split_close (GTK_VIM_SPLIT (global.gui.vimsplit));
+          gtk_vim_split_close (GTK_VIM_SPLIT (app->gui.vimsplit));
 
      ui_show ();
      return TRUE;
@@ -208,7 +209,7 @@ static gboolean command_split (gint argc, gchar **argv, GError **err)
                notebook_tabopen (CREAM_NOTEBOOK (nb), argv[i]);
      }
 
-     gtk_vim_split_add (GTK_VIM_SPLIT (global.gui.vimsplit), nb, GTK_ORIENTATION_VERTICAL);
+     gtk_vim_split_add (GTK_VIM_SPLIT (app->gui.vimsplit), nb, GTK_ORIENTATION_VERTICAL);
      ui_show ();
      return TRUE;
 }
@@ -229,14 +230,14 @@ static gboolean command_vsplit (gint argc, gchar **argv, GError **err)
                notebook_tabopen (CREAM_NOTEBOOK (nb), argv[i]);
      }
 
-     gtk_vim_split_add (GTK_VIM_SPLIT (global.gui.vimsplit), nb, GTK_ORIENTATION_HORIZONTAL);
+     gtk_vim_split_add (GTK_VIM_SPLIT (app->gui.vimsplit), nb, GTK_ORIENTATION_HORIZONTAL);
      ui_show ();
      return TRUE;
 }
 
 static gboolean command_close (gint argc, gchar **argv, GError **err)
 {
-     gtk_vim_split_close (GTK_VIM_SPLIT (global.gui.vimsplit));
+     gtk_vim_split_close (GTK_VIM_SPLIT (app->gui.vimsplit));
      ui_show ();
      return TRUE;
 }

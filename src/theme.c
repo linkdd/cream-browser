@@ -49,7 +49,7 @@ static void theme_init (Theme *self)
      {
           GError *error = NULL;
           if (!gtk_css_provider_load_from_path (self->engine, self->path, &error))
-               print_error (error, FALSE, "theme");
+               CREAM_BROWSER_GET_CLASS (app)->error (app, FALSE, error);
      }
 }
 

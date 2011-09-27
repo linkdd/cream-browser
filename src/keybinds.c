@@ -53,7 +53,7 @@ static gboolean keybinds_callback (GtkWindow *window, GdkEvent *event)
      {
           return FALSE;
      }
-     else if (global.mode & (CREAM_MODE_NORMAL | CREAM_MODE_EMBED | CREAM_MODE_CARET))
+     else if (app->mode & (CREAM_MODE_NORMAL | CREAM_MODE_EMBED | CREAM_MODE_CARET))
           command = g_string_append (command, gdk_keyval_name (ekey.keyval));
 
      /* check for keybind */
@@ -61,11 +61,11 @@ static gboolean keybinds_callback (GtkWindow *window, GdkEvent *event)
      {
           struct key_t *keybind = (struct key_t *) tmp->data;
 
-          if (g_string_equal (command, keybind->cmd) && (ekey.state & modifiers) == keybind->modmask && (global.mode & keybind->statemask))
+          if (g_string_equal (command, keybind->cmd) && (ekey.state & modifiers) == keybind->modmask && (app->mode & keybind->statemask))
           {
                /* call lua callback */
-               lua_pushwebview (global.luavm, CREAM_WEBVIEW (global.gui.fwebview));
-               luaL_callfunction (global.luavm, keybind->func, 1, 0);
+               lua_pushwebview (app->luavm, CREAM_WEBVIEW (cream_browser_get_focused_webview (app)));
+               luaL_callfunction (app->luavm, keybind->func, 1, 0);
                /* free current buffer */
                g_string_free (command, TRUE), command = NULL;
                return TRUE;
@@ -75,14 +75,10 @@ static gboolean keybinds_callback (GtkWindow *window, GdkEvent *event)
      return FALSE;
 }
 
-/*!
- * \fn void keybinds_init (void)
- *
- * Initialize keybindings.
- */
+/*! Initialize keybindings */
 void keybinds_init (void)
 {
-     g_signal_connect (G_OBJECT (global.gui.window), "key-press-event", G_CALLBACK (keybinds_callback), NULL);
+     g_signal_connect (G_OBJECT (app->gui.window), "key-press-event", G_CALLBACK (keybinds_callback), NULL);
 }
 
 

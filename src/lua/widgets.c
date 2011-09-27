@@ -56,12 +56,12 @@ static int luaL_inputbox_text (lua_State *L)
      if (lua_gettop (L) >= 1)
      {
           const gchar *txt = luaL_checkstring (L, 1);
-          gtk_entry_set_text (GTK_ENTRY (global.gui.inputbox), txt);
+          gtk_entry_set_text (GTK_ENTRY (app->gui.inputbox), txt);
           return 0;
      }
      else
      {
-          lua_pushstring (L, gtk_entry_get_text (GTK_ENTRY (global.gui.inputbox)));
+          lua_pushstring (L, gtk_entry_get_text (GTK_ENTRY (app->gui.inputbox)));
           return 1;
      }
 }
@@ -76,8 +76,8 @@ static int luaL_inputbox_text (lua_State *L)
  */
 static int luaL_inputbox_focus (lua_State *L)
 {
-     gtk_widget_grab_focus (global.gui.inputbox);
-     gtk_editable_set_position (GTK_EDITABLE (global.gui.inputbox), -1);
+     gtk_widget_grab_focus (app->gui.inputbox);
+     gtk_editable_set_position (GTK_EDITABLE (app->gui.inputbox), -1);
      return 0;
 }
 
@@ -101,7 +101,7 @@ static int luaL_inputbox_focus (lua_State *L)
 static int luaL_statusbar_set_state (lua_State *L)
 {
      CreamMode state = luaL_checkint (L, 1);
-     statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), state);
+     statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), state);
      return 0;
 }
 
@@ -116,7 +116,7 @@ static int luaL_statusbar_set_state (lua_State *L)
 static int luaL_statusbar_set_link (lua_State *L)
 {
      const gchar *link = luaL_checkstring (L, 1);
-     statusbar_set_link (CREAM_STATUSBAR (global.gui.statusbar), link);
+     statusbar_set_link (CREAM_STATUSBAR (app->gui.statusbar), link);
      return 0;
 }
 
@@ -132,7 +132,7 @@ static int luaL_statusbar_set_history (lua_State *L)
 {
      gboolean can_go_back    = luaL_checkboolean (L, 1);
      gboolean can_go_forward = luaL_checkboolean (L, 2);
-     statusbar_set_history (CREAM_STATUSBAR (global.gui.statusbar), can_go_back, can_go_forward);
+     statusbar_set_history (CREAM_STATUSBAR (app->gui.statusbar), can_go_back, can_go_forward);
      return 0;
 }
 
@@ -148,7 +148,7 @@ static int luaL_statusbar_set_history (lua_State *L)
 static int luaL_statusbar_set_scroll (lua_State *L)
 {
      gdouble scroll = (gdouble) luaL_checkint (L, 1);
-     statusbar_set_scroll (CREAM_STATUSBAR (global.gui.statusbar), scroll / 100.0);
+     statusbar_set_scroll (CREAM_STATUSBAR (app->gui.statusbar), scroll / 100.0);
      return 0;
 }
 
@@ -164,7 +164,7 @@ static int luaL_statusbar_set_scroll (lua_State *L)
 static int luaL_statusbar_set_progress (lua_State *L)
 {
      gdouble progress = (gdouble) luaL_checkint (L, 1);
-     statusbar_set_progress (CREAM_STATUSBAR (global.gui.statusbar), progress / 100.0);
+     statusbar_set_progress (CREAM_STATUSBAR (app->gui.statusbar), progress / 100.0);
      return 0;
 }
 
@@ -188,7 +188,7 @@ static int luaL_statusbar_set_progress (lua_State *L)
  */
 static int luaL_notebook_get_focused (lua_State *L)
 {
-     Notebook *n = CREAM_NOTEBOOK (gtk_vim_split_get_focus (GTK_VIM_SPLIT (global.gui.vimsplit)));
+     Notebook *n = CREAM_NOTEBOOK (gtk_vim_split_get_focus (GTK_VIM_SPLIT (app->gui.vimsplit)));
      lua_pushnotebook (L, n);
      return 1;
 }

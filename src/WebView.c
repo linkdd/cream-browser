@@ -282,13 +282,13 @@ void webview_load_uri (WebView *w, const gchar *uri)
 
      uri_scheme_parse (&u, uri);
 
-     g_return_if_fail (get_protocol (u.scheme) != 0);
+     g_return_if_fail (cream_browser_get_protocol (app, u.scheme) != 0);
 
-     if (w->mod == get_protocol (u.scheme))
+     if (w->mod == cream_browser_get_protocol (app, u.scheme))
           cream_module_load_uri (CREAM_MODULE (w->mod), w->child, &u);
      else
      {
-          webview_set_module (w, get_protocol (u.scheme));
+          webview_set_module (w, cream_browser_get_protocol (app, u.scheme));
           cream_module_load_uri (CREAM_MODULE (w->mod), w->child, &u);
      }
 }
@@ -352,10 +352,10 @@ static void webview_signal_uri_changed_cb (CreamModule *self, GtkWidget *webview
           w->uri = g_strdup (uri);
      }
 
-     if (GTK_WIDGET (w) == global.gui.fwebview)
+     if (GTK_WIDGET (w) == cream_browser_get_focused_webview (app))
      {
-          statusbar_set_link (CREAM_STATUSBAR (global.gui.statusbar), uri);
-          statusbar_set_history (CREAM_STATUSBAR (global.gui.statusbar),
+          statusbar_set_link (CREAM_STATUSBAR (app->gui.statusbar), uri);
+          statusbar_set_history (CREAM_STATUSBAR (app->gui.statusbar),
                     cream_module_can_go_back (self, webview),
                     cream_module_can_go_forward (self, webview));
      }
@@ -371,10 +371,10 @@ static void webview_signal_title_changed_cb (CreamModule *self, GtkWidget *webvi
           w->title = g_strdup (title);
      }
 
-     if (GTK_WIDGET (w) == global.gui.fwebview)
+     if (GTK_WIDGET (w) == cream_browser_get_focused_webview (app))
      {
           gchar *title = g_strdup_printf ("%s - %s", PACKAGE, webview_get_title (CREAM_WEBVIEW (w)));
-          gtk_window_set_title (GTK_WINDOW (global.gui.window), title);
+          gtk_window_set_title (GTK_WINDOW (app->gui.window), title);
           g_free (title);
      }
 }
@@ -401,17 +401,17 @@ static void webview_signal_progress_changed_cb (CreamModule *self, GtkWidget *we
      else
           g_free (status);
 
-     if (GTK_WIDGET (w) == global.gui.fwebview)
+     if (GTK_WIDGET (w) == cream_browser_get_focused_webview (app))
      {
-          statusbar_set_link (CREAM_STATUSBAR (global.gui.statusbar), status);
-          statusbar_set_progress (CREAM_STATUSBAR (global.gui.statusbar), progress);
+          statusbar_set_link (CREAM_STATUSBAR (app->gui.statusbar), status);
+          statusbar_set_progress (CREAM_STATUSBAR (app->gui.statusbar), progress);
      }
 }
 
 static void webview_signal_state_changed_cb (CreamModule *self, GtkWidget *webview, CreamMode state, WebView *w)
 {
-     if (GTK_WIDGET (w) == global.gui.fwebview)
-          statusbar_set_state (CREAM_STATUSBAR (global.gui.statusbar), state);
+     if (GTK_WIDGET (w) == cream_browser_get_focused_webview (app))
+          statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), state);
 }
 
 static gboolean webview_signal_download_cb (CreamModule *self, GtkWidget *webview, const gchar *file, WebView *w)

@@ -77,7 +77,7 @@ int luaL_error_handler (lua_State *L)
      lua_pushvalue (L, -1);
 
      err = g_error_new (CREAM_LUA_ERROR, CREAM_LUA_ERROR_FAILED, "%s", luaL_checkstring (L, 1));
-     print_error (err, FALSE, NULL);
+     CREAM_BROWSER_GET_CLASS (app)->error (app, FALSE, err);
 
      if (!luaL_dostring (L, "return debug.traceback (\"error while running function\", 3)"))
      {
@@ -105,38 +105,38 @@ gboolean lua_ctx_init (GError **err)
      const gchar * const *sysdatadirs = g_get_system_data_dirs ();
      const gchar *usrconfdir = g_get_user_config_dir ();
      const gchar *usrdatadir = g_get_user_data_dir ();
-     gchar *tmp;
+     gchar *tmp, *prgname = g_get_prgname ();
      int i;
 
-     global.luavm = luaL_newstate ();
+     lua_State *luavm = app->luavm = luaL_newstate ();
 
      /* open libraries */
-     luaL_openlibs (global.luavm);
+     luaL_openlibs (luavm);
 
-     luaL_clipboard_register (global.luavm);
-     lua_pop (global.luavm, 1);
+     luaL_clipboard_register (luavm);
+     lua_pop (luavm, 1);
 
-     luaL_util_register (global.luavm);
-     lua_pop (global.luavm, 1);
+     luaL_util_register (luavm);
+     lua_pop (luavm, 1);
 
-     luaL_bit_register (global.luavm);
-     lua_pop (global.luavm, 1);
+     luaL_bit_register (luavm);
+     lua_pop (luavm, 1);
 
-     luaL_webview_register (global.luavm);
-     lua_pop (global.luavm, 1);
+     luaL_webview_register (luavm);
+     lua_pop (luavm, 1);
 
-     luaL_notebook_register (global.luavm);
-     lua_pop (global.luavm, 1);
+     luaL_notebook_register (luavm);
+     lua_pop (luavm, 1);
 
-     luaL_widgets_register (global.luavm);
-     lua_pop (global.luavm, 1);
+     luaL_widgets_register (luavm);
+     lua_pop (luavm, 1);
 
-     luaL_keybinds_register (global.luavm);
-     lua_pop (global.luavm, 1);
+     luaL_keybinds_register (luavm);
+     lua_pop (luavm, 1);
 
      /* get package.path */
-     lua_getglobal (global.luavm, "package");
-     if (!lua_istable (global.luavm, 1))
+     lua_getglobal (luavm, "package");
+     if (!lua_istable (luavm, 1))
      {
           g_set_error (err,
                        CREAM_LUA_ERROR,
@@ -146,8 +146,8 @@ gboolean lua_ctx_init (GError **err)
           return FALSE;
      }
 
-     lua_getfield (global.luavm, 1, "path");
-     if (!lua_isstring (global.luavm, 2))
+     lua_getfield (luavm, 1, "path");
+     if (!lua_isstring (luavm, 2))
      {
           g_set_error (err,
                        CREAM_LUA_ERROR,
@@ -158,47 +158,47 @@ gboolean lua_ctx_init (GError **err)
      }
 
      /* add build directories */
-     tmp = g_strdup_printf (";%s", g_build_filename (DATADIR, global.prgname, "lib", "?.lua", NULL));
-     lua_pushlstring (global.luavm, tmp, strlen (tmp));
-     tmp = g_strdup_printf (";%s", g_build_filename (DATADIR, global.prgname, "lib", "?", "init.lua", NULL));
-     lua_pushlstring (global.luavm, tmp, strlen (tmp));
-     lua_concat (global.luavm, 3); /* concatenate with package.path */
+     tmp = g_strdup_printf (";%s", g_build_filename (DATADIR, prgname, "lib", "?.lua", NULL));
+     lua_pushlstring (luavm, tmp, strlen (tmp));
+     tmp = g_strdup_printf (";%s", g_build_filename (DATADIR, prgname, "lib", "?", "init.lua", NULL));
+     lua_pushlstring (luavm, tmp, strlen (tmp));
+     lua_concat (luavm, 3); /* concatenate with package.path */
 
      /* add user and system config dirs in path */
-     tmp = g_strdup_printf (";%s", g_build_filename (usrconfdir, global.prgname, "lib", "?.lua", NULL));
-     lua_pushlstring (global.luavm, tmp, strlen (tmp));
-     tmp = g_strdup_printf (";%s", g_build_filename (usrconfdir, global.prgname, "lib", "?", "init.lua", NULL));
-     lua_pushlstring (global.luavm, tmp, strlen (tmp));
-     lua_concat (global.luavm, 3); /* concatenate with package.path */
+     tmp = g_strdup_printf (";%s", g_build_filename (usrconfdir, prgname, "lib", "?.lua", NULL));
+     lua_pushlstring (luavm, tmp, strlen (tmp));
+     tmp = g_strdup_printf (";%s", g_build_filename (usrconfdir, prgname, "lib", "?", "init.lua", NULL));
+     lua_pushlstring (luavm, tmp, strlen (tmp));
+     lua_concat (luavm, 3); /* concatenate with package.path */
 
      for (i = 0; sysconfdirs[i] != NULL; ++i)
      {
-          tmp = g_strdup_printf (";%s", g_build_filename (sysconfdirs[i], global.prgname, "lib", "?.lua", NULL));
-          lua_pushlstring (global.luavm, tmp, strlen (tmp));
-          tmp = g_strdup_printf (";%s", g_build_filename (sysconfdirs[i], global.prgname, "lib", "?", "init.lua", NULL));
-          lua_pushlstring (global.luavm, tmp, strlen (tmp));
-          lua_concat (global.luavm, 3); /* concatenate with package.path */
+          tmp = g_strdup_printf (";%s", g_build_filename (sysconfdirs[i], prgname, "lib", "?.lua", NULL));
+          lua_pushlstring (luavm, tmp, strlen (tmp));
+          tmp = g_strdup_printf (";%s", g_build_filename (sysconfdirs[i], prgname, "lib", "?", "init.lua", NULL));
+          lua_pushlstring (luavm, tmp, strlen (tmp));
+          lua_concat (luavm, 3); /* concatenate with package.path */
      }
 
      /* add Lua lib path (located in user/system data dirs) */
-     tmp = g_strdup_printf (";%s", g_build_filename (usrdatadir, global.prgname, "lib", "?.lua", NULL));
-     lua_pushlstring (global.luavm, tmp, strlen (tmp));
-     tmp = g_strdup_printf (";%s", g_build_filename (usrdatadir, global.prgname, "lib", "?", "init.lua", NULL));
-     lua_pushlstring (global.luavm, tmp, strlen (tmp));
-     lua_concat (global.luavm, 3); /* concatenate with package.path */
+     tmp = g_strdup_printf (";%s", g_build_filename (usrdatadir, prgname, "lib", "?.lua", NULL));
+     lua_pushlstring (luavm, tmp, strlen (tmp));
+     tmp = g_strdup_printf (";%s", g_build_filename (usrdatadir, prgname, "lib", "?", "init.lua", NULL));
+     lua_pushlstring (luavm, tmp, strlen (tmp));
+     lua_concat (luavm, 3); /* concatenate with package.path */
 
      for (i = 0; sysdatadirs[i] != NULL; ++i)
      {
-          tmp = g_strdup_printf (";%s", g_build_filename (sysdatadirs[i], global.prgname, "lib", "?.lua", NULL));
-          lua_pushlstring (global.luavm, tmp, strlen (tmp));
-          tmp = g_strdup_printf (";%s", g_build_filename (sysdatadirs[i], global.prgname, "lib", "?", "init.lua", NULL));
-          lua_pushlstring (global.luavm, tmp, strlen (tmp));
-          lua_concat (global.luavm, 3); /* concatenate with package.path */
+          tmp = g_strdup_printf (";%s", g_build_filename (sysdatadirs[i], prgname, "lib", "?.lua", NULL));
+          lua_pushlstring (luavm, tmp, strlen (tmp));
+          tmp = g_strdup_printf (";%s", g_build_filename (sysdatadirs[i], prgname, "lib", "?", "init.lua", NULL));
+          lua_pushlstring (luavm, tmp, strlen (tmp));
+          lua_concat (luavm, 3); /* concatenate with package.path */
      }
 
-     lua_setfield (global.luavm, 1, "path"); /* package.path = "concatenated string" */
+     lua_setfield (luavm, 1, "path"); /* package.path = "concatenated string" */
 
-     lua_pop (global.luavm, 1);
+     lua_pop (luavm, 1);
 
      return TRUE;
 }
@@ -213,16 +213,17 @@ gboolean lua_ctx_init (GError **err)
  */
 gboolean lua_ctx_parse (const char *file, GError **err)
 {
+     lua_State *luavm = app->luavm;
      int s = 0;
 
      g_return_val_if_fail (file, FALSE);
 
-     s = luaL_loadfile (global.luavm, file);
+     s = luaL_loadfile (luavm, file);
      if (s == 0)
      {
-          lua_pushcfunction (global.luavm, luaL_error_handler);
-          lua_insert (global.luavm, -2);
-          s = lua_pcall (global.luavm, 0, LUA_MULTRET, -2);
+          lua_pushcfunction (luavm, luaL_error_handler);
+          lua_insert (luavm, -2);
+          s = lua_pcall (luavm, 0, LUA_MULTRET, -2);
      }
 
      if (s != 0)
@@ -230,23 +231,19 @@ gboolean lua_ctx_parse (const char *file, GError **err)
           g_set_error (err,
                        CREAM_LUA_ERROR,
                        CREAM_LUA_ERROR_PARSE,
-                       "%s", lua_tostring (global.luavm, -1)
+                       "%s", lua_tostring (luavm, -1)
           );
-          lua_pop (global.luavm, 1);
+          lua_pop (luavm, 1);
           return FALSE;
      }
 
      return TRUE;
 }
 
-/*!
- * \fn void lua_ctx_close (void)
- *
- * Close the lua VM state.
- */
+/*! Close the lua VM state */
 void lua_ctx_close (void)
 {
-     if (global.luavm) lua_close (global.luavm);
+     lua_close (app->luavm);
 }
 
 /* Used for __index and __newindex */

@@ -35,7 +35,7 @@ CREAM_DEFINE_MODULE (CreamModuleDummy, cream_module_dummy);
 
 static void cream_module_dummy_init (CreamModuleDummy *self)
 {
-     add_protocol ("dummy", G_OBJECT (self));
+     cream_browser_add_protocol (app, "dummy", G_OBJECT (self));
 }
 
 /* methods */
