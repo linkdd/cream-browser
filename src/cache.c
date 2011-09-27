@@ -23,28 +23,32 @@
 * OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef __CACHE_H
-#define __CACHE_H
+#include "local.h"
 
-typedef enum
+void cache_insert (Cache *cache, CacheType ctype, gchar *data)
 {
-     CACHE_FOLDER_FAVICONS,
-     CACHE_FOLDER_COOKIES,
-     CACHE_FOLDER_HISTORY,
-     CACHE_FOLDER_DOWNLOADS,
-     CACHE_FOLDER_SESSION,
-     CACHE_FOLDER_COMMANDS,
-     CACHE_FOLDER_NONE
-} CacheFolder;
+     GError *error = NULL;
 
-typedef struct
-{
-     GHashTable *datas;
-     gchar *path;
-} Cache;
+     g_mkdir_with_parents (cache->path, 0700);
 
-void cache_init (void);
-void cache_insert (CacheFolder folder, gpointer key, gpointer value);
-gpointer cache_lookup (CacheFolder folder, gpointer key);
+     switch (ctype)
+     {
+          case CACHE_TYPE_COMMANDS:
+          {
+               gchar *path = g_build_filename (cache->path, "commands", NULL);
+               GFile *f = g_file_new_for_path (path);
+               GFileOutputStream *cout = g_file_append_to (f, G_FILE_CREATE_PRIVATE, NULL, &error);
 
-#endif /* __CACHE_H */
+               if (!cout && error)
+               {
+                    print_error (error, FALSE, "cache.insert.commands");
+                    break;
+               }
+
+
+               g_object_unref (cout);
+               g_free (path);
+               break;
+          }
+     }
+}

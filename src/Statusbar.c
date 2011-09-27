@@ -74,7 +74,7 @@ static void statusbar_init (Statusbar *self)
      priv->llink     = gtk_label_new (NULL);
      priv->lhistory  = gtk_label_new (NULL);
      priv->lscroll   = gtk_label_new (NULL);
-     priv->lprogress = gtk_label_new (NULL);
+     priv->lprogress = gtk_progress_bar_new ();
 
      gtk_label_set_selectable (GTK_LABEL (priv->llink), TRUE);
 
@@ -211,32 +211,16 @@ void statusbar_set_scroll (Statusbar *obj, gdouble progress)
 void statusbar_set_progress (Statusbar *obj, gdouble progress)
 {
      StatusbarPrivate *priv;
-     gchar *txt = NULL;
 
      g_return_if_fail (CREAM_IS_STATUSBAR (obj));
      priv = CREAM_STATUSBAR_GET_PRIVATE (obj);
 
-     if (progress < 1) /* print a download bar */
-     {
-          GString *str = g_string_new ("[");
-          int i;
+     if (progress == 1)
+          gtk_widget_hide (priv->lprogress);
+     else
+          gtk_widget_show (priv->lprogress);
 
-          for (i = 0; i < (int) (progress * 100.0); i += 10)
-               str = g_string_append (str, "=");
-
-          if (i < 100)
-          {
-               str = g_string_append (str, ">");
-
-               for (; i < 100; i += 10)
-                    str = g_string_append (str, " ");
-          }
-          str = g_string_append (str, "]");
-          txt = g_string_free (str, FALSE);
-     }
-
-     gtk_label_set_text (GTK_LABEL (priv->lprogress), txt);
-     g_free (txt);
+     gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (priv->lprogress), progress);
 }
 
 /*! @} */
