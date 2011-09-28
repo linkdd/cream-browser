@@ -84,8 +84,6 @@ static void statusbar_init (Statusbar *self)
      gtk_box_pack_end (GTK_BOX (priv->hbox), priv->lscroll, FALSE, FALSE, 2);
      gtk_box_pack_end (GTK_BOX (priv->hbox), priv->lprogress, FALSE, FALSE, 2);
      gtk_container_add (GTK_CONTAINER (self), priv->hbox);
-
-     self->priv = priv;
 }
 
 /* methods */

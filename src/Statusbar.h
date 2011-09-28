@@ -68,8 +68,6 @@ typedef struct _StatusbarPrivate StatusbarPrivate;
 struct _Statusbar
 {
      GtkEventBox parent;
-
-     StatusbarPrivate *priv;
 };
 
 struct _StatusbarClass

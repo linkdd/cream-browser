@@ -303,11 +303,16 @@ static void cream_browser_startup (CreamBrowser *self)
      /* find lua config */
      if (!rc || !g_file_test (rc, G_FILE_TEST_EXISTS))
      {
-          if ((rc = find_file (FILE_TYPE_CONFIG, "rc.lua")) == NULL)
+          gchar *rclua = g_strdup_printf ("rc.%s.lua", self->profile);
+
+          if ((rc = find_file (FILE_TYPE_CONFIG, rclua)) == NULL
+              && (rc = find_file (FILE_TYPE_CONFIG, "rc.lua")) == NULL)
           {
                error = g_error_new (CREAM_BROWSER_ERROR, CREAM_BROWSER_ERROR_CONFIG, _("Configuration not found."));
                CREAM_BROWSER_GET_CLASS (self)->error (self, TRUE, error);
           }
+
+          g_free (rclua);
      }
 
      /* init and parse lua */
