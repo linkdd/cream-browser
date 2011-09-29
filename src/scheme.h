@@ -27,10 +27,7 @@
 #define __SCHEME_H
 
 /*!
- * \defgroup uri URI's Utilities
- * \ingroup cream-browser
- * All about URIs.
- *
+ * \addtogroup utils
  * @{
  */
 

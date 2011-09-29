@@ -51,7 +51,7 @@ typedef struct _CreamModuleDummyClass CreamModuleDummyClass;
 
 /*!
  * \class CreamModuleDummy
- * \implements CreamModuleIface
+ * \implements CreamModule
  * Manage protocol <code>dummy://</code>
  */
 struct _CreamModuleDummy

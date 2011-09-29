@@ -84,7 +84,11 @@
 #    include "modules/webkit.h"
 #endif
 
-
+/*!
+ * \defgroup utils Utils
+ * \ingroup cream-browser
+ * @{
+ */
 
 #define FILE_TYPE_CONFIG           (1 << 0)       /*!< Used to search a configuration file into standard directories. */
 #define FILE_TYPE_DATA             (1 << 1)       /*!< Used to search a ressource into standard directories. */

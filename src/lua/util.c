@@ -26,9 +26,9 @@
 #include "../local.h"
 
 /*!
- * \defgroup util API.util
+ * \defgroup lua-util Utils
  * \ingroup lua
- * Package 'util' of the API
+ * Package 'util' of the lua API
  * @{
  */
 
@@ -120,7 +120,7 @@ static const luaL_reg cream_util_functions[] =
 
 /*!
  * \defgroup regex Regular Expression
- * \ingroup util
+ * \ingroup lua-util
  * \class{GRegex} bindings for lua.
  * @{
  */

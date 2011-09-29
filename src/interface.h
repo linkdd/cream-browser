@@ -29,10 +29,6 @@
 /*!
  * \defgroup interface Graphical User Interface
  * GUI's functions.
- *
- * \todo LUA bindings
- * \todo LUA functions to connect signal to objects.
- *
  * @{
  */
 

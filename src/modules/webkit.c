@@ -40,6 +40,10 @@ static gboolean cream_module_webkit_signal_download_cb (WebKitWebView *webview, 
 
 CREAM_DEFINE_MODULE (CreamModuleWebKit, cream_module_webkit)
 
+/*!
+ * @param self The #CreamModuleWebKit structure.
+ * Initialize #CreamModuleWebKit.
+ */
 static void cream_module_webkit_init (CreamModuleWebKit *self)
 {
      self->wsession  = webkit_get_default_session ();
@@ -53,6 +57,8 @@ static void cream_module_webkit_init (CreamModuleWebKit *self)
      cream_browser_add_protocol (app, "about", G_OBJECT (self));
      cream_browser_add_protocol (app, "file",  G_OBJECT (self));
 }
+
+/*! @} */
 
 /* methods */
 
@@ -159,8 +165,23 @@ static void cream_module_webkit_useragent (CreamModule *self, const gchar *ua)
      g_object_set (G_OBJECT (mod->wsettings), "user-agent", ua, NULL);
 }
 
-/* signals */
+/*!
+ * \defgroup mod-webkit-signals Signals
+ * \ingroup mod-webkit
+ * \class{WebKitWebView} signal handlers.
+ *
+ * @{
+ */
 
+/*!
+ * @param webview A \class{WebKitWebView} object.
+ * @param pspec \class{GObject} parameter specification.
+ * @param self A #CreamModuleWebKit object.
+ *
+ * This function handles the signal "notify::uri" which is emitted when the webview
+ * loads a new URI.
+ * This handlers emit the signal \ref mod-uri-changed.
+ */
 static void cream_module_webkit_notify_uri_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self)
 {
      g_signal_emit (G_OBJECT (self),
@@ -169,6 +190,15 @@ static void cream_module_webkit_notify_uri_cb (WebKitWebView *webview, GParamSpe
      );
 }
 
+/*!
+ * @param webview A \class{WebKitWebView} object.
+ * @param pspec \class{GObject} parameter specification.
+ * @param self A #CreamModuleWebKit object.
+ *
+ * This function handles the signal "notify::title" which is emitted when the webview's
+ * page got a new title.
+ * This handlers emit the signal \ref mod-title-changed.
+ */
 static void cream_module_webkit_notify_title_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self)
 {
      g_signal_emit (G_OBJECT (self),
@@ -177,6 +207,15 @@ static void cream_module_webkit_notify_title_cb (WebKitWebView *webview, GParamS
      );
 }
 
+/*!
+ * @param webview A \class{WebKitWebView} object.
+ * @param pspec \class{GObject} parameter specification.
+ * @param self A #CreamModuleWebKit object.
+ *
+ * This function handles the signal "notify::icon-uri" which is emitted when the favicon
+ * of the webview's page is loaded.
+ * This handlers emit the signal \ref mod-favicon-changed.
+ */
 static void cream_module_webkit_notify_favicon_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self)
 {
      /* check favicon */
@@ -186,10 +225,17 @@ static void cream_module_webkit_notify_favicon_cb (WebKitWebView *webview, GPara
                     cream_module_webkit_signals[SIGNAL_FAVICON_CHANGED],
                     0, webview, favicon
      );
-
-     /* TODO: put favicon in cache */
 }
 
+/*!
+ * @param webview A \class{WebKitWebView} object.
+ * @param pspec \class{GObject} parameter specification.
+ * @param self A #CreamModuleWebKit object.
+ *
+ * This function handles the signal "notify::progress" which is emitted when the webview
+ * is loading.
+ * This handlers emit the signal \ref mod-progress-changed.
+ */
 static void cream_module_webkit_notify_progress_cb (WebKitWebView *webview, GParamSpec *pspec, CreamModuleWebKit *self)
 {
      gdouble progress = 0.0;
@@ -202,6 +248,18 @@ static void cream_module_webkit_notify_progress_cb (WebKitWebView *webview, GPar
      );
 }
 
+/*!
+ * @param webview A \class{WebKitWebView} object.
+ * @param event The mouse event.
+ * @param self A #CreamModuleWebKit object.
+ * @return \c TRUE if the signal was handled (will stop all other handlers).
+ *
+ * This function handles the signal "button-press-event" which is emitted when
+ * the user click on the webview.
+ * If the click happened on an editable content, this handlers will set the
+ * browser's state to #CREAM_MODE_INSERT, otherwise, it will set it to #CREAM_MODE_NORMAL.
+ * This handler emit the signal \ref mod-state-changed.
+ */
 static gboolean cream_module_webkit_button_press_event_cb (WebKitWebView *webview, GdkEventButton *event, CreamModuleWebKit *self)
 {
      WebKitHitTestResult *result = webkit_web_view_get_hit_test_result (webview, event);
@@ -217,6 +275,16 @@ static gboolean cream_module_webkit_button_press_event_cb (WebKitWebView *webvie
      return FALSE;
 }
 
+/*!
+ * @param webview A \class{WebKitWebView} object.
+ * @param download A \class{WebKitDownload} object.
+ * @param self A #CreamModuleWebKit object.
+ * @return \c TRUE if the signal was handled (will stop all other handlers).
+ *
+ * This function handles the signal "download-requested" which is emitted when the
+ * webview requests a download.
+ * This handlers emit the signal \ref mod-download.
+ */
 static gboolean cream_module_webkit_signal_download_cb (WebKitWebView *webview, WebKitDownload *download, CreamModuleWebKit *self)
 {
      gboolean ret = FALSE;

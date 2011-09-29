@@ -55,7 +55,7 @@ typedef struct _CreamModuleWebKitClass CreamModuleWebKitClass;
 
 /*!
  * \class CreamModuleWebKit
- * \implements CreamModuleIface
+ * \implements CreamModule
  * Manage protocol <code>httpt://</code> and <code>https://</code>.
  */
 struct _CreamModuleWebKit

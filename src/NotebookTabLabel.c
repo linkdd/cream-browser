@@ -32,11 +32,21 @@
 
 G_DEFINE_TYPE (NotebookTabLabel, notebook_tab_label, GTK_TYPE_HBOX);
 
+/*!
+ * @param klass The #NotebookTabLabel class structure.
+ *
+ * Initialize #NotebookTabLabel class.
+ */
 static void notebook_tab_label_class_init (NotebookTabLabelClass *klass)
 {
      return;
 }
 
+/*!
+ * @param self The #NotebookTabLabel instance.
+ *
+ * initialize #NotebookTabLabel instance.
+ */
 static void notebook_tab_label_init (NotebookTabLabel *self)
 {
      gtk_box_set_homogeneous (GTK_BOX (self), FALSE);
@@ -49,11 +59,16 @@ static void notebook_tab_label_init (NotebookTabLabel *self)
      gtk_box_pack_start (GTK_BOX (self), self->lbl, TRUE, TRUE, 5);
 }
 
-/* methods */
+/*! @} */
+
+/*!
+ * \defgroup notebook-tab-label-members Members
+ * \ingroup notebook-tab-label
+ * @{
+ */
 
 /*!
  * \public \memberof NotebookTabLabel
- * \fn void notebook_tab_label_set_pixbuf (NotebookTabLabel *obj, GdkPixbuf *pixbuf)
  * @param obj A #NotebookTabLabel object.
  * @param pixbuf New pixbuf to set as favicon.
  *
@@ -67,7 +82,6 @@ void notebook_tab_label_set_pixbuf (NotebookTabLabel *obj, GdkPixbuf *pixbuf)
 
 /*!
  * \public \memberof NotebookTabLabel
- * \fn void notebook_tab_label_set_text (NotebookTabLabel *obj, const char *text)
  * @param obj A #NotebookTabLabel object.
  * @param text Text to set in #NotebookTabLabel.
  *

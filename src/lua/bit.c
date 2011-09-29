@@ -26,9 +26,10 @@
 #include "../local.h"
 
 /*!
-* \defgroup bit Bitwise operators
+* \defgroup bit Bitwise API
 * \ingroup lua
-* Package 'bit' of the API
+* Bitwise operators.
+* Package 'bit' of the lua API
 * @{
 */
 

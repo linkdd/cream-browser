@@ -25,12 +25,20 @@
 
 #include "local.h"
 
+/*!
+ * \addtogroup socket
+ * @{
+ */
+
 static gboolean control_client_socket (GIOChannel *channel);
 static gboolean control_socket (GIOChannel *channel, GIOCondition cond, Socket *s);
 
 G_DEFINE_TYPE (Socket, socket, G_TYPE_SOCKET)
 
-/* constructors */
+/*!
+ * @param err Pointer to a \class{GError} to retrieve eventual error.
+ * @return A new #Socket object.
+ */
 Socket *socket_new (GError **err)
 {
      Socket *ret = g_initable_new (CREAM_TYPE_SOCKET,
@@ -57,19 +65,42 @@ Socket *socket_new (GError **err)
      return ret;
 }
 
+/*!
+ * @param klass The #Socket class structure.
+ * Initialize #Socket class.
+ */
 static void socket_class_init (SocketClass *klass)
 {
      return;
 }
 
+/*!
+ * @param self The #Socket instance structure.
+ * Initialize #Socket instance.
+ */
 static void socket_init (Socket *self)
 {
      self->path  = g_strdup_printf ("%s%s%s_%d.socket", g_get_tmp_dir (), G_DIR_SEPARATOR_S, PACKAGE, getpid ());
      self->addr  = g_unix_socket_address_new (self->path);
 }
 
-/* callbacks */
+/*! @} */
 
+/*!
+ * \defgroup socket-cb Callbacks
+ * \ingroup socket
+ * @{
+ */
+
+/*!
+ * @param channel The client \class{GIOChannel}
+ * @return \c TRUE to continue reading on the client socket, \c FALSE to stop any action on it.
+ *
+ * Control the client socket :
+ * - Read command
+ * - Execute command's callback (see \ref run_command).
+ * - Send result
+ */
 static gboolean control_client_socket (GIOChannel *channel)
 {
      GString *result = g_string_new ("\n");
@@ -118,6 +149,16 @@ static gboolean control_client_socket (GIOChannel *channel)
      return TRUE;
 }
 
+/*!
+ * @param channel Server \class{GIOChannel}.
+ * @param cond Unused.
+ * @param s A #Socket object.
+ * @return \c TRUE to continue listening, \c FALSE otherwise.
+ *
+ * Listening on the socket and accept incomming connection.
+ *
+ * \see \ref control_client_socket
+ */
 static gboolean control_socket (GIOChannel *channel, GIOCondition cond, Socket *s)
 {
      GError *err = NULL;
@@ -137,17 +178,34 @@ static gboolean control_socket (GIOChannel *channel, GIOCondition cond, Socket *
      return TRUE;
 }
 
-/* methods */
+/*! @} */
 
+/*!
+ * \defgroup socket-members Members
+ * \ingroup socket
+ * @{
+ */
+
+/*!
+ * \public \memberof Socket
+ * @param obj A #Socket object.
+ * @return The socket's path.
+ */
 const gchar *socket_get_path (Socket *obj)
 {
      g_return_val_if_fail (CREAM_IS_SOCKET (obj), NULL);
      return obj->path;
 }
 
+/*!
+ * \public \memberof Socket
+ * @param obj A #Socket object.
+ * @return The UNIX socket address.
+ */
 GSocketAddress *socket_get_addr (Socket *obj)
 {
      g_return_val_if_fail (CREAM_IS_SOCKET (obj), NULL);
      return obj->addr;
 }
 
+/*! @} */

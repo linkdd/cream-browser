@@ -57,6 +57,11 @@ static GQuark cream_browser_error_quark (void)
 
 G_DEFINE_TYPE (CreamBrowser, cream_browser, GTK_TYPE_APPLICATION)
 
+/*!
+ * @return A new #CreamBrowser application.
+ *
+ * Create Cream-Browser application.
+ */
 CreamBrowser *cream_browser_new (void)
 {
      gchar *appid = g_strdup_printf ("org.gtk.CreamBrowser.pid%d", getpid ());
@@ -68,6 +73,11 @@ CreamBrowser *cream_browser_new (void)
                           NULL);
 }
 
+/*!
+ * @param klass #CreamBrowser class structure.
+ *
+ * Initialize #CreamBrowser's class.
+ */
 static void cream_browser_class_init (CreamBrowserClass *klass)
 {
      G_OBJECT_CLASS (klass)->dispose = cream_browser_dispose;
@@ -75,9 +85,15 @@ static void cream_browser_class_init (CreamBrowserClass *klass)
      G_APPLICATION_CLASS (klass)->activate     = cream_browser_activate;
      G_APPLICATION_CLASS (klass)->command_line = cream_browser_command_line;
 
-     klass->error = cream_browser_error_handler;
+     klass->error   = cream_browser_error_handler;
+     klass->startup = cream_browser_startup;
 }
 
+/*!
+ * @param self #CreamBrowser object structure.
+ *
+ * Initialize #CreamBrowser's instance.
+ */
 static void cream_browser_init (CreamBrowser *self)
 {
      self->url       = NULL;
@@ -93,9 +109,24 @@ static void cream_browser_init (CreamBrowser *self)
      self->checkconf = FALSE;
 }
 
-/* Callbacks */
+/*! @} */
 
-/*! Error handler */
+/*!
+ * \defgroup cb-vfuncs Virtual Member Functions
+ * \ingroup cream-browser
+ * Virtual Member Functions definition.
+ *
+ * @{
+ */
+
+/*!
+ * \public \memberof CreamBrowser
+ * @param self #CreamBrowser application.
+ * @param abort Abort the program if \c TRUE.
+ * @param error \class{GError} to show/log.
+ *
+ * Error handler.
+ */
 static void cream_browser_error_handler (CreamBrowser *self, gboolean abort, GError *error)
 {
      gchar *str;
@@ -113,6 +144,12 @@ static void cream_browser_error_handler (CreamBrowser *self, gboolean abort, GEr
           cream_browser_exit (self, EXIT_FAILURE);
 }
 
+/*!
+ * \public \memberof CreamBrowser
+ * @param obj #CreamBrowser instance.
+ *
+ * Free memory used by the #CreamBrowser instance.
+ */
 static void cream_browser_dispose (GObject *obj)
 {
      CreamBrowser *self = CREAM_BROWSER (obj);
@@ -140,7 +177,12 @@ static void cream_browser_dispose (GObject *obj)
      G_OBJECT_CLASS (cream_browser_parent_class)->dispose (obj);
 }
 
-/*! Run the browser */
+/*!
+ * \public \memberof CreamBrowser
+ * @param gapp #CreamBrowser instance.
+ *
+ * Launch browser. This function is called when <code>g_application_activate()</code> is executed.
+ */
 static void cream_browser_activate (GApplication *gapp)
 {
      CreamBrowser *self = CREAM_BROWSER (gapp);
@@ -153,7 +195,7 @@ static void cream_browser_activate (GApplication *gapp)
           self->profile = g_strdup ("default");
 
      /* initialize */
-     cream_browser_startup (self);
+     CREAM_BROWSER_GET_CLASS (self)->startup (self);
 
      if (self->url)
      {
@@ -168,7 +210,14 @@ static void cream_browser_activate (GApplication *gapp)
      gtk_main ();
 }
 
-/*! Parse command line */
+/*!
+ * \public \memberof CreamBrowser
+ * @param gapp #CreamBrowser instance.
+ * @param cmdline Command line application.
+ * @return Exit code.
+ *
+ * Manage/parse command line part of Cream-Browser.
+ */
 static gint cream_browser_command_line (GApplication *gapp, GApplicationCommandLine *cmdline)
 {
      CreamBrowser *self = CREAM_BROWSER (gapp);
@@ -270,7 +319,12 @@ static gint cream_browser_command_line (GApplication *gapp, GApplicationCommandL
      return EXIT_SUCCESS;
 }
 
-/*! Initialize the browser */
+/*!
+ * \public \memberof CreamBrowser
+ * @param self #CreamBrowser instance.
+ *
+ * Initialize browser.
+ */
 static void cream_browser_startup (CreamBrowser *self)
 {
      GError *error = NULL;
@@ -325,7 +379,23 @@ static void cream_browser_startup (CreamBrowser *self)
      ui_show ();
 }
 
-/*! Send command on the socket */
+/*! @} */
+
+/*!
+ * \defgroup cb-members Members
+ * \ingroup cream-browser
+ * Members functions/accessors
+ *
+ * @{
+ */
+
+/*!
+ * \public \memberof CreamBrowser
+ * @param self #CreamBrowser instance.
+ * @return Exit code.
+ *
+ * Socket control program.
+ */
 static gint cream_browser_ctl (CreamBrowser *self)
 {
      GError *error = NULL;
@@ -373,25 +443,37 @@ static gint cream_browser_ctl (CreamBrowser *self)
      }
 }
 
-/* Accessors */
-
-/*! @return The current focused webview */
+/*!
+ * \public \memberof CreamBrowser
+ * @param self #CreamBrowser instance.
+ * @return A #WebView.
+ *
+ * Get the current focused webview.
+ */
 GtkWidget *cream_browser_get_focused_webview (CreamBrowser *self)
 {
      return self->gui.fwebview;
 }
 
-/*! @param webview The current focused webview */
+/*!
+ * \public \memberof CreamBrowser
+ * @param self #CreamBrowser instance.
+ * @param webview A #WebView.
+ *
+ * Set the current focused webview.
+ */
 void cream_browser_set_focused_webview (CreamBrowser *self, GtkWidget *webview)
 {
      self->gui.fwebview = webview;
 }
 
-/* Methods */
-
 /*!
- * @param scheme The protocol to manage
+ * \public \memberof CreamBrowser
+ * @param self #CreamBrowser instance.
+ * @param scheme The protocol's scheme (ie. <code>http</code>).
  * @param mod A #CreamModule object.
+ *
+ * Add a #CreamModule, associated to a protocol, to the protocols list.
  */
 void cream_browser_add_protocol (CreamBrowser *self, const gchar *scheme, GObject *mod)
 {
@@ -399,7 +481,11 @@ void cream_browser_add_protocol (CreamBrowser *self, const gchar *scheme, GObjec
 }
 
 /*!
+ * \public \memberof CreamBrowser
+ * @param self #CreamBrowser instance.
  * @param mod The #CreamModule object to delete.
+ *
+ * Delete a protocol from the list.
  */
 void cream_browser_del_protocol (CreamBrowser *self, GObject *mod)
 {
@@ -407,14 +493,25 @@ void cream_browser_del_protocol (CreamBrowser *self, GObject *mod)
 }
 
 /*!
- * @param scheme The protocol
- * @return The #CreamModule object associated to the protocol
+ * \public \memberof CreamBrowser
+ * @param self #CreamBrowser instance.
+ * @param scheme The protocol.
+ * @return A #CreamModule object.
+ *
+ * Get the module associated to the protocol.
  */
 GObject *cream_browser_get_protocol (CreamBrowser *self, const gchar *scheme)
 {
      return (GObject *) g_hash_table_lookup (self->protocols, scheme);
 }
 
+/*!
+ * \public \memberof CreamBrowser
+ * @param self #CreamBrowser instance.
+ * @param exit_code Exit code.
+ *
+ * Exit Cream-Browser.
+ */
 void cream_browser_exit (CreamBrowser *self, int exit_code)
 {
      g_application_command_line_set_exit_status (self->gappcmdline, EXIT_FAILURE);

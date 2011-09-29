@@ -32,11 +32,19 @@
 
 G_DEFINE_TYPE (Theme, theme, G_TYPE_OBJECT)
 
+/*!
+ * @param klass The #Theme class structure.
+ * Initialize #Theme class.
+ */
 static void theme_class_init (ThemeClass *klass)
 {
      return;
 }
 
+/*!
+ * @param self The #Theme instance structure.
+ * Initialize #Theme instance.
+ */
 static void theme_init (Theme *self)
 {
      GdkDisplay *dpy   = gdk_display_get_default ();

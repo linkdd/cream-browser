@@ -36,10 +36,6 @@ extern int luaL_keybinds_register (lua_State *L);
 
 /*!
  * \addtogroup lua
- *
- * \todo Implements all C API.
- * \todo Finish the Lua library using the C API.
- *
  * @{
  */
 
@@ -63,7 +59,6 @@ static GQuark cream_lua_error_quark (void)
 }
 
 /*!
- * \fn int luaL_error_handler (lua_State *L)
  * @param L The lua VM state.
  * @return Number of return value in lua.
  *
@@ -93,9 +88,8 @@ int luaL_error_handler (lua_State *L)
 }
 
 /*!
- * \fn gboolean lua_ctx_init (GError **err)
  * @param err \class{GError} pointer in order to follow possible errors.
- * @return <code>TRUE</code> on success, <code>FALSE</code> otherwise.
+ * @return \c TRUE on success, \c FALSE otherwise.
  *
  * Initialize the lua VM state.
  */
@@ -204,10 +198,9 @@ gboolean lua_ctx_init (GError **err)
 }
 
 /*!
- * \fn gboolean lua_ctx_parse (const char *file, GError **err)
  * @param file Path of the file to parse.
  * @param err \class{GError} pointer in order to follow possible errors.
- * @return <code>TRUE</code> on success, <code>FALSE</code> otherwise.
+ * @return \c TRUE on success, \c FALSE otherwise.
  *
  * Parse a lua file.
  */
@@ -249,7 +242,6 @@ void lua_ctx_close (void)
 /* Used for __index and __newindex */
 
 /*!
- * \fn void luaI_add (lua_State *L, const luaI_reg *l)
  * @param L The lua VM state.
  * @param l Table of functions to add.
  *
@@ -265,6 +257,10 @@ void luaI_add (lua_State *L, const luaI_reg *l)
      }
 }
 
+/*!
+ * @param L The lua VM state.
+ * @return Number of return value in lua.
+ */
 static int luaI_call (lua_State *L)
 {
      /* for get: stack has userdara, index, lightuserdata
@@ -277,7 +273,6 @@ static int luaI_call (lua_State *L)
 }
 
 /*!
- * \fn int luaI_index (lua_State *L)
  * @param L The lua VM state.
  * @return Number of return value in lua.
  *
@@ -302,7 +297,6 @@ int luaI_index (lua_State *L)
 }
 
 /*!
- * \fn int luaI_newindex (lua_State *L)
  * @param L The lua VM state.
  * @return Number of return value in lua.
  *
@@ -319,7 +313,6 @@ int luaI_newindex (lua_State *L)
 }
 
 /*!
- * \fn int luaI_getint (lua_State *L, gpointer v)
  * @param L The lua VM state.
  * @param v C data.
  * @return Number of return value in lua.
@@ -333,7 +326,6 @@ int luaI_getint (lua_State *L, gpointer v)
 }
 
 /*!
- * \fn int luaI_getbool (lua_State *L, gpointer v)
  * @param L The lua VM state.
  * @param v C data.
  * @return Number of return value in lua.
@@ -347,7 +339,6 @@ int luaI_getbool (lua_State *L, gpointer v)
 }
 
 /*!
- * \fn int luaI_getstring (lua_State *L, gpointer v)
  * @param L The lua VM state.
  * @param v C data.
  * @return Number of return value in lua.
@@ -361,7 +352,6 @@ int luaI_getstring (lua_State *L, gpointer v)
 }
 
 /*!
- * \fn int luaI_setint (lua_State *L, gpointer v)
  * @param L The lua VM state.
  * @param v C data.
  * @return Number of return value in lua.
@@ -375,7 +365,6 @@ int luaI_setint (lua_State *L, gpointer v)
 }
 
 /*!
- * \fn int luaI_setbool (lua_State *L, gpointer v)
  * @param L The lua VM state.
  * @param v C data.
  * @return Number of return value in lua.
@@ -389,7 +378,6 @@ int luaI_setbool (lua_State *L, gpointer v)
 }
 
 /*!
- * \fn int luaI_setstring (lua_State *L, gpointer v)
  * @param L The lua VM state.
  * @param v C data.
  * @return Number of return value in lua.

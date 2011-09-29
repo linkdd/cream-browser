@@ -27,7 +27,7 @@
 
 /*!
  * \defgroup clipboard Clipboard
- * \ingroup util
+ * \ingroup lua-util
  * \class{GtkClipboard} bindings for lua.
  * @{
  */

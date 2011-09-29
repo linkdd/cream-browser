@@ -31,7 +31,10 @@
  * @{
  */
 
-/* define interface */
+/*!
+ * @param g_class \class{GObject} class.
+ * Initialize interface.
+ */
 static void cream_module_base_init (gpointer g_class)
 {
      static gboolean is_initialized = FALSE;
@@ -47,6 +50,7 @@ static void cream_module_base_init (gpointer g_class)
      }
 }
 
+/*! @return The interface's \class{GType} */
 GType cream_module_get_type (void)
 {
      static GType iface_type = 0;
@@ -66,10 +70,7 @@ GType cream_module_get_type (void)
      return iface_type;
 }
 
-/*!
- * \fn void modules_init (void)
- * Initialize modules.
- */
+/*! Initialize modules. */
 void modules_init (void)
 {
      GObject *mod = NULL;
@@ -82,9 +83,16 @@ void modules_init (void)
 #endif
 }
 
+/*! @} */
+
+/*!
+ * \defgroup mod-members Members
+ * \ingroup modules
+ * @{
+ */
+
 /*!
  * \public \memberof CreamModule
- * \fn GtkWidget *cream_module_webview_new (CreamModule *self)
  * @param self The module to use.
  * @return A new widget to be used in #WebView.
  */
@@ -99,7 +107,6 @@ GtkWidget *cream_module_webview_new (CreamModule *self)
 
 /*!
  * \public \memberof CreamModule
- * \fn void cream_module_load_uri (CreamModule *self, GtkWidget *webview, UriScheme *uri)
  * @param self The module to use.
  * @param webview A webview.
  * @param uri URI to load, see #UriScheme.
@@ -115,7 +122,6 @@ void cream_module_load_uri (CreamModule *self, GtkWidget *webview, UriScheme *ur
 
 /*!
  * \public \memberof CreamModule
- * \fn void cream_module_reload (CreamModule *self, GtkWidget *webview)
  * @param self The module to use.
  * @param webview A webview.
  */
@@ -130,7 +136,6 @@ void cream_module_reload (CreamModule *self, GtkWidget *webview)
 
 /*!
  * \public \memberof CreamModule
- * \fn gboolean cream_module_can_go_back (CreamModule *self, GtkWidget *webview)
  * @param self The module to use.
  * @param webview A webview.
  */
@@ -145,7 +150,6 @@ gboolean cream_module_can_go_back (CreamModule *self, GtkWidget *webview)
 
 /*!
  * \public \memberof CreamModule
- * \fn void cream_module_backward (CreamModule *self, GtkWidget *webview)
  * @param self The module to use.
  * @param webview A webview.
  */
@@ -160,7 +164,6 @@ void cream_module_backward (CreamModule *self, GtkWidget *webview)
 
 /*!
  * \public \memberof CreamModule
- * \fn gboolean cream_module_can_go_forward (CreamModule *self, GtkWidget *webview)
  * @param self The module to use.
  * @param webview A webview.
  */
@@ -175,7 +178,6 @@ gboolean cream_module_can_go_forward (CreamModule *self, GtkWidget *webview)
 
 /*!
  * \public \memberof CreamModule
- * \fn void cream_module_forward (CreamModule *self, GtkWidget *webview)
  * @param self The module to use.
  * @param webview A webview.
  */
@@ -190,12 +192,11 @@ void cream_module_forward (CreamModule *self, GtkWidget *webview)
 
 /*!
  * \public \memberof CreamModule
- * \fn void cream_module_search (CreamModule *self, GtkWidget *webview, const gchar *text, gboolean forward)
  * @param self The module to use.
  * @param webview A webview.
  * @param text Text to look for.
  * @param forward Search forward or backward.
- * @return <code>TRUE</code> on success, <code>FALSE</code> otherwise.
+ * @return \c TRUE on success, \c FALSE otherwise.
  *
  * Looks for a specified string inside webview.
  */
@@ -210,7 +211,6 @@ gboolean cream_module_search (CreamModule *self, GtkWidget *webview, const gchar
 
 /*!
  * \public \memberof CreamModule
- * \fn void cream_module_proxy (CreamModule *self, const gchar *uri)
  * @param self The module to use.
  * @param uri Proxy URL.
  *
@@ -227,7 +227,6 @@ void cream_module_proxy (CreamModule *self, const gchar *uri)
 
 /*!
  * \public \memberof CreamModule
- * \fn void cream_module_useragent (CreamModule *self, const gchar *ua)
  * @param self The module to use.
  * @param ua Useragent.
  *

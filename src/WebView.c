@@ -30,7 +30,16 @@
  * @{
  */
 
-static void webview_destroy (GObject *obj);
+static void webview_destroy (GtkWidget *obj);
+
+static void webview_signal_grab_focus_cb (GtkWidget *child, WebView *w);
+static void webview_signal_uri_changed_cb (CreamModule *self, GtkWidget *webview, const gchar *uri, WebView *w);
+static void webview_signal_title_changed_cb (CreamModule *self, GtkWidget *webview, const gchar *title, WebView *w);
+static void webview_signal_favicon_changed_cb (CreamModule *self, GtkWidget *webview, GdkPixbuf *pixbuf, WebView *w);
+static void webview_signal_progress_changed_cb (CreamModule *self, GtkWidget *webview, gdouble progress, WebView *w);
+static void webview_signal_state_changed_cb (CreamModule *self, GtkWidget *webview, CreamMode state, WebView *w);
+static gboolean webview_signal_download_cb (CreamModule *self, GtkWidget *webview, const gchar *file, WebView *w);
+
 static void webview_connect_signals (WebView *w);
 
 /* signals */
@@ -53,11 +62,7 @@ static guint webview_signals[WEBVIEW_NB_SIGNALS] = { 0 };
 
 G_DEFINE_TYPE (WebView, webview, GTK_TYPE_SCROLLED_WINDOW)
 
-/* Constructors */
-
 /*!
- * \public \memberof WebView
- * \fn GtkWidget *webview_new (GObject *mod)
  * @param mod A #CreamModule object.
  * @return A #WebView object.
  *
@@ -79,12 +84,15 @@ GtkWidget *webview_new (GObject *mod)
      return GTK_WIDGET (w);
 }
 
+/*!
+ * @param klass The #WebView class structure.
+ * Initialize #WebView class.
+ */
 static void webview_class_init (WebViewClass *klass)
 {
-     typedef void (*DestroyCallback) (GtkWidget *);
      GtkWidgetClass *object_class = (GtkWidgetClass *) klass;
 
-     object_class->destroy = (DestroyCallback) webview_destroy;
+     object_class->destroy = webview_destroy;
 
      /* signals */
      webview_signals[WEBVIEW_URI_CHANGED_SIGNAL] = g_signal_new (
@@ -158,6 +166,10 @@ static void webview_class_init (WebViewClass *klass)
                1, G_TYPE_OBJECT);
 }
 
+/*!
+ * @param obj The #WebView instance structure.
+ * Initialize #WebView instance.
+ */
 static void webview_init (WebView *obj)
 {
      obj->mod   = NULL;
@@ -170,9 +182,11 @@ static void webview_init (WebView *obj)
      obj->load_status = 0;
 }
 
-/* Destructor */
-
-static void webview_destroy (GObject *obj)
+/*!
+ * @param obj A #WebView object.
+ * Destroy the #WebView widget.
+ */
+static void webview_destroy (GtkWidget *obj)
 {
      WebView *w = CREAM_WEBVIEW (obj);
 
@@ -184,12 +198,16 @@ static void webview_destroy (GObject *obj)
      if (w->status) g_free (w->status);
 }
 
+/*! @} */
 
-/* Methods */
+/*!
+ * \defgroup webview-members Members
+ * \ingroup webview
+ * @{
+ */
 
 /*!
  * \public \memberof WebView
- * \fn GObject *webview_get_module (WebView *w)
  * @param w A #WebView object.
  * @return A #CreamModule object.
  *
@@ -203,11 +221,12 @@ GObject *webview_get_module (WebView *w)
 
 /*!
  * \public \memberof WebView
- * \fn void webview_set_module (WebView *w, GObject *mod)
  * @param w A #WebView object.
  * @param mod A #CreamModule object.
  *
  * Associate a new #CreamModule to the #WebView.
+ *
+ * \see \ref w-module-changed
  */
 void webview_set_module (WebView *w, GObject *mod)
 {
@@ -225,7 +244,6 @@ void webview_set_module (WebView *w, GObject *mod)
 
 /*!
  * \public \memberof WebView
- * \fn GtkWidget *webview_get_child (WebView *w)
  * @param w A #WebView object.
  * @return A \class{GtkWidget} object.
  *
@@ -239,9 +257,8 @@ GtkWidget *webview_get_child (WebView *w)
 
 /*!
  * \public \memberof WebView
- * \fn gboolean webview_has_focus (WebView *w)
  * @param w A #WebView object.
- * @return <code>TRUE</code> if the #WebView is focused, <code>FALSE</code> otherwise.
+ * @return \c TRUE if the #WebView is focused, \c FALSE otherwise.
  *
  * Check if the #WebView is focused.
  */
@@ -253,10 +270,11 @@ gboolean webview_has_focus (WebView *w)
 
 /*!
  * \public \memberof WebView
- * \fn void webview_raise (WebView *w)
  * @param w A #WebView object.
  *
  * Give focus to the #WebView.
+ *
+ * \see \ref w-raise
  */
 void webview_raise (WebView *w)
 {
@@ -267,7 +285,6 @@ void webview_raise (WebView *w)
 
 /*!
  * \public \memberof WebView
- * \fn void webview_load_uri (WebView *w, const gchar *uri)
  * @param w A #WebView object.
  * @param uri The URI to load.
  *
@@ -295,7 +312,6 @@ void webview_load_uri (WebView *w, const gchar *uri)
 
 /*!
  * \public \memberof WebView
- * \fn const gchar *webview_get_uri (WebView *w)
  * @param w A #WebView object.
  * @return Loaded URI.
  *
@@ -309,7 +325,6 @@ const gchar *webview_get_uri (WebView *w)
 
 /*!
  * \public \memberof WebView
- * \fn const gchar *webview_get_title (WebView *w)
  * @param w A #WebView object.
  * @return Title of the loaded page.
  *
@@ -323,7 +338,6 @@ const gchar *webview_get_title (WebView *w)
 
 /*!
  * \public \memberof WebView
- * \fn const gchar *webview_get_status (WebView *w)
  * @param w A #WebView object.
  * @return The current status.
  *
@@ -335,13 +349,59 @@ const gchar *webview_get_status (WebView *w)
      return w->status;
 }
 
-/* signals */
+/*!
+ * \private \memberof WebView
+ * @param w A #WebView object
+ *
+ * Connect callbacks handlers to #CreamModule's signals and child widget's signals.
+ */
+static void webview_connect_signals (WebView *w)
+{
+     g_return_if_fail (CREAM_IS_WEBVIEW (w));
 
+     g_signal_connect (G_OBJECT (w->child), "grab-focus",        G_CALLBACK (webview_signal_grab_focus_cb),        w);
+     g_signal_connect (G_OBJECT (w->mod),   "uri-changed",       G_CALLBACK (webview_signal_uri_changed_cb),       w);
+     g_signal_connect (G_OBJECT (w->mod),   "title-changed",     G_CALLBACK (webview_signal_title_changed_cb),     w);
+     g_signal_connect (G_OBJECT (w->mod),   "favicon-changed",   G_CALLBACK (webview_signal_favicon_changed_cb),   w);
+     g_signal_connect (G_OBJECT (w->mod),   "progress-changed",  G_CALLBACK (webview_signal_progress_changed_cb),  w);
+     g_signal_connect (G_OBJECT (w->mod),   "state-changed",     G_CALLBACK (webview_signal_state_changed_cb),     w);
+     g_signal_connect (G_OBJECT (w->mod),   "download",          G_CALLBACK (webview_signal_download_cb),          w);
+}
+
+/*! @} */
+
+/*!
+ * \defgroup webview-cb Callbacks
+ * \ingroup webview
+ * #WebView's child signal handlers.
+ * @{
+ */
+
+/*!
+ * @param child The child widget (owned by the #CreamModule).
+ * @param w A #WebView object.
+ *
+ * This function handles the signal <code>"grab-focus"</code> which is emitted
+ * when the child widget requests the focus.
+ * This handler requestsa the focus on the #WebView.
+ *
+ * \see \ref focus-changed
+ */
 static void webview_signal_grab_focus_cb (GtkWidget *child, WebView *w)
 {
      g_signal_emit_by_name (G_OBJECT (w), "grab-focus");
 }
 
+/*!
+ * @param self A #CreamModule object.
+ * @param webview The child widget of a #WebView.
+ * @param uri The new URI loaded.
+ * @param w A #WebView object.
+ *
+ * This function handles the signal <code>"uri-changed"</code> which is emitted
+ * when the child widget of a #WebView request the loading of a new URI.
+ * This handler is able to modify the #Statusbar and emit the signal \ref w-uri-changed.
+ */
 static void webview_signal_uri_changed_cb (CreamModule *self, GtkWidget *webview, const gchar *uri, WebView *w)
 {
      if (webview == w->child)
@@ -361,6 +421,16 @@ static void webview_signal_uri_changed_cb (CreamModule *self, GtkWidget *webview
      }
 }
 
+/*!
+ * @param self A #CreamModule object.
+ * @param webview The child of a #WebView.
+ * @param title The new page's title.
+ * @param w A #WebView object.
+ *
+ * This function handles the signal <code>"title-changed"</code> which is emitted
+ * when the loaded page changes its title.
+ * This handler is able to modify the toplevel window and emit the signal \ref w-title-changed.
+ */
 static void webview_signal_title_changed_cb (CreamModule *self, GtkWidget *webview, const gchar *title, WebView *w)
 {
      if (webview == w->child)
@@ -379,12 +449,32 @@ static void webview_signal_title_changed_cb (CreamModule *self, GtkWidget *webvi
      }
 }
 
+/*!
+ * @param self A #CreamModule object.
+ * @param webview The child of a #WebView.
+ * @param pixbuf The favicon's \class{GdkPixbuf}.
+ * @param w A #WebView object.
+ *
+ * This function handles the signal <code>"favicon-changed"</code> which is emitted
+ * when the favicon is loaded.
+ * This handler emit the signal \ref w-favicon-changed.
+ */
 static void webview_signal_favicon_changed_cb (CreamModule *self, GtkWidget *webview, GdkPixbuf *pixbuf, WebView *w)
 {
      if (webview == w->child)
           g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_FAVICON_CHANGED_SIGNAL], 0, pixbuf);
 }
 
+/*!
+ * @param self A #CreamModule object.
+ * @param webview The child of a #WebView.
+ * @param progress The load progress.
+ * @param w A #WebView object.
+ *
+ * This function handles the signal <code>"progress-changed"</code> which is emitted
+ * on the page's loading.
+ * This handler is able to modify the #Statusbar and emit the signal \ref w-status-changed.
+ */
 static void webview_signal_progress_changed_cb (CreamModule *self, GtkWidget *webview, gdouble progress, WebView *w)
 {
      gchar *status = NULL;
@@ -408,12 +498,33 @@ static void webview_signal_progress_changed_cb (CreamModule *self, GtkWidget *we
      }
 }
 
+/*!
+ * @param self A #CreamModule object.
+ * @param webview The child of a #WebView.
+ * @param state See #CreamMode.
+ * @param w A #WebView object.
+ *
+ * This function handles the signal <code>"state-changed"</code> which is emitted
+ * when the child widget wants to modify the #CreamBrowser's state.
+ */
 static void webview_signal_state_changed_cb (CreamModule *self, GtkWidget *webview, CreamMode state, WebView *w)
 {
      if (GTK_WIDGET (w) == cream_browser_get_focused_webview (app))
           statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), state);
 }
 
+/*!
+ * @param self A #CreamModule object.
+ * @param webview The child of a #WebView.
+ * @param file File URI to download.
+ * @param w A #WebView object.
+ * @return \c TRUE if the signal was handled (will stop all other handlers).
+ *
+ * This function handles the signal <code>"download"</code> which is emitted when
+ * the user attempt to start a download (or when the webview can't show the file's
+ * content).
+ * This handler emit the signal \ref w-download
+ */
 static gboolean webview_signal_download_cb (CreamModule *self, GtkWidget *webview, const gchar *file, WebView *w)
 {
      gboolean ret = FALSE;
@@ -422,19 +533,6 @@ static gboolean webview_signal_download_cb (CreamModule *self, GtkWidget *webvie
           g_signal_emit (G_OBJECT (w), webview_signals[WEBVIEW_DOWNLOAD_SIGNAL], 0, file, &ret);
 
      return ret;
-}
-
-static void webview_connect_signals (WebView *w)
-{
-     g_return_if_fail (CREAM_IS_WEBVIEW (w));
-
-     g_signal_connect (G_OBJECT (w->child), "grab-focus",        G_CALLBACK (webview_signal_grab_focus_cb),        w);
-     g_signal_connect (G_OBJECT (w->mod),   "uri-changed",       G_CALLBACK (webview_signal_uri_changed_cb),       w);
-     g_signal_connect (G_OBJECT (w->mod),   "title-changed",     G_CALLBACK (webview_signal_title_changed_cb),     w);
-     g_signal_connect (G_OBJECT (w->mod),   "favicon-changed",   G_CALLBACK (webview_signal_favicon_changed_cb),   w);
-     g_signal_connect (G_OBJECT (w->mod),   "progress-changed",  G_CALLBACK (webview_signal_progress_changed_cb),  w);
-     g_signal_connect (G_OBJECT (w->mod),   "state-changed",     G_CALLBACK (webview_signal_state_changed_cb),     w);
-     g_signal_connect (G_OBJECT (w->mod),   "download",          G_CALLBACK (webview_signal_download_cb),          w);
 }
 
 /*! @} */

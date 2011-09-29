@@ -171,9 +171,7 @@ static int luaL_statusbar_set_progress (lua_State *L)
 /*! @} */
 
 /*!
- * \defgroup lua-notebook Notebook
- * \ingroup lua-widgets
- * #Notebook usefull functions.
+ * \addtogroup lua-notebook
  *
  * @{
  */

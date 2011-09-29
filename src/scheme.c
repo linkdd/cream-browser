@@ -27,15 +27,14 @@
 #include <string.h>
 
 /*!
- * \addtogroup uri
+ * \addtogroup utils
  * @{
  */
 
 /*!
- * \fn gboolean uri_scheme_parse (UriScheme *u, const gchar *uri)
  * @param u A pointer to #UriScheme structure.
  * @param uri A valid URI to parse.
- * @return <code>TRUE</code> on success, <code>FALSE</code> otherwise.
+ * @return \c TRUE on success, \c FALSE otherwise.
  *
  * Parse a valid URI into a structure to access easily to useful
  * URI's data (see #UriScheme).

@@ -30,7 +30,7 @@
  * @{
  */
 
-static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint page_num, gpointer unused);
+static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint page_num);
 
 static void notebook_signal_title_changed_cb (WebView *webview, const gchar *title, Notebook *obj);
 static void notebook_signal_favicon_changed_cb (WebView *webview, GdkPixbuf *favicon, Notebook *obj);
@@ -39,8 +39,6 @@ static void notebook_signal_grab_focus_cb (WebView *webview, Notebook *obj);
 G_DEFINE_TYPE (Notebook, notebook, GTK_TYPE_NOTEBOOK);
 
 /*!
- * \public \memberof Notebook
- * \fn GtkWidget *notebook_new (void)
  * @return A new #Notebook object.
  *
  * Create a new #Notebook object.
@@ -54,11 +52,21 @@ GtkWidget *notebook_new (void)
      return GTK_WIDGET (obj);
 }
 
+/*!
+ * @param klass The #Notebook class structure.
+ *
+ * Initialize #Notebook class.
+ */
 static void notebook_class_init (NotebookClass *klass)
 {
      return;
 }
 
+/*!
+ * @param obj The #Notebook instance structure.
+ *
+ * Initialize #Notebook instance.
+ */
 static void notebook_init (Notebook *obj)
 {
      obj->focus = NULL;
@@ -68,11 +76,17 @@ static void notebook_init (Notebook *obj)
      gtk_notebook_popup_enable (GTK_NOTEBOOK (obj));
 }
 
-/* methods */
+/*! @} */
+
+/*!
+ * \defgroup notebook-members Members
+ * \ingroup notebook
+ *
+ * @{
+ */
 
 /*!
  * \public \memberof Notebook
- * \fn GtkWidget *notebook_get_focus (Notebook *obj)
  * @param obj A #Notebook object.
  * @return A #WebView object.
  *
@@ -86,7 +100,6 @@ GtkWidget *notebook_get_focus (Notebook *obj)
 
 /*!
  * \public \memberof Notebook
- * \fn void notebook_open (Notebook *obj, const gchar *url)
  * @param obj A #Notebook object.
  * @param url URL to load.
  *
@@ -113,7 +126,6 @@ void notebook_open (Notebook *obj, const gchar *url)
 
 /*!
  * \public \memberof Notebook
- * \fn void notebook_tabopen (Notebook *obj, const gchar *url)
  * @param obj A #Notebook object.
  * @param url URL to load.
  *
@@ -151,7 +163,6 @@ void notebook_tabopen (Notebook *obj, const gchar *url)
 
 /*!
  * \public \memberof Notebook
- * \fn void notebook_close (Notebook *obj, gint page)
  * @param obj A #Notebook object.
  * @param page The page to close.
  *
@@ -165,14 +176,37 @@ void notebook_close (Notebook *obj, gint page)
      gtk_notebook_remove_page (GTK_NOTEBOOK (obj), page);
 }
 
-/* signals */
+/*! @} */
 
-static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint page_num, gpointer unused)
+/*!
+ * \defgroup notebook-cb Callbacks
+ * \ingroup notebook
+ * @{
+ */
+
+/*!
+ * @param self A #Notebook object.
+ * @param webview A #WebView object.
+ * @param page_num The page number of the #WebView inside the #Notebook.
+ *
+ * This function handles the signal <code>"switch-page"</code> which is emitted
+ * when the user changes the current page.
+ * This handler requests the focus on the #Notebook.
+ */
+static void notebook_switch_page_cb (Notebook *self, GtkWidget *webview, guint page_num)
 {
      self->focus = webview;
      g_signal_emit_by_name (G_OBJECT (self), "grab-focus");
 }
 
+/*!
+ * @param webview A #WebView object.
+ * @param title The #WebView's title.
+ * @param obj A #Notebook object.
+ *
+ * This function handles the signal <code>"title-changed"</code> which is emitted
+ * when the #WebView's title changed.
+ */
 static void notebook_signal_title_changed_cb (WebView *webview, const gchar *title, Notebook *obj)
 {
      NotebookTabLabel *tablabel = CREAM_NOTEBOOK_TAB_LABEL (gtk_notebook_get_tab_label (GTK_NOTEBOOK (obj), GTK_WIDGET (webview)));
@@ -180,6 +214,14 @@ static void notebook_signal_title_changed_cb (WebView *webview, const gchar *tit
      gtk_notebook_set_menu_label_text (GTK_NOTEBOOK (obj), GTK_WIDGET (webview), title);
 }
 
+/*!
+ * @param webview A #WebView object.
+ * @param favicon The favicon's \class{GdkPixbuf}.
+ * @param obj A #Notebook object.
+ *
+ * This function handles the signal <code>"favicon-changed"</code> which is emitted
+ * when the website's favicon is loaded.
+ */
 static void notebook_signal_favicon_changed_cb (WebView *webview, GdkPixbuf *favicon, Notebook *obj)
 {
      if (favicon == NULL) return;
@@ -187,6 +229,16 @@ static void notebook_signal_favicon_changed_cb (WebView *webview, GdkPixbuf *fav
      notebook_tab_label_set_pixbuf (tablabel, favicon);
 }
 
+/*!
+ * @param webview A #WebView object.
+ * @param obj A Notebook object.
+ *
+ * This function handles the signal <code>"grab-focus"</code> which is emitted
+ * when a #WebView request the focus.
+ * This handler requests the focus on the #Notebook.
+ *
+ * \see \ref focus-changed
+ */
 static void notebook_signal_grab_focus_cb (WebView *webview, Notebook *obj)
 {
      obj->focus = GTK_WIDGET (webview);

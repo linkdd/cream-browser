@@ -26,6 +26,12 @@
 #ifndef __SOCKET_H
 #define __SOCKET_H
 
+/*!
+ * \defgroup socket Socket
+ * Socket definition.
+ * @{
+ */
+
 #include <gio/gio.h>
 #include <gio/gunixsocketaddress.h>
 #include <glib.h>
@@ -40,13 +46,17 @@ G_BEGIN_DECLS
 typedef struct _Socket Socket;
 typedef struct _SocketClass SocketClass;
 
+/*!
+ * \class Socket
+ * Socket class definition.
+ */
 struct _Socket
 {
      GSocket parent;
 
-     GSocketAddress *addr;
-     GIOChannel *iochannel;
-     gchar *path;
+     GSocketAddress *addr;  /*!< UNIX socket address */
+     GIOChannel *iochannel; /*!< IO Channel to make socket asynchronous */
+     gchar *path;           /*!< Path of the socket */
 
      GError *error;
 };
@@ -63,5 +73,7 @@ const gchar *socket_get_path (Socket *obj);
 GSocketAddress *socket_get_addr (Socket *obj);
 
 G_END_DECLS
+
+/*! @} */
 
 #endif /* __SOCKET_H */

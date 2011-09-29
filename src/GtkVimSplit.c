@@ -43,11 +43,7 @@ static guint gtk_vim_split_signals[GTK_VIM_SPLIT_NB_SIGNALS] = { 0 };
 
 G_DEFINE_TYPE (GtkVimSplit, gtk_vim_split, GTK_TYPE_EVENT_BOX)
 
-/* Constructors */
-
 /*!
- * \public \memberof GtkVimSplit
- * \fn GtkWidget *gtk_vim_split_new (void)
  * @return A new #GtkVimSplit widget.
  *
  * Create a new #GtkVimSplit widget.
@@ -57,6 +53,11 @@ GtkWidget *gtk_vim_split_new (void)
      return GTK_WIDGET (g_object_new (gtk_vim_split_get_type (), NULL));
 }
 
+/*!
+ * @param klass #GtkVimSplit class structure.
+ *
+ * Initialize #GtkVimSplit class.
+ */
 static void gtk_vim_split_class_init (GtkVimSplitClass *klass)
 {
      /* signals */
@@ -82,25 +83,50 @@ static void gtk_vim_split_class_init (GtkVimSplitClass *klass)
 
 }
 
+/*!
+ * @param obj #GtkVimSplit instance.
+ *
+ * Initialize #GtkVimSplit instance.
+ */
 static void gtk_vim_split_init (GtkVimSplit *obj)
 {
      obj->focus   = NULL;
      obj->widgets = NULL;
 }
 
-/* callbacks */
+/*! @} */
 
+/*!
+ * \defgroup gtkvimsplit-callbacks Callbacks
+ * \ingroup gtkvimsplit
+ * @{
+ */
+
+/*!
+ * @param w The widget which emitted the signal.
+ * @param self A #GtkVimSplit object.
+ *
+ * This function handle the signal <code>"grab-focus"</code> emitted by a #Notebook
+ * when one of its webview try to grab the focus.
+ *
+ * \see \ref focus-changed
+ */
 static void gtk_vim_split_grab_focus_cb (GtkWidget *w, GtkVimSplit *self)
 {
      self->focus = w;
      g_signal_emit (G_OBJECT (self), gtk_vim_split_signals[GTK_VIM_SPLIT_FOCUS_CHANGED_SIGNAL], 0, w);
 }
 
-/* Methods */
+/*! @} */
+
+/*!
+ * \defgroup gtkvimsplit-members Members
+ * \ingroup gtkvimsplit
+ * @{
+ */
 
 /*!
  * \public \memberof GtkVimSplit
- * \fn GtkWidget *gtk_vim_split_get_focus (GtkVimSplit *obj)
  * @param obj A #GtkVimSplit widget.
  * @return A #Notebook widget.
  *
@@ -114,11 +140,12 @@ GtkWidget *gtk_vim_split_get_focus (GtkVimSplit *obj)
 
 /*!
  * \public \memberof GtkVimSplit
- * \fn void gtk_vim_split_set_focus (GtkVimSplit *obj, GtkWidget *nb)
  * @param obj A #GtkVimSplit widget.
  * @param nb A #Notebook widget.
  *
- * Set \arg nb as the current focused notebook.
+ * Set \b nb as the current focused notebook.
+ *
+ * \see \ref focus-changed
  */
 void gtk_vim_split_set_focus (GtkVimSplit *obj, GtkWidget *nb)
 {
@@ -132,12 +159,13 @@ void gtk_vim_split_set_focus (GtkVimSplit *obj, GtkWidget *nb)
 
 /*!
  * \public \memberof GtkVimSplit
- * \fn void gtk_vim_split_add (GtkVimSplit *obj, GtkWidget *child, GtkOrientation o)
  * @param obj A #GtkVimSplit widget.
  * @param child A #Notebook widget.
  * @param o Split orientation.
  *
  * Split the focused widget.
+ *
+ * \see \ref focus-changed
  */
 void gtk_vim_split_add (GtkVimSplit *obj, GtkWidget *child, GtkOrientation o)
 {
@@ -187,10 +215,11 @@ void gtk_vim_split_add (GtkVimSplit *obj, GtkWidget *child, GtkOrientation o)
 
 /*!
  * \public \memberof GtkVimSplit
- * \fn void gtk_vim_split_close (GtkVimSplit *obj)
  * @param obj A #GtkVimSplit widget.
  *
-  Close the focused notebook.
+ * Close the focused notebook.
+ *
+ * \see \ref no-more-split
  */
 void gtk_vim_split_close (GtkVimSplit *obj)
 {

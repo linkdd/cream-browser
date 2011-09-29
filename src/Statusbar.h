@@ -82,7 +82,7 @@ void statusbar_set_state (Statusbar *obj, CreamMode state);
 void statusbar_set_link (Statusbar *obj, const gchar *link);
 void statusbar_set_history (Statusbar *obj, gboolean can_go_back, gboolean can_go_forward);
 void statusbar_set_scroll (Statusbar *obj, gdouble progress);
-void statusbar_set_progress (Statusbar *obj, gdouble progress);
+void statusbar_set_progress (Statusbar *obj, gdouble fraction);
 
 G_END_DECLS
 

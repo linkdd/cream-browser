@@ -26,9 +26,9 @@
 #include "../local.h"
 
 /*!
- * \defgroup lua-keybinds Key Bindings.
+ * \defgroup lua-keybinds Key Bindings
  * \ingroup lua
- * Lua bindings for key bindings.
+ * Package 'keys' of the lua API.
  *
  * @{
  */

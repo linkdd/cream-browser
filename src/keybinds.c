@@ -27,12 +27,21 @@
 
 /*!
  * \addtogroup keybinds
- *
  * @{
  */
 
 static GSList *keys = NULL;
 
+/*!
+ * @param window The toplevel window on which we get the signal.
+ * @param event The keyboard event.
+ * @return \c TRUE if the event was handled.
+ *
+ * Get pressed key, add it to a buffer. When the buffer match to
+ * a registered command, execute the lua callback.
+ *
+ * \see \ref keybinds_add
+ */
 static gboolean keybinds_callback (GtkWindow *window, GdkEvent *event)
 {
      static GString *command = NULL;
@@ -83,7 +92,6 @@ void keybinds_init (void)
 
 
 /*!
- * \fn void keybinds_add (int statemask, int modmask, const char *cmd, int lua_func)
  * @param statemask Browser's mode in which the keybind is affected.
  * @param modmask Modifier keys.
  * @param cmd Command.

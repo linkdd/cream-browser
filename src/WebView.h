@@ -28,6 +28,7 @@
 
 /*!
  * \defgroup webview WebView
+ * \ingroup interface
  * WebView widget definition
  * @{
  */
@@ -48,19 +49,8 @@ typedef struct _WebViewClass WebViewClass;
 
 /*!
  * \class WebView
- * \implements CreamModule
  * This widget is an interface between the \class{GModule} and Cream-Browser.
- *
- * \signalsection
- * \signal{uri-changed, signal_uri_changed, void uri_changed (WebView *obj\, const gchar *uri)}
- * \signal{title-changed, signal_title_changed, void title_changed (WebView *obj\, const gchar *title)}
- * \signal{favicon-changed, signal_favicon_changed, void favicon_changed (WebView *obj\, GdkPixbuf *pixbuf)}
- * \signal{status-changed, signal_status_changed, void status_changed (WebView *obj\, const gchar *status)}
- * \signal{raise, signal_raise, void raise (WebView *obj)}
- * \signal{download, signal_download, gboolean download (WebView *obj\, const gchar *file_uri)}
- * \signal{module-changed, signal_module_changed, void module_changed (WebView *obj\, GObject *module)}
- * \signalendsection
- */
+  */
 struct _WebView
 {
      /*< private >*/
@@ -79,86 +69,14 @@ struct _WebView
 
 struct _WebViewClass
 {
-     /*< private >*/
      GtkScrolledWindowClass parent;
 
-     /*< public >*/
-
-     /*!
-      * \public \memberof WebView
-      * \signalof{WebView}
-      * \fn void signal_uri_changed (WebView *obj, const gchar *uri)
-      * @param obj The #WebView object from which the signal was emitted.
-      * @param uri New URI loaded.
-      *
-      * Signal emitted when the URI changes.
-      */
      void (*uri_changed) (WebView *obj, const gchar *uri);
-
-     /*!
-      * \public \memberof WebView
-      * \signalof{WebView}
-      * \fn void signal_title_changed (WebView *obj, const gchar *title)
-      * @param obj The #WebView object from which the signal was emitted.
-      * @param title The new page's title.
-      *
-      * Signal emitted when the page's title changes.
-      */
      void (*title_changed) (WebView *obj, const gchar *title);
-
-     /*!
-      * \public \memberof WebView
-      * \signalof{WebView}
-      * \fn void signal_status_changed (WebView *obj, const gchar *status)
-      * @param obj The #WebView object from which the signal was emitted.
-      * @param status The new status message.
-      *
-      * Signal emitted when the status message changes.
-      */
      void (*status_changed) (WebView *obj, const gchar *status);
-
-     /*!
-      * \public \memberof WebView
-      * \signalof{WebView}
-      * \fn void signal_raise (WebView *obj);
-      * @param obj The #WebView object from which the signal was emitted.
-      *
-      * Signal emitted when the #WebView is raised.
-      */
      void (*raise) (WebView *obj);
-
-     /*!
-      * \public \memberof WebView
-      * \signalof{WebView}
-      * \fn gboolean signal_download (WebView *obj, const gchar *file_uri)
-      * @param obj The #WebView object from which the signal was emitted.
-      * @param file_uri URI of the file to download.
-      * @return <code>TRUE</code> if the signal is handled, <code>FALSE</code> otherwise.
-      *
-      * Signal emitted when a download is requested.
-      */
      gboolean (*download) (WebView *obj, const gchar *file_uri);
-
-     /*!
-      * \public \memberof WebView
-      * \signalof{WebView}
-      * \fn void signal_module_changed (WebView *obj, GObject *module)
-      * @param obj The #WebView object from which the signal was emitted.
-      * @param module The new #CreamModule object used by the webview.
-      *
-      * Signal emitted when the webview uses a new module.
-      */
      void (*module_changed) (WebView *obj, GObject *module);
-
-     /*!
-      * \public \memberof WebView
-      * \signalof{WebView}
-      * \fn void signal_favicon_changed (WebView *obj, GdkPixbuf *pixbuf)
-      * @param obj The #WebView object from which the signal was emitted.
-      * @param pixbuf The new favicon's pixbuf.
-      *
-      * Signal emitted when the webview's favicon is loaded.
-      */
      void (*favicon_changed) (WebView *obj, GdkPixbuf *pixbuf);
 };
 
@@ -180,5 +98,90 @@ const gchar *webview_get_status (WebView *w);
 G_END_DECLS
 
 /*! @} */
+
+/*!
+ * \defgroup webview-signals Signals
+ * \ingroup webview
+ *
+ * \b Signals:
+ * - \ref w-uri-changed
+ * - \ref w-title-changed
+ * - \ref w-status-changed
+ * - \ref w-raise
+ * - \ref w-download
+ * - \ref w-module-changed
+ * - \ref w-favicon-changed
+ *
+ * <hr>
+ *
+ * \section w-uri-changed "uri-changed"
+ * \code void uri_changed (WebView *obj, const gchar *uri, gpointer user_data) \endcode
+ * @param obj A #WebView object.
+ * @param uri New URI loaded.
+ * @param user_data Data to pass to the handler.
+ *
+ * This signal is emitted when the URI loaded in the #WebView changes.
+ *
+ * <hr>
+ *
+ * \section w-title-changed "title-changed"
+ * \code void title_changed (WebView *obj, const gchar *title, gpointer user_data) \endcode
+ * @param obj A #WebView object.
+ * @param title New page's title.
+ * @param user_data Data to pass to the handler.
+ *
+ * This signal is emitted when the page's title changes.
+ *
+ * <hr>
+ *
+ * \section w-status-changed "status-changed"
+ * \code void status_changed (WebView *obj, const gchar *status, gpointer user_data) \endcode
+ * @param obj A #WebView object.
+ * @param status New page's status.
+ * @param user_data Data to pass to the handler.
+ *
+ * This signal is emitted when the page's status changes.
+ *
+ * <hr>
+ *
+ * \section w-raise "raise"
+ * \code void raise (WebView *obj, gpointer user_data) \endcode
+ * @param obj A #WebView object.
+ * @param user_data Data to pass to the handler.
+ *
+ * This signal is emitted in order to raise the #WebView.
+ *
+ * <hr>
+ *
+ * \section w-download "download"
+ * \code gboolean download (WebView *obj, const gchar *file_uri, gpointer user_data) \endcode
+ * @param obj A #WebView object.
+ * @param file_uri URI of the file to download.
+ * @param user_data Data to pass to the handler.
+ * @return \c TRUE if the signal was handled (will stop all other handlers)
+ *
+ * This signal is emitted when a download is requested.
+ *
+ * <hr>
+ *
+ * \section w-module-changed "module-changed"
+ * \code void module_changed (WebView *obj, GObject *module, gpointer user_data) \endcode
+ * @param obj A #WebView object.
+ * @param module A #CreamModule object.
+ * @param user_data Data to pass to the handler.
+ *
+ * This signal is emitted when the #WebView change its module (another protocol is
+ * requested).
+ *
+ * <hr>
+ *
+ * \section w-favicon-changed "favicon-changed"
+ * \code void favicon_changed (WebView *obj, GdkPixbuf *pixbuf, gpointer user_data) \endcode
+ * @param obj A #WebView object.
+ * @param pixbuf The favicon's \class{GdkPixbuf}.
+ * @param user_Data Data to pass to the handler.
+ *
+ * This signal is emitted when the #WebView's favicon is loaded.
+ */
 
 #endif /* __CLASS_WEBVIEW_H */

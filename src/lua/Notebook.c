@@ -27,7 +27,7 @@
 
 /*!
  * \defgroup lua-notebook Notebook
- * \ingroup lua
+ * \ingroup lua-widgets
  * #Notebook bindings for lua.
  * @{
  */

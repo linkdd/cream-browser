@@ -45,11 +45,7 @@ struct _StatusbarPrivate
 
 G_DEFINE_TYPE (Statusbar, statusbar, GTK_TYPE_EVENT_BOX)
 
-/* Constructors */
-
 /*!
- * \public \memberof Statusbar
- * \fn GtkWidget *statusbar_new (void)
  * @return A #Statusbar object
  *
  * Create a new #Statusbar object.
@@ -60,11 +56,19 @@ GtkWidget *statusbar_new (void)
      return GTK_WIDGET (obj);
 }
 
+/*!
+ * @param klass The #Statusbar class structure.
+ * Initialize #Statusbar class.
+ */
 static void statusbar_class_init (StatusbarClass *klass)
 {
      g_type_class_add_private (klass, sizeof (StatusbarPrivate));
 }
 
+/*!
+ * @param self The #Statusbar instance structure.
+ * Initialize #Statusbar instance.
+ */
 static void statusbar_init (Statusbar *self)
 {
      StatusbarPrivate *priv = CREAM_STATUSBAR_GET_PRIVATE (self);
@@ -86,11 +90,16 @@ static void statusbar_init (Statusbar *self)
      gtk_container_add (GTK_CONTAINER (self), priv->hbox);
 }
 
-/* methods */
+/*! @} */
+
+/*!
+ * \defgroup statusbar-members Members
+ * \ingroup statusbar
+ * @{
+ */
 
 /*!
  * \public \memberof Statusbar
- * \fn void statusbar_set_state (Statusbar *obj, CreamMode state)
  * @param obj A #Statusbar object.
  * @param state Browser's state (see #CreamMode).
  *
@@ -134,7 +143,6 @@ void statusbar_set_state (Statusbar *obj, CreamMode state)
 
 /*!
  * \public \memberof Statusbar
- * \fn void statusbar_set_link (Statusbar *obj, const gchar *link)
  * @param obj A #Statusbar object.
  * @param link URL to print in statusbar.
  *
@@ -150,10 +158,9 @@ void statusbar_set_link (Statusbar *obj, const gchar *link)
 
 /*!
  * \public \memberof Statusbar
- * \fn void statusbar_set_history (Statusbar *obj, gboolean can_go_back, gboolean can_go_forward)
  * @param obj A #Statusbar object.
- * @param can_go_back If <code>TRUE</code>, we can go back in history.
- * @param can_go_forward If <code>TRUE</code>, we can go forward in history.
+ * @param can_go_back If \c TRUE, we can go back in history.
+ * @param can_go_forward If \c TRUE, we can go forward in history.
  *
  * Display history indicator in statusbar.
  */
@@ -177,7 +184,6 @@ void statusbar_set_history (Statusbar *obj, gboolean can_go_back, gboolean can_g
 
 /*!
  * \public \memberof Statusbar
- * \fn void statusbar_set_scroll (Statusbar *obj, gdouble progress)
  * @param obj A #Statusbar object.
  * @param progress Scrolling percent.
  *
@@ -199,26 +205,25 @@ void statusbar_set_scroll (Statusbar *obj, gdouble progress)
 
 /*!
  * \public \memberof Statusbar
- * \fn void statusbar_set_progress (Statusbar *obj, gdouble progress)
  * @param obj A #Statusbar object.
- * @param progress Loading percent.
+ * @param fraction Loading percent.
  *
  * Display a download bar.
  */
 
-void statusbar_set_progress (Statusbar *obj, gdouble progress)
+void statusbar_set_progress (Statusbar *obj, gdouble fraction)
 {
      StatusbarPrivate *priv;
 
      g_return_if_fail (CREAM_IS_STATUSBAR (obj));
      priv = CREAM_STATUSBAR_GET_PRIVATE (obj);
 
-     if (progress == 1)
+     if (fraction == 1)
           gtk_widget_hide (priv->lprogress);
      else
           gtk_widget_show (priv->lprogress);
 
-     gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (priv->lprogress), progress);
+     gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (priv->lprogress), fraction);
 }
 
 /*! @} */

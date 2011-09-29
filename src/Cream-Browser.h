@@ -27,8 +27,7 @@
 #define __CREAM_BROWSER_H
 
 /*!
- * \defgroup cream-browser Cream-Browser Utilities.
- * Application class definition.
+ * \defgroup cream-browser Cream-Browser Application
  * @{
  */
 
@@ -103,6 +102,7 @@ struct _CreamBrowserClass
      GtkApplicationClass parent;
 
      void (*error) (CreamBrowser *, gboolean, GError *);
+     void (*startup) (CreamBrowser *);
 };
 
 GType cream_browser_get_type (void);

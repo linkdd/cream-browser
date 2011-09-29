@@ -28,7 +28,11 @@
 CreamBrowser *app = NULL;
 
 /*!
- * \fn gchar *find_file (guint type, const gchar *filename)
+ * \addtogroup utils
+ * @{
+ */
+
+/*!
  * @param type Type of file to find (#FILE_TYPE_CONFIG, #FILE_TYPE_DATA or #FILE_TYPE_CACHE).
  * @param filename Name of the file to find.
  * @return Path to the file, or <code>NULL</code> if not found.
@@ -99,7 +103,6 @@ gchar *find_file (guint type, const gchar *filename)
 }
 
 /*!
- * \fn char *str_replace (const char *search, const char *replace, const char *string)
  * @param search Text to search into the string
  * @param replace Replace \a search by the specified text
  * @param string String to modify
@@ -120,6 +123,8 @@ char *str_replace (const char *search, const char *replace, const char *string)
 
      return ret;
 }
+
+/*! @} */
 
 int main (int argc, char **argv)
 {

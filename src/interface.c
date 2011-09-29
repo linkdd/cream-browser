@@ -30,14 +30,32 @@
  * @{
  */
 
+/*!
+ * @param window The toplevel window.
+ *
+ * This function handles the signal <code>"destroy"</code> and
+ * \ref no-more-split which are respectively emitted when the
+ * toplevel window is destroyed (ie: closed by the WM) and when
+ * the user closed all the views.
+ *
+ * This handler remove the window from the \class{GtkApplication}.
+ */
 static void window_destroy (GtkWindow *window)
 {
      gtk_application_remove_window (GTK_APPLICATION (app), window);
 }
 
-static void window_update (GtkVimSplit *obj)
+/*!
+ * @param obj A #GtkVimSplit object.
+ * @param focus The current focused #Notebook.
+ *
+ * This function handles the signal \ref focus-changed which is
+ * emitted when a webview (contained in the notebook \b focus)
+ * grab the focus.
+ */
+static void window_update (GtkVimSplit *obj, Notebook *focus)
 {
-     GtkWidget *webview = notebook_get_focus (CREAM_NOTEBOOK (gtk_vim_split_get_focus (obj)));
+     GtkWidget *webview = notebook_get_focus (focus);
 
      cream_browser_set_focused_webview (app, webview);
 
@@ -50,10 +68,7 @@ static void window_update (GtkVimSplit *obj)
      ui_show ();
 }
 
-/*!
- * \fn void ui_init (void)
- * Create the main window
- */
+/*! Create the main window. */
 void ui_init (void)
 {
      GError *error = NULL;
@@ -85,10 +100,7 @@ void ui_init (void)
      gtk_application_add_window (GTK_APPLICATION (app), GTK_WINDOW (app->gui.window));
 }
 
-/*!
- * \fn void ui_show (void)
- * Show/Redraw the main window.
- */
+/*! Show/Redraw the main window. */
 void ui_show (void)
 {
      gtk_widget_show_all (app->gui.window);

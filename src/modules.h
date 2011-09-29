@@ -251,4 +251,86 @@ G_END_DECLS
 
 /*! @} */
 
+/*!
+ * \defgroup mod-signals Signals
+ * \ingroup modules
+ *
+ * \b Signals:
+ * - \ref mod-uri-changed
+ * - \ref mod-title-changed
+ * - \ref mod-favicon-changed
+ * - \ref mod-progress-changed
+ * - \ref mod-state-changed
+ * - \ref mod-download
+ *
+ * <hr>
+ *
+ * \section mod-uri-changed "uri-changed"
+ * \code void uri_changed (CreamModule *self, GtkWidget *webview, const gchar *uri, gpointer user_data) \endcode
+ * @param self A #CreamModule object.
+ * @param webview A webview owned by the #CreamModule object.
+ * @param uri The new URI.
+ * @param user_data Data to pass to the handler.
+ *
+ * This signal is emitted when a webview, owned by the #CreamModule object, loads a new URI.
+ *
+ * <hr>
+ *
+ * \section mod-title-changed "title-changed"
+ * \code void title_changed (CreamModule *self, GtkWidget *webview, const gchar *title, gpointer user_data) \endcode
+ * @param self A #CreamModule object.
+ * @param webview A webview owned by the #CreamModule object.
+ * @param title The new title.
+ * @param user_data Data to pass to the handler.
+ *
+ * This signal is emitted when a webview, owned by the #CreamModule object, got a new title.
+ *
+ * <hr>
+ *
+ * \section mod-favicon-changed "favicon-changed"
+ * \code void favicon_changed (CreamModule *self, GtkWidget *webview, GdkPixbuf *favicon, gpointer user_data) \endcode
+ * @param self A #CreamModule object.
+ * @param webview A webview owned by the #CreamModule object.
+ * @param favicon The favicon's \class{GdkPixbuf}.
+ * @param user_data Data to pass to the handler.
+ *
+ * This signal is emitted when the webview's favicon is loaded.
+ *
+ * <hr>
+ *
+ * \section mod-progress-changed "progress-changed"
+ * \code void progress_changed (CreamModule *self, GtkWidget *webview, gdouble progress, gpointer user_data) \endcode
+ * @param self A #CreamModule object.
+ * @param webview A webview owned by the #CreamModule object.
+ * @param progress The page's load.
+ * @param user_data Data to pass to the handler.
+ *
+ * This signal is emitted when a webview, owned by the #CreamModule object, is loading a page.
+ *
+ * <hr>
+ *
+ * \section mod-state-changed "state-changed"
+ * \code void state_changed (CreamModule *self, GtkWidget *webview, CreamMode state, gpointer user_data) \endcode
+ * @param self A #CreamModule object.
+ * @param webview A webview owned by the #CreamModule object.
+ * @param state Browser's state (see #CreamMode).
+ * @param user_data Data to pass to the handler.
+ *
+ * This signal is emitted when a webview, owned by the #CreamModule object, try to change the
+ * borwser's state.
+ *
+ * <hr>
+ *
+ * \section mod-download "download"
+ * \code gboolean download (CreamModule *self, GtkWidget *webview, const gchar *file_uri, gpointer user_data) \endcode
+ * @param self A #CreamModule object.
+ * @param webview A webview owned by the #CreamModule object.
+ * @param file_uri The file's URI.
+ * @param user_data Data to pass to the handler.
+ * @return \c TRUE if the signal was handled (will stop all other handlers).
+ *
+ * This signal is emitted when a webview, owned by the #CreamModule object, requests to
+ * download a file.
+ */
+
 #endif /* __MODULES_H */

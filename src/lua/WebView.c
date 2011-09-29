@@ -27,7 +27,7 @@
 
 /*!
  * \defgroup lua-webview WebView
- * \ingroup lua
+ * \ingroup lua-widgets
  * #WebView bindings for lua.
  * @{
  */

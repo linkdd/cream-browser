@@ -30,19 +30,16 @@
  * @{
  */
 
-static void inputbox_activate_cb (Inputbox *obj, gpointer unused);
-static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer unused);
-static void inputbox_focus_in_cb (Inputbox *obj, GdkEvent *event, gpointer unused);
-static void inputbox_focus_out_cb (Inputbox *obj, GdkEvent *event, gpointer unused);
+static void inputbox_activate_cb (Inputbox *obj);
+static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event);
+static void inputbox_focus_in_cb (Inputbox *obj, GdkEvent *event);
+static void inputbox_focus_out_cb (Inputbox *obj, GdkEvent *event);
 
 static void inputbox_check_mode (Inputbox *obj);
 
 G_DEFINE_TYPE (Inputbox, inputbox, GTK_TYPE_ENTRY)
 
-/* Constructors */
-
 /*!
- * \public \memberof Inputbox
  * \fn GtkWidget *inputbox_new (void)
  * @return A new #Inputbox object.
  *
@@ -58,20 +55,47 @@ GtkWidget *inputbox_new (void)
      return GTK_WIDGET (obj);
 }
 
+/*!
+ * \fn static void inputbox_class_init (InputboxClass *klass)
+ * @param klass The #Inputbox class structure.
+ *
+ * Initialize #Inputbox class.
+ */
 static void inputbox_class_init (InputboxClass *klass)
 {
      return;
 }
 
+/*!
+ * \fn static void inputbox_init (Inputbox *self)
+ * @param self The #Inputbox instance structure.
+ *
+ * Initialize #Inputbox instance.
+ */
 static void inputbox_init (Inputbox *self)
 {
      self->history = NULL;
      self->current = NULL;
 }
 
-/* callbacks */
+/*! @} */
 
-static void inputbox_activate_cb (Inputbox *obj, gpointer unused)
+/*!
+ * \defgroup inputbox-callbacks Callbacks
+ * \ingroup inputbox
+ * @{
+ */
+
+/*!
+ * \fn static void inputbox_activate_cb (Inputbox *obj)
+ * @param obj A #Inputbox object.
+ *
+ * This function handles the signal <code>"activate"</code> which is
+ * emitted when the user validate the entry by pressing <code>Enter</code>.
+ * This handler is able to run a command, start a research (forward or backward),
+ * and modify the commands history.
+ */
+static void inputbox_activate_cb (Inputbox *obj)
 {
      GError *error = NULL;
      WebView *fwebview;
@@ -122,7 +146,18 @@ static void inputbox_activate_cb (Inputbox *obj, gpointer unused)
      obj->history = g_list_prepend (obj->history, txt);
 }
 
-static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer unused)
+/*!
+ * \fn static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event)
+ * @param obj A #Inputbox object.
+ * @param event The keyboard event.
+ * @return \c TRUE if the signal was handled (will result in stopping all other handlers).
+ *
+ * This function handles the signal <code>"key-press-event"</code> which is
+ * emitted when the user press any key on the inputbox.
+ * This handler is able to modify the Cream-Browser's state (see #CreamMode),
+ * and to read the commands history.
+ */
+static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event)
 {
      GdkEventKey ekey = event->key;
      gchar *key = gdk_keyval_name (ekey.keyval);
@@ -181,18 +216,51 @@ static gboolean inputbox_keypress_cb (Inputbox *obj, GdkEvent *event, gpointer u
      return ret;
 }
 
-static void inputbox_focus_in_cb (Inputbox *obj, GdkEvent *event, gpointer unused)
+/*!
+ * \fn static void inputbox_focus_in_cb (Inputbox *obj, GdkEvent *event)
+ * @param obj A #Inputbox object.
+ * @param event The event.
+ *
+ * This function is called when the inputbox get the focus. It modify
+ * the Cream-Browser's state (see #CreamMode) to #CREAM_MODE_COMMAND.
+ */
+static void inputbox_focus_in_cb (Inputbox *obj, GdkEvent *event)
 {
      statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), CREAM_MODE_COMMAND);
 }
 
-static void inputbox_focus_out_cb (Inputbox *obj, GdkEvent *event, gpointer unused)
+/*!
+ * \fn static void inputbox_focus_out_cb (Inputbox *obj, GdkEvent *event)
+ * @param obj A #Inputbox object.
+ * @param event The event.
+ *
+ * This function is called when the inputbox loose the focus. It modify
+ * the Cream-Browser's state (see #CreamMode) to #CREAM_MODE_NORMAL.
+ */
+static void inputbox_focus_out_cb (Inputbox *obj, GdkEvent *event)
 {
      statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), CREAM_MODE_NORMAL);
 }
 
-/* methods */
+/*! @} */
 
+/*!
+ * \defgroup inputbox-members Members
+ * \ingroup inputbox
+ * @{
+ */
+
+/*!
+ * \private \memberof Inputbox
+ * \fn static void inputbox_check_mode (Inputbox *obj)
+ * @param obj A #Inputbox object.
+ *
+ * Modify the Cream-Browser's state (see #CreamMode) according to
+ * the inputbox's content.
+ *
+ * If the text begin with <code>'?'</code> or <code>'/'</code>, set the state to #CREAM_MODE_SEARCH.
+ * If the text start with anything else, set the state to #CREAM_MODE_COMMAND.
+ */
 static void inputbox_check_mode (Inputbox *obj)
 {
      const gchar *txt = gtk_entry_get_text (GTK_ENTRY (obj));

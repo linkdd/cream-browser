@@ -29,9 +29,15 @@
 /*!
  * \defgroup theme Theming Cream-Browser
  * \ingroup interface
- * Theme class definition.
  *
- * @{
+ * \section css-syntax The CSS syntax.
+ *
+ * <strong>GTK+-3.0</strong>, as a <em>Cream-Browser</em> dependancy, provide
+ * a <strong>CSS</strong> theming engine, via the object \class{GtkCssProvider}.
+ *
+ * \section todo TODO
+ *
+ * - Some documentation about CSS theming.
  */
 
 #include <gtk/gtk.h>
@@ -46,12 +52,16 @@ G_BEGIN_DECLS
 typedef struct _Theme Theme;
 typedef struct _ThemeClass ThemeClass;
 
+/*!
+ * \class Theme
+ * Theme class structure.
+ */
 struct _Theme
 {
      GObject parent;
 
-     GtkCssProvider *engine;
-     gchar *path;
+     GtkCssProvider *engine; /*!< The \class{GtkCssProvider} */
+     gchar *path;            /*!< The theme's path. */
 };
 
 struct _ThemeClass

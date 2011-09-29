@@ -33,7 +33,7 @@
 #include <err.h>
 
 /*!
- * \defgroup lua Lua context
+ * \defgroup lua Lua
  * Functions to manipulate the Lua context.
  *
  * @{
@@ -42,7 +42,6 @@
 int luaL_error_handler (lua_State *L);
 
 /*!
- * \fn static inline int luaL_checkfunction (lua_State *L, int idx)
  * @param L The lua VM state.
  * @param idx Index of the stack.
  * @return A reference on the function or 0.
@@ -58,7 +57,6 @@ static inline int luaL_checkfunction (lua_State *L, int idx)
 }
 
 /*!
- * \fn static inline void luaL_callfunction (lua_State *L, int ref, int nargs, int nreturns)
  * @param L The lua VM state.
  * @param ref The function's reference.
  * @param nargs Number of arguments.
@@ -94,7 +92,6 @@ static inline void luaL_callfunction (lua_State *L, int ref, int nargs, int nret
 }
 
 /*!
- * \fn static inline void luaL_checktable (lua_State *L, int idx)
  * @param L The lua VM state.
  * @param idx Index of the stack.
  *
@@ -106,7 +103,6 @@ static inline void luaL_checktable (lua_State *L, int idx)
 }
 
 /*!
- * \fn static inline gboolean luaL_checkboolean (lua_State *L, int idx)
  * @param L The lua VM state.
  * @param idx Index of the stack.
  * @return A boolean.

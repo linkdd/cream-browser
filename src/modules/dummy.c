@@ -33,6 +33,10 @@
 
 CREAM_DEFINE_MODULE (CreamModuleDummy, cream_module_dummy);
 
+/*!
+ * @param self The #CreamModuleDummy structure.
+ * Initialize #CreamModuleDummy.
+ */
 static void cream_module_dummy_init (CreamModuleDummy *self)
 {
      cream_browser_add_protocol (app, "dummy", G_OBJECT (self));

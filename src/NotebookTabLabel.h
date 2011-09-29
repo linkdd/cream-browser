@@ -67,6 +67,8 @@ GType notebook_tab_label_get_type (void);
 void notebook_tab_label_set_pixbuf (NotebookTabLabel *obj, GdkPixbuf *pixbuf);
 void notebook_tab_label_set_text (NotebookTabLabel *obj, const char *text);
 
+G_END_DECLS
+
 /*! @} */
 
 #endif /* __CLASS_NOTEBOOK_TAB_LABEL_H */

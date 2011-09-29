@@ -51,10 +51,6 @@ typedef struct _GtkVimSplitClass GtkVimSplitClass;
 /*!
  * \class GtkVimSplit
  * #GtkVimSplit object.
- *
- * \signalsection
- * \signal{no-more-split, signal_no_more_split, void signal_no_more_split (GtkVimSplit *obj);}
- * \signalendsection
  */
 struct _GtkVimSplit
 {
@@ -69,14 +65,6 @@ struct _GtkVimSplitClass
 {
      GtkEventBoxClass parent;
 
-     /*!
-      * \public \memberof GtkVimSplit
-      * \signalof{GtkVimSplit}
-      * \fn void signal_no_more_split (GtkVimSplit *obj);
-      * @param obj The #GtkVimSplit object from which the signal was emitted.
-      *
-      * Signal emitted when the last view is closed (see gtk_vim_split_close()).
-      */
      void (*no_more_split) (GtkVimSplit *obj);
      void (*focus_changed) (GtkVimSplit *obj, Notebook *focus);
 };
@@ -93,5 +81,34 @@ void gtk_vim_split_close (GtkVimSplit *obj);
 G_END_DECLS
 
 /*! @} */
+
+/*!
+ * \defgroup gtkvimsplit-signals Signals
+ * \ingroup gtkvimsplit
+ *
+ * \b Signals:
+ * - \ref no-more-split
+ * - \ref focus-changed
+ *
+ * <hr>
+ *
+ * \section no-more-split "no-more-split"
+ * \code void no_more_split (GtkVimSplit *obj, gpointer user_data) \endcode
+ * @param obj A #GtkVimSplit object.
+ * @param user_data Data to pass to the handler.
+ *
+ * This signal is emitted when there is no more view openned
+ * in the #GtkVimSplit.
+ *
+ * <hr>
+ *
+ * \section focus-changed "focus-changed"
+ * \code void focus_changed (GtkVimSplit *obj, Notebook *focus, gpointer user_data) \endcode
+ * @param obj A #GtkVimSplit object
+ * @param focus The #Notebook which owns the focus.
+ * @param user_data Data to pass to the handler.
+ *
+ * This signal is emitted when a #Notebook grab the focus.
+ */
 
 #endif /* __CLASS_GTK_VIM_SPLIT_H */
