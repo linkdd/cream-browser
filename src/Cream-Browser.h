@@ -41,6 +41,7 @@
 #include "interface.h"
 #include "theme.h"
 #include "socket.h"
+#include "cache.h"
 
 G_BEGIN_DECLS
 

@@ -28,23 +28,15 @@
 
 typedef enum
 {
-     CACHE_FOLDER_FAVICONS,
-     CACHE_FOLDER_COOKIES,
-     CACHE_FOLDER_HISTORY,
-     CACHE_FOLDER_DOWNLOADS,
-     CACHE_FOLDER_SESSION,
-     CACHE_FOLDER_COMMANDS,
-     CACHE_FOLDER_NONE
-} CacheFolder;
+     CACHE_TYPE_COMMANDS,
+     CACHE_TYPE_HISTORY,
+     CACHE_TYPE_SESSION,
+     CACHE_TYPE_COOKIES,
 
-typedef struct
-{
-     GHashTable *datas;
-     gchar *path;
-} Cache;
+     CACHE_TYPE_NONE,
+} CacheType;
 
-void cache_init (void);
-void cache_insert (CacheFolder folder, gpointer key, gpointer value);
-gpointer cache_lookup (CacheFolder folder, gpointer key);
+gchar *cache_path (CacheType type, const gchar *file);
+void cache_appendto (const gchar *path, const gchar *data);
 
 #endif /* __CACHE_H */

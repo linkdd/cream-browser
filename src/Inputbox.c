@@ -110,7 +110,7 @@ static void inputbox_activate_cb (Inputbox *obj)
      switch (txt[0])
      {
           case ':':
-               if (!run_command (txt + 1, &error))
+               if (!run_command (txt + 1, &error) && error != NULL)
                {
                     gtk_entry_set_text (GTK_ENTRY (obj), error->message);
                     g_error_free (error);
@@ -142,6 +142,12 @@ static void inputbox_activate_cb (Inputbox *obj)
      }
 
      gtk_editable_set_position (GTK_EDITABLE (obj), -1);
+
+     {
+          gchar *path = cache_path (CACHE_TYPE_COMMANDS, NULL);
+          cache_appendto (path, txt);
+          g_free (path);
+     }
 
      obj->history = g_list_prepend (obj->history, txt);
 }

@@ -25,30 +25,69 @@
 
 #include "local.h"
 
-void cache_insert (Cache *cache, CacheType ctype, gchar *data)
+gchar *cache_path (CacheType type, const gchar *file)
 {
-     GError *error = NULL;
+     gchar *ret = NULL;
 
-     g_mkdir_with_parents (cache->path, 0700);
-
-     switch (ctype)
+     switch (type)
      {
           case CACHE_TYPE_COMMANDS:
-          {
-               gchar *path = g_build_filename (cache->path, "commands", NULL);
-               GFile *f = g_file_new_for_path (path);
-               GFileOutputStream *cout = g_file_append_to (f, G_FILE_CREATE_PRIVATE, NULL, &error);
-
-               if (!cout && error)
-               {
-                    print_error (error, FALSE, "cache.insert.commands");
-                    break;
-               }
-
-
-               g_object_unref (cout);
-               g_free (path);
+               ret = g_build_path (G_DIR_SEPARATOR_S, g_get_user_cache_dir (), PACKAGE, app->profile, "commands", NULL);
                break;
-          }
+
+          case CACHE_TYPE_HISTORY:
+               ret = g_build_path (G_DIR_SEPARATOR_S, g_get_user_cache_dir (), PACKAGE, app->profile, "history", file, NULL);
+               break;
+
+          case CACHE_TYPE_SESSION:
+               ret = g_build_path (G_DIR_SEPARATOR_S, g_get_user_cache_dir (), PACKAGE, app->profile, "session", file, NULL);
+               break;
+
+          case CACHE_TYPE_COOKIES:
+               ret = g_build_path (G_DIR_SEPARATOR_S, g_get_user_cache_dir (), PACKAGE, app->profile, "cookies", file, NULL);
+               break;
+
+          case CACHE_TYPE_NONE:
+          default:
+               ret = g_build_path (G_DIR_SEPARATOR_S, g_get_user_cache_dir (), PACKAGE, app->profile, file, NULL);
+               break;
+     }
+
+     return ret;
+}
+
+void cache_appendto (const gchar *path, const gchar *data)
+{
+     GError *error = NULL;
+     GFileOutputStream *cout;
+     GFile *f;
+     gchar *cleared;
+
+     f = g_file_new_for_path (path);
+
+     if (!g_file_query_exists (f, NULL))
+          g_file_make_directory_with_parents (g_file_get_parent (f), NULL, NULL);
+
+     cout = g_file_append_to (f, G_FILE_CREATE_PRIVATE, NULL, &error);
+
+     if (error != NULL)
+     {
+          CREAM_BROWSER_GET_CLASS (app)->error (app, FALSE, error);
+          return;
+     }
+
+     cleared = g_strdup_printf ("%s\r\n", data);
+     if (g_output_stream_write (G_OUTPUT_STREAM (cout), cleared, strlen (cleared), NULL, &error) == -1 && error != NULL)
+     {
+          g_free (cleared);
+          CREAM_BROWSER_GET_CLASS (app)->error (app, FALSE, error);
+          return;
+     }
+     g_free (cleared);
+
+     if (!g_output_stream_close (G_OUTPUT_STREAM (cout), NULL, &error) && error != NULL)
+     {
+          CREAM_BROWSER_GET_CLASS (app)->error (app, FALSE, error);
+          return;
      }
 }
