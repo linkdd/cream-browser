@@ -36,6 +36,8 @@ static void inputbox_focus_in_cb (Inputbox *obj, GdkEvent *event);
 static void inputbox_focus_out_cb (Inputbox *obj, GdkEvent *event);
 
 static void inputbox_check_mode (Inputbox *obj);
+static void inputbox_cache_append (Inputbox *obj, gchar *txt);
+static void inputbox_cache_read (Inputbox *obj);
 
 G_DEFINE_TYPE (Inputbox, inputbox, GTK_TYPE_ENTRY)
 
@@ -76,6 +78,8 @@ static void inputbox_init (Inputbox *self)
 {
      self->history = NULL;
      self->current = NULL;
+
+     inputbox_cache_read (self);
 }
 
 /*! @} */
@@ -143,13 +147,7 @@ static void inputbox_activate_cb (Inputbox *obj)
 
      gtk_editable_set_position (GTK_EDITABLE (obj), -1);
 
-     {
-          gchar *path = cache_path (CACHE_TYPE_COMMANDS, NULL);
-          cache_appendto (path, txt);
-          g_free (path);
-     }
-
-     obj->history = g_list_prepend (obj->history, txt);
+     inputbox_cache_append (obj, txt);
 }
 
 /*!
@@ -286,6 +284,38 @@ static void inputbox_check_mode (Inputbox *obj)
           statusbar_set_state (CREAM_STATUSBAR (app->gui.statusbar), CREAM_MODE_COMMAND);
           gtk_grab_remove (GTK_WIDGET (obj));
      }
+}
+
+/*
+ * \private \memberof Inputbox
+ * @param obj A #Inputbox object.
+ * @param txt Text to append.
+ * Append a command into the cache file.
+ */
+static void inputbox_cache_append (Inputbox *obj, gchar *txt)
+{
+     gchar *path = cache_path (CACHE_TYPE_COMMANDS, NULL);
+     cache_appendto (path, txt);
+     g_free (path);
+
+     obj->history = g_list_prepend (obj->history, txt);
+}
+
+/*
+ * \private \memberof Inputbox
+ * @param obj A #Inputbox object.
+ * Read cache file and restore commands history.
+ */
+static void inputbox_cache_read (Inputbox *obj)
+{
+     gchar *path = cache_path (CACHE_TYPE_COMMANDS, NULL);
+     gchar **commands = cache_read (path);
+     int i, len = g_strv_length (commands);
+
+     g_free (path);
+
+     for (i = 0; i < len; ++i)
+          obj->history = g_list_prepend (obj->history, commands[i]);
 }
 
 /*! @} */

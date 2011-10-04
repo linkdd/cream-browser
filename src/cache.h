@@ -38,5 +38,6 @@ typedef enum
 
 gchar *cache_path (CacheType type, const gchar *file);
 void cache_appendto (const gchar *path, const gchar *data);
+gchar **cache_read (const gchar *path);
 
 #endif /* __CACHE_H */

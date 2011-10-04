@@ -91,3 +91,21 @@ void cache_appendto (const gchar *path, const gchar *data)
           return;
      }
 }
+
+gchar **cache_read (const gchar *path)
+{
+     GError *error = NULL;
+     gchar *contents = NULL;
+     gchar **lines = NULL;
+     gsize length;
+
+     if (!g_file_get_contents (path, &contents, &length, &error) && error != NULL)
+     {
+          CREAM_BROWSER_GET_CLASS (app)->error (app, FALSE, error);
+          return NULL;
+     }
+
+     lines = g_strsplit (contents, "\r\n", -1);
+     g_free (contents);
+     return lines;
+}
