@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>CSS Theming | Blog | Cream-Browser</title>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        <link type="text/css" rel="stylesheet" media="all" href="http://cream-browser.net/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="Cream-Browser's RSS feed" href="http://cream-browser.net/blog//rss2.xml" />
+    </head>
+    <body>
+        <div id="fork">
+            <a href="http://github.com/linkdd/cream-browser/">
+                <img src="http://cream-browser.net/img/forkme.png" alt="Fork me on GitHub" />
+            </a>
+        </div>
+
+        <div id="container">
+            <div class="download">
+                <a href="http://github.com/linkdd/cream-browser/zipball/master">
+                    <img width="90" src="http://cream-browser.net/img/zip.png" alt="zip" />
+                </a>
+                <a href="http://github.com/linkdd/cream-browser/tarball/master">
+                    <img width="90" src="http://cream-browser.net/img/tar.png" alt="tar" />
+                </a>
+            </div>
+
+            <div class="logo">
+                <a href="http://cream-browser.net/">
+                    <img src="http://cream-browser.net/img/logo.png" alt="" />
+                </a>
+            </div>
+
+            <h1>
+                <a href="http://cream-browser.net/">cream-browser</a>
+                <span class="small">unstable</span>
+            </h1>
+        </div>
+
+        <div id="menu">
+            <ul>
+                <li><a href="http://github.com/linkdd/cream-browser/">Source Code</a></li>
+                <li><a href="http://github.com/linkdd/cream-browser/issues/">Bug Tracker</a></li>
+                <li><a href="http://github.com/linkdd/cream-browser/wiki/">Wiki</a></li>
+                <li><a href="http://github.com/linkdd/cream-browser/wiki/Screenshots">Screenshots</a></li>
+                <li><a href="http://cream-browser.net/docs/cream-browser">Documentation</a></li>
+                <li><a href="http://cream-browser.net/docs/lua">Lua API</a></li>
+                <li><a href="http://cream-browser.net/blog/">Blog</a></li>
+                <li class="submenu"><a href="#">Mailing list</a>
+                <ul>
+                    <li><a href="http://groups.google.com/group/cream-browser-devel">Cream-Browser developers</a></li>
+                    <li><a href="http://groups.google.com/group/cream-browser-users">Cream-Browser users</a></li>
+                </ul></li>
+            </ul>
+        </div>
+
+        <div id="body">
+             <div id="blog">
+                    <p class="links">
+                         <span class=""><a href="http://cream-browser.net/blog/post/06.html"><img src="http://cream-browser.net/img/prev.png" alt="GTK2 not supported anymore" /></a></span>
+                         <span><a href="http://cream-browser.net/blog/post/07.html">CSS Theming</a></span>
+                         <span class="hidden"><a href="http://cream-browser.net/blog/post/.html"><img src="http://cream-browser.net/img/next.png" alt="" /></a></span>
+                    </p>
+
+                    <div class="content">
+<p>I'm glad to announce this to you.</p>
+
+<p>After removing the <strong>GTK+-2.0</strong> support, I was able to use some features of <strong>GTK+-3.0</strong> which are not available on
+<strong>GTK+-2.0</strong>. Features such as <strong>CSS theming</strong>.</p>
+
+<p>Instead of loading a <em>GtkRc</em> file, <strong>GTK+-3.0</strong> loads a <em>CSS</em> file.</p>
+
+<p>In my opinion, <em>GtkRc</em> is a big shit. If I wanted to keep <strong>GTK+-2.0</strong>, I had to use the <em>GtkWidget</em> tuning functions.
+In other words : a painful trip. Another good reason to remove <strong>GTK+-2.0</strong> support.</p>
+
+<p>If you don't want to use the default <em>GTK</em> theme, just put your custom <em>CSS</em> file into <strong>~/.config/cream-browser/theme.css</strong></p>
+
+<p>An example of <em>CSS</em> theme is already available on the <em>git</em> repository.</p>
+
+<p><a href="http://github.com/linkdd/cream-browser/wiki/screenshots/big/css-theme.png"><img src="http://github.com/linkdd/cream-browser/wiki/screenshots/small/css-theme.png" alt="screenshot" title=""></a></p>
+
+<p>Have fun!</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="footer">
+            <p>Copyright &copy; 2011, David Delassus &lt;<a href="mailto:">david (dot) jose (dot) delassus (at) gmail (dot) com</a>&gt;</p>
+            <p>
+                <script type="text/javascript" src="http://www.ohloh.net/p/483150/widgets/project_thin_badge.js"></script>
+                <a href="http://validator.w3.org/check?uri=referer">
+                    <img src="http://cream-browser.net/img/xhtml.png" alt="Valid XHTML 1.0 Strict" />
+                </a>
+                <a href="http://vim.org/">
+                    <img src="http://cream-browser.net/img/vim.png" alt="Written with Vim" />
+                </a>
+               <a class="feed" href="http://cream-browser.net/blog//rss2.xml"><span class="feed">RSS Feeds</span></a>
+            </p>
+        </div>
+    </body>
+</html>
+

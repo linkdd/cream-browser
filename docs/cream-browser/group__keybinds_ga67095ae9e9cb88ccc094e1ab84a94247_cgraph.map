@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$group__cb-members.html#ga834ab6cf9e173523f55b0ff9f69a1f4a" title="CreamBrowser::cream_browser_get_focused_webview" alt="" coords="189,5,555,35"/>
+<area shape="rect" id="node5" href="$group__lua-webview.html#ga9d622fce1c4e60643367213dd099c34c" title="lua_pushwebview" alt="" coords="307,59,437,88"/>
+<area shape="rect" id="node7" href="$group__lua.html#gaffccab9d3e8a677035a76bc8560376aa" title="luaL_callfunction" alt="" coords="309,112,435,141"/>
+<area shape="rect" id="node9" href="$group__lua.html#ga1abbe2739ad5cbd498a2223e30725106" title="luaL_error_handler" alt="" coords="604,112,745,141"/>
+</map>

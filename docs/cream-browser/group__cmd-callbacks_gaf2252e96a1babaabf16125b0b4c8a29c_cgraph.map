@@ -1,0 +1,33 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$group__gtkvimsplit-members.html#ga6ba3e5a9524ecf991fa9ac08edd3ad3f" title="GtkVimSplit::gtk_vim_split_get_focus" alt="" coords="197,161,448,191"/>
+<area shape="rect" id="node5" href="$group__notebook-members.html#ga64e417d298ffca975b66285d2f052535" title="Notebook::notebook_tabopen" alt="" coords="220,215,425,244"/>
+<area shape="rect" id="node19" href="$group__interface.html#ga90dc31afdc97f3170b810b764d581615" title="ui_show" alt="" coords="592,371,664,400"/>
+<area shape="rect" id="node7" href="$group__cb-members.html#gae7a258d4ab705325772fa8a776609d93" title="CreamBrowser::cream_browser_get_protocol" alt="" coords="824,163,1131,192"/>
+<area shape="rect" id="node9" href="$group__notebook-cb.html#ga996eafd3bd02780aa31f98b2265a3f85" title="notebook_signal_favicon_changed_cb" alt="" coords="497,5,759,35"/>
+<area shape="rect" id="node13" href="$group__notebook-cb.html#gaa3215be494d68f1072f3e2416f56cafb" title="notebook_signal_grab_focus_cb" alt="" coords="516,59,740,88"/>
+<area shape="rect" id="node15" href="$group__notebook-cb.html#gae043dc69cd2e76d785eece7739ff00ba" title="notebook_signal_title_changed_cb" alt="" coords="508,112,748,141"/>
+<area shape="rect" id="node21" href="$group__utils.html#ga336664bb74e89ca16a0969303a2d9bb2" title="uri_scheme_parse" alt="" coords="908,216,1047,245"/>
+<area shape="rect" id="node23" href="$group__webview-members.html#ga14371f1f9efaa76759810f394ba73ca6" title="WebView::webview_load_uri" alt="" coords="529,267,727,296"/>
+<area shape="rect" id="node69" href="$group__webview.html#gace040571a94dce0904e6a0c86b978cc8" title="webview_new" alt="" coords="923,376,1032,405"/>
+<area shape="rect" id="node11" href="$group__notebook-tab-label-members.html#gacf82443750b7524da31d2b989a94503f" title="NotebookTabLabel::notebook_tab_label_set_pixbuf" alt="" coords="808,5,1147,35"/>
+<area shape="rect" id="node17" href="$group__notebook-tab-label-members.html#ga4e239cba437fc5db9cf40754f7d3bc73" title="NotebookTabLabel::notebook_tab_label_set_text" alt="" coords="815,109,1140,139"/>
+<area shape="rect" id="node26" href="$group__mod-members.html#gabccfc0679cb2885019d728e99c0d978c" title="CreamModule::cream_module_load_uri" alt="" coords="844,269,1111,299"/>
+<area shape="rect" id="node29" href="$group__webview-members.html#ga9c74047f078ca29c05893fbfa5dacdfd" title="WebView::webview_set_module" alt="" coords="868,323,1087,352"/>
+<area shape="rect" id="node31" href="$group__mod-members.html#ga6d110d8b8a15a39f1126976e7e604b76" title="CreamModule::cream_module_webview_new" alt="" coords="1196,323,1497,352"/>
+<area shape="rect" id="node33" href="$group__webview-members.html#ga1e199a0f19e6a527e14c9f7f41358cc1" title="WebView::webview_connect_signals" alt="" coords="1223,376,1471,405"/>
+<area shape="rect" id="node35" href="$group__webview-cb.html#ga62b782469ee6578a33596cfa75592ff9" title="webview_signal_download_cb" alt="" coords="1576,216,1787,245"/>
+<area shape="rect" id="node37" href="$group__webview-cb.html#ga4c53415362bbe282168584210791b5eb" title="webview_signal_favicon_changed_cb" alt="" coords="1552,269,1811,299"/>
+<area shape="rect" id="node39" href="$group__webview-cb.html#ga0cbccdf7eed612d1d43538073ce66004" title="webview_signal_grab_focus_cb" alt="" coords="1572,323,1791,352"/>
+<area shape="rect" id="node41" href="$group__webview-cb.html#gab6560b45327accdcd08c49cc8bd4f715" title="webview_signal_progress_changed_cb" alt="" coords="1547,483,1816,512"/>
+<area shape="rect" id="node49" href="$group__webview-cb.html#gabdd22d92fc71eb936837f55dc490c280" title="webview_signal_state_changed_cb" alt="" coords="1560,376,1803,405"/>
+<area shape="rect" id="node54" href="$group__webview-cb.html#gaef68d55f432f1ba2235d41394d4459ce" title="webview_signal_title_changed_cb" alt="" coords="1564,429,1799,459"/>
+<area shape="rect" id="node59" href="$group__webview-cb.html#ga7cd9e910778ce4b9a8728bed63cffc80" title="webview_signal_uri_changed_cb" alt="" coords="1568,563,1795,592"/>
+<area shape="rect" id="node43" href="$group__cb-members.html#ga834ab6cf9e173523f55b0ff9f69a1f4a" title="CreamBrowser::cream_browser_get_focused_webview" alt="" coords="1864,429,2229,459"/>
+<area shape="rect" id="node45" href="$group__statusbar-members.html#ga9f0bc93c02300d85b1d8d16ffca0ff66" title="Statusbar::statusbar_set_link" alt="" coords="1947,536,2147,565"/>
+<area shape="rect" id="node47" href="$group__statusbar-members.html#ga43096c07df752992ee3d46223040427d" title="Statusbar::statusbar_set_progress" alt="" coords="1929,483,2164,512"/>
+<area shape="rect" id="node52" href="$group__statusbar-members.html#gad471850c00342993b9751f34252e77a6" title="Statusbar::statusbar_set_state" alt="" coords="1941,323,2152,352"/>
+<area shape="rect" id="node57" href="$group__webview-members.html#ga09389ce1c5cb0f7948bc37226dbb933f" title="WebView::webview_get_title" alt="" coords="1948,376,2145,405"/>
+<area shape="rect" id="node62" href="$group__mod-members.html#ga29ef33dc9e0d7a3920a01dbbafc1ef27" title="CreamModule::cream_module_can_go_back" alt="" coords="1897,589,2196,619"/>
+<area shape="rect" id="node64" href="$group__mod-members.html#ga531135ee5e74ab32e5824523349ca548" title="CreamModule::cream_module_can_go_forward" alt="" coords="1888,643,2205,672"/>
+<area shape="rect" id="node66" href="$group__statusbar-members.html#ga2d2ba5e6c2fbf25e90f0e3fd001431a0" title="Statusbar::statusbar_set_history" alt="" coords="1936,696,2157,725"/>
+</map>

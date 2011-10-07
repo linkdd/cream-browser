@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rss version="2.0"
+ xmlns:blogChannel="http://backend.userland.com/blogChannelModule"
+>
+
+<channel>
+<title>Cream-Browser&#x27;s RSS feed</title>
+<link>http://cream-browser.net/blog</link>
+<description>RSS feeds of the Cream-Browser&#x27;s blog.</description>
+<language>en</language>
+<lastBuildDate>sam., 24 sept. 2011 00:20:22 +0200</lastBuildDate>
+<managingEditor>david.jose.delassus@gmail.com</managingEditor>
+<webMaster>david.jose.delassus@gmail.com</webMaster>
+
+<item>
+<title>CSS Theming</title>
+<link>http://cream-browser.net/blog//post/07.html</link>
+<description>&#x3C;p&#x3E;I&#x27;m glad to announce this to you.&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;After removing the &#x3C;strong&#x3E;GTK+-2.0&#x3C;/strong&#x3E; support, I was able to use some features of &#x3C;strong&#x3E;GTK+-3.0&#x3C;/strong&#x3E; which are not available on
+
+&#x3C;strong&#x3E;GTK+-2.0&#x3C;/strong&#x3E;. Features such as &#x3C;strong&#x3E;CSS theming&#x3C;/strong&#x3E;.&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;Instead of loading a &#x3C;em&#x3E;GtkRc&#x3C;/em&#x3E; file, &#x3C;strong&#x3E;GTK+-3.0&#x3C;/strong&#x3E; loads a &#x3C;em&#x3E;CSS&#x3C;/em&#x3E; file.&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;In my opinion, &#x3C;em&#x3E;GtkRc&#x3C;/em&#x3E; is a big shit. If I wanted to keep &#x3C;strong&#x3E;GTK+-2.0&#x3C;/strong&#x3E;, I had to use the &#x3C;em&#x3E;GtkWidget&#x3C;/em&#x3E; tuning functions.
+
+In other words : a painful trip. Another good reason to remove &#x3C;strong&#x3E;GTK+-2.0&#x3C;/strong&#x3E; support.&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;If you don&#x27;t want to use the default &#x3C;em&#x3E;GTK&#x3C;/em&#x3E; theme, just put your custom &#x3C;em&#x3E;CSS&#x3C;/em&#x3E; file into &#x3C;strong&#x3E;~/.config/cream-browser/theme.css&#x3C;/strong&#x3E;&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;An example of &#x3C;em&#x3E;CSS&#x3C;/em&#x3E; theme is already available on the &#x3C;em&#x3E;git&#x3C;/em&#x3E; repository.&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;&#x3C;a href=&#x22;http://github.com/linkdd/cream-browser/wiki/screenshots/big/css-theme.png&#x22;&#x3E;&#x3C;img src=&#x22;http://github.com/linkdd/cream-browser/wiki/screenshots/small/css-theme.png&#x22; alt=&#x22;screenshot&#x22; title=&#x22;&#x22;&#x3E;&#x3C;/a&#x3E;&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;Have fun!&#x3C;/p&#x3E;
+</description>
+<pubDate>sam., 24 sept. 2011 00:20:18 +0200</pubDate>
+</item>
+<item>
+<title>GTK2 not supported anymore</title>
+<link>http://cream-browser.net/blog//post/06.html</link>
+<description>&#x3C;p&#x3E;Today I have removed support for &#x3C;strong&#x3E;GTK+-2.0&#x3C;/strong&#x3E; (and unfortunately &#x3C;em&#x3E;DirectFB&#x3C;/em&#x3E;, because &#x3C;strong&#x3E;GTK+-3.0&#x3C;/strong&#x3E; does not support it anymore).&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;Why did I do this?&#x3C;/p&#x3E;
+
+
+
+&#x3C;ul&#x3E;
+
+&#x3C;li&#x3E;As with all new versions of &#x3C;strong&#x3E;GTK+-3.0&#x3C;/strong&#x3E; comes with interesting features (such as CSS to customize the widgets) that are not available in &#x3C;strong&#x3E;GTK+-2.0&#x3C;/strong&#x3E;. It is relatively a handicap for development.&#x3C;/li&#x3E;
+
+&#x3C;li&#x3E;&#x3C;strong&#x3E;GTK+-2.0&#x3C;/strong&#x3E; is much heavier than &#x3C;strong&#x3E;GTK+-3.0&#x3C;/strong&#x3E;, because &#x3C;strong&#x3E;GTK+-3.0&#x3C;/strong&#x3E; removes many features depreciated. This handicaps even more the development, requiring many &#x3C;strong&#x3E;&#x3C;em&#x3E;#ifdef&#x3C;/em&#x3E;&#x3C;/strong&#x3E; block in the code.&#x3C;/li&#x3E;
+
+&#x3C;li&#x3E;The library &#x3C;strong&#x3E;WebKitGTK&#x3C;/strong&#x3E; already has a port to &#x3C;strong&#x3E;GTK+-3.0&#x3C;/strong&#x3E; (although they still maintain the development of the branch &#x3C;strong&#x3E;GTK+-2.0&#x3C;/strong&#x3E;), so switching to &#x3C;strong&#x3E;GTK+-3.0&#x3C;/strong&#x3E; will be invisible on this side of.&#x3C;/li&#x3E;
+
+&#x3C;li&#x3E;&#x3C;strong&#x3E;GTK+-3.0&#x3C;/strong&#x3E; is already in the repositories of many &#x3C;em&#x3E;GNU/Linux&#x3C;/em&#x3E; distributions (such as &#x3C;em&#x3E;Gentoo&#x3C;/em&#x3E;, &#x3C;em&#x3E;Debian testing/sid&#x3C;/em&#x3E;, &#x3C;em&#x3E;archlinux&#x3C;/em&#x3E;, ...), its installation for the developer and/or the user is not the most complicated. On this point, we could say that is because this version was released several months ago.&#x3C;/li&#x3E;
+
+&#x3C;/ul&#x3E;
+
+
+
+&#x3C;p&#x3E;So I wont maintain any longer the support of the two releases, I encourage you to install &#x3C;strong&#x3E;GTK+-3.0&#x3C;/strong&#x3E; if not already done.&#x3C;/p&#x3E;
+</description>
+<pubDate>jeu., 22 sept. 2011 23:23:35 +0200</pubDate>
+</item>
+<item>
+<title>Keybindings are available</title>
+<link>http://cream-browser.net/blog//post/05.html</link>
+<description>&#x3C;p&#x3E;Hi every body !&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;I&#x27;m happy to tell you that &#x3C;strong&#x3E;key bindings&#x3C;/strong&#x3E; are now available in &#x3C;em&#x3E;cream-browser&#x3C;/em&#x3E; !&#x3C;/p&#x3E;
+
+
+
+&#x3C;pre&#x3E;&#x3C;code&#x3E;17:00 &#x26;lt;CIA-69&#x26;gt; cream-browser: David Delassus unstable * r0feb308 / (21 files in 3 dirs): Add keybindings (soon a note on the blog) - http://git.io/In8GfA
+
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;
+
+
+
+&#x3C;p&#x3E;The lua bindings are already available :&#x3C;/p&#x3E;
+
+
+
+&#x3C;pre&#x3E;&#x3C;code&#x3E;cream.keys.map (statelist, modkeys_list, command, callback)
+
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;
+
+
+
+&#x3C;p&#x3E;&#x3C;strong&#x3E;statelist&#x3C;/strong&#x3E; is a list of state where your keybind will be affected, here is the different states of &#x3C;em&#x3E;cream-browser&#x3C;/em&#x3E; :&#x3C;/p&#x3E;
+
+
+
+&#x3C;pre&#x3E;&#x3C;code&#x3E;cream.state.insert   # You are typing in a webview
+
+cream.state.command  # You are typing a command in the inputbox
+
+cream.state.search   # You are typing a search command in the inputbox
+
+cream.state.embed    # A plugin (ie. flashplayer) own the focus (not yet implemented)
+
+cream.state.caret    # CARET browsing (not yet implemented)
+
+cream.state.normal   # Normal state
+
+cream.state.all      # All states
+
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;
+
+
+
+&#x3C;p&#x3E;Here is an example :&#x3C;/p&#x3E;
+
+
+
+&#x3C;pre&#x3E;&#x3C;code&#x3E; cream.keys.map ({ cream.state.all }, { }, &#x22;Escape&#x22;,
+
+           function (w)
+
+                cream.inputbox.text (&#x22;&#x22;)
+
+                cream.state.current (cream.state.normal)
+
+           end)
+
+
+
+ cream.keys.map ({ { cream.state.normal, cream.state.embed, cream.state.caret }, { &#x22;Shift&#x22; }, &#x22;colon&#x22;,
+
+           function (w)
+
+                cream.inputbox.text (&#x22;:&#x22;)
+
+                cream.inputbox.focus ()
+
+           end)
+
+
+
+ -- Paste command \o/
+
+ cream.keys.map ({ cream.state.normal, cream.state.embed, cream.state.caret }, { }, &#x22;pp&#x22;,
+
+           function (w)
+
+                uri = cream.clipboard.primary:get ()
+
+
+
+                if uri ~= &#x22;&#x22; then
+
+                     w:open (uri)
+
+                end
+
+           end)
+
+&#x3C;/code&#x3E;&#x3C;/pre&#x3E;
+
+
+
+&#x3C;p&#x3E;&#x3C;strong&#x3E;NB: You HAVE TO precise all modkeys (ie. &#x22;Shift&#x22; + P)&#x3C;/strong&#x3E;&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;&#x3C;strong&#x3E;NB: You have to write the full name of the key (ie. minus an not -)&#x3C;/strong&#x3E;&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;Enjoy! :)&#x3C;/p&#x3E;
+</description>
+<pubDate>jeu., 08 sept. 2011 17:22:26 +0200</pubDate>
+</item>
+<item>
+<title>Split your browser as you split your Vim</title>
+<link>http://cream-browser.net/blog//post/04.html</link>
+<description>&#x3C;p&#x3E;Oe of the &#x3C;em&#x3E;Cream-Browser&#x3C;/em&#x3E;&#x27;s killer feature is the &#x3C;strong&#x3E;GtkVimSplit&#x3C;/strong&#x3E; which allow you to split your browser in multiple views, just like &#x3C;strong&#x3E;&#x3C;em&#x3E;vim&#x3C;/em&#x3E;&#x3C;/strong&#x3E; :)&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;This feature is now finished, and to end the GUI I just have to finish the &#x3C;em&#x3E;inputbox&#x3C;/em&#x3E;, the &#x3C;em&#x3E;statusbar&#x3C;/em&#x3E; and the &#x3C;em&#x3E;theme engine&#x3C;/em&#x3E;.&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;Soon a GUI for &#x3C;em&#x3E;Cream-Browser&#x3C;/em&#x3E; !&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;&#x3C;img src=&#x22;https://lh6.googleusercontent.com/-9EKISo61qiA/Tfd2yP-aZ7I/AAAAAAAAAB0/1uTEKbafl9k/cream-browser.png&#x22; alt=&#x22;Cream-Browser - GtkVimSplit screenshot&#x22; title=&#x22;&#x22;&#x3E;&#x3C;/p&#x3E;
+</description>
+<pubDate>mar., 14 juin 2011 17:24:34 +0200</pubDate>
+</item>
+<item>
+<title>Gettext support</title>
+<link>http://cream-browser.net/blog//post/03.html</link>
+<description>&#x3C;p&#x3E;&#x3C;em&#x3E;Cream-Browser&#x3C;/em&#x3E; has now the &#x3C;strong&#x3E;&#x3C;em&#x3E;gettext&#x3C;/em&#x3E;&#x3C;/strong&#x3E; support and is now translatable.&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;I already made a french translation available on git. And a howto will be soon
+
+available on the wiki.&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;&#x3C;strong&#x3E;&#x3C;em&#x3E;Q: Why now ? There is no more important things to do, like a GUI ?&#x3C;/em&#x3E;&#x3C;/strong&#x3E;&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;&#x3C;strong&#x3E;A:&#x3C;/strong&#x3E; In fact, &#x3C;em&#x3E;gettext&#x3C;/em&#x3E; support wasn&#x27;t long to do. It was preferable to do
+
+this now, before more translations to do (so a bigger work).&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;I hope that other translations will be available very soon :)&#x3C;/p&#x3E;
+</description>
+<pubDate>mar., 14 juin 2011 17:20:27 +0200</pubDate>
+</item>
+<item>
+<title>RSS Feeds for Cream-Browser&#x27;s blog</title>
+<link>http://cream-browser.net/blog//post/02.html</link>
+<description>&#x3C;p&#x3E;Still powered by &#x3C;a href=&#x22;https://github.com/linkdd/plstblog&#x22;&#x3E;plstblog&#x3C;/a&#x3E;, this blog has now &#x3C;strong&#x3E;RSS 2.0&#x3C;/strong&#x3E; feeds.&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;You will be able to follow this blog in your favorite &#x3C;em&#x3E;RSS reader&#x3C;/em&#x3E; (who said &#x3C;em&#x3E;newsbeuter&#x3C;/em&#x3E; ?).&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;Here is the link : &#x3C;code&#x3E;http://cream-browser.net/blog/rss2.xml&#x3C;/code&#x3E;.&#x3C;/p&#x3E;
+</description>
+<pubDate>mar., 14 juin 2011 17:20:27 +0200</pubDate>
+</item>
+<item>
+<title>Cream-Browser with DirectFB support</title>
+<link>http://cream-browser.net/blog//post/01.html</link>
+<description>&#x3C;p&#x3E;Hi,&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;&#x3C;em&#x3E;Cream-Browser&#x3C;/em&#x3E; is now able to be compiled with &#x3C;strong&#x3E;DirectFB&#x3C;/strong&#x3E; support.&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;The only inconvenient is that &#x3C;strong&#x3E;GTK+-3.0&#x3C;/strong&#x3E; drop the &#x3C;em&#x3E;DirectFB&#x3C;/em&#x3E; support,
+
+so you have to build Cream-Browser with &#x3C;strong&#x3E;GTK+-2.0&#x3C;/strong&#x3E; (hopefully, both
+
+versions are supported).&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;Do you want to know more ? Just go &#x3C;a href=&#x22;https://github.com/linkdd/cream-browser/wiki/Directfb-support&#x22;&#x3E;here&#x3C;/a&#x3E;&#x3C;/p&#x3E;
+</description>
+<pubDate>mar., 14 juin 2011 17:20:27 +0200</pubDate>
+</item>
+<item>
+<title>Welcome on the Cream-Browser&#x27;s blog</title>
+<link>http://cream-browser.net/blog//post/00.html</link>
+<description>&#x3C;p&#x3E;Hi everybody.&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;I&#x27;m glad to tell you that the &#x3C;em&#x3E;Cream-Browser&#x3C;/em&#x3E;&#x27;s blog is now open and powered by
+
+&#x3C;a href=&#x22;https://github.com/linkdd/plstblog&#x22;&#x3E;plstblog&#x3C;/a&#x3E;.&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;&#x3C;strong&#x3E;&#x3C;em&#x3E;Q: Why did I open this blog ?&#x3C;/em&#x3E;&#x3C;/strong&#x3E;&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;&#x3C;strong&#x3E;&#x3C;em&#x3E;A: In order to :&#x3C;/em&#x3E;&#x3C;/strong&#x3E;&#x3C;/p&#x3E;
+
+
+
+&#x3C;ul&#x3E;
+
+&#x3C;li&#x3E;Announce every new release of Cream-Browser.&#x3C;/li&#x3E;
+
+&#x3C;li&#x3E;Say welcome to every (eventual) new developers.&#x3C;/li&#x3E;
+
+&#x3C;li&#x3E;Do what a blog does.&#x3C;/li&#x3E;
+
+&#x3C;/ul&#x3E;
+
+
+
+&#x3C;p&#x3E;Of course, it will be less active than the mailing lists (I hope so !).&#x3C;/p&#x3E;
+
+
+
+&#x3C;p&#x3E;And if you want constant informations, you may have to subscribe to those
+
+mailing lists :&#x3C;/p&#x3E;
+
+
+
+&#x3C;ul&#x3E;
+
+&#x3C;li&#x3E;&#x3C;a href=&#x22;http://groups.google.com/group/cream-browser-devel&#x22;&#x3E;Developers mailing list&#x3C;/a&#x3E;&#x3C;/li&#x3E;
+
+&#x3C;li&#x3E;&#x3C;a href=&#x22;http://groups.google.com/group/cream-browser-users&#x22;&#x3E;Users mailing list&#x3C;/a&#x3E;&#x3C;/li&#x3E;
+
+&#x3C;/ul&#x3E;
+</description>
+<pubDate>mar., 14 juin 2011 17:20:27 +0200</pubDate>
+</item>
+</channel>
+</rss>

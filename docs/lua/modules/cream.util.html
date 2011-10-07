@@ -1,0 +1,482 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../luadoc.css" type="text/css" />
+	<!--meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/-->
+</head>
+
+<body>
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+<div id="main">
+
+<div id="navigation">
+
+
+<h1>LuaDoc</h1>
+<ul>
+	
+	<li><a href="../index.html">Index</a></li>
+	
+</ul>
+
+
+<!-- Module list -->
+
+<h1>Modules</h1>
+<ul>
+
+	<li>
+		<a href="../modules/cream.html">cream</a>
+	</li>
+
+	<li>
+		<a href="../modules/cream.bit.html">cream.bit</a>
+	</li>
+
+	<li>
+		<a href="../modules/cream.clipboard.html">cream.clipboard</a>
+	</li>
+
+	<li>
+		<a href="../modules/cream.inputbox.html">cream.inputbox</a>
+	</li>
+
+	<li>
+		<a href="../modules/cream.keys.html">cream.keys</a>
+	</li>
+
+	<li>
+		<a href="../modules/cream.regex.html">cream.regex</a>
+	</li>
+
+	<li>
+		<a href="../modules/cream.statusbar.html">cream.statusbar</a>
+	</li>
+
+	<li>
+		<a href="../modules/cream.tab.html">cream.tab</a>
+	</li>
+
+	<li><strong>cream.util</strong></li>
+	
+</ul>
+
+
+
+<!-- File list -->
+
+
+
+
+
+
+</div><!-- id="navigation" -->
+
+<div id="content">
+
+<h1>Module <code>cream.util</code></h1>
+
+<p>Utility functions</p>
+
+<p><b>Author:</b>
+<table class="authors_list">
+
+	<tr><td class="name">David Delassus &lt;david.jose.delassus@gmail.com&gt;</td></tr>
+
+</table>
+</p>
+
+
+
+
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#eval">eval</a>&nbsp;(s)</td>
+	<td class="summary">Eval Lua code </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#quit">quit</a>&nbsp;(...)</td>
+	<td class="summary">Exit Cream-Browser </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#spawn">spawn</a>&nbsp;(cmd)</td>
+	<td class="summary">Spawn a program </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#spawn_shell">spawn_shell</a>&nbsp;(cmd)</td>
+	<td class="summary">Spawn a program using the shell </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#table.clone">table.clone</a>&nbsp;(t)</td>
+	<td class="summary">Clone a table </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#table.hasitem">table.hasitem</a>&nbsp;(t, item)</td>
+	<td class="summary">Check if a table has an item and return its key </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#table.join">table.join</a>&nbsp;(args)</td>
+	<td class="summary">Join all tables given as parameters This will iterate all tables and insert all their keys into a new table </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#table.keys">table.keys</a>&nbsp;(t)</td>
+	<td class="summary">Get a sorted table with all integer keys from a table </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#table.keys_filter">table.keys_filter</a>&nbsp;(t, ...)</td>
+	<td class="summary">Filter a tables keys for certain content types </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#table.reverse">table.reverse</a>&nbsp;(t)</td>
+	<td class="summary">Reverse a table </td>
+	</tr>
+
+</table>
+
+
+
+
+
+
+<br/>
+<br/>
+
+
+
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="eval"></a><strong>eval</strong>&nbsp;(s)</dt>
+<dd>
+Eval Lua code
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  s: Lua code to parse
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+The return value of the Lua code.
+
+
+
+</dd>
+
+
+
+
+<dt><a name="quit"></a><strong>quit</strong>&nbsp;(...)</dt>
+<dd>
+Exit Cream-Browser
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  ...: Exit Code (if needed)
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="spawn"></a><strong>spawn</strong>&nbsp;(cmd)</dt>
+<dd>
+Spawn a program
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  cmd: The command to run
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+The new PID
+
+
+
+</dd>
+
+
+
+
+<dt><a name="spawn_shell"></a><strong>spawn_shell</strong>&nbsp;(cmd)</dt>
+<dd>
+Spawn a program using the shell
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  cmd: The command to run.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+The new PID
+
+
+
+</dd>
+
+
+
+
+<dt><a name="table.clone"></a><strong>table.clone</strong>&nbsp;(t)</dt>
+<dd>
+Clone a table
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  t: the table to clone
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+a clone of t
+
+
+
+</dd>
+
+
+
+
+<dt><a name="table.hasitem"></a><strong>table.hasitem</strong>&nbsp;(t, item)</dt>
+<dd>
+Check if a table has an item and return its key
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  t: The table
+	</li>
+	
+	<li>
+	  item: The item to look for in values of the table
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+The key were the item is found, or nil if not found
+
+
+
+</dd>
+
+
+
+
+<dt><a name="table.join"></a><strong>table.join</strong>&nbsp;(args)</dt>
+<dd>
+Join all tables given as parameters This will iterate all tables and insert all their keys into a new table
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  args: A list of tables to join
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+A new table containing all keys from the arguments.
+
+
+
+</dd>
+
+
+
+
+<dt><a name="table.keys"></a><strong>table.keys</strong>&nbsp;(t)</dt>
+<dd>
+Get a sorted table with all integer keys from a table
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  t: the table for which the keys to get
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+A table with keys
+
+
+
+</dd>
+
+
+
+
+<dt><a name="table.keys_filter"></a><strong>table.keys_filter</strong>&nbsp;(t, ...)</dt>
+<dd>
+Filter a tables keys for certain content types
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  t: The table to retrieve the keys for
+	</li>
+	
+	<li>
+	  ...: the types to look for
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+A filtered table with keys
+
+
+
+</dd>
+
+
+
+
+<dt><a name="table.reverse"></a><strong>table.reverse</strong>&nbsp;(t)</dt>
+<dd>
+Reverse a table
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  t: the table to reverse
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+the reversed table
+
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->	
+</body>
+</html>

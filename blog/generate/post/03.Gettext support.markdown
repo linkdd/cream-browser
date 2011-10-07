@@ -1,0 +1,11 @@
+*Cream-Browser* has now the ***gettext*** support and is now translatable.
+
+I already made a french translation available on git. And a howto will be soon
+available on the wiki.
+
+***Q: Why now ? There is no more important things to do, like a GUI ?***
+
+**A:** In fact, *gettext* support wasn't long to do. It was preferable to do
+this now, before more translations to do (so a bigger work).
+
+I hope that other translations will be available very soon :)

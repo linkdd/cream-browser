@@ -1,0 +1,24 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$group__utils.html#gaa5f9b694d671933043fb61262643001a" title="find_file" alt="" coords="147,5,216,35"/>
+<area shape="rect" id="node5" href="$group__gtkvimsplit.html#gac5d907cd4ddcf6673c5ae7af6bd1a0f6" title="gtk_vim_split_new" alt="" coords="113,59,249,88"/>
+<area shape="rect" id="node7" href="$group__inputbox.html#ga7be04ed4eb11de12b6b0478685847ea5" title="inputbox_new" alt="" coords="128,189,235,219"/>
+<area shape="rect" id="node21" href="$group__statusbar-members.html#gad471850c00342993b9751f34252e77a6" title="Statusbar::statusbar_set_state" alt="" coords="789,163,1000,192"/>
+<area shape="rect" id="node31" href="$group__statusbar.html#ga3dcd9c0ba42b38d386dcd1752bf7f625" title="statusbar_new" alt="" coords="125,243,237,272"/>
+<area shape="rect" id="node34" href="$group__interface.html#ga8f1aa20c1cd15e8b32b6e94826f563ff" title="window_destroy" alt="" coords="120,296,243,325"/>
+<area shape="rect" id="node36" href="$group__interface.html#ga29d708ab7ec38fe05fba78ccd4f4b8d5" title="window_update" alt="" coords="121,483,241,512"/>
+<area shape="rect" id="node9" href="$group__inputbox-callbacks.html#ga8a3664e600590783338b6c826c572182" title="inputbox_activate_cb" alt="" coords="405,323,557,352"/>
+<area shape="rect" id="node19" href="$group__inputbox-callbacks.html#ga3e80c2ba0f26a098bfa5d691fa2da404" title="inputbox_focus_in_cb" alt="" coords="404,216,559,245"/>
+<area shape="rect" id="node23" href="$group__inputbox-callbacks.html#ga811e75b6a090beb4412073abe661f810" title="inputbox_focus_out_cb" alt="" coords="400,163,563,192"/>
+<area shape="rect" id="node26" href="$group__inputbox-callbacks.html#gadbc1d447a381b387989018e7f37a536f" title="inputbox_keypress_cb" alt="" coords="401,269,561,299"/>
+<area shape="rect" id="node11" href="$group__cb-members.html#ga834ab6cf9e173523f55b0ff9f69a1f4a" title="CreamBrowser::cream_browser_get_focused_webview" alt="" coords="712,269,1077,299"/>
+<area shape="rect" id="node13" href="$group__mod-members.html#ga518193d8054cafb8f7dcb3a9f69c054b" title="CreamModule::cream_module_search" alt="" coords="765,323,1024,352"/>
+<area shape="rect" id="node15" href="$group__command.html#gaa3d4604884455990ae5927c9e019e7b2" title="run_command" alt="" coords="840,376,949,405"/>
+<area shape="rect" id="node17" href="$group__webview-members.html#ga61363ef396791f158cbe5c1a5570afc0" title="WebView::webview_get_module" alt="" coords="785,429,1004,459"/>
+<area shape="rect" id="node28" href="$group__inputbox-members.html#gae7d846684c9d0f18d5a927d4da8237d4" title="Inputbox::inputbox_check_mode" alt="" coords="784,216,1005,245"/>
+<area shape="rect" id="node38" href="$group__cb-members.html#gac087870382dc251c27d9d5637ed64524" title="CreamBrowser::cream_browser_set_focused_webview" alt="" coords="300,643,663,672"/>
+<area shape="rect" id="node40" href="$group__notebook-members.html#ga35161184f603a04280cb5ca123353fdf" title="Notebook::notebook_get_focus" alt="" coords="375,376,588,405"/>
+<area shape="rect" id="node42" href="$group__statusbar-members.html#ga9f0bc93c02300d85b1d8d16ffca0ff66" title="Statusbar::statusbar_set_link" alt="" coords="381,429,581,459"/>
+<area shape="rect" id="node44" href="$group__interface.html#ga90dc31afdc97f3170b810b764d581615" title="ui_show" alt="" coords="445,483,517,512"/>
+<area shape="rect" id="node46" href="$group__webview-members.html#ga09389ce1c5cb0f7948bc37226dbb933f" title="WebView::webview_get_title" alt="" coords="383,536,580,565"/>
+<area shape="rect" id="node48" href="$group__webview-members.html#gaf32521fc0e783a095b881d852bf6f2de" title="WebView::webview_get_uri" alt="" coords="387,589,576,619"/>
+</map>

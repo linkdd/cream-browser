@@ -1,0 +1,10 @@
+Today I have removed support for **GTK+-2.0** (and unfortunately *DirectFB*, because **GTK+-3.0** does not support it anymore).
+
+Why did I do this?
+
+* As with all new versions of **GTK+-3.0** comes with interesting features (such as CSS to customize the widgets) that are not available in **GTK+-2.0**. It is relatively a handicap for development.
+* **GTK+-2.0** is much heavier than **GTK+-3.0**, because **GTK+-3.0** removes many features depreciated. This handicaps even more the development, requiring many ***#ifdef*** block in the code.
+* The library **WebKitGTK** already has a port to **GTK+-3.0** (although they still maintain the development of the branch **GTK+-2.0**), so switching to **GTK+-3.0** will be invisible on this side of.
+* **GTK+-3.0** is already in the repositories of many *GNU/Linux* distributions (such as *Gentoo*, *Debian testing/sid*, *archlinux*, ...), its installation for the developer and/or the user is not the most complicated. On this point, we could say that is because this version was released several months ago.
+
+So I wont maintain any longer the support of the two releases, I encourage you to install **GTK+-3.0** if not already done.

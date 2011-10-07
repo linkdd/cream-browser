@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Keybindings are available | Blog | Cream-Browser</title>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        <link type="text/css" rel="stylesheet" media="all" href="http://cream-browser.net/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="Cream-Browser's RSS feed" href="http://cream-browser.net/blog//rss2.xml" />
+    </head>
+    <body>
+        <div id="fork">
+            <a href="http://github.com/linkdd/cream-browser/">
+                <img src="http://cream-browser.net/img/forkme.png" alt="Fork me on GitHub" />
+            </a>
+        </div>
+
+        <div id="container">
+            <div class="download">
+                <a href="http://github.com/linkdd/cream-browser/zipball/master">
+                    <img width="90" src="http://cream-browser.net/img/zip.png" alt="zip" />
+                </a>
+                <a href="http://github.com/linkdd/cream-browser/tarball/master">
+                    <img width="90" src="http://cream-browser.net/img/tar.png" alt="tar" />
+                </a>
+            </div>
+
+            <div class="logo">
+                <a href="http://cream-browser.net/">
+                    <img src="http://cream-browser.net/img/logo.png" alt="" />
+                </a>
+            </div>
+
+            <h1>
+                <a href="http://cream-browser.net/">cream-browser</a>
+                <span class="small">unstable</span>
+            </h1>
+        </div>
+
+        <div id="menu">
+            <ul>
+                <li><a href="http://github.com/linkdd/cream-browser/">Source Code</a></li>
+                <li><a href="http://github.com/linkdd/cream-browser/issues/">Bug Tracker</a></li>
+                <li><a href="http://github.com/linkdd/cream-browser/wiki/">Wiki</a></li>
+                <li><a href="http://github.com/linkdd/cream-browser/wiki/Screenshots">Screenshots</a></li>
+                <li><a href="http://cream-browser.net/docs/cream-browser">Documentation</a></li>
+                <li><a href="http://cream-browser.net/docs/lua">Lua API</a></li>
+                <li><a href="http://cream-browser.net/blog/">Blog</a></li>
+                <li class="submenu"><a href="#">Mailing list</a>
+                <ul>
+                    <li><a href="http://groups.google.com/group/cream-browser-devel">Cream-Browser developers</a></li>
+                    <li><a href="http://groups.google.com/group/cream-browser-users">Cream-Browser users</a></li>
+                </ul></li>
+            </ul>
+        </div>
+
+        <div id="body">
+             <div id="blog">
+                    <p class="links">
+                         <span class=""><a href="http://cream-browser.net/blog/post/04.html"><img src="http://cream-browser.net/img/prev.png" alt="Split your browser as you split your Vim" /></a></span>
+                         <span><a href="http://cream-browser.net/blog/post/05.html">Keybindings are available</a></span>
+                         <span class=""><a href="http://cream-browser.net/blog/post/06.html"><img src="http://cream-browser.net/img/next.png" alt="GTK2 not supported anymore" /></a></span>
+                    </p>
+
+                    <div class="content">
+<p>Hi every body !</p>
+
+<p>I'm happy to tell you that <strong>key bindings</strong> are now available in <em>cream-browser</em> !</p>
+
+<pre><code>17:00 &lt;CIA-69&gt; cream-browser: David Delassus unstable * r0feb308 / (21 files in 3 dirs): Add keybindings (soon a note on the blog) - http://git.io/In8GfA
+</code></pre>
+
+<p>The lua bindings are already available :</p>
+
+<pre><code>cream.keys.map (statelist, modkeys_list, command, callback)
+</code></pre>
+
+<p><strong>statelist</strong> is a list of state where your keybind will be affected, here is the different states of <em>cream-browser</em> :</p>
+
+<pre><code>cream.state.insert   # You are typing in a webview
+cream.state.command  # You are typing a command in the inputbox
+cream.state.search   # You are typing a search command in the inputbox
+cream.state.embed    # A plugin (ie. flashplayer) own the focus (not yet implemented)
+cream.state.caret    # CARET browsing (not yet implemented)
+cream.state.normal   # Normal state
+cream.state.all      # All states
+</code></pre>
+
+<p>Here is an example :</p>
+
+<pre><code> cream.keys.map ({ cream.state.all }, { }, "Escape",
+           function (w)
+                cream.inputbox.text ("")
+                cream.state.current (cream.state.normal)
+           end)
+
+ cream.keys.map ({ { cream.state.normal, cream.state.embed, cream.state.caret }, { "Shift" }, "colon",
+           function (w)
+                cream.inputbox.text (":")
+                cream.inputbox.focus ()
+           end)
+
+ -- Paste command \o/
+ cream.keys.map ({ cream.state.normal, cream.state.embed, cream.state.caret }, { }, "pp",
+           function (w)
+                uri = cream.clipboard.primary:get ()
+
+                if uri ~= "" then
+                     w:open (uri)
+                end
+           end)
+</code></pre>
+
+<p><strong>NB: You HAVE TO precise all modkeys (ie. "Shift" + P)</strong></p>
+
+<p><strong>NB: You have to write the full name of the key (ie. minus an not -)</strong></p>
+
+<p>Enjoy! :)</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="footer">
+            <p>Copyright &copy; 2011, David Delassus &lt;<a href="mailto:">david (dot) jose (dot) delassus (at) gmail (dot) com</a>&gt;</p>
+            <p>
+                <script type="text/javascript" src="http://www.ohloh.net/p/483150/widgets/project_thin_badge.js"></script>
+                <a href="http://validator.w3.org/check?uri=referer">
+                    <img src="http://cream-browser.net/img/xhtml.png" alt="Valid XHTML 1.0 Strict" />
+                </a>
+                <a href="http://vim.org/">
+                    <img src="http://cream-browser.net/img/vim.png" alt="Written with Vim" />
+                </a>
+               <a class="feed" href="http://cream-browser.net/blog//rss2.xml"><span class="feed">RSS Feeds</span></a>
+            </p>
+        </div>
+    </body>
+</html>
+

@@ -1,0 +1,24 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$group__webview-members.html#ga14371f1f9efaa76759810f394ba73ca6" title="WebView::webview_load_uri" alt="" coords="221,85,419,115"/>
+<area shape="rect" id="node5" href="$group__cb-members.html#gae7a258d4ab705325772fa8a776609d93" title="CreamBrowser::cream_browser_get_protocol" alt="" coords="467,5,773,35"/>
+<area shape="rect" id="node7" href="$group__mod-members.html#gabccfc0679cb2885019d728e99c0d978c" title="CreamModule::cream_module_load_uri" alt="" coords="487,59,753,88"/>
+<area shape="rect" id="node9" href="$group__utils.html#ga336664bb74e89ca16a0969303a2d9bb2" title="uri_scheme_parse" alt="" coords="551,112,689,141"/>
+<area shape="rect" id="node11" href="$group__webview-members.html#ga9c74047f078ca29c05893fbfa5dacdfd" title="WebView::webview_set_module" alt="" coords="511,165,729,195"/>
+<area shape="rect" id="node13" href="$group__mod-members.html#ga6d110d8b8a15a39f1126976e7e604b76" title="CreamModule::cream_module_webview_new" alt="" coords="823,139,1124,168"/>
+<area shape="rect" id="node15" href="$group__webview-members.html#ga1e199a0f19e6a527e14c9f7f41358cc1" title="WebView::webview_connect_signals" alt="" coords="849,192,1097,221"/>
+<area shape="rect" id="node17" href="$group__webview-cb.html#ga62b782469ee6578a33596cfa75592ff9" title="webview_signal_download_cb" alt="" coords="1203,32,1413,61"/>
+<area shape="rect" id="node19" href="$group__webview-cb.html#ga4c53415362bbe282168584210791b5eb" title="webview_signal_favicon_changed_cb" alt="" coords="1179,85,1437,115"/>
+<area shape="rect" id="node21" href="$group__webview-cb.html#ga0cbccdf7eed612d1d43538073ce66004" title="webview_signal_grab_focus_cb" alt="" coords="1199,139,1417,168"/>
+<area shape="rect" id="node23" href="$group__webview-cb.html#gab6560b45327accdcd08c49cc8bd4f715" title="webview_signal_progress_changed_cb" alt="" coords="1173,299,1443,328"/>
+<area shape="rect" id="node31" href="$group__webview-cb.html#gabdd22d92fc71eb936837f55dc490c280" title="webview_signal_state_changed_cb" alt="" coords="1187,192,1429,221"/>
+<area shape="rect" id="node36" href="$group__webview-cb.html#gaef68d55f432f1ba2235d41394d4459ce" title="webview_signal_title_changed_cb" alt="" coords="1191,245,1425,275"/>
+<area shape="rect" id="node41" href="$group__webview-cb.html#ga7cd9e910778ce4b9a8728bed63cffc80" title="webview_signal_uri_changed_cb" alt="" coords="1195,379,1421,408"/>
+<area shape="rect" id="node25" href="$group__cb-members.html#ga834ab6cf9e173523f55b0ff9f69a1f4a" title="CreamBrowser::cream_browser_get_focused_webview" alt="" coords="1491,245,1856,275"/>
+<area shape="rect" id="node27" href="$group__statusbar-members.html#ga9f0bc93c02300d85b1d8d16ffca0ff66" title="Statusbar::statusbar_set_link" alt="" coords="1573,352,1773,381"/>
+<area shape="rect" id="node29" href="$group__statusbar-members.html#ga43096c07df752992ee3d46223040427d" title="Statusbar::statusbar_set_progress" alt="" coords="1556,299,1791,328"/>
+<area shape="rect" id="node34" href="$group__statusbar-members.html#gad471850c00342993b9751f34252e77a6" title="Statusbar::statusbar_set_state" alt="" coords="1568,139,1779,168"/>
+<area shape="rect" id="node39" href="$group__webview-members.html#ga09389ce1c5cb0f7948bc37226dbb933f" title="WebView::webview_get_title" alt="" coords="1575,192,1772,221"/>
+<area shape="rect" id="node44" href="$group__mod-members.html#ga29ef33dc9e0d7a3920a01dbbafc1ef27" title="CreamModule::cream_module_can_go_back" alt="" coords="1524,405,1823,435"/>
+<area shape="rect" id="node46" href="$group__mod-members.html#ga531135ee5e74ab32e5824523349ca548" title="CreamModule::cream_module_can_go_forward" alt="" coords="1515,459,1832,488"/>
+<area shape="rect" id="node48" href="$group__statusbar-members.html#ga2d2ba5e6c2fbf25e90f0e3fd001431a0" title="Statusbar::statusbar_set_history" alt="" coords="1563,512,1784,541"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$group__cb-members.html#ga834ab6cf9e173523f55b0ff9f69a1f4a" title="CreamBrowser::cream_browser_get_focused_webview" alt="" coords="283,5,648,35"/>
+<area shape="rect" id="node5" href="$group__mod-members.html#ga29ef33dc9e0d7a3920a01dbbafc1ef27" title="CreamModule::cream_module_can_go_back" alt="" coords="316,59,615,88"/>
+<area shape="rect" id="node7" href="$group__mod-members.html#ga531135ee5e74ab32e5824523349ca548" title="CreamModule::cream_module_can_go_forward" alt="" coords="307,112,624,141"/>
+<area shape="rect" id="node9" href="$group__statusbar-members.html#ga2d2ba5e6c2fbf25e90f0e3fd001431a0" title="Statusbar::statusbar_set_history" alt="" coords="355,165,576,195"/>
+<area shape="rect" id="node11" href="$group__statusbar-members.html#ga9f0bc93c02300d85b1d8d16ffca0ff66" title="Statusbar::statusbar_set_link" alt="" coords="365,219,565,248"/>
+</map>

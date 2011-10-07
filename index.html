@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Cream-Browser</title>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        <link type="text/css" rel="stylesheet" media="all" href="style.css" />
+    </head>
+    <body>
+        <div id="fork">
+            <a href="http://github.com/linkdd/cream-browser/">
+                <img src="http://cream-browser.net/img/forkme.png" alt="Fork me on GitHub" />
+            </a>
+        </div>
+
+        <div id="container">
+            <div class="download">
+                <a href="http://github.com/linkdd/cream-browser/zipball/master">
+                    <img width="90" src="http://cream-browser.net/img/zip.png" alt="zip" />
+                </a>
+                <a href="http://github.com/linkdd/cream-browser/tarball/master">
+                    <img width="90" src="http://cream-browser.net/img/tar.png" alt="tar" />
+                </a>
+            </div>
+
+            <div class="logo">
+                <a href="http://cream-browser.net/">
+                    <img src="http://cream-browser.net/img/logo.png" alt="" />
+                </a>
+            </div>
+
+            <h1>
+                <a href="http://cream-browser.net/">cream-browser</a>
+                <span class="small">unstable</span>
+            </h1>
+        </div>
+
+        <div id="menu">
+            <ul>
+                <li><a href="http://github.com/linkdd/cream-browser/">Source Code</a></li>
+                <li><a href="http://github.com/linkdd/cream-browser/issues/">Bug Tracker</a></li>
+                <li><a href="http://github.com/linkdd/cream-browser/wiki/">Wiki</a></li>
+                <li><a href="http://github.com/linkdd/cream-browser/wiki/Screenshots">Screenshots</a></li>
+                <li><a href="http://cream-browser.net/docs/cream-browser">Documentation</a></li>
+                <li><a href="http://cream-browser.net/docs/lua">Lua API</a></li>
+                <li><a href="http://cream-browser.net/blog/">Blog</a></li>
+                <li class="submenu"><a href="#">Mailing list</a>
+                <ul>
+                    <li><a href="http://groups.google.com/group/cream-browser-devel">Cream-Browser developers</a></li>
+                    <li><a href="http://groups.google.com/group/cream-browser-users">Cream-Browser users</a></li>
+                </ul></li>
+            </ul>
+        </div>
+
+        <div id="body">
+            <p>Cream-Browser is a lightweight web browser using <strong>GTK+-3.0</strong>, with the same interface as
+            <a href="http://vimperator.org">Vimperator</a>.</p>
+
+            <h2>Features</h2>
+
+            <ul>
+                <li>Modules : every modules manage one or more protocols (ie. <em>HTTP(S), FTP, gopher, ...</em>), they are used by Cream-Browser to
+                load URLs.</li>
+                <li>UNIX socket : used to control Cream-Browser from the command-line (via a UNIX socket).</li>
+                <li>Vim split : a widget which implements <strong>split</strong> and <strong>vsplit</strong> commands.</li>
+                <li>Lua configuration : Using lua makes Cream-Browser very configurable and easy to customize. Lua isn't a very hard
+                language, it's <abbr title="Keep It Simple, Stupid">KISS</abbr> and powerful.</li>
+                <li>CSS Theming : because Cream-Browser uses <strong>GTK+-3.0</strong>, it provides its <em>CSS</em> theming engine.</li>
+            </ul>
+
+            <h2>Installation</h2>
+
+            <h3>Getting Cream-Browser</h3>
+
+            <p>Download the <a href="http://github.com/linkdd/cream-browser/zipball/master">zip</a> archive, or
+            the <a href="http://github.com/linkdd/cream-browser/tarball/master">tar</a> archive.</p>
+
+            <p>Or clone the git repository :</p>
+
+            <code>$ git clone git://github.com/linkdd/cream-browser.git<br/>
+            And because the master branch is currently depecreated :<br/>
+            $ git checkout unstable</code>
+
+            <p>Or clone directly the unstable branch :</p>
+
+            <code>$ git clone -b unstable git://github.com/linkdd/cream-browser.git</code>
+
+            <h3>Building Cream-Browser</h3>
+
+            Run <code class="inline">./configure --help</code> to see every possible options. Then :
+
+            <code>$ ./configure<br/>
+            $ make</code>
+
+            <p><strong>NB:</strong> If you want to build Cream-Browser with another compiler (maybe
+            <a href="http://clang.llvm.org/">clang</a> ?), just do : <code class="inline">CC=clang ./configure</code></p>
+
+            <h3>Install / Uninstall</h3>
+
+            <p>To install Cream-Browser, you just have to run : <code class="inline">make install</code>.</p>
+
+            <p><strong>NB:</strong> <code class="pre">DESTDIR</code> feature is correctly supported.</p>
+
+            <p>To uninstall Cream-Browser, you have to run <code class="inline">make uninstall</code> with <strong>exactly</strong>
+            the same value for <code class="pre">DESTDIR</code> if it was specified at installation.</p>
+
+            <p>Packages for Debian, Gentoo and Archlinux will be created very soon.</p>
+
+            <h2>Configuration</h2>
+
+            <p>Because it uses <a href="http://lua.org/">lua</a>, Cream-Browser is highly
+            <a href="http://github.com/linkdd/cream-browser/wiki/Configuration">configurable</a>.
+            Pages on the wiki and other documentations will be written in a while.</p>
+
+            <h2>Help and support</h2>
+
+            <ul>
+                <li>The first place to get help is the <a href="http://github.com/linkdd/cream-browser/wiki/">wiki</a>.</li>
+                <li>You can also report any issue on the <a href="http://github.com/linkdd/cream-browser/issues/">bug tracker</a>.</li>
+                <li>If you want more help, you can join the IRC channel <strong>#cream-browser</strong> @ <a href="#">irc.freenode.org</a>.</li>
+                <li>Or subscribe to mailing lists :</li>
+            </ul>
+
+            <div class="googlegroups">
+                <div class="left">
+                    <p>
+                        <img src="http://groups.google.com/intl/en/images/logos/groups_logo_sm.gif"
+                             height=30 width=140 alt="Google Groups"><br/>
+                        <strong>Subscribe to cream-browser developers</strong>
+                    </p>
+
+                    <form action="http://groups.google.com/group/cream-browser-devel/boxsubscribe">
+                        <p><input type=hidden name="hl" value="en"></p>
+                        <p>
+                            Email: <input type=text name=email>
+                            <input type=submit name="sub" value="Subscribe">
+                        </p>
+                    </form>
+                    <p style="text-align: right;">
+                        <a href="http://groups.google.com/group/cream-browser-devel?hl=en">Visit this group</a>
+                    </p>
+                </div>
+                <div class="right">
+                    <p>
+                        <img src="http://groups.google.com/intl/en/images/logos/groups_logo_sm.gif"
+                             height=30 width=140 alt="Google Groups"><br/>
+                        <strong>Subscribe to cream-browser users</strong>
+                    </p>
+
+                    <form action="http://groups.google.com/group/cream-browser-users/boxsubscribe">
+                        <p><input type=hidden name="hl" value="en"></p>
+                        <p>
+                            Email: <input type=text name=email>
+                            <input type=submit name="sub" value="Subscribe">
+                        </p>
+                    </form>
+                    <p style="text-align: right;">
+                        <a href="http://groups.google.com/group/cream-browser-users?hl=en">Visit this group</a>
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="footer">
+            <p>Copyright &copy; 2011, David Delassus &lt;<a href="mailto:">david (dot) jose (dot) delassus (at) gmail (dot) com</a>&gt;</p>
+            <p>
+                <script type="text/javascript" src="http://www.ohloh.net/p/483150/widgets/project_thin_badge.js"></script>
+                <a href="http://validator.w3.org/check?uri=referer">
+                    <img src="http://cream-browser.net/img/xhtml.png" alt="Valid XHTML 1.0 Strict" />
+                </a>
+                <a href="http://vim.org/">
+                    <img src="http://cream-browser.net/img/vim.png" alt="Written with Vim" />
+                </a>
+            </p>
+        </div>
+    </body>
+</html>
+

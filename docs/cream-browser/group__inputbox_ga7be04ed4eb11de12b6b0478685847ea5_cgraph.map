@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$group__inputbox-callbacks.html#ga8a3664e600590783338b6c826c572182" title="inputbox_activate_cb" alt="" coords="169,112,321,141"/>
+<area shape="rect" id="node13" href="$group__inputbox-callbacks.html#ga3e80c2ba0f26a098bfa5d691fa2da404" title="inputbox_focus_in_cb" alt="" coords="168,165,323,195"/>
+<area shape="rect" id="node17" href="$group__inputbox-callbacks.html#ga811e75b6a090beb4412073abe661f810" title="inputbox_focus_out_cb" alt="" coords="164,219,327,248"/>
+<area shape="rect" id="node20" href="$group__inputbox-callbacks.html#gadbc1d447a381b387989018e7f37a536f" title="inputbox_keypress_cb" alt="" coords="165,272,325,301"/>
+<area shape="rect" id="node5" href="$group__cb-members.html#ga834ab6cf9e173523f55b0ff9f69a1f4a" title="CreamBrowser::cream_browser_get_focused_webview" alt="" coords="376,5,741,35"/>
+<area shape="rect" id="node7" href="$group__mod-members.html#ga518193d8054cafb8f7dcb3a9f69c054b" title="CreamModule::cream_module_search" alt="" coords="429,59,688,88"/>
+<area shape="rect" id="node9" href="$group__command.html#gaa3d4604884455990ae5927c9e019e7b2" title="run_command" alt="" coords="504,112,613,141"/>
+<area shape="rect" id="node11" href="$group__webview-members.html#ga61363ef396791f158cbe5c1a5570afc0" title="WebView::webview_get_module" alt="" coords="449,165,668,195"/>
+<area shape="rect" id="node15" href="$group__statusbar-members.html#gad471850c00342993b9751f34252e77a6" title="Statusbar::statusbar_set_state" alt="" coords="453,219,664,248"/>
+<area shape="rect" id="node22" href="$group__inputbox-members.html#gae7d846684c9d0f18d5a927d4da8237d4" title="Inputbox::inputbox_check_mode" alt="" coords="448,272,669,301"/>
+</map>

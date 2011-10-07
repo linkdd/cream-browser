@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Blog | Cream-Browser</title>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        <link type="text/css" rel="stylesheet" media="all" href="../style.css" />
+        {%rsslink%}
+    </head>
+    <body>
+        <div id="fork">
+            <a href="http://github.com/linkdd/cream-browser/">
+                <img src="http://cream-browser.net/img/forkme.png" alt="Fork me on GitHub" />
+            </a>
+        </div>
+
+        <div id="container">
+            <div class="download">
+                <a href="http://github.com/linkdd/cream-browser/zipball/master">
+                    <img width="90" src="http://cream-browser.net/img/zip.png" alt="zip" />
+                </a>
+                <a href="http://github.com/linkdd/cream-browser/tarball/master">
+                    <img width="90" src="http://cream-browser.net/img/tar.png" alt="tar" />
+                </a>
+            </div>
+
+            <div class="logo">
+                <a href="http://cream-browser.net/">
+                    <img src="http://cream-browser.net/img/logo.png" alt="" />
+                </a>
+            </div>
+
+            <h1>
+                <a href="http://cream-browser.net/">cream-browser</a>
+                <span class="small">unstable</span>
+            </h1>
+        </div>
+
+        <div id="menu">
+            <ul>
+                <li><a href="http://github.com/linkdd/cream-browser/">Source Code</a></li>
+                <li><a href="http://github.com/linkdd/cream-browser/issues/">Bug Tracker</a></li>
+                <li><a href="http://github.com/linkdd/cream-browser/wiki/">Wiki</a></li>
+                <li><a href="http://github.com/linkdd/cream-browser/wiki/Screenshots">Screenshots</a></li>
+                <li><a href="http://cream-browser.net/docs/cream-browser">Documentation</a></li>
+                <li><a href="http://cream-browser.net/docs/lua">Lua API</a></li>
+                <li><a href="http://cream-browser.net/blog/">Blog</a></li>
+                <li class="submenu"><a href="#">Mailing list</a>
+                <ul>
+                    <li><a href="http://groups.google.com/group/cream-browser-devel">Cream-Browser developers</a></li>
+                    <li><a href="http://groups.google.com/group/cream-browser-users">Cream-Browser users</a></li>
+                </ul></li>
+            </ul>
+        </div>
+
+        <div id="body">
+             <div id="blog">
+               <div class="index">

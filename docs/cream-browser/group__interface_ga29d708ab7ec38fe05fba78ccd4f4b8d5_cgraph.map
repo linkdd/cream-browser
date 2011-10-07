@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$group__cb-members.html#gac087870382dc251c27d9d5637ed64524" title="CreamBrowser::cream_browser_set_focused_webview" alt="" coords="175,5,537,35"/>
+<area shape="rect" id="node5" href="$group__notebook-members.html#ga35161184f603a04280cb5ca123353fdf" title="Notebook::notebook_get_focus" alt="" coords="249,59,463,88"/>
+<area shape="rect" id="node7" href="$group__statusbar-members.html#ga9f0bc93c02300d85b1d8d16ffca0ff66" title="Statusbar::statusbar_set_link" alt="" coords="256,112,456,141"/>
+<area shape="rect" id="node9" href="$group__interface.html#ga90dc31afdc97f3170b810b764d581615" title="ui_show" alt="" coords="320,165,392,195"/>
+<area shape="rect" id="node11" href="$group__webview-members.html#ga09389ce1c5cb0f7948bc37226dbb933f" title="WebView::webview_get_title" alt="" coords="257,219,455,248"/>
+<area shape="rect" id="node13" href="$group__webview-members.html#gaf32521fc0e783a095b881d852bf6f2de" title="WebView::webview_get_uri" alt="" coords="261,272,451,301"/>
+</map>

@@ -1,0 +1,7 @@
+Oe of the *Cream-Browser*'s killer feature is the **GtkVimSplit** which allow you to split your browser in multiple views, just like ***vim*** :)
+
+This feature is now finished, and to end the GUI I just have to finish the *inputbox*, the *statusbar* and the *theme engine*.
+
+Soon a GUI for *Cream-Browser* !
+
+![Cream-Browser - GtkVimSplit screenshot](https://lh6.googleusercontent.com/-9EKISo61qiA/Tfd2yP-aZ7I/AAAAAAAAAB0/1uTEKbafl9k/cream-browser.png)

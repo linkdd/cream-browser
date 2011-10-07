@@ -1,0 +1,49 @@
+Hi every body !
+
+I'm happy to tell you that **key bindings** are now available in *cream-browser* !
+
+    17:00 <CIA-69> cream-browser: David Delassus unstable * r0feb308 / (21 files in 3 dirs): Add keybindings (soon a note on the blog) - http://git.io/In8GfA
+
+The lua bindings are already available :
+
+    cream.keys.map (statelist, modkeys_list, command, callback)
+
+**statelist** is a list of state where your keybind will be affected, here is the different states of *cream-browser* :
+
+    cream.state.insert   # You are typing in a webview
+    cream.state.command  # You are typing a command in the inputbox
+    cream.state.search   # You are typing a search command in the inputbox
+    cream.state.embed    # A plugin (ie. flashplayer) own the focus (not yet implemented)
+    cream.state.caret    # CARET browsing (not yet implemented)
+    cream.state.normal   # Normal state
+    cream.state.all      # All states
+
+Here is an example :
+
+     cream.keys.map ({ cream.state.all }, { }, "Escape",
+               function (w)
+                    cream.inputbox.text ("")
+                    cream.state.current (cream.state.normal)
+               end)
+
+     cream.keys.map ({ { cream.state.normal, cream.state.embed, cream.state.caret }, { "Shift" }, "colon",
+               function (w)
+                    cream.inputbox.text (":")
+                    cream.inputbox.focus ()
+               end)
+
+     -- Paste command \o/
+     cream.keys.map ({ cream.state.normal, cream.state.embed, cream.state.caret }, { }, "pp",
+               function (w)
+                    uri = cream.clipboard.primary:get ()
+
+                    if uri ~= "" then
+                         w:open (uri)
+                    end
+               end)
+
+**NB: You HAVE TO precise all modkeys (ie. "Shift" + P)**
+
+**NB: You have to write the full name of the key (ie. minus an not -)**
+
+Enjoy! :)

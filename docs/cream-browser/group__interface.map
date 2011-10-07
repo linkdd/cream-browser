@@ -1,0 +1,8 @@
+<map id="structs" name="structs">
+<area shape="rect" id="node1" href="$group__theme.html" title="Theming Cream&#45;Browser" alt="" coords="232,5,411,35"/>
+<area shape="rect" id="node2" href="$group__webview.html" title="WebView" alt="" coords="281,59,361,88"/>
+<area shape="rect" id="node3" href="$group__notebook.html" title="Notebook" alt="" coords="280,112,363,141"/>
+<area shape="rect" id="node4" href="$group__gtkvimsplit.html" title="GtkVimSplit" alt="" coords="275,165,368,195"/>
+<area shape="rect" id="node5" href="$group__inputbox.html" title="Inputbox" alt="" coords="284,219,359,248"/>
+<area shape="rect" id="node7" href="$group__statusbar.html" title="Statusbar" alt="" coords="281,272,361,301"/>
+</map>

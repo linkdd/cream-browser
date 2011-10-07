@@ -1,0 +1,14 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$group__cb-members.html#gaa8355dbc1a386e9b97e4c98048968562" title="CreamBrowser::cream_browser_ctl" alt="" coords="375,5,615,35"/>
+<area shape="rect" id="node5" href="$group__utils.html#gaa5f9b694d671933043fb61262643001a" title="find_file" alt="" coords="460,59,529,88"/>
+<area shape="rect" id="node7" href="$group__lua.html#ga53ca6b5dcc4a0f5d243eedc6211f9826" title="lua_ctx_close" alt="" coords="441,112,548,141"/>
+<area shape="rect" id="node9" href="$group__lua.html#ga9ffe7fe3e03f14598c5129eb0aa9672a" title="lua_ctx_init" alt="" coords="449,165,540,195"/>
+<area shape="rect" id="node23" href="$group__lua.html#gae3916ff81ad74630a844f7ddf4754332" title="lua_ctx_parse" alt="" coords="440,272,549,301"/>
+<area shape="rect" id="node11" href="$group__clipboard.html#ga4381ac480c5c7c96b5ade632009fe27a" title="luaL_clipboard_register" alt="" coords="665,5,833,35"/>
+<area shape="rect" id="node13" href="$group__lua-keybinds.html#ga0374b8d388ef80bb2c7a7e7f24b562e6" title="luaL_keybinds_register" alt="" coords="667,59,832,88"/>
+<area shape="rect" id="node15" href="$group__lua-notebook.html#gabd75f92082667017f0f823e20e01d400" title="luaL_notebook_register" alt="" coords="664,112,835,141"/>
+<area shape="rect" id="node17" href="$group__lua-util.html#gaabf5651ec9b080cc024312c297f42592" title="luaL_util_register" alt="" coords="685,165,813,195"/>
+<area shape="rect" id="node19" href="$group__lua-webview.html#gab14acc854e4fcfe172c7c9b76f92a0f6" title="luaL_webview_register" alt="" coords="667,219,832,248"/>
+<area shape="rect" id="node21" href="$group__lua-widgets.html#gadd5013593fcc48955dc231ba405ca775" title="luaL_widgets_register" alt="" coords="669,272,829,301"/>
+<area shape="rect" id="node25" href="$group__lua.html#ga1abbe2739ad5cbd498a2223e30725106" title="luaL_error_handler" alt="" coords="679,325,820,355"/>
+</map>

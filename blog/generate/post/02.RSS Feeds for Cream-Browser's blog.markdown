@@ -1,0 +1,5 @@
+Still powered by [plstblog](https://github.com/linkdd/plstblog), this blog has now **RSS 2.0** feeds.
+
+You will be able to follow this blog in your favorite *RSS reader* (who said *newsbeuter* ?).
+
+Here is the link : `http://cream-browser.net/blog/rss2.xml`.

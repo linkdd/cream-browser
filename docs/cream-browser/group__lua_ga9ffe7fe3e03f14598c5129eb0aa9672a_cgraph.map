@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$group__clipboard.html#ga4381ac480c5c7c96b5ade632009fe27a" title="luaL_clipboard_register" alt="" coords="148,5,316,35"/>
+<area shape="rect" id="node5" href="$group__lua-keybinds.html#ga0374b8d388ef80bb2c7a7e7f24b562e6" title="luaL_keybinds_register" alt="" coords="149,59,315,88"/>
+<area shape="rect" id="node7" href="$group__lua-notebook.html#gabd75f92082667017f0f823e20e01d400" title="luaL_notebook_register" alt="" coords="147,112,317,141"/>
+<area shape="rect" id="node9" href="$group__lua-util.html#gaabf5651ec9b080cc024312c297f42592" title="luaL_util_register" alt="" coords="168,165,296,195"/>
+<area shape="rect" id="node11" href="$group__lua-webview.html#gab14acc854e4fcfe172c7c9b76f92a0f6" title="luaL_webview_register" alt="" coords="149,219,315,248"/>
+<area shape="rect" id="node13" href="$group__lua-widgets.html#gadd5013593fcc48955dc231ba405ca775" title="luaL_widgets_register" alt="" coords="152,272,312,301"/>
+</map>

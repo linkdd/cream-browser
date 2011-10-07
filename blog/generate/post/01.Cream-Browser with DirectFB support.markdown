@@ -1,0 +1,11 @@
+Hi,
+
+*Cream-Browser* is now able to be compiled with **DirectFB** support.
+
+The only inconvenient is that **GTK+-3.0** drop the *DirectFB* support,
+so you have to build Cream-Browser with **GTK+-2.0** (hopefully, both
+versions are supported).
+
+Do you want to know more ? Just go [here](https://github.com/linkdd/cream-browser/wiki/Directfb-support)
+
+

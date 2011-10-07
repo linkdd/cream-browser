@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$group__cb-members.html#ga834ab6cf9e173523f55b0ff9f69a1f4a" title="CreamBrowser::cream_browser_get_focused_webview" alt="" coords="208,5,573,35"/>
+<area shape="rect" id="node5" href="$group__mod-members.html#ga518193d8054cafb8f7dcb3a9f69c054b" title="CreamModule::cream_module_search" alt="" coords="261,59,520,88"/>
+<area shape="rect" id="node7" href="$group__command.html#gaa3d4604884455990ae5927c9e019e7b2" title="run_command" alt="" coords="336,112,445,141"/>
+<area shape="rect" id="node9" href="$group__webview-members.html#ga61363ef396791f158cbe5c1a5570afc0" title="WebView::webview_get_module" alt="" coords="281,165,500,195"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="structs" name="structs">
+<area shape="rect" id="node1" href="$group__lua-statusbar.html" title="Statusbar" alt="" coords="223,5,303,35"/>
+<area shape="rect" id="node2" href="$group__lua.html" title="Lua" alt="" coords="5,85,51,115"/>
+<area shape="rect" id="node4" href="$group__lua-notebook.html" title="Notebook" alt="" coords="221,59,304,88"/>
+<area shape="rect" id="node5" href="$group__lua-webview.html" title="WebView" alt="" coords="223,112,303,141"/>
+<area shape="rect" id="node6" href="$group__lua-inputbox.html" title="Inputbox" alt="" coords="225,165,300,195"/>
+</map>
