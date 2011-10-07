@@ -201,14 +201,9 @@ static int luaL_notebook_get_focused (lua_State *L)
 
 static const luaL_reg cream_widgets_functions[] =
 {
-     { "inputbox_text",          luaL_inputbox_text },
-     { "inputbox_focus",         luaL_inputbox_focus },
-     { "statusbar_set_state",    luaL_statusbar_set_state },
-     { "statusbar_set_link",     luaL_statusbar_set_link },
-     { "statusbar_set_history",  luaL_statusbar_set_history },
-     { "statusbar_set_scroll",   luaL_statusbar_set_scroll },
-     { "statusbar_set_progress", luaL_statusbar_set_progress },
-     { "notebook_get_focused",   luaL_notebook_get_focused },
+     { "inputbox_text",        luaL_inputbox_text },
+     { "inputbox_focus",       luaL_inputbox_focus },
+     { "notebook_get_focused", luaL_notebook_get_focused },
      { NULL, NULL }
 };
 
