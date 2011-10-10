@@ -5,6 +5,17 @@
         <meta http-equiv="content-type" content="text/html;charset=utf-8" />
         <link type="text/css" rel="stylesheet" media="all" href="../style.css" />
         <link rel="alternate" type="application/rss+xml" title="Cream-Browser's RSS feed" href="http://cream-browser.net/blog//rss2.xml" />
+
+        <script type="text/javascript" src="jquery.min.js"></script>
+        <script type="text/javascript" src="jquery.dataTables.min.js"></script>
+        <script type="text/javascript">
+          $(document).ready (function(){
+               $('#plstblog_index').dataTable ({
+                   "sPaginationType": "full_numbers",
+                   "bSort": false
+                });
+          });
+        </script>
     </head>
     <body>
         <div id="fork">
@@ -55,16 +66,16 @@
         <div id="body">
              <div id="blog">
                <div class="index">
-<ul>
-<li><span class="link"><a href="http://cream-browser.net/blog//post/07.html">CSS Theming</a></span><span class="date">Last edition: 00:20:18 09/24/11</span></li>
-<li><span class="link"><a href="http://cream-browser.net/blog//post/06.html">GTK2 not supported anymore</a></span><span class="date">Last edition: 23:23:35 09/22/11</span></li>
-<li><span class="link"><a href="http://cream-browser.net/blog//post/05.html">Keybindings are available</a></span><span class="date">Last edition: 17:22:26 09/08/11</span></li>
-<li><span class="link"><a href="http://cream-browser.net/blog//post/04.html">Split your browser as you split your Vim</a></span><span class="date">Last edition: 17:24:34 06/14/11</span></li>
-<li><span class="link"><a href="http://cream-browser.net/blog//post/03.html">Gettext support</a></span><span class="date">Last edition: 17:20:27 06/14/11</span></li>
-<li><span class="link"><a href="http://cream-browser.net/blog//post/02.html">RSS Feeds for Cream-Browser's blog</a></span><span class="date">Last edition: 17:20:27 06/14/11</span></li>
-<li><span class="link"><a href="http://cream-browser.net/blog//post/01.html">Cream-Browser with DirectFB support</a></span><span class="date">Last edition: 17:20:27 06/14/11</span></li>
-<li><span class="link"><a href="http://cream-browser.net/blog//post/00.html">Welcome on the Cream-Browser's blog</a></span><span class="date">Last edition: 17:20:27 06/14/11</span></li>
-</ul>
+<table id="plstblog_index"><thead><tr><th class="title">Title</th><th class="lastedit">Last edition</th></tr></thead><tbody>
+<tr><td class="link"><a href="http://cream-browser.net/blog//post/07.html">CSS Theming</a></td><td class="lastedit">17:00:22 10/10/11</td></tr>
+<tr><td class="link"><a href="http://cream-browser.net/blog//post/06.html">GTK2 not supported anymore</a></td><td class="lastedit">17:00:22 10/10/11</td></tr>
+<tr><td class="link"><a href="http://cream-browser.net/blog//post/05.html">Keybindings are available</a></td><td class="lastedit">17:00:22 10/10/11</td></tr>
+<tr><td class="link"><a href="http://cream-browser.net/blog//post/04.html">Split your browser as you split your Vim</a></td><td class="lastedit">17:00:22 10/10/11</td></tr>
+<tr><td class="link"><a href="http://cream-browser.net/blog//post/03.html">Gettext support</a></td><td class="lastedit">17:00:22 10/10/11</td></tr>
+<tr><td class="link"><a href="http://cream-browser.net/blog//post/02.html">RSS Feeds for Cream-Browser's blog</a></td><td class="lastedit">17:00:22 10/10/11</td></tr>
+<tr><td class="link"><a href="http://cream-browser.net/blog//post/01.html">Cream-Browser with DirectFB support</a></td><td class="lastedit">17:00:22 10/10/11</td></tr>
+<tr><td class="link"><a href="http://cream-browser.net/blog//post/00.html">Welcome on the Cream-Browser's blog</a></td><td class="lastedit">17:00:22 10/10/11</td></tr>
+</tbody></table>
                 </div>
             </div>
         </div>

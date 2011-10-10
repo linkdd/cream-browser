@@ -9,7 +9,7 @@
 <link>http://cream-browser.net/blog</link>
 <description>RSS feeds of the Cream-Browser&#x27;s blog.</description>
 <language>en</language>
-<lastBuildDate>sam., 24 sept. 2011 00:20:22 +0200</lastBuildDate>
+<lastBuildDate>Mon, 10 Oct 2011 20:06:28 +0200</lastBuildDate>
 <managingEditor>david.jose.delassus@gmail.com</managingEditor>
 <webMaster>david.jose.delassus@gmail.com</webMaster>
 
@@ -50,7 +50,7 @@ In other words : a painful trip. Another good reason to remove &#x3C;strong&#x3E
 
 &#x3C;p&#x3E;Have fun!&#x3C;/p&#x3E;
 </description>
-<pubDate>sam., 24 sept. 2011 00:20:18 +0200</pubDate>
+<pubDate>Mon, 10 Oct 2011 17:00:22 +0200</pubDate>
 </item>
 <item>
 <title>GTK2 not supported anymore</title>
@@ -79,7 +79,7 @@ In other words : a painful trip. Another good reason to remove &#x3C;strong&#x3E
 
 &#x3C;p&#x3E;So I wont maintain any longer the support of the two releases, I encourage you to install &#x3C;strong&#x3E;GTK+-3.0&#x3C;/strong&#x3E; if not already done.&#x3C;/p&#x3E;
 </description>
-<pubDate>jeu., 22 sept. 2011 23:23:35 +0200</pubDate>
+<pubDate>Mon, 10 Oct 2011 17:00:22 +0200</pubDate>
 </item>
 <item>
 <title>Keybindings are available</title>
@@ -190,7 +190,7 @@ cream.state.all      # All states
 
 &#x3C;p&#x3E;Enjoy! :)&#x3C;/p&#x3E;
 </description>
-<pubDate>jeu., 08 sept. 2011 17:22:26 +0200</pubDate>
+<pubDate>Mon, 10 Oct 2011 17:00:22 +0200</pubDate>
 </item>
 <item>
 <title>Split your browser as you split your Vim</title>
@@ -209,7 +209,7 @@ cream.state.all      # All states
 
 &#x3C;p&#x3E;&#x3C;img src=&#x22;https://lh6.googleusercontent.com/-9EKISo61qiA/Tfd2yP-aZ7I/AAAAAAAAAB0/1uTEKbafl9k/cream-browser.png&#x22; alt=&#x22;Cream-Browser - GtkVimSplit screenshot&#x22; title=&#x22;&#x22;&#x3E;&#x3C;/p&#x3E;
 </description>
-<pubDate>mar., 14 juin 2011 17:24:34 +0200</pubDate>
+<pubDate>Mon, 10 Oct 2011 17:00:22 +0200</pubDate>
 </item>
 <item>
 <title>Gettext support</title>
@@ -236,7 +236,7 @@ this now, before more translations to do (so a bigger work).&#x3C;/p&#x3E;
 
 &#x3C;p&#x3E;I hope that other translations will be available very soon :)&#x3C;/p&#x3E;
 </description>
-<pubDate>mar., 14 juin 2011 17:20:27 +0200</pubDate>
+<pubDate>Mon, 10 Oct 2011 17:00:22 +0200</pubDate>
 </item>
 <item>
 <title>RSS Feeds for Cream-Browser&#x27;s blog</title>
@@ -251,7 +251,7 @@ this now, before more translations to do (so a bigger work).&#x3C;/p&#x3E;
 
 &#x3C;p&#x3E;Here is the link : &#x3C;code&#x3E;http://cream-browser.net/blog/rss2.xml&#x3C;/code&#x3E;.&#x3C;/p&#x3E;
 </description>
-<pubDate>mar., 14 juin 2011 17:20:27 +0200</pubDate>
+<pubDate>Mon, 10 Oct 2011 17:00:22 +0200</pubDate>
 </item>
 <item>
 <title>Cream-Browser with DirectFB support</title>
@@ -274,7 +274,7 @@ versions are supported).&#x3C;/p&#x3E;
 
 &#x3C;p&#x3E;Do you want to know more ? Just go &#x3C;a href=&#x22;https://github.com/linkdd/cream-browser/wiki/Directfb-support&#x22;&#x3E;here&#x3C;/a&#x3E;&#x3C;/p&#x3E;
 </description>
-<pubDate>mar., 14 juin 2011 17:20:27 +0200</pubDate>
+<pubDate>Mon, 10 Oct 2011 17:00:22 +0200</pubDate>
 </item>
 <item>
 <title>Welcome on the Cream-Browser&#x27;s blog</title>
@@ -327,7 +327,7 @@ mailing lists :&#x3C;/p&#x3E;
 
 &#x3C;/ul&#x3E;
 </description>
-<pubDate>mar., 14 juin 2011 17:20:27 +0200</pubDate>
+<pubDate>Mon, 10 Oct 2011 17:00:22 +0200</pubDate>
 </item>
 </channel>
 </rss>

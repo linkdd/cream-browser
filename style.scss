@@ -270,45 +270,112 @@ body
           {
                .index
                {
-                    ul
+                    padding-top: 10px;
+                    padding-bottom: 10px;
+
+                    input, select
                     {
-                         list-style-type: none;
-
-                         li
-                         {
-                              height: 22px;
-                              line-height: 22px;
-
-                              margin: 3px;
-
-                              border: 1px solid #DDDDDD;
-                              background: #F7F8F9;
-
-                              &:hover
-                              {
-                                   border: 1px solid #BEDCE7;
-                                   background: #EAF2F5;
-                              }
-
-                              span.link
-                              {
-                                   padding: 5px;
-                              }
-
-                              span.date
-                              {
-                                   padding-left: 15px;
-                                   padding-right: 5px;
-                                   float: right;
-
-                                   border-left: 1px solid #DDDDDD;
-
-                                   font-style: italic;
-                                   font-size: 10px;
-                                   color: #888888;
-                              }
-                         }
+                        border: 1px solid gray;
+                        font: normal 9px sans-serif;
                     }
+
+                    #plstblog_index_length, #plstblog_index_info
+                    {
+                        font: normal 10px sans-serif;
+                        float: left;
+                    }
+
+                    #plstblog_index_filter, #plstblog_index_paginate
+                    {
+                        font: normal 10px sans-serif;
+                        text-align: right;
+                        padding-bottom: 5px;
+                    }
+
+                    #plstblog_index_paginate
+                    {
+                        padding-top: 5px;
+                        span
+                        {
+                            border: 1px solid gray;
+                            padding: 3px;
+
+                            &.paginate_active
+                            {
+                                background-color: #EFEFEF;
+                            }
+                        }
+                    }
+
+                    #plstblog_index_wrapper
+                    {
+                        width: 95%;
+                        margin: auto;
+                    }
+
+                    table
+                    {
+                        width: 100%;
+                        margin: auto;
+
+                        border-collapse: collapse;
+                        border: 1px solid #666666;
+                        font: normal 11px verdana, arial, helvetica, sans-serif;
+                        color: #363636;
+                        background: #f6f6f6;
+                        text-align: left;
+
+                        caption
+                        {
+                            text-align: center;
+                            font: bold 16px arial, helvetica, sans-serif;
+                            background: transparent;
+                            padding: 6px 4px 8px 0px;
+                            color: #CC00FF;
+                            text-transform: uppercase;
+                        }
+
+                        .lastedit
+                        {
+                            text-align: right;
+                        }
+
+                        thead, tfoot
+                        {
+                            background: repeat-x url("http://cream-browser.net/img/tab.gif");
+                            text-align: left;
+                            height: 30px;
+
+                            th
+                            {
+                                padding: 5px;
+                            }
+                        }
+
+                        tbody
+                        {
+                            th, td
+                            {
+                                padding: 5px;
+                            }
+                        }
+
+                        a
+                        {
+                            color: #333333;
+                            text-decoration: none;
+
+                            &:hover
+                            {
+                                text-decoration: underline;
+                            }
+                        }
+
+                        tr.odd
+                        {
+                            background: #f1f1f1;
+                        }
+                   }
                }
 
                p.links

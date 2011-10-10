@@ -144,27 +144,62 @@ body {
         border: 1px solid #DDDDDD;
         margin: 3px;
         padding: 5px; }
-    body #body #blog .index ul {
-      list-style-type: none; }
-      body #body #blog .index ul li {
-        height: 22px;
-        line-height: 22px;
-        margin: 3px;
-        border: 1px solid #DDDDDD;
-        background: #F7F8F9; }
-        body #body #blog .index ul li:hover {
-          border: 1px solid #BEDCE7;
-          background: #EAF2F5; }
-        body #body #blog .index ul li span.link {
+    body #body #blog .index {
+      padding-top: 10px;
+      padding-bottom: 10px; }
+      body #body #blog .index input, body #body #blog .index select {
+        border: 1px solid gray;
+        font: normal 9px sans-serif; }
+      body #body #blog .index #plstblog_index_length, body #body #blog .index #plstblog_index_info {
+        font: normal 10px sans-serif;
+        float: left; }
+      body #body #blog .index #plstblog_index_filter, body #body #blog .index #plstblog_index_paginate {
+        font: normal 10px sans-serif;
+        text-align: right;
+        padding-bottom: 5px; }
+      body #body #blog .index #plstblog_index_paginate {
+        padding-top: 5px; }
+        body #body #blog .index #plstblog_index_paginate span {
+          border: 1px solid gray;
+          padding: 3px; }
+          body #body #blog .index #plstblog_index_paginate span.paginate_active {
+            background-color: #EFEFEF; }
+      body #body #blog .index #plstblog_index_wrapper {
+        width: 95%;
+        margin: auto; }
+      body #body #blog .index table {
+        width: 100%;
+        margin: auto;
+        border-collapse: collapse;
+        border: 1px solid #666666;
+        font: normal 11px verdana, arial, helvetica, sans-serif;
+        color: #363636;
+        background: #f6f6f6;
+        text-align: left; }
+        body #body #blog .index table caption {
+          text-align: center;
+          font: bold 16px arial, helvetica, sans-serif;
+          background: transparent;
+          padding: 6px 4px 8px 0px;
+          color: #CC00FF;
+          text-transform: uppercase; }
+        body #body #blog .index table .lastedit {
+          text-align: right; }
+        body #body #blog .index table thead, body #body #blog .index table tfoot {
+          background: repeat-x url("http://cream-browser.net/img/tab.gif");
+          text-align: left;
+          height: 30px; }
+          body #body #blog .index table thead th, body #body #blog .index table tfoot th {
+            padding: 5px; }
+        body #body #blog .index table tbody th, body #body #blog .index table tbody td {
           padding: 5px; }
-        body #body #blog .index ul li span.date {
-          padding-left: 15px;
-          padding-right: 5px;
-          float: right;
-          border-left: 1px solid #DDDDDD;
-          font-style: italic;
-          font-size: 10px;
-          color: #888888; }
+        body #body #blog .index table a {
+          color: #333333;
+          text-decoration: none; }
+          body #body #blog .index table a:hover {
+            text-decoration: underline; }
+        body #body #blog .index table tr.odd {
+          background: #f1f1f1; }
     body #body #blog p.links {
       margin-top: 15px;
       margin-bottom: 15px;
