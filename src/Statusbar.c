@@ -219,9 +219,9 @@ void statusbar_set_progress (Statusbar *obj, gdouble fraction)
      priv = CREAM_STATUSBAR_GET_PRIVATE (obj);
 
      if (fraction == 1)
-          gtk_widget_hide (priv->lprogress);
+          gtk_widget_unmap (priv->lprogress);
      else
-          gtk_widget_show (priv->lprogress);
+          gtk_widget_map (priv->lprogress);
 
      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (priv->lprogress), fraction);
 }
