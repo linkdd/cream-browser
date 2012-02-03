@@ -386,8 +386,8 @@ int luaI_setbool (lua_State *L, gpointer v)
  */
 int luaI_setstring (lua_State *L, gpointer v)
 {
-     char *str = (char *) v;
-     str = g_strdup (luaL_checkstring (L, 3));
+     char **str = (char **) v;
+     *str = g_strdup (luaL_checkstring (L, 3));
      return 0;
 }
 
