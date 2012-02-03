@@ -2,7 +2,18 @@
 * {
     font: sans-serif 11;
     -GtkPaned-handle-size: 2;
+    -GtkProgressBar-min-horizontal-bar-height: 10;
+    -GtkProgressBar-min-vertical-bar-width: 10;
     background-color: rgb (100, 100, 100);
+}
+
+*:hover {
+    background-color: rgb (125, 125, 125);
+}
+
+GtkNotebook
+{
+    -GtkWidget-focus-line-width: 0;
 }
 
 /* notebook theme */
@@ -15,6 +26,7 @@
 .notebook child
 {
     border-style: none;
+    background-color: rgb (100, 100, 100);
 }
 
 .notebook tab
@@ -31,11 +43,16 @@
     background-color: black;
 }
 
+.notebook tab:hover
+{
+    background-color: rgb (125, 125, 125);
+}
+
 /* scrollbar theme */
 GtkScrollbar
 {
     background-color: rgb (100, 100, 100);
-    border-color: black;
+    border-color: #444444;
     border-width: 1;
 
     -GtkRange-slider-width: 10;
@@ -54,6 +71,14 @@ Statusbar, Statusbar *
     background-color: rgb (0, 0, 0);
     color: rgb (255, 255, 255);
     font: sans-serif 9 bold;
+}
+
+.progressbar,
+.progressbar row
+{
+    background-color: rgb (50, 50, 100);
+    border-width: 1;
+    border-color: shade (rgb (50, 50, 100), 0.4);
 }
 
 /* inputbox theme */

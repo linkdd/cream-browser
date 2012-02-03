@@ -28,7 +28,7 @@ cream.keys.map (state.all, { "Control" }, "w",
           end)
 
 -- focus to inputbox
-cream.keys.map (state.noedit, { "Shift" }, "colon",
+cream.keys.map (state.noedit, { }, "colon",
           function (w)
                cream.inputbox.text (":")
                cream.inputbox.focus ()
