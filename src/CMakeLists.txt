@@ -3,8 +3,6 @@ project (cream-browser)
 
 # Build options
 
-option (DIRECTFB "Build with GTK+-2.0 DirectFB backend" OFF)
-
 option (ENABLE_MOD_DUMMY "Build module 'dummy'" ON)
 option (ENABLE_MOD_WEBKIT "Build module 'webkit'" ON)
 
