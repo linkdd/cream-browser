@@ -174,6 +174,9 @@ void notebook_close (Notebook *obj, gint page)
      GList *node = g_list_find (obj->webviews, webview);
      obj->webviews = g_list_remove_link (obj->webviews, node);
      gtk_notebook_remove_page (GTK_NOTEBOOK (obj), page);
+
+     if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (obj)) == 0)
+          gtk_vim_split_close (GTK_VIM_SPLIT (app->gui.vimsplit));
 }
 
 /*! @} */
